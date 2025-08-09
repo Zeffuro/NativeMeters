@@ -25,3 +25,4 @@ public class Plugin : IDalamudPlugin
     private void OnCommand(string command, string args)
     {
     }
+}
