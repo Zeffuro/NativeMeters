@@ -1,5 +1,10 @@
-<Project Sdk="Dalamud.NET.Sdk/13.0.0">
+<Project Sdk="Dalamud.NET.Sdk/13.1.0">
     <PropertyGroup>
         <Version>1.0.0.0</Version>
+        <LangVersion>Preview</LangVersion>
+        <DebugType>portable</DebugType>
     </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\KamiToolKit\KamiToolKit.csproj"/>
+    </ItemGroup>
 </Project>

@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeMeters", "NativeMeters\NativeMeters.csproj", "{09D42EDA-5C8C-442D-9C6C-2CD12C819EBA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KamiToolKit", "KamiToolKit\KamiToolKit.csproj", "{E76FCC8B-FBC5-4953-9912-091BD80626F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -12,5 +14,9 @@ Global
 		{09D42EDA-5C8C-442D-9C6C-2CD12C819EBA}.Debug|x64.Build.0 = Debug|x64
 		{09D42EDA-5C8C-442D-9C6C-2CD12C819EBA}.Release|x64.ActiveCfg = Release|x64
 		{09D42EDA-5C8C-442D-9C6C-2CD12C819EBA}.Release|x64.Build.0 = Release|x64
+		{E76FCC8B-FBC5-4953-9912-091BD80626F9}.Debug|x64.ActiveCfg = Debug|x64
+		{E76FCC8B-FBC5-4953-9912-091BD80626F9}.Debug|x64.Build.0 = Debug|x64
+		{E76FCC8B-FBC5-4953-9912-091BD80626F9}.Release|x64.ActiveCfg = Release|x64
+		{E76FCC8B-FBC5-4953-9912-091BD80626F9}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 EndGlobal
