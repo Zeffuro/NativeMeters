@@ -16,7 +16,7 @@ public class MeterService : MeterServiceBase, IDisposable
     private readonly IINACTIpcClient iinactIpcClient;
     private readonly ConcurrentQueue<string> webSocketMessageQueue = new();
     private readonly ConcurrentQueue<string> ipcMessageQueue = new();
-    private readonly bool useWebSocket = true;
+    private readonly bool useWebSocket = false;
 
     public override event Action? CombatDataUpdated;
 
