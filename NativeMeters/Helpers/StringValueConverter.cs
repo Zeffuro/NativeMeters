@@ -2,6 +2,8 @@ using System;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using NativeMeters.Extensions;
+using NativeMeters.Services;
 
 namespace NativeMeters.Helpers;
 
@@ -24,6 +26,7 @@ public class StringValueConverter<T> : JsonConverter<T>
             "Double" => TryParseWithSuffix(stringValue, out double doubleVal) ? doubleVal : 0.0,
             "Boolean" => bool.TryParse(stringValue, out bool boolResult) && boolResult,
             "TimeSpan" => TimeSpan.TryParse(stringValue, out TimeSpan tsResult) ? tsResult : TimeSpan.Zero,
+            "ClassJob" => Service.DataManager.GetClassJobByAbbreviation(stringValue),
             _ => default(T)
         };
 

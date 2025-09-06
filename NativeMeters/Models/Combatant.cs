@@ -1,10 +1,11 @@
 using System;
 using System.Text.Json.Serialization;
+using Lumina.Excel.Sheets;
 using NativeMeters.Helpers;
 
 namespace NativeMeters.Models;
 
-public class Combatant
+public class Combatant : IEquatable<Combatant>
 {
     // String properties that do not need conversion
     [JsonPropertyName("n")]
@@ -271,5 +272,25 @@ public class Combatant
     [JsonPropertyName("threatdelta")]
     public string ThreatDelta { get; set; }
     [JsonPropertyName("Job")]
-    public string Job { get; set; }
+    [JsonConverter(typeof(StringValueConverter<ClassJob>))]
+    public ClassJob Job { get; set; }
+
+    public bool Equals(Combatant? other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Name == other.Name && Job.RowId == other.Job.RowId;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        return obj.GetType() == GetType() && Equals((Combatant)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Name, Job);
+    }
 }

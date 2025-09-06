@@ -10,7 +10,6 @@ namespace NativeMeters.Nodes.LayoutNodes;
 
 public sealed class MeterListLayoutNode : SimpleComponentNode
 {
-    private IMeterService meterService;
     private VerticalListNode verticalListNode;
     public MeterListLayoutNode()
     {
@@ -24,8 +23,7 @@ public sealed class MeterListLayoutNode : SimpleComponentNode
         };
         Service.NativeController.AttachNode(verticalListNode, this);
 
-        meterService = Service.ActiveMeterService;
-        meterService.CombatDataUpdated += OnCombatDataUpdated;
+        Service.ActiveMeterService.CombatDataUpdated += OnCombatDataUpdated;
         RebuildList();
     }
 
@@ -35,19 +33,22 @@ public sealed class MeterListLayoutNode : SimpleComponentNode
     }
 
     private void RebuildList() {
-        if (meterService.CurrentCombatData is null) return;
-        var combatDataMessage = meterService.CurrentCombatData;
-        Service.Logger.Info(combatDataMessage.Encounter.ENCDPS.ToString());
+        if (!Service.ActiveMeterService.HasCombatData()) return;
 
         uint nodeIndex = 2;
-        verticalListNode.SyncWithListData(combatDataMessage.Combatant.Values, node => node.Combatant, data => new MeterRowNode {
+        verticalListNode.SyncWithListData(Service.ActiveMeterService.GetCombatants(), node => node.Combatant, data => new MeterRowNode {
             NodeId = nodeIndex++,
             Height = 36.0f,
             Width = verticalListNode.Width,
             IsVisible = true,
-            Encounter = combatDataMessage.Encounter,
+            Encounter = Service.ActiveMeterService.GetEncounter(),
             Combatant = data
         });
+
+        foreach (var meterRowNode in verticalListNode.GetNodes<MeterRowNode>())
+        {
+            meterRowNode.Update();
+        }
 
         verticalListNode.ReorderNodes((x, y) => ComparisonBy(x, y, c => c.ENCDPS));
     }
@@ -74,6 +75,6 @@ public sealed class MeterListLayoutNode : SimpleComponentNode
     {
         verticalListNode?.Dispose();
         verticalListNode = null!;
-        meterService.CombatDataUpdated -= OnCombatDataUpdated;
+        Service.ActiveMeterService.CombatDataUpdated -= OnCombatDataUpdated;
     }
 }

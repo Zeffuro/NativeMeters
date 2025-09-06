@@ -1,31 +1,37 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using NativeMeters.Models;
 
 namespace NativeMeters.Services;
 
-public class TestMeterService : IDisposable, IMeterService
+public class TestMeterService : MeterServiceBase, IDisposable
 {
-    private readonly Timer _timer;
-    private bool _disposed;
-    private CombatDataMessage? _currentCombatData;
-    private readonly Random _random = new();
+    private readonly Timer timer;
+    private bool disposed;
+    private readonly List<Combatant> fixedCombatants;
+    private readonly Random random = new();
 
-    public event Action? CombatDataUpdated;
+    public override event Action? CombatDataUpdated;
 
     public TestMeterService()
     {
-        _timer = new Timer(GenerateFakeData, null, 0, 2000); // every 2 seconds
+        fixedCombatants = FakeCombatantFactory.CreateFixedCombatants(8);
+        timer = new Timer(GenerateFakeData, null, 0, 1000); // every 1 seconds
     }
-
-    public CombatDataMessage? CurrentCombatData => _currentCombatData;
 
     private void GenerateFakeData(object? state)
     {
-        int count = _random.Next(2, 8);
-        var combatants = FakeCombatantFactory.CreateFakeCombatants(count);
+        var combatants = fixedCombatants
+            .Select((c, i) => {
+                var newCombatant = FakeCombatantFactory.CreateFakeCombatant(c.Name, i + 1);
+                newCombatant.Job = c.Job;
+                return newCombatant;
+            })
+            .ToDictionary(c => c.Name, c => c);;
 
-        _currentCombatData = new CombatDataMessage
+        CombatData = new CombatDataMessage
         {
             Type = "test",
             Encounter = FakeEncounterFactory.CreateFakeEncounter(combatants.Values),
@@ -37,9 +43,9 @@ public class TestMeterService : IDisposable, IMeterService
 
     public void Dispose()
     {
-        if (_disposed) return;
-        _disposed = true;
-        _timer.Dispose();
-        _currentCombatData = null;
+        if (disposed) return;
+        disposed = true;
+        timer.Dispose();
+        CombatData = null;
     }
 }

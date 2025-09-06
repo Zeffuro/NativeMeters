@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using NativeMeters.Clients;
 using NativeMeters.Models;
 using System.Text.Json;
@@ -8,32 +10,29 @@ using Dalamud.Plugin.Ipc;
 
 namespace NativeMeters.Services;
 
-public class MeterService : IDisposable, IMeterService
+public class MeterService : MeterServiceBase, IDisposable
 {
-    private readonly WebSocketClient _webSocketClient;
+    private readonly WebSocketClient webSocketClient;
     private readonly IINACTIpcClient iinactIpcClient;
-    private readonly ConcurrentQueue<string> _webSocketMessageQueue = new();
-    private readonly ConcurrentQueue<string> _ipcMessageQueue = new();
-    private CombatDataMessage? _currentCombatData;
-    private bool _useWebSocket = true;
+    private readonly ConcurrentQueue<string> webSocketMessageQueue = new();
+    private readonly ConcurrentQueue<string> ipcMessageQueue = new();
+    private readonly bool useWebSocket = true;
 
-    public event Action? CombatDataUpdated;
+    public override event Action? CombatDataUpdated;
 
     public MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinactIpcClient)
     {
-        _webSocketClient = webSocketClient;
+        this.webSocketClient = webSocketClient;
         this.iinactIpcClient = iinactIpcClient;
-
-
     }
 
     public void Enable()
     {
-        if (_useWebSocket)
+        if (useWebSocket)
         {
             var serverUri = new Uri("ws://127.0.0.1:10501/ws");
-            _ = _webSocketClient.StartAsync(serverUri);
-            _webSocketClient.OnMessageReceived += EnqueueWebSocketMessage;
+            _ = webSocketClient.StartAsync(serverUri);
+            webSocketClient.OnMessageReceived += EnqueueWebSocketMessage;
         }
         else
         {
@@ -41,30 +40,28 @@ public class MeterService : IDisposable, IMeterService
         }
     }
 
-    public CombatDataMessage? CurrentCombatData => _currentCombatData;
-
     private void EnqueueWebSocketMessage(string message)
     {
-        _webSocketMessageQueue.Enqueue(message);
+        webSocketMessageQueue.Enqueue(message);
     }
 
     public void EnqueueIpcMessage(string message)
     {
-        _ipcMessageQueue.Enqueue(message);
+        ipcMessageQueue.Enqueue(message);
     }
 
     public void ProcessPendingMessages()
     {
-        if (_useWebSocket)
+        if (useWebSocket)
         {
-            while (_webSocketMessageQueue.TryDequeue(out var message))
+            while (webSocketMessageQueue.TryDequeue(out var message))
             {
                 HandleMessage(message);
             }
         }
         else
         {
-            while (_ipcMessageQueue.TryDequeue(out var ipcMessage))
+            while (ipcMessageQueue.TryDequeue(out var ipcMessage))
             {
                 HandleMessage(ipcMessage);
             }
@@ -75,10 +72,10 @@ public class MeterService : IDisposable, IMeterService
     {
         try
         {
-            var combatData = JsonSerializer.Deserialize<CombatDataMessage>(message);
-            if (combatData != null)
+            var combatDataMessage = JsonSerializer.Deserialize<CombatDataMessage>(message);
+            if (combatDataMessage != null)
             {
-                _currentCombatData = combatData;
+                CombatData = combatDataMessage;
                 CombatDataUpdated?.Invoke();
             }
         }
@@ -90,18 +87,18 @@ public class MeterService : IDisposable, IMeterService
 
     public void Dispose()
     {
-        if (_useWebSocket)
+        if (useWebSocket)
         {
-            _webSocketClient.OnMessageReceived -= EnqueueWebSocketMessage;
-            _webSocketClient.Dispose();
+            webSocketClient.OnMessageReceived -= EnqueueWebSocketMessage;
+            webSocketClient.Dispose();
         }
         else
         {
             iinactIpcClient.Unsubscribe();
         }
 
-        _webSocketMessageQueue.Clear();
-        _ipcMessageQueue.Clear();
-        _currentCombatData = null;
+        webSocketMessageQueue.Clear();
+        ipcMessageQueue.Clear();
+        CombatData = null;
     }
 }

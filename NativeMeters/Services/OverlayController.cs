@@ -27,8 +27,8 @@ public unsafe class OverlayController : IDisposable
 
         _meterListLayoutNode = new MeterListLayoutNode {
             NodeId = 2,
-            X = 10,
-            Y = 10,
+            X = 1900,
+            Y = 1100,
             Width = 300,
             Height = 200,
             IsVisible = true,
