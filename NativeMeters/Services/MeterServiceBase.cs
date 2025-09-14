@@ -25,4 +25,6 @@ public abstract class MeterServiceBase : IMeterService
 
     public virtual bool HasCombatData()
         => CombatData != null;
+
+    public virtual bool IsConnected => false;
 }

@@ -12,4 +12,5 @@ public interface IMeterService
     Encounter? GetEncounter();
     double GetMaxCombatantStat(Func<Combatant, double> selector);
     bool HasCombatData();
+    bool IsConnected { get; }
 }

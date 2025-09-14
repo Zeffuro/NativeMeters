@@ -1,6 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Dalamud.Plugin;
 using NativeMeters.Models;
 using NativeMeters.Services;
 using Newtonsoft.Json.Linq;
@@ -50,5 +49,20 @@ public class IINACTIpcClient
     {
         Service.MeterService.EnqueueIpcMessage(json.ToString());
         return true;
+    }
+
+    public bool IsConnected
+    {
+        get
+        {
+            try
+            {
+                return Service.PluginInterface.GetIpcSubscriber<bool>(ListeningEndpoint).InvokeFunc();
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

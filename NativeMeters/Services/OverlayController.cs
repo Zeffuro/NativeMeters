@@ -9,9 +9,9 @@ namespace NativeMeters.Services;
 
 public unsafe class OverlayController : IDisposable
 {
-    private bool _isDisposed = false;
-    private OverlayRootNode? _nativeMetersRootNode;
-    private MeterListLayoutNode? _meterListLayoutNode;
+    private bool isDisposed = false;
+    private OverlayRootNode? nativeMetersRootNode;
+    private MeterListLayoutNode? meterListLayoutNode;
 
     public OverlayController() {
         Service.NameplateAddonController.OnAttach += AttachNodes;
@@ -23,9 +23,9 @@ public unsafe class OverlayController : IDisposable
 
         var screenSize = new Vector2(AtkStage.Instance()->ScreenSize.Width, AtkStage.Instance()->ScreenSize.Height);
 
-        _nativeMetersRootNode = new OverlayRootNode(screenSize, Service.NativeController);
+        nativeMetersRootNode = new OverlayRootNode(screenSize, Service.NativeController);
 
-        _meterListLayoutNode = new MeterListLayoutNode {
+        meterListLayoutNode = new MeterListLayoutNode {
             NodeId = 2,
             X = 1900,
             Y = 1100,
@@ -34,7 +34,7 @@ public unsafe class OverlayController : IDisposable
             IsVisible = true,
         };
 
-        _nativeMetersRootNode.AddOverlay(_meterListLayoutNode);
+        nativeMetersRootNode.AddOverlay(meterListLayoutNode);
         //_nativeMetersRootNode.AddOverlay(_playerCombinedOverlay);
 
         /*
@@ -53,16 +53,16 @@ public unsafe class OverlayController : IDisposable
         };
         */
 
-        if (addonNamePlate != null && _nativeMetersRootNode != null)
+        if (addonNamePlate != null && nativeMetersRootNode != null)
         {
-            _nativeMetersRootNode.AttachAllToNativeController(addonNamePlate->RootNode);
+            nativeMetersRootNode.AttachAllToNativeController(addonNamePlate->RootNode);
         }
 
         //_enemyMultiDoTOverlay?.Setup();
     }
 
     public void OnUpdate() {
-        if (_isDisposed) {
+        if (isDisposed) {
             return;
         }
 
@@ -86,18 +86,18 @@ public unsafe class OverlayController : IDisposable
             _configurationWindow = null;
         }
         */
-        if (_nativeMetersRootNode != null)
+        if (nativeMetersRootNode != null)
         {
-            _nativeMetersRootNode.Cleanup();
-            _nativeMetersRootNode = null;
+            nativeMetersRootNode.Cleanup();
+            nativeMetersRootNode = null;
         }
     }
 
     public void Dispose() {
-        if (_isDisposed) {
+        if (isDisposed) {
             return;
         }
-        _isDisposed = true;
+        isDisposed = true;
 
         DetachAndDisposeAll();
     }

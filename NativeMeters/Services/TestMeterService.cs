@@ -11,14 +11,13 @@ public class TestMeterService : MeterServiceBase, IDisposable
     private readonly Timer timer;
     private bool disposed;
     private readonly List<Combatant> fixedCombatants;
-    private readonly Random random = new();
 
     public override event Action? CombatDataUpdated;
 
     public TestMeterService()
     {
         fixedCombatants = FakeCombatantFactory.CreateFixedCombatants(8);
-        timer = new Timer(GenerateFakeData, null, 0, 1000); // every 1 seconds
+        timer = new Timer(GenerateFakeData, null, 0, 1000); // every one second
     }
 
     private void GenerateFakeData(object? state)
@@ -29,7 +28,7 @@ public class TestMeterService : MeterServiceBase, IDisposable
                 newCombatant.Job = c.Job;
                 return newCombatant;
             })
-            .ToDictionary(c => c.Name, c => c);;
+            .ToDictionary(c => c.Name, c => c);
 
         CombatData = new CombatDataMessage
         {
@@ -48,4 +47,5 @@ public class TestMeterService : MeterServiceBase, IDisposable
         timer.Dispose();
         CombatData = null;
     }
+    public override bool IsConnected => true;
 }

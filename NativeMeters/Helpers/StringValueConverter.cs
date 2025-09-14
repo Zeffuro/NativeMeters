@@ -30,7 +30,7 @@ public class StringValueConverter<T> : JsonConverter<T>
             _ => default(T)
         };
 
-        return (T)result;
+        return (T)result!;
     }
 
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)

@@ -6,9 +6,9 @@ namespace NativeMeters.Models;
 public class CombatDataMessage
 {
     [JsonProperty("type")]
-    public string Type { get; set; }
+    public required string Type { get; set; }
     [JsonProperty("Encounter")]
-    public Encounter Encounter { get; set; }
+    public required Encounter Encounter { get; set; }
     [JsonProperty("Combatant")]
-    public Dictionary<string, Combatant> Combatant { get; set; }
+    public required Dictionary<string, Combatant> Combatant { get; set; }
 }

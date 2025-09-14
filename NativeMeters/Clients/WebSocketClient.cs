@@ -5,7 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Text.Json;
+using NativeMeters.Config;
 using NativeMeters.Models;
+using NativeMeters.Services;
 
 namespace NativeMeters.Clients;
 
@@ -15,18 +17,20 @@ public class WebSocketClient
     private readonly ConcurrentQueue<string> messageQueue = new();
     public event Action<string>? OnMessageReceived;
 
-    public async Task ConnectAsync(Uri uri)
+    private bool LogConnectionErrors => ConnectionConfig.Instance.LogConnectionErrors;
+
+    private async Task ConnectAsync(Uri uri)
     {
         await client.ConnectAsync(uri, CancellationToken.None);
     }
 
-    public async Task SendAsync(string message)
+    private async Task SendAsync(string message)
     {
         var buffer = Encoding.UTF8.GetBytes(message);
         await client.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
     }
 
-    public async Task<string> ReceiveDataAsync()
+    private async Task<string> ReceiveDataAsync()
     {
         var buffer = new byte[4096];
         using var ms = new System.IO.MemoryStream();
@@ -59,7 +63,10 @@ public class WebSocketClient
             }
             catch (Exception ex)
             {
-                // Log error if needed
+                if (LogConnectionErrors)
+                {
+                    Service.Logger.Error($"WebSocket error: {ex}");
+                }
             }
         });
     }
