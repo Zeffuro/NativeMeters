@@ -1,16 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using KamiToolKit;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using KamiToolKit.System;
+using KamiToolKit.Overlay;
 using NativeMeters.Models;
 using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.LayoutNodes;
 
-public sealed class MeterListLayoutNode : SimpleComponentNode
+public class MeterListLayoutNode : OverlayNode
 {
-    private VerticalListNode verticalListNode;
+    public override OverlayLayer OverlayLayer => OverlayLayer.BehindUserInterface;
+    public override bool HideWithNativeUi => System.Config.General.HideWithNativeUi;
+
+    protected override void OnUpdate()
+    {
+    }
+
+    private readonly VerticalListNode verticalListNode;
     public MeterListLayoutNode()
     {
         verticalListNode = new VerticalListNode() {
@@ -21,9 +30,9 @@ public sealed class MeterListLayoutNode : SimpleComponentNode
             Height = 500,
             IsVisible = true,
         };
-        Service.NativeController.AttachNode(verticalListNode, this);
+        verticalListNode.AttachNode(this);
 
-        Service.ActiveMeterService.CombatDataUpdated += OnCombatDataUpdated;
+        System.ActiveMeterService.CombatDataUpdated += OnCombatDataUpdated;
         RebuildList();
     }
 
@@ -33,15 +42,15 @@ public sealed class MeterListLayoutNode : SimpleComponentNode
     }
 
     private void RebuildList() {
-        if (!Service.ActiveMeterService.HasCombatData()) return;
+        if (!System.ActiveMeterService.HasCombatData()) return;
 
         uint nodeIndex = 2;
-        verticalListNode.SyncWithListData(Service.ActiveMeterService.GetCombatants(), node => node.Combatant, data => new MeterRowNode {
+        verticalListNode.SyncWithListData(System.ActiveMeterService.GetCombatants(), node => node.Combatant, data => new MeterRowNode {
             NodeId = nodeIndex++,
             Height = 36.0f,
             Width = verticalListNode.Width,
             IsVisible = true,
-            Encounter = Service.ActiveMeterService.GetEncounter(),
+            Encounter = System.ActiveMeterService.GetEncounter(),
             Combatant = data
         });
 
@@ -51,12 +60,6 @@ public sealed class MeterListLayoutNode : SimpleComponentNode
         }
 
         verticalListNode.ReorderNodes((x, y) => ComparisonBy(x, y, c => c.ENCDPS));
-    }
-
-    private static int Comparison(NodeBase x, NodeBase y) {
-        if (x is not MeterRowNode left ||  y is not MeterRowNode right) return 0;
-
-        return string.Compare(left.Combatant.Name, right.Combatant.Name, StringComparison.Ordinal);
     }
 
     private static int ComparisonBy<T>(NodeBase x, NodeBase y, Func<Combatant, T> selector, bool ascending = false) where T : IComparable<T>
@@ -71,10 +74,8 @@ public sealed class MeterListLayoutNode : SimpleComponentNode
         return ascending ? result : -result;
     }
 
-    protected override void Dispose(bool disposing)
+    public void OnDispose(bool disposing)
     {
-        verticalListNode?.Dispose();
-        verticalListNode = null!;
-        Service.ActiveMeterService.CombatDataUpdated -= OnCombatDataUpdated;
+        System.ActiveMeterService.CombatDataUpdated -= OnCombatDataUpdated;
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using Dalamud.Plugin;
 using Dalamud.Game.Command;
 using Dalamud.Plugin.Services;
@@ -6,7 +7,11 @@ using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using KamiToolKit;
+using KamiToolKit.Overlay;
+using NativeMeters.Addons;
 using NativeMeters.Clients;
+using NativeMeters.Commands;
+using NativeMeters.Helpers;
 using NativeMeters.Services;
 using StatusTimers.Helpers;
 
@@ -14,78 +19,68 @@ namespace NativeMeters;
 
 public class Plugin : IDalamudPlugin
 {
-    public const string CommandName = "/nativemeters";
+    public readonly OverlayManager OverlayManager;
 
-    public unsafe Plugin(IDalamudPluginInterface pluginInterface)
+    private readonly CommandHandler _commandHandler;
+
+    public Plugin(IDalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
-
+        System.Config = Util.LoadConfigOrDefault();
         BackupHelper.DoConfigBackup(pluginInterface);
 
-        Service.NativeController = new NativeController(pluginInterface);
-        Service.NameplateAddonController = new NameplateAddonController(pluginInterface);
+        KamiToolKitLibrary.Initialize(pluginInterface);
+        System.OverlayController = new OverlayController();
 
-        Service.OverlayController = new OverlayController();
-        Service.MeterService = new MeterService(new WebSocketClient(), new IINACTIpcClient());
-        Service.TestMeterService = new TestMeterService();
-        Service.ActiveMeterService = Service.MeterService;
+        System.MeterService = new MeterService(new WebSocketClient(), new IINACTIpcClient());
+        System.TestMeterService = new TestMeterService();
+        System.ActiveMeterService = System.MeterService;
 
-        Service.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
+        System.AddonConfigurationWindow = new AddonConfigurationWindow
         {
-            HelpMessage = ""
-        });
+            InternalName = "NativeMeters Config",
+            Title = "NativeMeters Config",
+            Size = new Vector2(640, 512),
+        };
+
+        Service.PluginInterface.UiBuilder.OpenMainUi += System.AddonConfigurationWindow.Toggle;
+        Service.PluginInterface.UiBuilder.OpenConfigUi += System.AddonConfigurationWindow.Toggle;
+
+
+        OverlayManager = new OverlayManager();
+        OverlayManager.Setup();
+
+        _commandHandler = new CommandHandler();
+        Service.Framework.Update += OnFrameworkUpdate;
+        Service.ClientState.Login += OnLogin;
 
         if (Service.ClientState.IsLoggedIn) {
             Service.Framework.RunOnFrameworkThread(OnLogin);
         }
-
-
-
-        Service.Framework.Update += OnFrameworkUpdate;
-        Service.ClientState.Login += OnLogin;
-        Service.ClientState.Logout += OnLogout;
-        Service.NameplateAddonController.OnUpdate += OnNameplateUpdate;
-
     }
 
     public void Dispose()
     {
-        Service.CommandManager.RemoveHandler(CommandName);
-
         Service.Framework.Update -= OnFrameworkUpdate;
         Service.ClientState.Login -= OnLogin;
-        Service.ClientState.Logout -= OnLogout;
 
-        Service.OverlayController.Dispose();
-        Service.NativeController.Dispose();
-        Service.NameplateAddonController.Dispose();
-        Service.TestMeterService.Dispose();
-        Service.MeterService.Dispose();
+        System.OverlayController.Dispose();
+        System.TestMeterService.Dispose();
+        System.MeterService.Dispose();
+
+        Util.SaveConfig(System.Config);
+        KamiToolKitLibrary.Dispose();
     }
 
     private void OnFrameworkUpdate(IFramework framework) {
-        Service.MeterService.ProcessPendingMessages();
-        //Service.Logger.Info(Service.MeterService.CurrentCombatData.Combatant.ToString());
-    }
-
-    private unsafe void OnNameplateUpdate(AddonNamePlate* nameplate) {
-        Service.OverlayController.OnUpdate();
-    }
-
-    private void OnCommand(string command, string args) {
-        //OverlayManager.ToggleConfig();
+        System.MeterService.ProcessPendingMessages();
     }
 
     private void OnLogin() {
-        Service.MeterService.Enable();
-        Service.NameplateAddonController.Enable();
+        System.MeterService.Enable();
 
         #if DEBUG
             //OverlayManager.OpenConfig();
         #endif
-    }
-
-    private static void OnLogout(int type, int code) {
-        Service.NameplateAddonController.Disable();
     }
 }

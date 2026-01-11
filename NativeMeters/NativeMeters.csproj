@@ -1,4 +1,4 @@
-<Project Sdk="Dalamud.NET.Sdk/13.1.0">
+<Project Sdk="Dalamud.NET.Sdk/14.0.1">
     <PropertyGroup>
         <Version>1.0.0.0</Version>
         <LangVersion>Preview</LangVersion>
@@ -8,6 +8,15 @@
         <ProjectReference Include="..\KamiToolKit\KamiToolKit.csproj"/>
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Addons\" />
+        <Content Include=".gitignore" />
+        <Content Include="changelog.md" />
+        <Content Include="Assets\*.*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
+        </Content>
+        <Content Include="Assets\Icons\*.*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
+        </Content>
     </ItemGroup>
 </Project>

@@ -11,7 +11,7 @@ namespace NativeMeters.Nodes.LayoutNodes;
 
 public sealed class MeterRowNode : SimpleComponentNode
 {
-    private CastBarProgressBarNode barProgressNode;
+    private ProgressBarCastNode barProgressNode;
     private IconImageNode iconImageNode;
     private TextNineGridNode nameTextNode;
     private TextNineGridNode dpsTextNode;
@@ -34,9 +34,9 @@ public sealed class MeterRowNode : SimpleComponentNode
             IsVisible = true,
             FitTexture = true
         };
-        Service.NativeController.AttachNode(iconImageNode, this);
+        iconImageNode.AttachNode(this);
 
-        barProgressNode = new CastBarProgressBarNode
+        barProgressNode = new ProgressBarCastNode
         {
             NodeId = 3,
             X = 32,
@@ -45,7 +45,7 @@ public sealed class MeterRowNode : SimpleComponentNode
             Height = 20,
             IsVisible = true,
         };
-        Service.NativeController.AttachNode(barProgressNode, this);
+        barProgressNode.AttachNode(this);
 
         nameTextNode = new TextNineGridNode()
         {
@@ -63,7 +63,7 @@ public sealed class MeterRowNode : SimpleComponentNode
             IsVisible = true,
             String = Combatant?.Name ?? "Unknown",
         };
-        Service.NativeController.AttachNode(nameTextNode, this);
+        nameTextNode.AttachNode(this);
 
         dpsTextNode = new TextNineGridNode()
         {
@@ -80,7 +80,7 @@ public sealed class MeterRowNode : SimpleComponentNode
             IsVisible = true,
             String = Combatant?.ENCDPS.ToString("0.00") ?? "0.00"
         };
-        Service.NativeController.AttachNode(dpsTextNode, this);
+        dpsTextNode.AttachNode(this);
     }
 
     public required Combatant Combatant
@@ -105,10 +105,10 @@ public sealed class MeterRowNode : SimpleComponentNode
 
     public void Update()
     {
-        double maxEncdps = Service.ActiveMeterService.GetMaxCombatantStat(c => c.ENCDPS);
+        double maxEncdps = System.ActiveMeterService.GetMaxCombatantStat(c => c.ENCDPS);
 
-        Combatant = Service.ActiveMeterService.GetCombatant(Combatant.Name) ?? Combatant;
-        Encounter = Service.ActiveMeterService.GetEncounter() ?? Encounter;
+        Combatant = System.ActiveMeterService.GetCombatant(Combatant.Name) ?? Combatant;
+        Encounter = System.ActiveMeterService.GetEncounter() ?? Encounter;
         barProgressNode.Progress = MeterUtil.CalculateProgressRatio(Combatant.ENCDPS, maxEncdps > 0 ? maxEncdps : 1.0);
         Service.Logger.Info($"Set Combatant: {Combatant.Name} with ENCDPS: {Combatant.ENCDPS} and total: {Encounter?.ENCDPS} and Progress: {barProgressNode.Progress} and {Combatant.Job.GetColor()}");
     }

@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Text.Json;
-using NativeMeters.Config;
+using NativeMeters.Configuration;
 using NativeMeters.Models;
 using NativeMeters.Services;
 
@@ -17,7 +17,7 @@ public class WebSocketClient
     private readonly ConcurrentQueue<string> messageQueue = new();
     public event Action<string>? OnMessageReceived;
 
-    private bool LogConnectionErrors => ConnectionConfig.Instance.LogConnectionErrors;
+    private bool LogConnectionErrors => System.Config.ConnectionSettings.LogConnectionErrors;
 
     private async Task ConnectAsync(Uri uri)
     {
@@ -33,7 +33,7 @@ public class WebSocketClient
     private async Task<string> ReceiveDataAsync()
     {
         var buffer = new byte[4096];
-        using var ms = new System.IO.MemoryStream();
+        using var ms = new global::System.IO.MemoryStream();
         WebSocketReceiveResult result;
         do
         {

@@ -1,14 +1,14 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace NativeMeters.Models;
 
 public class CombatDataMessage
 {
-    [JsonProperty("type")]
+    [JsonPropertyName("type")]
     public required string Type { get; set; }
-    [JsonProperty("Encounter")]
+    [JsonPropertyName("Encounter")]
     public required Encounter Encounter { get; set; }
-    [JsonProperty("Combatant")]
+    [JsonPropertyName("Combatant")]
     public required Dictionary<string, Combatant> Combatant { get; set; }
 }

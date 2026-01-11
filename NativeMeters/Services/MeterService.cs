@@ -3,7 +3,8 @@ using System.Collections.Concurrent;
 using NativeMeters.Clients;
 using NativeMeters.Models;
 using System.Text.Json;
-using NativeMeters.Config;
+using System.Text.Json.Nodes;
+using NativeMeters.Configuration;
 
 namespace NativeMeters.Services;
 
@@ -12,8 +13,8 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
 {
     private readonly ConcurrentQueue<string> webSocketMessageQueue = new();
     private readonly ConcurrentQueue<string> ipcMessageQueue = new();
-    private ConnectionType CurrentConnectionType => ConnectionConfig.Instance.SelectedConnectionType;
-    private string ServerUri => ConnectionConfig.Instance.WebSocketUrl;
+    private ConnectionType CurrentConnectionType => System.Config.ConnectionSettings.SelectedConnectionType;
+    private string ServerUri => System.Config.ConnectionSettings.WebSocketUrl;
 
     public override event Action? CombatDataUpdated;
 
@@ -70,11 +71,29 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
     {
         try
         {
-            var combatDataMessage = JsonSerializer.Deserialize<CombatDataMessage>(message);
-            if (combatDataMessage == null) return;
+            var jsonNode = JsonNode.Parse(message);
+            if (jsonNode == null) return;
 
-            CombatData = combatDataMessage;
-            CombatDataUpdated?.Invoke();
+            var messageType = jsonNode["type"]?.ToString() ?? jsonNode["Type"]?.ToString();
+
+            if (messageType is "CombatData" or "broadcast")
+            {
+                Service.Logger.Debug($"Received combat message: {message}");
+                var combatDataMessage = JsonSerializer.Deserialize<CombatDataMessage>(message);
+                if (combatDataMessage == null) return;
+
+                CombatData = combatDataMessage;
+                CombatDataUpdated?.Invoke();
+            }
+            else
+            {
+                // Log or ignore other message types like 'connection' or 'subscribe'
+                Service.Logger.Debug($"Received non-combat message type: {messageType}");
+            }
+        }
+        catch (JsonException ex)
+        {
+            Service.Logger.Error($"JSON structure error: {ex.Message}");
         }
         catch (Exception ex)
         {

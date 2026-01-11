@@ -21,7 +21,7 @@ public static class FakeEncounterFactory
                 if (part.EndsWith("K")) { multiplier = 1_000; part = part[..^1]; }
                 else if (part.EndsWith("M")) { multiplier = 1_000_000; part = part[..^1]; }
                 else if (part.EndsWith("B")) { multiplier = 1_000_000_000; part = part[..^1]; }
-                if (double.TryParse(part, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var num))
+                if (double.TryParse(part, global::System.Globalization.NumberStyles.Any, global::System.Globalization.CultureInfo.InvariantCulture, out var num))
                     return num * multiplier;
             }
             return 0;

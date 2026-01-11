@@ -47,7 +47,7 @@ public class IINACTIpcClient
 
     private bool HandleJObject(JObject json)
     {
-        Service.MeterService.EnqueueIpcMessage(json.ToString());
+        System.MeterService.EnqueueIpcMessage(json.ToString());
         return true;
     }
 
