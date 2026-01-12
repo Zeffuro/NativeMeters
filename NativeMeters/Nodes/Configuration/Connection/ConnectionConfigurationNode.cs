@@ -19,7 +19,6 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         ItemVerticalSpacing = 5;
 
-        // --- Section: Server Connection ---
         AddNode(new CategoryTextNode
         {
             Height = 18,
@@ -30,7 +29,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         var typeDropDown = new LabeledDropdownNode
         {
-            Size = new Vector2(300, 20),
+            Size = new Vector2(400, 28),
             LabelText = "Connection Type",
             LabelTextFlags = TextFlags.AutoAdjustNodeSize,
             Options = Enum.GetNames(typeof(ConnectionType)).ToList(),
@@ -47,7 +46,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         var urlInputNode = new LabeledTextInputNode
         {
-            Size = new Vector2(300, 20),
+            Size = new Vector2(400, 28),
             LabelText = "WebSocket URL",
             Text = config.WebSocketUrl,
             OnInputComplete = text =>
@@ -62,7 +61,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         AddNode(new CategoryTextNode
         {
-            Height = 18,
+            Height = 28,
             String = "Reconnection & Logging",
         });
 
@@ -70,7 +69,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         var autoReconnectCheckbox = new CheckboxNode
         {
-            Size = Size with { Y = 18 },
+            Size = Size with { Y = 20 },
             IsVisible = true,
             String = "Enable Auto-Reconnect",
             IsChecked = config.AutoReconnect,
@@ -85,7 +84,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         reconnectIntervalSlider = new LabeledNumericInputNode
         {
-            Size = new Vector2(300, 20),
+            Size = new Vector2(400, 20),
             LabelText = "Reconnect Interval (s)",
             Min = 1,
             Max = 60,
@@ -100,9 +99,9 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         var logErrorsCheckbox = new CheckboxNode
         {
-            Size = Size with { Y = 18 },
+            Size = Size with { Y = 20 },
             IsVisible = true,
-            String = "Log connection errors to chat/log",
+            String = "Log connection errors to log",
             IsChecked = config.LogConnectionErrors,
             OnClick = isChecked =>
             {

@@ -1,20 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Numerics;
-using KamiToolKit.Premade.Addons;
 using NativeMeters.Nodes.LayoutNodes;
 
 namespace NativeMeters.Services;
 
 public class OverlayManager : IDisposable {
-    private bool _isDisposed;
-    private MeterListLayoutNode? _meterListOverlay;
+    private bool isDisposed;
+    private MeterListLayoutNode? meterListOverlay;
+    private readonly Dictionary<string, MeterListLayoutNode> _activeMeters = new();
 
     public void Dispose() {
-        if (_isDisposed) {
+        if (isDisposed) {
             return;
         }
-        _isDisposed = true;
+        isDisposed = true;
 
         DetachAndDisposeAll();
     }
@@ -26,14 +25,25 @@ public class OverlayManager : IDisposable {
     }
 
     private void DetachAndDisposeAll() {
-        _meterListOverlay?.OnDispose(true);
-        _meterListOverlay = null;
+        foreach (var node in _activeMeters.Values) {
+            node.OnDispose();
+            System.OverlayController.RemoveNode(node);
+        }
+        _activeMeters.Clear();
     }
 
     private void CreateAndAttachOverlays()
     {
-        _meterListOverlay = new MeterListLayoutNode();
-        System.OverlayController.AddNode(_meterListOverlay);
+        foreach (var meterConfig in System.Config.Meters) {
+            if (!meterConfig.IsEnabled) continue;
+
+            var node = new MeterListLayoutNode
+            {
+                MeterSettings = meterConfig
+            };
+            _activeMeters.Add(meterConfig.Id, node);
+            System.OverlayController.AddNode(node);
+        }
     }
 }
 

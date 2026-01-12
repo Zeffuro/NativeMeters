@@ -12,5 +12,6 @@ public static class System
     public static SystemConfiguration Config { get; set; } = null!;
     public static MeterService MeterService { get; set; } = null!;
     public static OverlayController OverlayController { get; set; } = null!;
+    public static OverlayManager OverlayManager { get; set; } = null!;
     public static TestMeterService TestMeterService { get; set; } = null!;
 }

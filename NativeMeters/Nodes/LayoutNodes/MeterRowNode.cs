@@ -1,7 +1,9 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
+using NativeMeters.Configuration;
 using NativeMeters.Extensions;
 using NativeMeters.Helpers;
 using NativeMeters.Models;
@@ -11,13 +13,15 @@ namespace NativeMeters.Nodes.LayoutNodes;
 
 public sealed class MeterRowNode : SimpleComponentNode
 {
-    private ProgressBarCastNode barProgressNode;
+    // TODO: Allow swapping for other ProgressBarNodes
+    private NodeBase barProgressNode = null!;
     private IconImageNode iconImageNode;
-    private TextNineGridNode nameTextNode;
-    private TextNineGridNode dpsTextNode;
+    private BackgroundTextNode nameTextNode;
+    private BackgroundTextNode dpsTextNode;
 
     public MeterRowNode()
     {
+        DisableCollisionNode = true;
         X = 0;
         Y = 0;
         Width = 500;
@@ -26,7 +30,6 @@ public sealed class MeterRowNode : SimpleComponentNode
 
         iconImageNode = new IconImageNode
         {
-            NodeId = 2,
             X = 0,
             Y = 0,
             Width = 32,
@@ -38,7 +41,7 @@ public sealed class MeterRowNode : SimpleComponentNode
 
         barProgressNode = new ProgressBarCastNode
         {
-            NodeId = 3,
+            DisableCollisionNode = true,
             X = 32,
             Y = 10,
             Width = 200,
@@ -47,39 +50,42 @@ public sealed class MeterRowNode : SimpleComponentNode
         };
         barProgressNode.AttachNode(this);
 
-        nameTextNode = new TextNineGridNode()
+        nameTextNode = new BackgroundTextNode
         {
-            NodeId = 4,
-            X = 32,
-            Y = 0,
+            X = 34,
+            Y = -2,
+            Padding = new Vector2(6, 2),
             Width = 150,
             Height = 20,
             FontSize = 14,
             FontType = FontType.Axis,
             TextColor = ColorHelper.GetColor(50),
             TextOutlineColor = ColorHelper.GetColor(53),
-            TextFlags = TextFlags.Edge,
+            TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
             AlignmentType = AlignmentType.Left,
             IsVisible = true,
             String = Combatant?.Name ?? "Unknown",
         };
+        nameTextNode.CollisionNode.NodeFlags = 0;
         nameTextNode.AttachNode(this);
 
-        dpsTextNode = new TextNineGridNode()
+        dpsTextNode = new BackgroundTextNode
         {
-            NodeId = 5,
-            X = 172,
-            Y = 20,
+            X = 180,
+            Y = 18,
+            Padding = new Vector2(4, 1),
             Width = 60,
             Height = 20,
             FontSize = 14,
             FontType = FontType.TrumpGothic,
             TextColor = ColorHelper.GetColor(50),
             TextOutlineColor = ColorHelper.GetColor(53),
-            TextFlags = TextFlags.Edge,
+            TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
             IsVisible = true,
+            ShowBackground = false,
             String = Combatant?.ENCDPS.ToString("0.00") ?? "0.00"
         };
+        dpsTextNode.CollisionNode.NodeFlags = 0;
         dpsTextNode.AttachNode(this);
     }
 
@@ -89,11 +95,16 @@ public sealed class MeterRowNode : SimpleComponentNode
         set
         {
             field = value;
-            iconImageNode.IconId = Combatant.Job.GetIconId() ?? 0;
+            if (MeterSettings == null) return;
+            iconImageNode.IconId = field.GetIconId(MeterSettings.JobIconType);
+
+            SetBarColor(field.GetColor());
+
             nameTextNode.String = field.Name;
+            nameTextNode.ShowBackground = MeterSettings.BackgroundEnabled;
             dpsTextNode.String = field.ENCDPS.ToString("0.00");
-            barProgressNode.BarColor = Combatant.Job.GetColor();
-            Service.Logger.Info($"Set Combatant: {field.Name} with ENCDPS: {field.ENCDPS} and total: {Encounter?.ENCDPS} and Progress: {barProgressNode.Progress}");
+
+            Service.Logger.DebugOnly($"Set Combatant: {field.Name} with ENCDPS: {field.ENCDPS}");
         }
     }
 
@@ -103,13 +114,85 @@ public sealed class MeterRowNode : SimpleComponentNode
         set;
     }
 
+    public required MeterSettings MeterSettings
+    {
+        get;
+        set
+        {
+            var previousType = field?.ProgressBarType;
+            field = value;
+
+            // If the type changed (or this is the first set), rebuild the bar
+            if (previousType != value.ProgressBarType)
+            {
+                RebuildProgressBar();
+            }
+        }
+    }
+
+    private void RebuildProgressBar()
+    {
+        barProgressNode.DetachNode();
+        barProgressNode.Dispose();
+
+        barProgressNode = MeterSettings.ProgressBarType switch
+        {
+            ProgressBarType.Cast => new ProgressBarCastNode(),
+            ProgressBarType.EnemyCast => new ProgressBarEnemyCastNode(),
+            _ => new ProgressBarNode(),
+        };
+
+        barProgressNode.X = 32;
+        barProgressNode.Y = 10;
+        barProgressNode.Width = 200;
+        barProgressNode.Height = 20;
+        barProgressNode.IsVisible = true;
+
+        barProgressNode.AttachNode(iconImageNode, NodePosition.BeforeTarget);
+    }
+
+    private void SetBarColor(Vector4 color)
+    {
+        switch (barProgressNode)
+        {
+            case ProgressBarCastNode castBar:
+                castBar.BarColor = color;
+                break;
+            case ProgressBarEnemyCastNode enemyCast:
+                enemyCast.BarColor = color;
+                break;
+            case ProgressBarNode bar:
+                bar.BarColor = color;
+                break;
+        }
+    }
+
+    private void SetBarProgress(double progress)
+    {
+        float barProgress = (float)progress;
+        switch (barProgressNode)
+        {
+            case ProgressBarCastNode castBar:
+                castBar.Progress = barProgress;
+                break;
+            case ProgressBarEnemyCastNode enemyCast:
+                enemyCast.Progress = barProgress;
+                break;
+            case ProgressBarNode bar:
+                bar.Progress = barProgress;
+                break;
+        }
+    }
+
     public void Update()
     {
         double maxEncdps = System.ActiveMeterService.GetMaxCombatantStat(c => c.ENCDPS);
 
         Combatant = System.ActiveMeterService.GetCombatant(Combatant.Name) ?? Combatant;
         Encounter = System.ActiveMeterService.GetEncounter() ?? Encounter;
-        barProgressNode.Progress = MeterUtil.CalculateProgressRatio(Combatant.ENCDPS, maxEncdps > 0 ? maxEncdps : 1.0);
-        Service.Logger.Info($"Set Combatant: {Combatant.Name} with ENCDPS: {Combatant.ENCDPS} and total: {Encounter?.ENCDPS} and Progress: {barProgressNode.Progress} and {Combatant.Job.GetColor()}");
+
+        var ratio = MeterUtil.CalculateProgressRatio(Combatant.ENCDPS, maxEncdps > 0 ? maxEncdps : 1.0);
+        SetBarProgress(ratio);
+        Service.Logger.DebugOnly($"Set Combatant: {Combatant.Name} with ENCDPS: {Combatant.ENCDPS} and total: {Encounter?.ENCDPS} and Ratio: {ratio} and {Combatant.Job.GetColor()}");
     }
 }

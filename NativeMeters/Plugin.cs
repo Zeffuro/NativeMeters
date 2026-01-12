@@ -47,8 +47,8 @@ public class Plugin : IDalamudPlugin
         Service.PluginInterface.UiBuilder.OpenConfigUi += System.AddonConfigurationWindow.Toggle;
 
 
-        OverlayManager = new OverlayManager();
-        OverlayManager.Setup();
+        System.OverlayManager = new OverlayManager();
+        System.OverlayManager.Setup();
 
         _commandHandler = new CommandHandler();
         Service.Framework.Update += OnFrameworkUpdate;

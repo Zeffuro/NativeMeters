@@ -4,9 +4,9 @@ using NativeMeters.Configuration;
 
 namespace NativeMeters.Nodes.Configuration.General;
 
-internal sealed class FunctionalConfigurationNode : TabbedVerticalListNode
+internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
 {
-    public FunctionalConfigurationNode()
+    public GeneralConfigurationNode()
     {
         GeneralSettings config = System.Config.General;
 
@@ -21,11 +21,24 @@ internal sealed class FunctionalConfigurationNode : TabbedVerticalListNode
 
         AddTab(1);
 
+        var isEnabledCheckbox = new CheckboxNode
+        {
+            Size = Size with { Y = 18 },
+            IsVisible = true,
+            String = "Enabled",
+            IsChecked = config.IsEnabled,
+            OnClick = isChecked =>
+            {
+                config.IsEnabled = isChecked;
+            }
+        };
+        AddNode(isEnabledCheckbox);
+
         var hideWithNativeUiCheckBox = new CheckboxNode
         {
             Size = Size with { Y = 18 },
             IsVisible = true,
-            String = "Hide with native UI (HUD)",
+            String = "Hide with Native UI",
             IsChecked = config.HideWithNativeUi,
             OnClick = isChecked =>
             {

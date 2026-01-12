@@ -5,6 +5,7 @@ using NativeMeters.Models;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using NativeMeters.Configuration;
+using NativeMeters.Extensions;
 
 namespace NativeMeters.Services;
 
@@ -78,7 +79,7 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
 
             if (messageType is "CombatData" or "broadcast")
             {
-                Service.Logger.Debug($"Received combat message: {message}");
+                Service.Logger.DebugOnly($"Received combat message: {message}");
                 var combatDataMessage = JsonSerializer.Deserialize<CombatDataMessage>(message);
                 if (combatDataMessage == null) return;
 
@@ -88,7 +89,7 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
             else
             {
                 // Log or ignore other message types like 'connection' or 'subscribe'
-                Service.Logger.Debug($"Received non-combat message type: {messageType}");
+                Service.Logger.DebugOnly($"Received non-combat message type: {messageType}");
             }
         }
         catch (JsonException ex)
