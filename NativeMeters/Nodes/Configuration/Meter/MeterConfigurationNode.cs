@@ -5,30 +5,30 @@ namespace NativeMeters.Nodes.Configuration.Meter;
 
 public class MeterConfigurationNode : ConfigNode<MeterWrapper>
 {
-    private MeterDefinitionConfigurationNode? _activeNode;
+    private MeterDefinitionConfigurationNode? activeNode;
 
     protected override void OptionChanged(MeterWrapper? option)
     {
         if (option == null)
         {
-            if (_activeNode != null) _activeNode.IsVisible = false;
+            if (activeNode != null) activeNode.IsVisible = false;
             return;
         }
 
-        if (_activeNode == null)
+        if (activeNode == null)
         {
-            _activeNode = new MeterDefinitionConfigurationNode();
-            _activeNode.AttachNode(this);
+            activeNode = new MeterDefinitionConfigurationNode();
+            activeNode.AttachNode(this);
         }
 
-        _activeNode.IsVisible = true;
-        _activeNode.Size = Size;
-        _activeNode.SetMeter(option.MeterSettings);
+        activeNode.IsVisible = true;
+        activeNode.Size = Size;
+        activeNode.SetMeter(option.MeterSettings);
     }
 
     protected override void OnSizeChanged()
     {
         base.OnSizeChanged();
-        if (_activeNode != null) _activeNode.Size = Size;
+        if (activeNode != null) activeNode.Size = Size;
     }
 }

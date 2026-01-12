@@ -103,6 +103,7 @@ public sealed class MeterRowNode : SimpleComponentNode
             nameTextNode.String = field.Name;
             nameTextNode.ShowBackground = MeterSettings.BackgroundEnabled;
             dpsTextNode.String = field.ENCDPS.ToString("0.00");
+            dpsTextNode.ShowBackground = MeterSettings.BackgroundEnabled;
 
             Service.Logger.DebugOnly($"Set Combatant: {field.Name} with ENCDPS: {field.ENCDPS}");
         }

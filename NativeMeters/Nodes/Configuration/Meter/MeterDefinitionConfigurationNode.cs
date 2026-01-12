@@ -157,6 +157,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
     private LabeledDropdownNode? iconTypeDropdown;
     private LabeledDropdownNode? progressBarTypeDropdown;
     private LabeledNumericInputNode? maxRowsInput;
+    private CheckboxNode? backgroundCheckbox;
 
     public MeterDisplaySection(Func<MeterSettings> getSettings) : base(getSettings) { }
 
@@ -168,6 +169,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         iconTypeDropdown!.SelectedOption = Settings.JobIconType.ToString();
         progressBarTypeDropdown!.SelectedOption = Settings.ProgressBarType.ToString();
         maxRowsInput!.Value = Settings.MaxCombatants;
+        backgroundCheckbox!.IsChecked = Settings.BackgroundEnabled;
 
         RecalculateLayout();
     }
@@ -221,5 +223,13 @@ public sealed class MeterDisplaySection : MeterConfigSection
             }
         };
         AddNode(progressBarTypeDropdown);
+
+        backgroundCheckbox = new CheckboxNode
+        {
+            Size = new Vector2(Width, 20),
+            String = "Show Background",
+            OnClick = val => Settings.BackgroundEnabled = val,
+        };
+        AddNode(backgroundCheckbox);
     }
 }
