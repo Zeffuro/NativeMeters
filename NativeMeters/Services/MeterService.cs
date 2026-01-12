@@ -4,6 +4,7 @@ using NativeMeters.Clients;
 using NativeMeters.Models;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Dalamud.Interface.ImGuiNotification;
 using NativeMeters.Configuration;
 using NativeMeters.Extensions;
 
@@ -12,6 +13,10 @@ namespace NativeMeters.Services;
 public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinactIpcClient)
     : MeterServiceBase, IDisposable
 {
+    private DateTime _lastReconnectAttempt = DateTime.MinValue;
+    private bool _isManuallyDisabled;
+    private bool _reconnectPending;
+
     private readonly ConcurrentQueue<string> webSocketMessageQueue = new();
     private readonly ConcurrentQueue<string> ipcMessageQueue = new();
     private ConnectionType CurrentConnectionType => System.Config.ConnectionSettings.SelectedConnectionType;
@@ -24,16 +29,57 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
         switch (CurrentConnectionType)
         {
             case ConnectionType.WebSocket:
+                webSocketClient.OnConnected += ShowConnectionNotification;
+                webSocketClient.OnDisconnected += HandleDisconnect;
                 _ = webSocketClient.StartAsync(new Uri(ServerUri));
                 webSocketClient.OnMessageReceived += EnqueueWebSocketMessage;
                 break;
             case ConnectionType.IINACTIPC:
+                iinactIpcClient.OnConnected += ShowConnectionNotification;
                 iinactIpcClient.Subscribe();
                 break;
             default:
                 Service.Logger.Error($"Unknown connection type: {CurrentConnectionType}");
                 break;
         }
+    }
+
+    private void ShowConnectionNotification()
+    {
+        string service = CurrentConnectionType == ConnectionType.WebSocket ? "ACT" : "IINACT";
+        Service.NotificationManager.AddNotification(new Notification
+        {
+            Content = $"[NativeMeters] Successfully connected to {service}.\nNativeMeters can now display Meters.",
+            Type = NotificationType.Success,
+        });
+    }
+
+    private void CheckAutoReconnect()
+    {
+        if (_isManuallyDisabled) return;
+        if (IsConnected) return;
+        if (!System.Config.ConnectionSettings.AutoReconnect) return;
+
+        var interval = System.Config.ConnectionSettings.AutoReconnectInterval;
+        if ((DateTime.Now - _lastReconnectAttempt).TotalSeconds >= interval)
+        {
+            _lastReconnectAttempt = DateTime.Now;
+            Service.Logger.DebugOnly("Attempting auto-reconnect...");
+            ActualReconnect();
+        }
+    }
+
+    public void Reconnect() => RequestReconnect();
+
+    public void RequestReconnect()
+    {
+        _reconnectPending = true;
+    }
+
+    public void ActualReconnect()
+    {
+        StopClients();
+        Enable();
     }
 
     private void EnqueueWebSocketMessage(string message)
@@ -48,24 +94,45 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
 
     public void ProcessPendingMessages()
     {
-        switch (CurrentConnectionType)
+        try
         {
-            case ConnectionType.WebSocket:
-                while (webSocketMessageQueue.TryDequeue(out var message))
-                {
-                    HandleMessage(message);
-                }
-                break;
-            case ConnectionType.IINACTIPC:
-                while (ipcMessageQueue.TryDequeue(out var ipcMessage))
-                {
-                    HandleMessage(ipcMessage);
-                }
-                break;
-            default:
-                Service.Logger.Error($"Unknown connection type: {CurrentConnectionType}");
-                break;
+            if (_reconnectPending)
+            {
+                _reconnectPending = false;
+                ActualReconnect();
+                return;
+            }
+
+            CheckAutoReconnect();
+
+            switch (CurrentConnectionType)
+            {
+                case ConnectionType.WebSocket:
+                    while (webSocketMessageQueue.TryDequeue(out var message))
+                    {
+                        HandleMessage(message);
+                    }
+                    break;
+                case ConnectionType.IINACTIPC:
+                    while (ipcMessageQueue.TryDequeue(out var ipcMessage))
+                    {
+                        HandleMessage(ipcMessage);
+                    }
+                    break;
+                default:
+                    Service.Logger.Error($"Unknown connection type: {CurrentConnectionType}");
+                    break;
+            }
         }
+        catch (Exception ex)
+        {
+            Service.Logger.Error($"Error in ProcessPendingMessages: {ex.Message}");
+        }
+    }
+
+    private void HandleDisconnect()
+    {
+        _lastReconnectAttempt = DateTime.Now;
     }
 
     private void HandleMessage(string message)
@@ -88,7 +155,6 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
             }
             else
             {
-                // Log or ignore other message types like 'connection' or 'subscribe'
                 Service.Logger.DebugOnly($"Received non-combat message type: {messageType}");
             }
         }
@@ -106,22 +172,21 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
         ? webSocketClient.IsConnected
         : iinactIpcClient.IsConnected;
 
+    private void StopClients()
+    {
+        webSocketClient.OnConnected -= ShowConnectionNotification;
+        webSocketClient.OnDisconnected -= HandleDisconnect;
+        webSocketClient.OnMessageReceived -= EnqueueWebSocketMessage;
+        webSocketClient.Dispose();
+
+        iinactIpcClient.OnConnected -= ShowConnectionNotification;
+        iinactIpcClient.Unsubscribe();
+    }
+
     public void Dispose()
     {
-        switch (CurrentConnectionType)
-        {
-            case ConnectionType.WebSocket:
-                webSocketClient.OnMessageReceived -= EnqueueWebSocketMessage;
-                webSocketClient.Dispose();
-                break;
-            case ConnectionType.IINACTIPC:
-                iinactIpcClient.Unsubscribe();
-                break;
-            default:
-                Service.Logger.Error($"Unknown connection type: {CurrentConnectionType}");
-                break;
-        }
-
+        _isManuallyDisabled = true;
+        StopClients();
         webSocketMessageQueue.Clear();
         ipcMessageQueue.Clear();
         CombatData = null;

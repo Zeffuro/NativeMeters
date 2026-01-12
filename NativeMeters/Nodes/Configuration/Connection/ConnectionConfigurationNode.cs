@@ -39,6 +39,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
                 if (Enum.TryParse<ConnectionType>(selected, out var parsed))
                 {
                     config.SelectedConnectionType = parsed;
+                    System.MeterService.Reconnect();
                 }
             }
         };
@@ -52,6 +53,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             OnInputComplete = text =>
             {
                 config.WebSocketUrl = text.ExtractText();
+                System.MeterService.Reconnect();
             }
         };
         AddNode(urlInputNode);

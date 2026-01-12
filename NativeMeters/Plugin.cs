@@ -13,7 +13,6 @@ using NativeMeters.Clients;
 using NativeMeters.Commands;
 using NativeMeters.Helpers;
 using NativeMeters.Services;
-using StatusTimers.Helpers;
 
 namespace NativeMeters;
 
@@ -74,6 +73,8 @@ public class Plugin : IDalamudPlugin
 
     private void OnFrameworkUpdate(IFramework framework) {
         System.MeterService.ProcessPendingMessages();
+
+        if (System.Config.General.PreviewEnabled) System.TestMeterService.Tick();
     }
 
     private void OnLogin() {

@@ -6,7 +6,9 @@ using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using KamiToolKit.Overlay;
 using NativeMeters.Configuration;
+using NativeMeters.Helpers;
 using NativeMeters.Models;
+using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.LayoutNodes;
 
@@ -14,6 +16,9 @@ public sealed class MeterListLayoutNode : OverlayNode
 {
     public override OverlayLayer OverlayLayer => OverlayLayer.BehindUserInterface;
     public override bool HideWithNativeUi => System.Config.General.HideWithNativeUi;
+
+    private IMeterService? hookedService;
+    private bool isDisposing;
 
     public required MeterSettings? MeterSettings
     {
@@ -39,7 +44,8 @@ public sealed class MeterListLayoutNode : OverlayNode
         };
         verticalListNode.AttachNode(this);
 
-        System.ActiveMeterService.CombatDataUpdated += OnCombatDataUpdated;
+        hookedService = System.ActiveMeterService;
+        hookedService.CombatDataUpdated += OnCombatDataUpdated;
     }
 
     private void InitializeFromSettings()
@@ -72,6 +78,7 @@ public sealed class MeterListLayoutNode : OverlayNode
 
     private void OnCombatDataUpdated()
     {
+        if (isDisposing) return;
         RebuildList();
     }
 
@@ -99,7 +106,8 @@ public sealed class MeterListLayoutNode : OverlayNode
             meterRowNode.Update();
         }
 
-        verticalListNode.ReorderNodes((x, y) => ComparisonBy(x, y, c => c.ENCDPS));
+        var selector = CombatantStatHelpers.GetStatSelector(MeterSettings.StatToTrack);
+        verticalListNode.ReorderNodes((x, y) => ComparisonBy(x, y, selector));
     }
 
     private static int ComparisonBy<T>(NodeBase x, NodeBase y, Func<Combatant, T> selector, bool ascending = false) where T : IComparable<T>
@@ -116,6 +124,14 @@ public sealed class MeterListLayoutNode : OverlayNode
 
     public void OnDispose()
     {
-        System.ActiveMeterService.CombatDataUpdated -= OnCombatDataUpdated;
+        isDisposing = true;
+
+        if (hookedService != null)
+        {
+            hookedService.CombatDataUpdated -= OnCombatDataUpdated;
+            hookedService = null;
+        }
+
+        verticalListNode.Clear();
     }
 }

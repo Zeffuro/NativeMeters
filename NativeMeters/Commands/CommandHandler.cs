@@ -8,8 +8,8 @@ namespace NativeMeters.Commands;
 public class CommandHandler : IDisposable
 {
     private const string MainCommand = "/nativemeters";
-    private const string ShortCommand = "/nm";
-    private const string HelpDescription = "Toggles your meters. Use '/nm help' for more options.";
+    private const string ShortCommand = "/ntm";
+    private const string HelpDescription = "Toggles your meters. Use '/nativemeters help' for more options.";
 
     public CommandHandler()
     {
@@ -38,7 +38,11 @@ public class CommandHandler : IDisposable
         {
             case "":
             case "toggle":
-                // TODO: Toggle Meters
+                System.Config.General.IsEnabled = !System.Config.General.IsEnabled;
+                break;
+
+            case "config":
+                System.AddonConfigurationWindow.Toggle();
                 break;
 
             case "help":
@@ -47,7 +51,7 @@ public class CommandHandler : IDisposable
                 break;
 
             default:
-                PrintChat($"Unknown command: {subCommand}. Use '/ab help' for available commands.");
+                PrintChat($"Unknown command: {subCommand}. Use '/nativemeters help' for available commands.");
                 break;
         }
     }
@@ -55,7 +59,7 @@ public class CommandHandler : IDisposable
     private void PrintHelp()
     {
         var helpText = @"NativeMeters Commands:
-  /nm              - Toggle meters
+  /ntm              - Toggle meters
 ";
         PrintChat(helpText);
     }

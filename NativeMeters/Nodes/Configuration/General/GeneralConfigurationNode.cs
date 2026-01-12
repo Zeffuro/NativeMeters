@@ -27,12 +27,22 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             IsVisible = true,
             String = "Enabled",
             IsChecked = config.IsEnabled,
-            OnClick = isChecked =>
-            {
-                config.IsEnabled = isChecked;
-            }
+            OnClick = isChecked => { config.IsEnabled = isChecked; System.OverlayManager.Setup(); },
         };
         AddNode(isEnabledCheckbox);
+
+        var testModeCheckbox = new CheckboxNode
+        {
+            Size = Size with { Y = 20 },
+            String = "Preview",
+            IsChecked = config.PreviewEnabled,
+            OnClick = isChecked =>
+            {
+                config.PreviewEnabled = isChecked;
+                System.OverlayManager.UpdateActiveService();
+            }
+        };
+        AddNode(testModeCheckbox);
 
         var hideWithNativeUiCheckBox = new CheckboxNode
         {

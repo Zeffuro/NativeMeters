@@ -1,5 +1,7 @@
+using System;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Dalamud.Interface.ImGuiNotification;
 using NativeMeters.Models;
 using NativeMeters.Services;
 using Newtonsoft.Json.Linq;
@@ -14,6 +16,8 @@ public class IINACTIpcClient
     private const string UnsubscribeEndpoint = "IINACT.Unsubscribe";
     private const string ProviderEditEndpoint = "IINACT.IpcProvider." + SubscriptionName;
 
+    public event Action? OnConnected;
+
     public IINACTIpcClient()
     {
         var subscriptionReceiver = Service.PluginInterface.GetIpcProvider<JObject, bool>(SubscriptionName);
@@ -22,27 +26,42 @@ public class IINACTIpcClient
 
     public void Subscribe()
     {
-        var isRunning = Service.PluginInterface.GetIpcSubscriber<bool>(ListeningEndpoint).InvokeFunc();
-        if (!isRunning)
+        try
         {
-            Service.Logger.Error("IINACT doesn't seem to be running.");
-            return;
+            var isRunning = Service.PluginInterface.GetIpcSubscriber<bool>(ListeningEndpoint).InvokeFunc();
+            if (!isRunning)
+            {
+                Service.Logger.Error("IINACT doesn't seem to be running.");
+                return;
+            }
+
+            var result = Service.PluginInterface.GetIpcSubscriber<string, bool>(SubscribeEndpoint).InvokeFunc(SubscriptionName);
+            Service.Logger.Information(result ? "Subscribed to IINACT" : "Failed to subscribe to IINACT");
+            if (!result) return;
+
+            OnConnected?.Invoke();
+
+            var subscription = new SubscriptionRequest();
+            var jsonNode = JsonNode.Parse(JsonSerializer.Serialize(subscription));
+            var jObject = JObject.Parse(jsonNode?.ToJsonString() ?? string.Empty);
+            Service.PluginInterface.GetIpcSubscriber<JObject, bool>(ProviderEditEndpoint).InvokeAction(jObject);
         }
-
-        var result = Service.PluginInterface.GetIpcSubscriber<string, bool>(SubscribeEndpoint).InvokeFunc(SubscriptionName);
-        Service.Logger.Information(result ? "Subscribed to IINACT" : "Failed to subscribe to IINACT");
-        if (!result) return;
-
-        var subscription = new SubscriptionRequest();
-        var jsonNode = JsonNode.Parse(JsonSerializer.Serialize(subscription));
-        var jObject = JObject.Parse(jsonNode?.ToJsonString() ?? string.Empty);
-        Service.PluginInterface.GetIpcSubscriber<JObject, bool>(ProviderEditEndpoint).InvokeAction(jObject);
+        catch (Exception ex)
+        {
+            if (System.Config.ConnectionSettings.LogConnectionErrors) Service.Logger.Debug($"IINACT Subscribe failed (IINACT likely not running): {ex.Message}");
+        }
     }
 
     public void Unsubscribe()
     {
-        var result = Service.PluginInterface.GetIpcSubscriber<string, bool>(UnsubscribeEndpoint).InvokeFunc(SubscriptionName);
-        Service.Logger.Information(result ? "Unsubscribed from IINACT" : "Failed to unsubscribe from IINACT");
+        try
+        {
+            Service.PluginInterface.GetIpcSubscriber<string, bool>(UnsubscribeEndpoint).InvokeFunc(SubscriptionName);
+        }
+        catch (Exception ex)
+        {
+            if (System.Config.ConnectionSettings.LogConnectionErrors) Service.Logger.Debug($"IINACT Unsubscribe failed: {ex.Message}");
+        }
     }
 
     private bool HandleJObject(JObject json)

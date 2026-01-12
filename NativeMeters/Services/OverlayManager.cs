@@ -6,8 +6,7 @@ namespace NativeMeters.Services;
 
 public class OverlayManager : IDisposable {
     private bool isDisposed;
-    private MeterListLayoutNode? meterListOverlay;
-    private readonly Dictionary<string, MeterListLayoutNode> _activeMeters = new();
+    private readonly Dictionary<string, MeterListLayoutNode> activeMeters = new();
 
     public void Dispose() {
         if (isDisposed) {
@@ -25,25 +24,37 @@ public class OverlayManager : IDisposable {
     }
 
     private void DetachAndDisposeAll() {
-        foreach (var node in _activeMeters.Values) {
+        foreach (var node in activeMeters.Values) {
             node.OnDispose();
             System.OverlayController.RemoveNode(node);
         }
-        _activeMeters.Clear();
+        activeMeters.Clear();
     }
 
     private void CreateAndAttachOverlays()
     {
         foreach (var meterConfig in System.Config.Meters) {
-            if (!meterConfig.IsEnabled) continue;
+            if (!meterConfig.IsEnabled || !System.Config.General.IsEnabled) continue;
 
             var node = new MeterListLayoutNode
             {
                 MeterSettings = meterConfig
             };
-            _activeMeters.Add(meterConfig.Id, node);
+            activeMeters.Add(meterConfig.Id, node);
             System.OverlayController.AddNode(node);
         }
+    }
+
+    public void UpdateActiveService()
+    {
+        IMeterService newService = System.Config.General.PreviewEnabled
+            ? System.TestMeterService
+            : System.MeterService;
+
+        if (System.ActiveMeterService == newService) return;
+
+        System.ActiveMeterService = newService;
+        Setup();
     }
 }
 

@@ -13,21 +13,24 @@ namespace NativeMeters.Clients;
 
 public class WebSocketClient
 {
-    private readonly ClientWebSocket client = new();
+    private ClientWebSocket? client;
+    private CancellationTokenSource? cancellationTokenSource;
     private readonly ConcurrentQueue<string> messageQueue = new();
     public event Action<string>? OnMessageReceived;
+    public event Action? OnConnected;
+    public event Action? OnDisconnected;
 
     private bool LogConnectionErrors => System.Config.ConnectionSettings.LogConnectionErrors;
 
     private async Task ConnectAsync(Uri uri)
     {
-        await client.ConnectAsync(uri, CancellationToken.None);
+        await client?.ConnectAsync(uri, CancellationToken.None)!;
     }
 
     private async Task SendAsync(string message)
     {
         var buffer = Encoding.UTF8.GetBytes(message);
-        await client.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+        await client?.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None)!;
     }
 
     private async Task<string> ReceiveDataAsync()
@@ -37,7 +40,7 @@ public class WebSocketClient
         WebSocketReceiveResult result;
         do
         {
-            result = await client.ReceiveAsync(buffer, CancellationToken.None);
+            result = await client?.ReceiveAsync(buffer, CancellationToken.None)!;
             ms.Write(buffer, 0, result.Count);
         }
         while (!result.EndOfMessage);
@@ -46,47 +49,75 @@ public class WebSocketClient
 
     public async Task StartAsync(Uri serverUri)
     {
-        await ConnectAsync(serverUri);
+        await StopAsync();
 
-        var subscription = new SubscriptionRequest();
-        await SendAsync(JsonSerializer.Serialize(subscription));
-        _ = Task.Run(async () =>
+        client = new ClientWebSocket();
+        cancellationTokenSource = new CancellationTokenSource();
+
+        try
         {
-            try
-            {
-                while (IsConnected)
-                {
-                    var message = await ReceiveDataAsync();
-                    messageQueue.Enqueue(message);
-                    OnMessageReceived?.Invoke(message);
-                }
-            }
-            catch (Exception ex)
-            {
-                if (LogConnectionErrors)
-                {
-                    Service.Logger.Error($"WebSocket error: {ex}");
-                }
-            }
-        });
-    }
+            await ConnectAsync(serverUri);
 
-    public bool IsConnected => client.State == WebSocketState.Open;
+            var subscription = new SubscriptionRequest();
+            await SendAsync(JsonSerializer.Serialize(subscription));
 
-    private async Task DisconnectAsync()
-    {
-        if (IsConnected)
+            OnConnected?.Invoke();
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    while (IsConnected)
+                    {
+                        var message = await ReceiveDataAsync();
+                        messageQueue.Enqueue(message);
+                        OnMessageReceived?.Invoke(message);
+                    }
+                }
+                catch
+                {
+                    OnDisconnected?.Invoke();
+                }
+            });
+        } catch (Exception ex)
         {
-            await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client disconnecting", CancellationToken.None);
+            if (LogConnectionErrors) Service.Logger.Error($"WebSocket error: {ex}");
+            OnDisconnected?.Invoke();
         }
     }
 
-    public void Dispose()
+    public bool IsConnected => client?.State == WebSocketState.Open;
+
+    public async Task StopAsync()
     {
-        if (client.State == WebSocketState.Open)
+        // Capture references to avoid race conditions during null-setting
+        var tokenSource = cancellationTokenSource;
+        var clientWebSocket = client;
+
+        if (tokenSource != null)
         {
-            _ = DisconnectAsync();
+            try { await tokenSource.CancelAsync(); }
+            catch { /* Ignore */ }
+            tokenSource.Dispose();
+            cancellationTokenSource = null;
         }
-        client.Dispose();
+
+        if (clientWebSocket != null)
+        {
+            if (clientWebSocket.State == WebSocketState.Open)
+            {
+                try
+                {
+                    // Use a short timeout for the close handshake
+                    using var timeoutCts = new CancellationTokenSource(1000);
+                    await clientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", timeoutCts.Token);
+                }
+                catch { /* Ignore */ }
+            }
+            clientWebSocket.Dispose();
+            client = null;
+        }
     }
+
+    public void Dispose() => _ = StopAsync();
 }

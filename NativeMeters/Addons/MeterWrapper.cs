@@ -16,9 +16,8 @@ public class MeterWrapper(MeterSettings meterSettings) : IInfoNodeData
     public string GetSubLabel()
     {
         var status = MeterSettings.IsEnabled ? "✓ Enabled" : " Disabled";
-        var lockStatus = MeterSettings.IsLocked ? " |  Locked" : "";
 
-        return $"{status}{lockStatus} ({MeterSettings.StatToTrack})";
+        return $"{status} ({MeterSettings.StatToTrack})";
     }
 
     public uint? GetId() => null;

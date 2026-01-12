@@ -117,7 +117,9 @@ public static class FakeCombatantFactory
         var combatants = new List<Combatant>();
         for (int i = 0; i < count; i++)
         {
-            var combatant = CreateFakeCombatant(names[i % names.Length], i + 1);
+            string uniqueName = i < names.Length ? names[i] : $"{names[i % names.Length]} {i}";
+
+            var combatant = CreateFakeCombatant(uniqueName, i + 1);
             var jobAbbr = jobs[i % jobs.Length];
             combatant.Job = Service.DataManager.GetClassJobByAbbreviation(jobAbbr);
             combatants.Add(combatant);

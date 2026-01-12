@@ -8,24 +8,26 @@ namespace NativeMeters.Services;
 
 public class TestMeterService : MeterServiceBase, IDisposable
 {
-    private readonly Timer timer;
     private bool disposed;
-    private readonly List<Combatant> fixedCombatants;
+    private readonly List<Combatant> fixedCombatants = FakeCombatantFactory.CreateFixedCombatants(20);
+    private DateTime lastUpdate = DateTime.MinValue;
 
     public override event Action? CombatDataUpdated;
 
-    public TestMeterService()
+    public void Tick()
     {
-        fixedCombatants = FakeCombatantFactory.CreateFixedCombatants(8);
-        timer = new Timer(GenerateFakeData, null, 0, 1000); // every one second
+        if ((DateTime.Now - lastUpdate).TotalMilliseconds < 1000) return;
+        lastUpdate = DateTime.Now;
+
+        GenerateFakeData();
     }
 
-    private void GenerateFakeData(object? state)
+    private void GenerateFakeData()
     {
         var combatants = fixedCombatants
-            .Select((c, i) => {
-                var newCombatant = FakeCombatantFactory.CreateFakeCombatant(c.Name, i + 1);
-                newCombatant.Job = c.Job;
+            .Select((combatant, i) => {
+                var newCombatant = FakeCombatantFactory.CreateFakeCombatant(combatant.Name, i + 1);
+                newCombatant.Job = combatant.Job;
                 return newCombatant;
             })
             .ToDictionary(c => c.Name, c => c);
@@ -44,7 +46,6 @@ public class TestMeterService : MeterServiceBase, IDisposable
     {
         if (disposed) return;
         disposed = true;
-        timer.Dispose();
         CombatData = null;
     }
     public override bool IsConnected => true;

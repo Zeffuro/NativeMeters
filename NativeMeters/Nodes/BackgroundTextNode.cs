@@ -26,7 +26,7 @@ public class BackgroundTextNode : SimpleComponentNode
 
         TextNode = new TextNode
         {
-            TextFlags = TextFlags.AutoAdjustNodeSize | TextFlags.Edge,
+            TextFlags = TextFlags.Edge,
             FontType = FontType.TrumpGothic,
             FontSize = 18,
             AlignmentType = AlignmentType.Left,
@@ -55,10 +55,15 @@ public class BackgroundTextNode : SimpleComponentNode
 
     private void UpdateLayout()
     {
-        var newSize = new Vector2(TextNode.Width + Padding.X * 2, TextNode.Height + Padding.Y * 2);
-        Size = newSize;
+        var textWidth = TextNode.Width;
+        var textHeight = TextNode.Height;
+
+        if (textWidth <= 0) textWidth = 10;
+        if (textHeight <= 0) textHeight = 10;
+
+        Size = new Vector2(textWidth + Padding.X * 2, textHeight + Padding.Y * 2);
         TextNode.Position = Padding;
-        BackgroundNode.Size = newSize;
+        BackgroundNode.Size = Size;
     }
 
     protected override void OnSizeChanged()

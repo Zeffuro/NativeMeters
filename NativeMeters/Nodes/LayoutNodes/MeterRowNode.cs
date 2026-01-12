@@ -14,7 +14,7 @@ namespace NativeMeters.Nodes.LayoutNodes;
 public sealed class MeterRowNode : SimpleComponentNode
 {
     // TODO: Allow swapping for other ProgressBarNodes
-    private NodeBase barProgressNode = null!;
+    private NodeBase? barProgressNode;
     private IconImageNode iconImageNode;
     private BackgroundTextNode nameTextNode;
     private BackgroundTextNode dpsTextNode;
@@ -53,7 +53,7 @@ public sealed class MeterRowNode : SimpleComponentNode
         nameTextNode = new BackgroundTextNode
         {
             X = 34,
-            Y = -2,
+            Y = 10,
             Padding = new Vector2(6, 2),
             Width = 150,
             Height = 20,
@@ -61,18 +61,18 @@ public sealed class MeterRowNode : SimpleComponentNode
             FontType = FontType.Axis,
             TextColor = ColorHelper.GetColor(50),
             TextOutlineColor = ColorHelper.GetColor(53),
-            TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
+            TextFlags = TextFlags.Edge,
             AlignmentType = AlignmentType.Left,
             IsVisible = true,
             String = Combatant?.Name ?? "Unknown",
+            DisableCollisionNode = true
         };
-        nameTextNode.CollisionNode.NodeFlags = 0;
         nameTextNode.AttachNode(this);
 
         dpsTextNode = new BackgroundTextNode
         {
             X = 180,
-            Y = 18,
+            Y = 28,
             Padding = new Vector2(4, 1),
             Width = 60,
             Height = 20,
@@ -80,12 +80,12 @@ public sealed class MeterRowNode : SimpleComponentNode
             FontType = FontType.TrumpGothic,
             TextColor = ColorHelper.GetColor(50),
             TextOutlineColor = ColorHelper.GetColor(53),
-            TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
+            TextFlags = TextFlags.Edge,
             IsVisible = true,
             ShowBackground = false,
-            String = Combatant?.ENCDPS.ToString("0.00") ?? "0.00"
+            String = Combatant?.ENCDPS.ToString("0.00") ?? "0.00",
+            DisableCollisionNode = true
         };
-        dpsTextNode.CollisionNode.NodeFlags = 0;
         dpsTextNode.AttachNode(this);
     }
 
@@ -119,21 +119,26 @@ public sealed class MeterRowNode : SimpleComponentNode
         get;
         set
         {
-            var previousType = field?.ProgressBarType;
-            field = value;
-
-            // If the type changed (or this is the first set), rebuild the bar
-            if (previousType != value.ProgressBarType)
+            if (barProgressNode == null || field?.ProgressBarType != value.ProgressBarType)
             {
+                field = value;
                 RebuildProgressBar();
+            }
+            else
+            {
+                field = value;
             }
         }
     }
 
     private void RebuildProgressBar()
     {
-        barProgressNode.DetachNode();
-        barProgressNode.Dispose();
+        if (barProgressNode != null)
+        {
+            barProgressNode.DetachNode();
+            barProgressNode.Dispose();
+            barProgressNode = null;
+        }
 
         barProgressNode = MeterSettings.ProgressBarType switch
         {
@@ -153,46 +158,59 @@ public sealed class MeterRowNode : SimpleComponentNode
 
     private void SetBarColor(Vector4 color)
     {
-        switch (barProgressNode)
+        if (barProgressNode == null) return;
+
+        try
         {
-            case ProgressBarCastNode castBar:
-                castBar.BarColor = color;
-                break;
-            case ProgressBarEnemyCastNode enemyCast:
-                enemyCast.BarColor = color;
-                break;
-            case ProgressBarNode bar:
-                bar.BarColor = color;
-                break;
-        }
+            switch (barProgressNode)
+            {
+                case ProgressBarCastNode c:
+                    c.BarColor = color;
+                    break;
+                case ProgressBarEnemyCastNode e:
+                    e.BarColor = color;
+                    break;
+                case ProgressBarNode b:
+                    b.BarColor = color;
+                    break;
+            }
+        } catch { /* Ignored */ }
     }
 
     private void SetBarProgress(double progress)
     {
-        float barProgress = (float)progress;
-        switch (barProgressNode)
+        if (barProgressNode == null) return;
+        var barProgress = (float)progress;
+
+        try
         {
-            case ProgressBarCastNode castBar:
-                castBar.Progress = barProgress;
-                break;
-            case ProgressBarEnemyCastNode enemyCast:
-                enemyCast.Progress = barProgress;
-                break;
-            case ProgressBarNode bar:
-                bar.Progress = barProgress;
-                break;
+            switch (barProgressNode)
+            {
+                case ProgressBarCastNode c:
+                    c.Progress = barProgress;
+                    break;
+                case ProgressBarEnemyCastNode e:
+                    e.Progress = barProgress;
+                    break;
+                case ProgressBarNode b:
+                    b.Progress = barProgress;
+                    break;
+            }
         }
+        catch { /* Ignored */ }
     }
 
     public void Update()
     {
-        double maxEncdps = System.ActiveMeterService.GetMaxCombatantStat(c => c.ENCDPS);
-
+        var selector = CombatantStatHelpers.GetStatSelector(MeterSettings.StatToTrack);
+        double maxStat = System.ActiveMeterService.GetMaxCombatantStat(selector);
         Combatant = System.ActiveMeterService.GetCombatant(Combatant.Name) ?? Combatant;
         Encounter = System.ActiveMeterService.GetEncounter() ?? Encounter;
 
-        var ratio = MeterUtil.CalculateProgressRatio(Combatant.ENCDPS, maxEncdps > 0 ? maxEncdps : 1.0);
+        double currentVal = selector(Combatant);
+        var ratio = MeterUtil.CalculateProgressRatio(currentVal, maxStat > 0 ? maxStat : 1.0);
         SetBarProgress(ratio);
-        Service.Logger.DebugOnly($"Set Combatant: {Combatant.Name} with ENCDPS: {Combatant.ENCDPS} and total: {Encounter?.ENCDPS} and Ratio: {ratio} and {Combatant.Job.GetColor()}");
+
+        dpsTextNode.String = CombatantStatHelpers.FormatStatValue(currentVal, MeterSettings.StatToTrack);
     }
 }

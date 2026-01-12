@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using NativeMeters;
 using NativeMeters.Services;
 
-namespace StatusTimers.Helpers;
+namespace NativeMeters.Helpers;
 
 // Taken and adapted for StatusTimers using zips from https://github.com/Caraxi/SimpleHeels/blob/0a0fe3c02a0a2c5a7c96b3304952d5078cd338aa/Plugin.cs#L392
 // Thanks Caraxi
@@ -65,7 +65,7 @@ public static class BackupHelper {
                         moved = true;
                     } catch (IOException ioEx) when (i < 4) {
                         Service.Logger.Debug($"Move failed, retrying in 100ms: {ioEx.Message}");
-                        System.Threading.Thread.Sleep(100);
+                        global::System.Threading.Thread.Sleep(100);
                     }
                 }
                 if (!moved) {
