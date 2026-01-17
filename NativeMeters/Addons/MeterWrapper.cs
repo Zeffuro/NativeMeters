@@ -1,22 +1,17 @@
 using System;
-using KamiToolKit.Premade;
 using NativeMeters.Configuration;
 
 namespace NativeMeters.Addons;
 
-public class MeterWrapper(MeterSettings meterSettings) : IInfoNodeData
+public class MeterWrapper(MeterSettings meterSettings)
 {
     public MeterSettings MeterSettings { get; } = meterSettings;
 
-    public string GetLabel()
-    {
-        return string.IsNullOrWhiteSpace(MeterSettings.Name) ? "Unnamed Meter" : MeterSettings.Name;
-    }
+    public string GetLabel() => string.IsNullOrWhiteSpace(MeterSettings.Name) ? "Unnamed Meter" : MeterSettings.Name;
 
     public string GetSubLabel()
     {
         var status = MeterSettings.IsEnabled ? "✓ Enabled" : " Disabled";
-
         return $"{status} ({MeterSettings.StatToTrack})";
     }
 
@@ -24,12 +19,8 @@ public class MeterWrapper(MeterSettings meterSettings) : IInfoNodeData
 
     public uint? GetIconId() => 0;
 
-    public string? GetTexturePath() => null;
-
-    public int Compare(IInfoNodeData other, string sortingMode)
+    public int Compare(MeterWrapper other, string sortingMode)
     {
-        if (other is not MeterWrapper otherWrapper) return 0;
-
-        return string.Compare(MeterSettings.Name, otherWrapper.MeterSettings.Name, StringComparison.OrdinalIgnoreCase);
+        return string.Compare(MeterSettings.Name, other.MeterSettings.Name, StringComparison.OrdinalIgnoreCase);
     }
 }

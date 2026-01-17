@@ -33,12 +33,12 @@ public class LabeledTextInputNode : SimpleComponentNode {
         _textInputNode.Size = _gridNode[1, 0].Size;
     }
 
-    public string LabelText {
+    public ReadOnlySeString LabelText {
         get => _labelNode.String;
         set => _labelNode.String = value;
     }
 
-    public string Text {
+    public ReadOnlySeString Text {
         get => _textInputNode.String;
         set => _textInputNode.String = value;
     }

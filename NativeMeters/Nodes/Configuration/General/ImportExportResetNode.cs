@@ -1,6 +1,7 @@
 using System.IO;
 using Dalamud.Game.ClientState.Keys;
 using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using NativeMeters.Helpers;
 using NativeMeters.Services;

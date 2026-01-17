@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using NativeMeters.Models;
 
@@ -11,6 +12,7 @@ public class MeterSettings
 
     public bool IsEnabled { get; set; } = true;
     public bool IsLocked { get; set; } = false;
+    public bool IsClickthrough { get; set; } = false;
 
     public Vector2 Position { get; set; } = new(500, 500);
     public Vector2 Size { get; set; } = new(250, 300);
@@ -21,6 +23,8 @@ public class MeterSettings
     public JobIconType JobIconType { get; set; } = JobIconType.Default;
     public ProgressBarType ProgressBarType { get; set; } = ProgressBarType.Cast;
     public bool BackgroundEnabled { get; set; } = false;
+
+    public List<RowComponentSettings> RowComponents { get; set; } = new();
 }
 
 public enum ProgressBarType

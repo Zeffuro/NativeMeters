@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
+using Lumina.Text.ReadOnly;
 
 namespace NativeMeters.Nodes.Input;
 
@@ -36,7 +37,7 @@ public class LabeledDropdownNode : SimpleComponentNode {
         _dropDownNode.Size = _gridNode[1, 0].Size;
     }
 
-    public required string LabelText
+    public required ReadOnlySeString LabelText
     {
         get => _labelNode.String;
         set => _labelNode.String = value;

@@ -14,71 +14,71 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 {
     public Action? OnLayoutChanged { get; init; }
 
-    private MeterSettings _settings = new();
+    private MeterSettings settings = new();
 
-    private readonly ScrollingAreaNode<TreeListNode> _scrollingArea;
-    private readonly MeterGeneralSection _generalSettings;
-    private readonly MeterDisplaySection _displaySettings;
+    private readonly ScrollingAreaNode<TreeListNode> scrollingArea;
+    private readonly MeterGeneralSection generalSettings;
+    private readonly MeterDisplaySection displaySettings;
 
     public MeterDefinitionConfigurationNode()
     {
-        _scrollingArea = new ScrollingAreaNode<TreeListNode>
+        scrollingArea = new ScrollingAreaNode<TreeListNode>
         {
             ContentHeight = 100.0f,
             AutoHideScrollBar = true,
         };
-        _scrollingArea.AttachNode(this);
+        scrollingArea.AttachNode(this);
 
-        _scrollingArea.ContentNode.OnLayoutUpdate = newHeight =>
+        scrollingArea.ContentNode.OnLayoutUpdate = newHeight =>
         {
-            _scrollingArea.ContentHeight = newHeight;
+            scrollingArea.ContentHeight = newHeight;
         };
 
-        _scrollingArea.ContentNode.CategoryVerticalSpacing = 4.0f;
+        scrollingArea.ContentNode.CategoryVerticalSpacing = 4.0f;
 
-        var treeListNode = _scrollingArea.ContentAreaNode;
+        var treeListNode = scrollingArea.ContentAreaNode;
 
-        _generalSettings = new MeterGeneralSection(() => _settings)
+        generalSettings = new MeterGeneralSection(() => settings)
         {
             String = "General Settings",
             IsCollapsed = false,
         };
-        _generalSettings.OnToggle = _ => HandleLayoutChange();
-        treeListNode.AddCategoryNode(_generalSettings);
+        generalSettings.OnToggle = _ => HandleLayoutChange();
+        treeListNode.AddCategoryNode(generalSettings);
 
-        _displaySettings = new MeterDisplaySection(() => _settings)
+        displaySettings = new MeterDisplaySection(() => settings)
         {
             String = "Display Settings",
             IsCollapsed = false,
         };
-        _displaySettings.OnToggle = _ => HandleLayoutChange();
-        treeListNode.AddCategoryNode(_displaySettings);
+        displaySettings.OnToggle = _ => HandleLayoutChange();
+        treeListNode.AddCategoryNode(displaySettings);
     }
 
     protected override void OnSizeChanged()
     {
         base.OnSizeChanged();
-        _scrollingArea.Size = Size;
+        scrollingArea.Size = Size;
 
-        foreach (var categoryNode in _scrollingArea.ContentNode.CategoryNodes)
+        foreach (var categoryNode in scrollingArea.ContentNode.CategoryNodes)
         {
             categoryNode.Width = Width - 16.0f;
         }
 
-        _scrollingArea.ContentNode.RefreshLayout();
+        scrollingArea.ContentNode.RefreshLayout();
     }
 
     public void SetMeter(MeterSettings settings)
     {
-        _settings = settings;
-        _generalSettings.Refresh();
-        _displaySettings.Refresh();
+        this.settings = settings;
+        generalSettings.Refresh();
+        displaySettings.Refresh();
         HandleLayoutChange();
     }
 
     private void HandleLayoutChange()
     {
-        _scrollingArea.ContentNode.RefreshLayout();
+        scrollingArea.ContentNode.RefreshLayout();
         OnLayoutChanged?.Invoke();
     }
 }

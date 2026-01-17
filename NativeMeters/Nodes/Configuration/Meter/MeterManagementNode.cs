@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -5,82 +6,89 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Nodes;
 using NativeMeters.Configuration;
-using NativeMeters.Addons; // For MeterWrapper
+using NativeMeters.Addons;
+using NativeMeters.Helpers; // For MeterWrapper
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
 public class MeterManagementNode : SimpleComponentNode
 {
-    private ModifyListNode<MeterWrapper>? _selectionListNode;
-    private MeterConfigurationNode? _configNode;
-    private TextNode? _nothingSelectedTextNode;
-    private List<MeterWrapper> _meterWrappers = new();
+    private readonly ModifyListNode<MeterWrapper, MeterListItemNode>? selectionListNode;
+    private readonly MeterConfigurationNode? configNode;
+    private readonly TextNode? nothingSelectedTextNode;
+    private readonly List<MeterWrapper> meterWrappers = new();
 
     public MeterManagementNode()
     {
-        _meterWrappers = System.Config.Meters.Select(m => new MeterWrapper(m)).ToList();
+        meterWrappers = System.Config.Meters.Select(meterSettings => new MeterWrapper(meterSettings)).ToList();
 
-        _selectionListNode = new ModifyListNode<MeterWrapper>
+        selectionListNode = new ModifyListNode<MeterWrapper, MeterListItemNode>
         {
             Position = Vector2.Zero,
             Size = new Vector2(200.0f, 400.0f),
-            SelectionOptions = _meterWrappers,
-            OnOptionChanged = OnOptionChanged,
+            Options = meterWrappers,
+            SelectionChanged = OnOptionChanged,
             AddNewEntry = OnAddNewMeter,
             RemoveEntry = OnRemoveMeter,
+            SortOptions = [ "Alphabetical" ],
+            ItemComparer = (left, right, mode) => left.Compare(right, mode),
+            IsSearchMatch = (data, search) => data.GetLabel().Contains(search, StringComparison.OrdinalIgnoreCase),
         };
-        _selectionListNode.AttachNode(this);
+        selectionListNode.AttachNode(this);
 
-        _configNode = new MeterConfigurationNode
+        configNode = new MeterConfigurationNode
         {
             Position = new Vector2(210.0f, 0.0f),
             IsVisible = false,
         };
-        _configNode.AttachNode(this);
+        configNode.AttachNode(this);
 
-        _nothingSelectedTextNode = new TextNode
+        nothingSelectedTextNode = new TextNode
         {
-            Position = _configNode.Position,
+            Position = configNode.Position,
             AlignmentType = AlignmentType.Center,
             String = "Select a meter or create a new one.",
         };
-        _nothingSelectedTextNode.AttachNode(this);
+        nothingSelectedTextNode.AttachNode(this);
     }
 
     protected override void OnSizeChanged()
     {
         base.OnSizeChanged();
-        if (_selectionListNode != null) _selectionListNode.Height = Height;
-        if (_configNode != null)
+        if (selectionListNode != null) selectionListNode.Height = Height;
+        if (configNode != null)
         {
-            _configNode.Size = Size - new Vector2(210.0f, 0.0f);
-            _nothingSelectedTextNode!.Size = _configNode.Size;
+            configNode.Size = Size - new Vector2(210.0f, 0.0f);
+            nothingSelectedTextNode!.Size = configNode.Size;
         }
     }
 
     private void OnOptionChanged(MeterWrapper? newOption)
     {
-        _configNode!.IsVisible = newOption != null;
-        _nothingSelectedTextNode!.IsVisible = newOption == null;
-        _configNode.ConfigurationOption = newOption;
+        configNode!.IsVisible = newOption != null;
+        nothingSelectedTextNode!.IsVisible = newOption == null;
+        configNode.ConfigurationOption = newOption;
     }
 
-    private void OnAddNewMeter(ModifyListNode<MeterWrapper> listNode)
+    private void OnAddNewMeter()
     {
-        var newMeter = new MeterSettings { Name = $"New Meter {System.Config.Meters.Count + 1}" };
+        var newMeter = new MeterSettings {
+            Name = $"New Meter {System.Config.Meters.Count + 1}",
+            RowComponents = MeterPresets.GetDefaultStylishComponents()
+        };
         System.Config.Meters.Add(newMeter);
         var wrapper = new MeterWrapper(newMeter);
-        _meterWrappers.Add(wrapper);
-        listNode.AddOption(wrapper);
+        meterWrappers.Add(wrapper);
+        selectionListNode?.RefreshList();
         System.OverlayManager.Setup();
     }
 
     private void OnRemoveMeter(MeterWrapper wrapper)
     {
         System.Config.Meters.Remove(wrapper.MeterSettings);
-        _meterWrappers.Remove(wrapper);
-        _selectionListNode?.UpdateList();
+        meterWrappers.Remove(wrapper);
+        selectionListNode?.RefreshList();
         System.OverlayManager.Setup();
-        if (ReferenceEquals(_configNode?.ConfigurationOption, wrapper)) OnOptionChanged(null);
+        if (ReferenceEquals(configNode?.ConfigurationOption, wrapper)) OnOptionChanged(null);
     }
 }

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using KamiToolKit;
-using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using KamiToolKit.Overlay;
 using NativeMeters.Configuration;
@@ -11,6 +11,8 @@ using NativeMeters.Models;
 using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.LayoutNodes;
+
+public record CombatantRowData(Combatant Combatant, MeterSettings Settings);
 
 public sealed class MeterListLayoutNode : OverlayNode
 {
@@ -30,19 +32,26 @@ public sealed class MeterListLayoutNode : OverlayNode
         }
     }
 
-    private readonly VerticalListNode verticalListNode;
+    private readonly ListNode<CombatantRowData, MeterRowListItemNode> listNode;
 
     public MeterListLayoutNode()
     {
-        verticalListNode = new VerticalListNode {
-            DisableCollisionNode = true,
-            X = 0,
-            Y = 0,
-            Width = 500,
-            Height = 300,
-            IsVisible = true,
+        listNode = new ListNode<CombatantRowData, MeterRowListItemNode> {
+            X = 0, Y = 0,
+            Width = 500, Height = 300,
+            ItemSpacing = 0.0f,
+            OptionsList = []
         };
-        verticalListNode.AttachNode(this);
+
+        if (MeterSettings?.IsClickthrough == true)
+        {
+            listNode.DisableCollisionNode = true;
+        }
+
+        listNode.AttachNode(this);
+
+        listNode.ScrollBarNode.IsVisible = false;
+        listNode.ScrollBarNode.IsEnabled = false;
 
         hookedService = System.ActiveMeterService;
         hookedService.CombatDataUpdated += OnCombatDataUpdated;
@@ -51,6 +60,12 @@ public sealed class MeterListLayoutNode : OverlayNode
     private void InitializeFromSettings()
     {
         if (MeterSettings == null) return;
+
+        if (MeterSettings.IsClickthrough)
+        {
+            DisableCollisionNode = true;
+            listNode.DisableCollisionNode = true;
+        }
 
         Position = MeterSettings.Position;
         Size = MeterSettings.Size;
@@ -63,17 +78,18 @@ public sealed class MeterListLayoutNode : OverlayNode
 
     protected override void OnUpdate()
     {
-        DisableCollisionNode = true;
         if (MeterSettings == null) return;
 
         EnableMoving = !MeterSettings.IsLocked;
         EnableResizing = !MeterSettings.IsLocked;
         IsVisible = MeterSettings.IsEnabled;
 
-        if (verticalListNode.Size != Size)
+        if (listNode.Size != Size)
         {
-            verticalListNode.Size = Size;
+            listNode.Size = Size;
         }
+
+        listNode.Update();
     }
 
     private void OnCombatDataUpdated()
@@ -84,42 +100,20 @@ public sealed class MeterListLayoutNode : OverlayNode
 
     private void RebuildList() {
         if (MeterSettings == null) return;
-        if (!System.ActiveMeterService.HasCombatData()) return;
 
-        var combatants = System.ActiveMeterService.GetCombatants();
+        var combatants = System.ActiveMeterService.GetCombatants().ToList();
 
         if (!MeterSettings.ShowLimitBreak) {
-            combatants = combatants.Where(c => !c.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase));
-        }
-
-        verticalListNode.SyncWithListData(combatants.Take(MeterSettings.MaxCombatants), node => node.Combatant, data => new MeterRowNode {
-            Height = 36.0f,
-            Width = verticalListNode.Width,
-            IsVisible = true,
-            MeterSettings = MeterSettings,
-            Encounter = System.ActiveMeterService.GetEncounter(),
-            Combatant = data,
-        });
-
-        foreach (var meterRowNode in verticalListNode.GetNodes<MeterRowNode>())
-        {
-            meterRowNode.Update();
+            combatants.RemoveAll(combatant => combatant.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase));
         }
 
         var selector = CombatantStatHelpers.GetStatSelector(MeterSettings.StatToTrack);
-        verticalListNode.ReorderNodes((x, y) => ComparisonBy(x, y, selector));
-    }
+        combatants.Sort((left, right) => selector(right).CompareTo(selector(left)));
 
-    private static int ComparisonBy<T>(NodeBase x, NodeBase y, Func<Combatant, T> selector, bool ascending = false) where T : IComparable<T>
-    {
-        if (x is not MeterRowNode left || y is not MeterRowNode right)
-            return 0;
-
-        var leftValue = selector(left.Combatant);
-        var rightValue = selector(right.Combatant);
-
-        int result = Comparer<T>.Default.Compare(leftValue, rightValue);
-        return ascending ? result : -result;
+        listNode.OptionsList = combatants
+            .Take(MeterSettings.MaxCombatants)
+            .Select(combatant => new CombatantRowData(combatant, MeterSettings))
+            .ToList();
     }
 
     public void OnDispose()
@@ -131,7 +125,5 @@ public sealed class MeterListLayoutNode : OverlayNode
             hookedService.CombatDataUpdated -= OnCombatDataUpdated;
             hookedService = null;
         }
-
-        verticalListNode.Clear();
     }
 }

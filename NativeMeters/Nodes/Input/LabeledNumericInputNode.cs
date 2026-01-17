@@ -1,6 +1,7 @@
 using System;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
+using Lumina.Text.ReadOnly;
 
 namespace NativeMeters.Nodes.Input;
 
@@ -32,7 +33,7 @@ public unsafe class LabeledNumericInputNode : SimpleComponentNode {
         _numericInputNode.Size = _gridNode[1, 0].Size;
     }
 
-    public string LabelText {
+    public ReadOnlySeString LabelText {
         get => _labelNode.String;
         set => _labelNode.String = value;
     }

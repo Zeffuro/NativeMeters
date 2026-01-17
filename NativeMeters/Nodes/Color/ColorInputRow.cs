@@ -4,6 +4,7 @@ using AetherBags.Nodes.Color;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Addons;
+using KamiToolKit.Premade.Color;
 
 namespace NativeMeters.Nodes.Color;
 
@@ -102,6 +103,5 @@ public class ColorInputRow : HorizontalListNode
     public required Vector4 DefaultColor { get; set; }
     public Action<Vector4>? OnColorConfirmed { get; set; }
     public Action<Vector4>? OnColorCanceled { get; set; }
-    public Action<Vector4>? OnColorChange { get; set; }
     public Action<Vector4>? OnColorPreviewed { get; set; }
 }

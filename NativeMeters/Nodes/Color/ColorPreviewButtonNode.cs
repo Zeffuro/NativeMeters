@@ -1,5 +1,6 @@
 using System.Numerics;
 using KamiToolKit.Nodes;
+using NativeMeters.Nodes.Color;
 
 namespace AetherBags.Nodes.Color;
 

@@ -1,6 +1,7 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
+using Lumina.Text.ReadOnly;
 
 namespace NativeMeters.Nodes;
 
@@ -35,7 +36,7 @@ public class BackgroundTextNode : SimpleComponentNode
         TextNode.AttachNode(this);
     }
 
-    public string String
+    public ReadOnlySeString String
     {
         get => TextNode.String;
         set

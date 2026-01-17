@@ -2,55 +2,55 @@ using System.Drawing;
 using System.IO;
 using System.Numerics;
 using Dalamud.Interface;
-using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using NativeMeters.Services;
 
-namespace AetherBags.Nodes.Color;
+namespace NativeMeters.Nodes.Color;
 
 public class ColorPreviewNode : ResNode
 {
-    private readonly BackgroundImageNode _colorBackground;
-    private readonly ImGuiImageNode _alphaLayer;
-    private readonly BackgroundImageNode _colorForeground;
+    private readonly BackgroundImageNode colorBackground;
+    private readonly ImGuiImageNode alphaLayer;
+    private readonly BackgroundImageNode colorForeground;
 
-    private bool _isDisposed;
+    private bool isDisposed;
 
     public ColorPreviewNode()
     {
         base.Size = new Vector2(64, 64);
 
-        _colorBackground = new BackgroundImageNode
+        colorBackground = new BackgroundImageNode
         {
             IsVisible = true,
             Color = KnownColor.Black.Vector(),
             FitTexture = true,
         };
-        _colorBackground.AttachNode(this);
+        colorBackground.AttachNode(this);
 
-        _alphaLayer = new ImGuiImageNode
+        alphaLayer = new ImGuiImageNode
         {
             IsVisible = true,
             TexturePath = GetAlphaTexturePath(),
             WrapMode = WrapMode.Stretch,
         };
-        _alphaLayer.AttachNode(this);
+        alphaLayer.AttachNode(this);
 
-        _colorForeground = new BackgroundImageNode
+        colorForeground = new BackgroundImageNode
         {
             IsVisible = true,
             Color = KnownColor.White.Vector(),
             FitTexture = true,
         };
-        _colorForeground.AttachNode(this);
+        colorForeground.AttachNode(this);
 
         UpdateLayout();
     }
 
     public override Vector4 Color
     {
-        get => _colorForeground.Color;
-        set => _colorForeground.Color = value;
+        get => colorForeground.Color;
+        set => colorForeground.Color = value;
     }
 
     public override Vector2 Size
@@ -63,8 +63,8 @@ public class ColorPreviewNode : ResNode
         }
     }
 
-    public BackgroundImageNode BackgroundNode => _colorBackground;
-    public BackgroundImageNode ForegroundNode => _colorForeground;
+    public BackgroundImageNode BackgroundNode => colorBackground;
+    public BackgroundImageNode ForegroundNode => colorForeground;
 
     private void UpdateLayout()
     {
@@ -76,14 +76,14 @@ public class ColorPreviewNode : ResNode
         var alphaSize = base.Size - new Vector2(alphaPadding * 2f);
         var fgSize = base.Size - new Vector2(foregroundPadding * 2f);
 
-        _colorBackground.Size = bgSize;
-        _colorBackground.Position = new Vector2(backgroundPadding, backgroundPadding);
+        colorBackground.Size = bgSize;
+        colorBackground.Position = new Vector2(backgroundPadding, backgroundPadding);
 
-        _alphaLayer.Size = alphaSize;
-        _alphaLayer.Position = new Vector2(alphaPadding, alphaPadding);
+        alphaLayer.Size = alphaSize;
+        alphaLayer.Position = new Vector2(alphaPadding, alphaPadding);
 
-        _colorForeground.Size = fgSize;
-        _colorForeground.Position = new Vector2(foregroundPadding, foregroundPadding);
+        colorForeground.Size = fgSize;
+        colorForeground.Position = new Vector2(foregroundPadding, foregroundPadding);
     }
 
     private static string GetAlphaTexturePath()
@@ -94,18 +94,18 @@ public class ColorPreviewNode : ResNode
 
     protected override void Dispose(bool disposing, bool isNativeDestructor)
     {
-        if (_isDisposed)
+        if (isDisposed)
         {
             base.Dispose(disposing, isNativeDestructor);
             return;
         }
 
-        _isDisposed = true;
+        isDisposed = true;
         if (disposing)
         {
-            _colorBackground.Dispose();
-            _alphaLayer.Dispose();
-            _colorForeground.Dispose();
+            colorBackground.Dispose();
+            alphaLayer.Dispose();
+            colorForeground.Dispose();
         }
 
         base.Dispose(disposing, isNativeDestructor);

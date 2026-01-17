@@ -18,10 +18,6 @@ namespace NativeMeters;
 
 public class Plugin : IDalamudPlugin
 {
-    public readonly OverlayManager OverlayManager;
-
-    private readonly CommandHandler _commandHandler;
-
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
@@ -45,11 +41,11 @@ public class Plugin : IDalamudPlugin
         Service.PluginInterface.UiBuilder.OpenMainUi += System.AddonConfigurationWindow.Toggle;
         Service.PluginInterface.UiBuilder.OpenConfigUi += System.AddonConfigurationWindow.Toggle;
 
+        System.CommandHandler = new CommandHandler();
 
         System.OverlayManager = new OverlayManager();
         System.OverlayManager.Setup();
 
-        _commandHandler = new CommandHandler();
         Service.Framework.Update += OnFrameworkUpdate;
         Service.ClientState.Login += OnLogin;
 
@@ -79,9 +75,6 @@ public class Plugin : IDalamudPlugin
 
     private void OnLogin() {
         System.MeterService.Enable();
-
-        #if DEBUG
-            //OverlayManager.OpenConfig();
-        #endif
+        System.AddonConfigurationWindow.DebugOpen();
     }
 }
