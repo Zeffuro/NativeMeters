@@ -4,12 +4,12 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace NativeMeters.Configuration;
 
-public enum ComponentType { JobIcon, Text, ProgressBar, Background }
+public enum MeterComponentType { JobIcon, Text, ProgressBar, Background }
 
 public class RowComponentSettings
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
-    public ComponentType Type { get; set; }
+    public MeterComponentType Type { get; set; }
     public string Name { get; set; } = "New Component";
 
     public Vector2 Position { get; set; } = Vector2.Zero;

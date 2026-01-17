@@ -11,7 +11,7 @@ public static class MeterPresets
         new()
         {
             Name = "Job Icon",
-            Type = ComponentType.JobIcon,
+            Type = MeterComponentType.JobIcon,
             Position = new Vector2(0, 2),
             Size = new Vector2(32, 32),
             ZIndex = 1
@@ -20,7 +20,7 @@ public static class MeterPresets
         new()
         {
             Name = "Progress Bar",
-            Type = ComponentType.ProgressBar,
+            Type = MeterComponentType.ProgressBar,
             Position = new Vector2(32, 10),
             Size = new Vector2(200, 20),
             ZIndex = 0
@@ -29,7 +29,7 @@ public static class MeterPresets
         new()
         {
             Name = "Player Name",
-            Type = ComponentType.Text,
+            Type = MeterComponentType.Text,
             DataSource = "Name",
             Position = new Vector2(34, 5),
             Size = new Vector2(150, 20),
@@ -39,7 +39,7 @@ public static class MeterPresets
         new()
         {
             Name = "Stat Value",
-            Type = ComponentType.Text,
+            Type = MeterComponentType.Text,
             DataSource = "ENCDPS",
             Position = new Vector2(180, 22),
             Size = new Vector2(60, 20),

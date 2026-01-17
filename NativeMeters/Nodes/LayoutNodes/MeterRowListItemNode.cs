@@ -64,14 +64,14 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
     private NodeBase CreateComponent(RowComponentSettings settings)
     {
         NodeBase node = settings.Type switch {
-            ComponentType.JobIcon => new IconImageNode { FitTexture = true },
-            ComponentType.ProgressBar => MeterSettings!.ProgressBarType switch {
+            MeterComponentType.JobIcon => new IconImageNode { FitTexture = true },
+            MeterComponentType.ProgressBar => MeterSettings!.ProgressBarType switch {
                 ProgressBarType.Cast => new ProgressBarCastNode(),
                 ProgressBarType.EnemyCast => new ProgressBarEnemyCastNode(),
                 _ => new ProgressBarNode()
             },
-            ComponentType.Text => new BackgroundTextNode(),
-            ComponentType.Background => new SimpleNineGridNode {
+            MeterComponentType.Text => new BackgroundTextNode(),
+            MeterComponentType.Background => new SimpleNineGridNode {
                 TexturePath = "ui/uld/ToolTipS.tex",
                 TextureCoordinates = new Vector2(0.0f, 0.0f),
                 TextureSize = new Vector2(32.0f, 24.0f),
