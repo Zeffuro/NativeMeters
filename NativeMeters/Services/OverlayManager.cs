@@ -18,9 +18,10 @@ public class OverlayManager : IDisposable {
     }
 
     public void Setup() {
-        DetachAndDisposeAll();
-
-        Service.Framework.RunOnFrameworkThread(CreateAndAttachOverlays);
+        Service.Framework.RunOnFrameworkThread(() => {
+            DetachAndDisposeAll();
+            CreateAndAttachOverlays();
+        });
     }
 
     private void DetachAndDisposeAll() {

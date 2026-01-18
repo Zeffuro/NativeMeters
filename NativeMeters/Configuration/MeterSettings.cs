@@ -24,7 +24,9 @@ public class MeterSettings
     public ProgressBarType ProgressBarType { get; set; } = ProgressBarType.Cast;
     public bool BackgroundEnabled { get; set; } = false;
 
-    public List<RowComponentSettings> RowComponents { get; set; } = new();
+    public List<RowComponentSettings> RowComponents { get; set; } = [];
+    public List<RowComponentSettings> HeaderComponents { get; set; } = [];
+    public List<RowComponentSettings> FooterComponents { get; set; } = [];
 }
 
 public enum ProgressBarType

@@ -13,7 +13,9 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     private readonly ScrollingAreaNode<TreeListNode> scrollingArea;
     private readonly MeterGeneralSection generalSettings;
     private readonly MeterDisplaySection displaySettings;
+    private readonly MeterComponentsSection headerSettings;
     private readonly MeterComponentsSection componentSettings;
+    private readonly MeterComponentsSection footerSettings;
 
     public MeterDefinitionConfigurationNode()
     {
@@ -49,13 +51,26 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         displaySettings.OnToggle = _ => HandleLayoutChange();
         treeListNode.AddCategoryNode(displaySettings);
 
-        componentSettings = new MeterComponentsSection(() => settings, HandleLayoutChange)
+        headerSettings = new MeterComponentsSection(() => settings, HandleLayoutChange, ComponentTarget.Header)
         {
-            String = "Row Components",
+            String = "Header Components",
             IsCollapsed = true,
         };
-        componentSettings.OnToggle = _ => HandleLayoutChange();
+        treeListNode.AddCategoryNode(headerSettings);
+
+        componentSettings = new MeterComponentsSection(() => settings, HandleLayoutChange, ComponentTarget.Row)
+        {
+            String = "Row Components (Combatants)",
+            IsCollapsed = true,
+        };
         treeListNode.AddCategoryNode(componentSettings);
+
+        footerSettings = new MeterComponentsSection(() => settings, HandleLayoutChange, ComponentTarget.Footer)
+        {
+            String = "Footer Components",
+            IsCollapsed = true,
+        };
+        treeListNode.AddCategoryNode(footerSettings);
     }
 
     protected override void OnSizeChanged()
@@ -71,12 +86,16 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         scrollingArea.ContentNode.RefreshLayout();
     }
 
-    public void SetMeter(MeterSettings settings)
+    public void SetMeter(MeterSettings meterSettings)
     {
-        this.settings = settings;
+        settings = meterSettings;
         generalSettings.Refresh();
         displaySettings.Refresh();
+
+        headerSettings.Refresh();
         componentSettings.Refresh();
+        footerSettings.Refresh();
+
         HandleLayoutChange();
     }
 
