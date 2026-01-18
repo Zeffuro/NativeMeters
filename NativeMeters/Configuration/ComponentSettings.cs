@@ -7,7 +7,7 @@ namespace NativeMeters.Configuration;
 
 public enum MeterComponentType { JobIcon, Text, ProgressBar, Background }
 
-public class RowComponentSettings
+public class ComponentSettings
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public MeterComponentType Type { get; set; }
@@ -23,10 +23,10 @@ public class RowComponentSettings
     public FontType FontType { get; set; } = FontType.Axis;
     public TextFlags TextFlags { get; set; } = TextFlags.Edge;
 
-    public Vector4 Color { get; set; } = ColorHelper.GetColor(54);
+    public Vector4 TextColor { get; set; } = ColorHelper.GetColor(54);
     public bool UseJobColor { get; set; } = false;
     public bool ShowOutline { get; set; } = true;
-    public Vector4 OutlineColor { get; set; } = ColorHelper.GetColor(53);
+    public Vector4 TextOutlineColor { get; set; } = ColorHelper.GetColor(53);
 
     public bool ShowBackground { get; set; }
 }

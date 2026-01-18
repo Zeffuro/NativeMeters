@@ -33,7 +33,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
         InitializeAddRow();
     }
 
-    private List<RowComponentSettings> TargetList => target switch
+    private List<ComponentSettings> TargetList => target switch
     {
         ComponentTarget.Header => Settings.HeaderComponents,
         ComponentTarget.Row => Settings.RowComponents,
@@ -60,7 +60,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
     {
         if (!Enum.TryParse<MeterComponentType>(selectedComponent, out var parsedComponentType)) return;
 
-        var component = new RowComponentSettings {
+        var component = new ComponentSettings {
             Type = parsedComponentType,
             Name = $"New {parsedComponentType}",
             Size = new Vector2(100, 20)

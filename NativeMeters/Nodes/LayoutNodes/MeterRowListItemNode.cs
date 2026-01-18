@@ -61,7 +61,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
         }
     }
 
-    private NodeBase CreateComponent(RowComponentSettings settings)
+    private NodeBase CreateComponent(ComponentSettings settings)
     {
         NodeBase node = settings.Type switch {
             MeterComponentType.JobIcon => new IconImageNode { FitTexture = true },
@@ -89,7 +89,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
         return node;
     }
 
-    private void UpdateComponentData(NodeBase node, RowComponentSettings settings)
+    private void UpdateComponentData(NodeBase node, ComponentSettings settings)
     {
         if (Combatant == null || MeterSettings == null) return;
 
@@ -103,7 +103,8 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
                 textNode.String = CombatantStatHelpers.GetStatValueByName(Combatant, settings.DataSource);
                 textNode.FontSize = (int)settings.FontSize;
                 textNode.FontType = settings.FontType;
-                textNode.TextColor = settings.Color;
+                textNode.TextFlags = settings.TextFlags;
+                textNode.TextColor = settings.UseJobColor ? Combatant.GetColor() : settings.TextColor;
                 textNode.ShowBackground = settings.ShowBackground || MeterSettings.BackgroundEnabled;
                 break;
 
@@ -117,11 +118,11 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
                 double currentVal = selector(Combatant);
 
                 progressNode.Progress = MeterUtil.CalculateProgressRatio(currentVal, maxStat > 0 ? maxStat : 1.0);
-                progressNode.BarColor = Combatant.GetColor();
+                progressNode.BarColor = settings.UseJobColor ? Combatant.GetColor() : settings.TextColor;
                 break;
 
             case NineGridNode backgroundNode:
-                backgroundNode.Color = settings.Color;
+                backgroundNode.Color = settings.TextColor;
                 break;
         }
     }

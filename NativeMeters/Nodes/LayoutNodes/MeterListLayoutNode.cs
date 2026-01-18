@@ -22,6 +22,9 @@ public sealed class MeterListLayoutNode : OverlayNode
     private IMeterService? hookedService;
     private bool isDisposing;
 
+    private StaticComponentContainerNode? headerContainer;
+    private StaticComponentContainerNode? footerContainer;
+
     public required MeterSettings? MeterSettings
     {
         get;
@@ -70,6 +73,15 @@ public sealed class MeterListLayoutNode : OverlayNode
         Position = MeterSettings.Position;
         Size = MeterSettings.Size;
 
+        headerContainer?.Dispose();
+        footerContainer?.Dispose();
+
+        headerContainer = new StaticComponentContainerNode(MeterSettings.HeaderComponents);
+        headerContainer.AttachNode(this);
+
+        footerContainer = new StaticComponentContainerNode(MeterSettings.FooterComponents);
+        footerContainer.AttachNode(this);
+
         OnMoveComplete = node => MeterSettings.Position = node.Position;
         OnResizeComplete = node => MeterSettings.Size = node.Size;
 
@@ -89,6 +101,8 @@ public sealed class MeterListLayoutNode : OverlayNode
             listNode.Size = Size;
         }
 
+        headerContainer?.Update();
+        footerContainer?.Update();
         listNode.Update();
     }
 
@@ -120,10 +134,9 @@ public sealed class MeterListLayoutNode : OverlayNode
     {
         isDisposing = true;
 
-        if (hookedService != null)
-        {
-            hookedService.CombatDataUpdated -= OnCombatDataUpdated;
-            hookedService = null;
-        }
+        if (hookedService == null) return;
+
+        hookedService.CombatDataUpdated -= OnCombatDataUpdated;
+        hookedService = null;
     }
 }

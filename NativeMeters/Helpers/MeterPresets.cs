@@ -6,7 +6,7 @@ namespace NativeMeters.Helpers;
 
 public static class MeterPresets
 {
-    public static List<RowComponentSettings> GetDefaultStylishComponents() =>
+    public static List<ComponentSettings> GetDefaultStylishComponents() =>
     [
         new()
         {
