@@ -8,6 +8,7 @@
         <ProjectReference Include="..\KamiToolKit\KamiToolKit.csproj"/>
     </ItemGroup>
     <ItemGroup>
+        <Content Include=".editorconfig" />
         <Content Include=".gitignore" />
         <Content Include="changelog.md" />
         <Content Include="Assets\*.*">

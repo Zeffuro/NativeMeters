@@ -29,6 +29,8 @@ public sealed class MeterGeneralSection : MeterConfigSection
 
     private void Initialize()
     {
+        AddTab();
+
         nameInput = new LabeledTextInputNode
         {
             Size = new Vector2(Width, 28),

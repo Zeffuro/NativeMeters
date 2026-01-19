@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using NativeMeters.Models;
 
 namespace NativeMeters.Configuration;
 
@@ -18,6 +19,8 @@ public class ComponentSettings
     public int ZIndex { get; set; } = 0;
 
     public string DataSource { get; set; } = "[name]";
+
+    public JobIconType JobIconType { get; set; } = JobIconType.Default;
 
     public uint FontSize { get; set; } = 14;
     public FontType FontType { get; set; } = FontType.Axis;

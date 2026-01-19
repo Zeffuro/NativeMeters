@@ -10,7 +10,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
     {
         GeneralSettings config = System.Config.General;
 
-        ItemVerticalSpacing = 5;
+        ItemVerticalSpacing = 2;
 
         AddNode(new CategoryTextNode
         {
@@ -27,7 +27,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             OnClick = isChecked => { config.IsEnabled = isChecked; System.OverlayManager.Setup(); },
         });
 
-        AddNode(new CheckboxNode
+        AddNode(1, new CheckboxNode
         {
             Size = Size with { Y = 20 },
             String = "Preview",
@@ -39,7 +39,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             }
         });
 
-        AddNode(new CheckboxNode
+        AddNode(1, new CheckboxNode
         {
             Size = Size with { Y = 18 },
             IsVisible = true,
@@ -51,7 +51,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             }
         });
 
-        AddNode(new CheckboxNode
+        AddNode(1, new CheckboxNode
         {
             Size = Size with { Y = 18 },
             IsVisible = true,

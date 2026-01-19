@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 
@@ -10,67 +11,49 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 
     private MeterSettings settings = new();
 
-    private readonly ScrollingAreaNode<TreeListNode> scrollingArea;
-    private readonly MeterGeneralSection generalSettings;
-    private readonly MeterDisplaySection displaySettings;
-    private readonly MeterComponentsSection headerSettings;
-    private readonly MeterComponentsSection componentSettings;
-    private readonly MeterComponentsSection footerSettings;
+    private readonly ScrollingAreaNode<VerticalListNode> scrollingArea;
+    private readonly VerticalListNode mainLayout;
+
+    private readonly List<MeterConfigSection> sections = [];
 
     public MeterDefinitionConfigurationNode()
     {
-        scrollingArea = new ScrollingAreaNode<TreeListNode>
-        {
-            ContentHeight = 100.0f,
+        scrollingArea = new ScrollingAreaNode<VerticalListNode> {
             AutoHideScrollBar = true,
+            ContentHeight = 10f,
         };
         scrollingArea.AttachNode(this);
 
-        scrollingArea.ContentNode.OnLayoutUpdate = newHeight =>
+        mainLayout = scrollingArea.ContentAreaNode;
+        mainLayout.FitContents = true;
+        mainLayout.ItemSpacing = 6.0f;
+
+        sections.Add(new MeterGeneralSection(() => settings)
         {
-            scrollingArea.ContentHeight = newHeight;
-        };
-
-        scrollingArea.ContentNode.CategoryVerticalSpacing = 4.0f;
-
-        var treeListNode = scrollingArea.ContentAreaNode;
-
-        generalSettings = new MeterGeneralSection(() => settings)
+            String = "General Settings", IsCollapsed = false,
+        });
+        sections.Add(new MeterDisplaySection(() => settings)
         {
-            String = "General Settings",
-            IsCollapsed = false,
-        };
-        generalSettings.OnToggle = _ => HandleLayoutChange();
-        treeListNode.AddCategoryNode(generalSettings);
-
-        displaySettings = new MeterDisplaySection(() => settings)
-        {
-            String = "Display Settings",
-            IsCollapsed = false,
-        };
-        displaySettings.OnToggle = _ => HandleLayoutChange();
-        treeListNode.AddCategoryNode(displaySettings);
-
-        headerSettings = new MeterComponentsSection(() => settings, HandleLayoutChange, ComponentTarget.Header)
+            String = "Display Settings", IsCollapsed = false,
+        });
+        sections.Add(new MeterComponentsSection(() => settings, HandleLayoutChange, ComponentTarget.Header)
         {
             String = "Header Components",
-            IsCollapsed = true,
-        };
-        treeListNode.AddCategoryNode(headerSettings);
-
-        componentSettings = new MeterComponentsSection(() => settings, HandleLayoutChange, ComponentTarget.Row)
+        });
+        sections.Add(new MeterComponentsSection(() => settings, HandleLayoutChange, ComponentTarget.Row)
         {
             String = "Row Components (Combatants)",
-            IsCollapsed = true,
-        };
-        treeListNode.AddCategoryNode(componentSettings);
-
-        footerSettings = new MeterComponentsSection(() => settings, HandleLayoutChange, ComponentTarget.Footer)
+        });
+        sections.Add(new MeterComponentsSection(() => settings, HandleLayoutChange, ComponentTarget.Footer)
         {
             String = "Footer Components",
-            IsCollapsed = true,
-        };
-        treeListNode.AddCategoryNode(footerSettings);
+        });
+
+        foreach (var section in sections)
+        {
+            section.OnToggle = HandleLayoutChange;
+            mainLayout.AddNode(section);
+        }
     }
 
     protected override void OnSizeChanged()
@@ -78,31 +61,28 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         base.OnSizeChanged();
         scrollingArea.Size = Size;
 
-        foreach (var categoryNode in scrollingArea.ContentNode.CategoryNodes)
-        {
-            categoryNode.Width = Width - 16.0f;
-        }
+        var listWidth = Math.Max(0, Width - 16.0f);
+        mainLayout.Width = listWidth;
 
-        scrollingArea.ContentNode.RefreshLayout();
+        foreach (var section in sections)
+            section.Width = listWidth;
+
+        HandleLayoutChange();
     }
 
     public void SetMeter(MeterSettings meterSettings)
     {
         settings = meterSettings;
-        generalSettings.Refresh();
-        displaySettings.Refresh();
-
-        headerSettings.Refresh();
-        componentSettings.Refresh();
-        footerSettings.Refresh();
-
+        foreach (var section in sections) section.Refresh();
         HandleLayoutChange();
     }
 
     private void HandleLayoutChange()
     {
-        scrollingArea.ContentNode.RefreshLayout();
-        scrollingArea.ContentHeight = scrollingArea.ContentNode.Height;
+        mainLayout.RecalculateLayout();
+
+        scrollingArea.ContentHeight = mainLayout.Height;
+
         OnLayoutChanged?.Invoke();
     }
 }

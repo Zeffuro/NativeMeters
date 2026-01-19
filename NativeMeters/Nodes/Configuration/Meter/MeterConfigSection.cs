@@ -1,12 +1,10 @@
 using System;
-using System.Numerics;
-using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
+using NativeMeters.Nodes.LayoutNodes;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
-public abstract class MeterConfigSection : TreeListCategoryNode
+public abstract class MeterConfigSection : CategoryNode
 {
     protected readonly Func<MeterSettings> GetMeterSettings;
     protected MeterSettings Settings => GetMeterSettings();
@@ -14,15 +12,10 @@ public abstract class MeterConfigSection : TreeListCategoryNode
     protected MeterConfigSection(Func<MeterSettings> getSettings)
     {
         GetMeterSettings = getSettings;
-        VerticalPadding = 4.0f;
+        HeaderHeight = 32.0f;
+        FontSize = 14;
+        NestingIndent = 0.0f;
     }
 
     public abstract void Refresh();
-
-    protected static LabelTextNode CreateLabel(string text) => new()
-    {
-        TextFlags = TextFlags.AutoAdjustNodeSize,
-        Size = new Vector2(100, 20),
-        String = text,
-    };
 }

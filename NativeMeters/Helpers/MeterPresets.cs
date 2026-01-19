@@ -30,7 +30,7 @@ public static class MeterPresets
         {
             Name = "Player Name",
             Type = MeterComponentType.Text,
-            DataSource = "Name",
+            DataSource = "[name]",
             Position = new Vector2(34, 5),
             Size = new Vector2(150, 20),
             ZIndex = 2,

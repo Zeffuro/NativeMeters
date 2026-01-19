@@ -56,11 +56,10 @@ public static class TagProcessor
         var cache = isEncounter ? EncounterCache : CombatantCache;
         var value = cache.TryGetValue(mappedKey, out var prop) ? prop.GetValue(data) : null;
 
-        // "YOU" replacement
         if (!isEncounter && key.Equals("name", StringComparison.OrdinalIgnoreCase) && value is string s && s.Equals("YOU", StringComparison.OrdinalIgnoreCase))
         {
             if (System.Config.General.ReplaceYou)
-                return Service.ClientState.LocalPlayer?.Name.TextValue ?? "YOU";
+                return Service.ObjectTable.LocalPlayer?.Name.TextValue ?? "YOU";
         }
 
         return value;

@@ -80,7 +80,6 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
             _ => new SimpleComponentNode()
         };
 
-        // Fix CS1061: Cast to SimpleComponentNode to access DisableCollisionNode
         if (node is SimpleComponentNode simpleNode)
         {
             simpleNode.DisableCollisionNode = true;
@@ -109,11 +108,13 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
                 break;
 
             case IconImageNode iconNode:
-                iconNode.IconId = Combatant.GetIconId(MeterSettings.JobIconType);
+                iconNode.IconId = Combatant.GetIconId(settings.JobIconType);
                 break;
 
             case ProgressNode progressNode:
-                var selector = CombatantStatHelpers.GetStatSelector(MeterSettings.StatToTrack);
+                var statName = string.IsNullOrWhiteSpace(settings.DataSource) ? MeterSettings.StatToTrack : settings.DataSource;
+                var selector = CombatantStatHelpers.GetStatSelector(statName);
+
                 double maxStat = System.ActiveMeterService.GetMaxCombatantStat(selector);
                 double currentVal = selector(Combatant);
 

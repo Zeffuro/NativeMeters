@@ -18,6 +18,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
 
     public MeterComponentsSection(Func<MeterSettings> getSettings, Action onLayoutChanged, ComponentTarget target) : base(getSettings)
     {
+        AddTab();
         this.onLayoutChanged = onLayoutChanged;
         this.target = target;
 
@@ -27,7 +28,12 @@ public sealed class MeterComponentsSection : MeterConfigSection
         };
         AddNode(listContainer);
 
-        addRow = new HorizontalListNode { Size = new Vector2(300, 30), ItemSpacing = 5.0f, Position = new Vector2(0, 10) };
+        addRow = new HorizontalListNode
+        {
+            Size = new Vector2(300, 30),
+            ItemSpacing = 5.0f,
+            Position = new Vector2(0, 10)
+        };
         AddNode(addRow);
 
         InitializeAddRow();
@@ -71,6 +77,14 @@ public sealed class MeterComponentsSection : MeterConfigSection
         System.OverlayManager.Setup();
     }
 
+    private void RefreshLayout()
+    {
+        listContainer.RecalculateLayout();
+        ContentNode.RecalculateLayout();
+        RecalculateLayout();
+        onLayoutChanged();
+    }
+
     public override void Refresh()
     {
         listContainer.Clear();
@@ -80,26 +94,19 @@ public sealed class MeterComponentsSection : MeterConfigSection
                 Position = new Vector2(10.0f, 0),
                 Width = Width - 20.0f,
                 HeaderHeight = 24.0f,
-                NestingIndent = 12.0f,
                 RowComponent = component,
                 OnChanged = () => System.OverlayManager.Setup(),
                 OnDeleted = () => {
                     TargetList.Remove(component);
                     Refresh();
-                    System.OverlayManager.Setup();
+                    System. OverlayManager.Setup();
                 },
-                OnToggle = () => {
-                    listContainer.RecalculateLayout();
-                    RecalculateLayout();
-                    onLayoutChanged();
-                }
+                OnToggle = RefreshLayout
             };
 
             listContainer.AddNode(node);
         }
 
-        listContainer.RecalculateLayout();
-        RecalculateLayout();
-        onLayoutChanged();
+        RefreshLayout();
     }
 }
