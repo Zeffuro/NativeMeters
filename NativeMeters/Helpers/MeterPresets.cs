@@ -34,17 +34,19 @@ public static class MeterPresets
             Position = new Vector2(34, 5),
             Size = new Vector2(150, 20),
             ZIndex = 2,
-            FontSize = 14
+            FontSize = 14,
+            UseJobColor = true
         },
         new()
         {
             Name = "Stat Value",
             Type = MeterComponentType.Text,
-            DataSource = "ENCDPS",
+            DataSource = "[ENCDPS]",
             Position = new Vector2(180, 22),
             Size = new Vector2(60, 20),
             ZIndex = 2,
-            FontSize = 14
+            FontSize = 14,
+            UseJobColor = false
         }
     ];
 }

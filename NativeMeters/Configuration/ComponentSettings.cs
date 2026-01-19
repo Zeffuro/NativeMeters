@@ -23,10 +23,10 @@ public class ComponentSettings
     public FontType FontType { get; set; } = FontType.Axis;
     public TextFlags TextFlags { get; set; } = TextFlags.Edge;
 
-    public Vector4 TextColor { get; set; } = ColorHelper.GetColor(54);
-    public bool UseJobColor { get; set; } = false;
+    public Vector4 TextColor { get; set; } = ColorHelper.GetColor(50);
+    public bool UseJobColor { get; set; } = true;
     public bool ShowOutline { get; set; } = true;
-    public Vector4 TextOutlineColor { get; set; } = ColorHelper.GetColor(53);
+    public Vector4 TextOutlineColor { get; set; } = ColorHelper.GetColor(51);
 
     public bool ShowBackground { get; set; }
 }

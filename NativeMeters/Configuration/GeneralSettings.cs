@@ -8,4 +8,5 @@ public class GeneralSettings
     public bool HideWithNativeUi { get; set; } = true;
     public bool IsEnabled { get; set; } = true;
     public bool PreviewEnabled { get; set; }
+    public bool ReplaceYou { get; set; } = false;
 }

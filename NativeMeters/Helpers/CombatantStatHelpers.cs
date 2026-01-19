@@ -25,13 +25,15 @@ public static class CombatantStatHelpers
 
     public static List<string> GetAvailableStatSources() => StatRegistry.Keys.ToList();
 
-    public static string GetStatValueByName(Combatant? combatant, string dataSource)
+    public static string GetStatValueByName(Combatant combatant, string format)
     {
-        if (combatant == null) return string.Empty;
+        return TagProcessor.Process(format, combatant);
+    }
 
-        return StatRegistry.TryGetValue(dataSource, out var func)
-            ? func(combatant)
-            : combatant.ENCDPS.ToString("N0");
+    public static string GetGlobalStatValue(string format)
+    {
+        var encounter = System.ActiveMeterService.GetEncounter();
+        return TagProcessor.Process(format, encounter);
     }
 
     public static Func<Combatant, double> GetStatSelector(string statName) => statName switch

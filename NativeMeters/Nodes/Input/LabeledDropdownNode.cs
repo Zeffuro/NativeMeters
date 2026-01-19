@@ -61,6 +61,12 @@ public class LabeledDropdownNode : SimpleComponentNode {
         set => _dropDownNode.Options = value;
     }
 
+    public int MaxListOptions
+    {
+        get => _dropDownNode.MaxListOptions;
+        set => _dropDownNode.MaxListOptions = value;
+    }
+
     public TextFlags LabelTextFlags
     {
         get => _labelNode.TextFlags;

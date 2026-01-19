@@ -100,7 +100,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
         switch (node)
         {
             case BackgroundTextNode textNode:
-                textNode.String = CombatantStatHelpers.GetStatValueByName(Combatant, settings.DataSource);
+                textNode.String = TagProcessor.Process(settings.DataSource, Combatant);
                 textNode.FontSize = (int)settings.FontSize;
                 textNode.FontType = settings.FontType;
                 textNode.TextFlags = settings.TextFlags;

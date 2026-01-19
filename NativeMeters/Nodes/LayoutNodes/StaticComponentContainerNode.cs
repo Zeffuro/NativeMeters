@@ -84,7 +84,8 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
 
         if (node is BackgroundTextNode textNode)
         {
-            //textNode.String = EncounterStatHelpers.GetGlobalStatValue(settings.DataSource);
+            var encounter = System.ActiveMeterService.GetEncounter();
+            if (encounter != null) textNode.String = TagProcessor.Process(settings.DataSource, encounter);
             textNode.FontSize = (int)settings.FontSize;
             textNode.FontType = settings.FontType;
             textNode.TextFlags = settings.TextFlags;

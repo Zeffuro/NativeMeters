@@ -12,26 +12,22 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
 
         ItemVerticalSpacing = 5;
 
-        var titleNode = new CategoryTextNode
+        AddNode(new CategoryTextNode
         {
             Height = 18,
             String = "General Configuration",
-        };
-        AddNode(titleNode);
+        });
 
-        AddTab(1);
-
-        var isEnabledCheckbox = new CheckboxNode
+        AddNode(1, new CheckboxNode
         {
             Size = Size with { Y = 18 },
             IsVisible = true,
             String = "Enabled",
             IsChecked = config.IsEnabled,
             OnClick = isChecked => { config.IsEnabled = isChecked; System.OverlayManager.Setup(); },
-        };
-        AddNode(isEnabledCheckbox);
+        });
 
-        var testModeCheckbox = new CheckboxNode
+        AddNode(new CheckboxNode
         {
             Size = Size with { Y = 20 },
             String = "Preview",
@@ -41,10 +37,9 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
                 config.PreviewEnabled = isChecked;
                 System.OverlayManager.UpdateActiveService();
             }
-        };
-        AddNode(testModeCheckbox);
+        });
 
-        var hideWithNativeUiCheckBox = new CheckboxNode
+        AddNode(new CheckboxNode
         {
             Size = Size with { Y = 18 },
             IsVisible = true,
@@ -54,8 +49,19 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             {
                 config.HideWithNativeUi = isChecked;
             }
-        };
-        AddNode(hideWithNativeUiCheckBox);
+        });
+
+        AddNode(new CheckboxNode
+        {
+            Size = Size with { Y = 18 },
+            IsVisible = true,
+            String = "Replace YOU with your name",
+            IsChecked = config.ReplaceYou,
+            OnClick = isChecked =>
+            {
+                config.ReplaceYou = isChecked;
+            }
+        });
 
         SubtractTab(1);
     }
