@@ -99,7 +99,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
                 OnDeleted = () => {
                     TargetList.Remove(component);
                     Refresh();
-                    System. OverlayManager.Setup();
+                    System.OverlayManager.Setup();
                 },
                 OnToggle = RefreshLayout
             };

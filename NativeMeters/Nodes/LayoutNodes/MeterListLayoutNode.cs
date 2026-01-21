@@ -56,6 +56,11 @@ public sealed class MeterListLayoutNode : OverlayNode
         listNode.ScrollBarNode.IsVisible = false;
         listNode.ScrollBarNode.IsEnabled = false;
 
+        SubscribeToCombatDataUpdates();
+    }
+
+    public void SubscribeToCombatDataUpdates()
+    {
         hookedService = System.ActiveMeterService;
         hookedService.CombatDataUpdated += OnCombatDataUpdated;
     }
@@ -92,9 +97,13 @@ public sealed class MeterListLayoutNode : OverlayNode
     {
         if (MeterSettings == null) return;
 
+        bool hasActiveData = System.ActiveMeterService.HasCombatData() || System.Config.General.PreviewEnabled;
+        bool isEditing = !MeterSettings.IsLocked;
+
+        IsVisible = MeterSettings.IsEnabled && (hasActiveData || isEditing);
+
         EnableMoving = !MeterSettings.IsLocked;
         EnableResizing = !MeterSettings.IsLocked;
-        IsVisible = MeterSettings.IsEnabled;
 
         if (listNode.Size != Size)
         {
@@ -116,6 +125,11 @@ public sealed class MeterListLayoutNode : OverlayNode
         if (MeterSettings == null) return;
 
         var combatants = System.ActiveMeterService.GetCombatants().ToList();
+
+        if (combatants.Count == 0 && !System.Config.General.PreviewEnabled)
+        {
+            combatants = FakeCombatantFactory.CreateFixedCombatants(MeterSettings.MaxCombatants);
+        }
 
         if (!MeterSettings.ShowLimitBreak) {
             combatants.RemoveAll(combatant => combatant.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase));

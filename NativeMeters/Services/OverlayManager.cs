@@ -55,7 +55,10 @@ public class OverlayManager : IDisposable {
         if (System.ActiveMeterService == newService) return;
 
         System.ActiveMeterService = newService;
-        Setup();
+        foreach (var meter in activeMeters)
+        {
+            meter.Value.SubscribeToCombatDataUpdates();
+        }
     }
 }
 
