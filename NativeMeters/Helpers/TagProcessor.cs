@@ -50,6 +50,7 @@ public static class TagProcessor
             "name" => isEncounter ? "Title" : "Name",
             "hps" => "Enchps",
             "damage" or "damagetotal" => "Damage",
+            "zone" => "CurrentZoneName",
             _ => key
         };
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
@@ -93,8 +94,14 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
         if (Combatant == null || MeterSettings == null) return;
 
         node.IsVisible = true;
-        node.Position = settings.Position;
         node.Size = settings.Size;
+
+        float x = settings.AlignmentType switch {
+            AlignmentType.Right => Width - settings.Size.X - settings.Position.X,
+            AlignmentType.Center => (Width / 2.0f) - (settings.Size.X / 2.0f) + settings.Position.X,
+            _ => settings.Position.X
+        };
+        node.Position = settings.Position with { X = x };
 
         switch (node)
         {
@@ -103,8 +110,11 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
                 textNode.FontSize = (int)settings.FontSize;
                 textNode.FontType = settings.FontType;
                 textNode.TextFlags = settings.TextFlags;
+                textNode.AlignmentType = settings.AlignmentType;
                 textNode.TextColor = settings.UseJobColor ? Combatant.GetColor() : settings.TextColor;
-                textNode.ShowBackground = settings.ShowBackground || MeterSettings.BackgroundEnabled;
+                textNode.TextOutlineColor = settings.TextOutlineColor;
+                textNode.BackgroundColor = settings.TextBackgroundColor;
+                textNode.ShowBackground = settings.ShowBackground;
                 break;
 
             case IconImageNode iconNode:
@@ -114,11 +124,8 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
             case ProgressNode progressNode:
                 var statName = string.IsNullOrWhiteSpace(settings.DataSource) ? MeterSettings.StatToTrack : settings.DataSource;
                 var selector = CombatantStatHelpers.GetStatSelector(statName);
-
                 double maxStat = System.ActiveMeterService.GetMaxCombatantStat(selector);
-                double currentVal = selector(Combatant);
-
-                progressNode.Progress = MeterUtil.CalculateProgressRatio(currentVal, maxStat > 0 ? maxStat : 1.0);
+                progressNode.Progress = MeterUtil.CalculateProgressRatio(selector(Combatant), maxStat > 0 ? maxStat : 1.0);
                 progressNode.BarColor = settings.UseJobColor ? Combatant.GetColor() : settings.TextColor;
                 break;
 

@@ -15,6 +15,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
     private readonly LabelTextNode headerLabel;
     private readonly LabeledDropdownNode fontTypeDropdown;
     private readonly LabeledDropdownNode textFlagsDropdown;
+    private readonly LabeledDropdownNode alignmentDropdown;
     private readonly LabeledNumericInputNode fontSizeInput;
 
     public Action? OnSettingsChanged { get; set; }
@@ -62,6 +63,21 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             }
         };
 
+        alignmentDropdown = new LabeledDropdownNode
+        {
+            LabelText = "Alignment:",
+            Size = new Vector2(Width, 28),
+            Options = Enum.GetNames<AlignmentType>().ToList(),
+            OnOptionSelected = val =>
+            {
+                if (Enum.TryParse<AlignmentType>(val, out var align) && settings != null)
+                {
+                    settings.AlignmentType = align;
+                    OnSettingsChanged?.Invoke();
+                }
+            }
+        };
+
         fontSizeInput = new LabeledNumericInputNode
         {
             LabelText = "Size:",
@@ -76,7 +92,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             }
         };
 
-        AddNode([headerLabel, fontTypeDropdown, fontSizeInput, textFlagsDropdown]);
+        AddNode([headerLabel, fontTypeDropdown, alignmentDropdown, fontSizeInput, textFlagsDropdown]);
     }
 
     public void LoadSettings(ComponentSettings componentSettings)
@@ -96,6 +112,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
 
         fontTypeDropdown.SelectedOption = settings.FontType.ToString();
         textFlagsDropdown.SelectedOption = settings.TextFlags.ToString();
+        alignmentDropdown.SelectedOption = settings.AlignmentType.ToString();
         fontSizeInput.Value = (int)settings.FontSize;
 
         RecalculateLayout();
@@ -108,6 +125,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
         headerLabel.Width = Width;
         fontTypeDropdown.Width = Width;
         textFlagsDropdown.Width = Width;
+        alignmentDropdown.Width = Width;
         fontSizeInput.Width = Width;
     }
 }

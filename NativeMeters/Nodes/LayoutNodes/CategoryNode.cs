@@ -143,8 +143,14 @@ public class CategoryNode : VerticalListNode
         ContentNode.IsVisible = !isCollapsed;
         ArrowNode.PartId = isCollapsed ? 0u : 1u;
 
-        ContentNode.RecalculateLayout();
+        if (!isCollapsed)
+        {
+            ContentNode.Width = Math.Max(0, Width - ContentNode.X);
+            ContentNode.RecalculateLayout();
+        }
+
         RecalculateLayout();
+        OnToggle?.Invoke();
     }
 
     public void AddTab(int tabAmount = 1) => ContentNode.AddTab(tabAmount);

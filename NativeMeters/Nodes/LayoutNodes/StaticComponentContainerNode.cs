@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
@@ -42,6 +43,12 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
         foreach (var node in componentMap.Values) node.Dispose();
         componentMap.Clear();
 
+        // Since VerticalList will error out to 65532 if the list empty we add a dummy so the FitContents calculation works
+        if (settingsList.Count == 0)
+        {
+            var guard = new SimpleComponentNode { Height = 0 };
+            guard.AttachNode(this);
+        }
         var sortedComponents = settingsList.OrderBy(component => component.ZIndex).ToList();
 
         foreach (var settings in sortedComponents)
@@ -54,7 +61,6 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
 
     private NodeBase CreateComponent(ComponentSettings settings)
     {
-        // Reusing the factory logic from RowListItem
         NodeBase node = settings.Type switch {
             MeterComponentType.JobIcon => new IconImageNode { FitTexture = true },
             MeterComponentType.ProgressBar => new ProgressBarNode(),
@@ -78,18 +84,29 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
 
     private void UpdateComponentData(NodeBase node, ComponentSettings settings)
     {
+        var encounter = System.ActiveMeterService.GetEncounter();
+        if (encounter == null) return;
+
         node.IsVisible = true;
-        node.Position = settings.Position;
         node.Size = settings.Size;
+
+        float x = settings.AlignmentType switch {
+            AlignmentType.Right => Width - settings.Size.X - settings.Position.X,
+            AlignmentType.Center => (Width / 2.0f) - (settings.Size.X / 2.0f) + settings.Position.X,
+            _ => settings.Position.X
+        };
+        node.Position = settings.Position with { X = x };
 
         if (node is BackgroundTextNode textNode)
         {
-            var encounter = System.ActiveMeterService.GetEncounter();
-            if (encounter != null) textNode.String = TagProcessor.Process(settings.DataSource, encounter);
+            textNode.String = TagProcessor.Process(settings.DataSource, encounter);
             textNode.FontSize = (int)settings.FontSize;
             textNode.FontType = settings.FontType;
             textNode.TextFlags = settings.TextFlags;
+            textNode.AlignmentType = settings.AlignmentType;
             textNode.TextColor = settings.TextColor;
+            textNode.TextOutlineColor = settings.TextOutlineColor;
+            textNode.BackgroundColor = settings.TextBackgroundColor;
             textNode.ShowBackground = settings.ShowBackground;
         }
     }

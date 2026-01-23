@@ -73,7 +73,10 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     public void SetMeter(MeterSettings meterSettings)
     {
         settings = meterSettings;
-        foreach (var section in sections) section.Refresh();
+        foreach (var section in sections)
+        {
+            section.Refresh();
+        }
         HandleLayoutChange();
     }
 

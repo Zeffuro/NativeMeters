@@ -41,6 +41,8 @@ public class BackgroundTextNode : SimpleComponentNode
         get => TextNode.String;
         set
         {
+            if (TextNode.String.ToString() == value.ToString()) return;
+
             TextNode.String = value;
             UpdateLayout();
         }
@@ -52,6 +54,18 @@ public class BackgroundTextNode : SimpleComponentNode
         set => BackgroundNode.IsVisible = value;
     }
 
+    public Vector4 BackgroundColor
+    {
+        get => TextNode.BackgroundColor;
+        set => TextNode.BackgroundColor = value;
+    }
+
+    public Vector4 BackgroundPlateColor
+    {
+        get => BackgroundNode.Color;
+        set => BackgroundNode.Color = value;
+    }
+
     public Vector2 Padding { get; set; } = new(6, 2);
 
     private void UpdateLayout()
@@ -61,6 +75,13 @@ public class BackgroundTextNode : SimpleComponentNode
 
         if (textWidth <= 0) textWidth = 10;
         if (textHeight <= 0) textHeight = 10;
+
+        var newSize = new Vector2(textWidth + Padding.X * 2, textHeight + Padding.Y * 2);
+
+        if (Vector2.Distance(Size, newSize) > 0.1f)
+        {
+            Size = newSize;
+        }
 
         Size = new Vector2(textWidth + Padding.X * 2, textHeight + Padding.Y * 2);
         TextNode.Position = Padding;

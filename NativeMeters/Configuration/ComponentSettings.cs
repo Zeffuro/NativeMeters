@@ -1,5 +1,7 @@
 using System;
+using System.Drawing;
 using System.Numerics;
+using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using NativeMeters.Models;
@@ -25,10 +27,10 @@ public class ComponentSettings
     public uint FontSize { get; set; } = 14;
     public FontType FontType { get; set; } = FontType.Axis;
     public TextFlags TextFlags { get; set; } = TextFlags.Edge;
-
+    public AlignmentType AlignmentType { get; set; } = AlignmentType.Left;
     public Vector4 TextColor { get; set; } = ColorHelper.GetColor(50);
-    public bool UseJobColor { get; set; } = true;
     public Vector4 TextOutlineColor { get; set; } = ColorHelper.GetColor(51);
-
+    public Vector4 TextBackgroundColor { get; set; } = KnownColor.Transparent.Vector();
+    public bool UseJobColor { get; set; } = true;
     public bool ShowBackground { get; set; }
 }

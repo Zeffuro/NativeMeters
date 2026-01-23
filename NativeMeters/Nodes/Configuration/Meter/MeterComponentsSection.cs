@@ -18,7 +18,6 @@ public sealed class MeterComponentsSection : MeterConfigSection
 
     public MeterComponentsSection(Func<MeterSettings> getSettings, Action onLayoutChanged, ComponentTarget target) : base(getSettings)
     {
-        AddTab();
         this.onLayoutChanged = onLayoutChanged;
         this.target = target;
 
@@ -30,25 +29,10 @@ public sealed class MeterComponentsSection : MeterConfigSection
 
         addRow = new HorizontalListNode
         {
-            Size = new Vector2(300, 30),
-            ItemSpacing = 5.0f,
-            Position = new Vector2(0, 10)
+            Size = new Vector2(300, 32),
+            ItemSpacing = 8.0f,
         };
-        AddNode(addRow);
 
-        InitializeAddRow();
-    }
-
-    private List<ComponentSettings> TargetList => target switch
-    {
-        ComponentTarget.Header => Settings.HeaderComponents,
-        ComponentTarget.Row => Settings.RowComponents,
-        ComponentTarget.Footer => Settings.FooterComponents,
-        _ => Settings.RowComponents
-    };
-
-    private void InitializeAddRow()
-    {
         var typeDropdown = new TextDropDownNode {
             Size = new Vector2(150, 28),
             Options = Enum.GetNames<MeterComponentType>().ToList(),
@@ -60,16 +44,29 @@ public sealed class MeterComponentsSection : MeterConfigSection
             Size = new Vector2(120, 28),
             OnClick = () => AddNewComponent(typeDropdown.SelectedOption)
         });
+
+        AddNode(addRow);
     }
+
+    private List<ComponentSettings> TargetList => target switch
+    {
+        ComponentTarget.Header => Settings.HeaderComponents,
+        ComponentTarget.Row => Settings.RowComponents,
+        ComponentTarget.Footer => Settings.FooterComponents,
+        _ => Settings.RowComponents
+    };
 
     private void AddNewComponent(string? selectedComponent)
     {
         if (!Enum.TryParse<MeterComponentType>(selectedComponent, out var parsedComponentType)) return;
 
         var component = new ComponentSettings {
+            Id = Guid.NewGuid().ToString(),
             Type = parsedComponentType,
             Name = $"New {parsedComponentType}",
-            Size = new Vector2(100, 20)
+            Size = new Vector2(100, 20),
+            Position = Vector2.Zero,
+            ZIndex = TargetList.Count > 0 ? TargetList.Max(c => c.ZIndex) + 1 : 0
         };
 
         TargetList.Add(component);
@@ -89,9 +86,14 @@ public sealed class MeterComponentsSection : MeterConfigSection
     {
         listContainer.Clear();
 
+        // Since VerticalList will error out to 65532 if the list empty we add a dummy so the FitContents calculation works
+        if (TargetList.Count == 0)
+        {
+            listContainer.AddNode(new ResNode { Height = 0, IsVisible = true });
+        }
+
         foreach (var component in TargetList) {
             var node = new ComponentSettingsNode {
-                Position = new Vector2(10.0f, 0),
                 Width = Width - 20.0f,
                 HeaderHeight = 24.0f,
                 RowComponent = component,
@@ -108,5 +110,12 @@ public sealed class MeterComponentsSection : MeterConfigSection
         }
 
         RefreshLayout();
+    }
+
+    protected override void OnSizeChanged()
+    {
+        base.OnSizeChanged();
+
+        addRow?.Width = Math.Max(0, Width - ContentNode.X);
     }
 }

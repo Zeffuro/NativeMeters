@@ -3,6 +3,7 @@ using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Nodes.Color;
+using NativeMeters.Nodes.Input;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
@@ -15,6 +16,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
     private readonly ColorInputRow textColorInput;
     private readonly ColorInputRow outlineColorInput;
     private readonly CheckboxNode backgroundCheckbox;
+    private readonly ColorInputRow backgroundTextColorInput;
 
     public Action? OnSettingsChanged { get; set; }
     public Action? OnLayoutChanged { get; set; }
@@ -47,8 +49,8 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         {
             Label = "Static Color",
             Size = new Vector2(Width, 28),
-            DefaultColor = Vector4.One,
-            CurrentColor = Vector4.One,
+            DefaultColor = new ComponentSettings().TextColor,
+            CurrentColor = settings?.TextColor ?? new ComponentSettings().TextColor,
             OnColorConfirmed = color =>
             {
                 if (settings == null) return;
@@ -61,12 +63,26 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         {
             Label = "Outline Color",
             Size = new Vector2(Width, 28),
-            DefaultColor = new Vector4(0, 0, 0, 1),
-            CurrentColor = new Vector4(0, 0, 0, 1),
+            DefaultColor = new ComponentSettings().TextOutlineColor,
+            CurrentColor = settings?.TextOutlineColor ?? new ComponentSettings().TextOutlineColor,
             OnColorConfirmed = color =>
             {
                 if (settings == null) return;
                 settings.TextOutlineColor = color;
+                OnSettingsChanged?.Invoke();
+            }
+        };
+
+        backgroundTextColorInput = new ColorInputRow
+        {
+            Label = "Background Color: ",
+            Size = new Vector2(Width, 28),
+            DefaultColor = new ComponentSettings().TextBackgroundColor,
+            CurrentColor = settings?.TextBackgroundColor ?? new ComponentSettings().TextBackgroundColor,
+            OnColorConfirmed = color =>
+            {
+                if (settings == null) return;
+                settings.TextBackgroundColor = color;
                 OnSettingsChanged?.Invoke();
             }
         };
@@ -83,7 +99,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             }
         };
 
-        AddNode([headerLabel, jobColorCheckbox, textColorInput, outlineColorInput, backgroundCheckbox]);
+        AddNode([headerLabel, jobColorCheckbox, textColorInput, outlineColorInput, backgroundCheckbox, backgroundTextColorInput]);
     }
 
     public void LoadSettings(ComponentSettings componentSettings)
@@ -107,6 +123,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         textColorInput.IsVisible = isText || isBg;
         outlineColorInput.IsVisible = isText;
         backgroundCheckbox.IsVisible = isText;
+        backgroundTextColorInput.IsVisible = isText;
 
         textColorInput.Label = isBg ? "Plate Color: " : "Static Color: ";
 
@@ -114,6 +131,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         textColorInput.CurrentColor = settings.TextColor;
         outlineColorInput.CurrentColor = settings.TextOutlineColor;
         backgroundCheckbox.IsChecked = settings.ShowBackground;
+        backgroundTextColorInput.CurrentColor = settings.TextBackgroundColor;
 
         RecalculateLayout();
         if (wasVisible != IsVisible) OnLayoutChanged?.Invoke();
@@ -127,5 +145,6 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         textColorInput.Width = Width;
         outlineColorInput.Width = Width;
         backgroundCheckbox.Width = Width;
+        backgroundTextColorInput.Width = Width;
     }
 }

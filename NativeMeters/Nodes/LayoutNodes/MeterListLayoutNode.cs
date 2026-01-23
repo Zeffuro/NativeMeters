@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using KamiToolKit;
+using System.Numerics;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using KamiToolKit.Overlay;
@@ -41,7 +40,8 @@ public sealed class MeterListLayoutNode : OverlayNode
     {
         listNode = new ListNode<CombatantRowData, MeterRowListItemNode> {
             X = 0, Y = 0,
-            Width = 500, Height = 300,
+            Position = Vector2.Zero,
+            Size = new Vector2(500, 300),
             ItemSpacing = 0.0f,
             OptionsList = []
         };
@@ -79,11 +79,10 @@ public sealed class MeterListLayoutNode : OverlayNode
         Size = MeterSettings.Size;
 
         headerContainer?.Dispose();
-        footerContainer?.Dispose();
-
         headerContainer = new StaticComponentContainerNode(MeterSettings.HeaderComponents);
         headerContainer.AttachNode(this);
 
+        footerContainer?.Dispose();
         footerContainer = new StaticComponentContainerNode(MeterSettings.FooterComponents);
         footerContainer.AttachNode(this);
 
@@ -97,18 +96,27 @@ public sealed class MeterListLayoutNode : OverlayNode
     {
         if (MeterSettings == null) return;
 
-        bool hasActiveData = System.ActiveMeterService.HasCombatData() || System.Config.General.PreviewEnabled;
-        bool isEditing = !MeterSettings.IsLocked;
+        bool hasActiveData = System.ActiveMeterService.HasCombatData();
+        bool isEditing = !MeterSettings.IsLocked || System.Config.General.PreviewEnabled;
 
         IsVisible = MeterSettings.IsEnabled && (hasActiveData || isEditing);
 
         EnableMoving = !MeterSettings.IsLocked;
         EnableResizing = !MeterSettings.IsLocked;
 
-        if (listNode.Size != Size)
-        {
-            listNode.Size = Size;
-        }
+        float currentHeaderHeight = MeterSettings.HeaderEnabled ? MeterSettings.HeaderHeight : 0;
+        float currentFooterHeight = MeterSettings.FooterEnabled ? MeterSettings.FooterHeight : 0;
+
+        headerContainer?.IsVisible = MeterSettings.HeaderEnabled;
+        headerContainer?.Position = Vector2.Zero;
+        headerContainer?.Size = new Vector2(Width, currentHeaderHeight);
+
+        footerContainer?.IsVisible = MeterSettings.FooterEnabled;
+        footerContainer?.Position = new Vector2(0, Height - currentFooterHeight);
+        footerContainer?.Size = new Vector2(Width, currentFooterHeight);
+
+        listNode.Position = new Vector2(0, currentHeaderHeight);
+        listNode.Size = new Vector2(Width, Math.Max(0, Height - currentHeaderHeight - currentFooterHeight));
 
         headerContainer?.Update();
         footerContainer?.Update();

@@ -4,7 +4,7 @@ using KamiToolKit;
 using KamiToolKit.Nodes;
 using NativeMeters.Nodes.Configuration.Connection;
 using NativeMeters.Nodes.Configuration.General;
-using NativeMeters.Nodes.Configuration.Meter; // New
+using NativeMeters.Nodes.Configuration.Meter;
 
 namespace NativeMeters.Addons;
 
