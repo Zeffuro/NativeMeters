@@ -118,7 +118,9 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
                 break;
 
             case IconImageNode iconNode:
-                iconNode.IconId = Combatant.GetIconId(settings.JobIconType);
+                var iconId = Combatant.GetIconId(settings.JobIconType);
+                iconNode.IsVisible = iconId != 0;
+                if (iconId != 0) iconNode.IconId = iconId;
                 break;
 
             case ProgressNode progressNode:

@@ -33,7 +33,8 @@ public sealed class ComponentSettingsNode : CategoryNode
             typographyPanel.LoadSettings(settings);
             visualsPanel.LoadSettings(settings);
 
-            RefreshLayout();
+            ContentNode.RecalculateLayout();
+            RecalculateLayout();
         }
     }
 

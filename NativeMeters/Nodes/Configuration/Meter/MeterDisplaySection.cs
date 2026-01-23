@@ -91,6 +91,6 @@ public sealed class MeterDisplaySection : MeterConfigSection
             OnValueUpdate = val => Settings.FooterHeight = val
         };
 
-        AddNode([statDropdown, maxRowsInput, backgroundCheckbox, headerToggle, headerHeightInput, footerToggle, footerHeightInput, backgroundCheckbox]);
+        AddNode([statDropdown, maxRowsInput, backgroundCheckbox, headerToggle, headerHeightInput, footerToggle, footerHeightInput]);
     }
 }

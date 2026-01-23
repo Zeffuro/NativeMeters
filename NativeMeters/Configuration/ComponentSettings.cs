@@ -8,7 +8,7 @@ using NativeMeters.Models;
 
 namespace NativeMeters.Configuration;
 
-public enum MeterComponentType { JobIcon, Text, ProgressBar, Background }
+public enum MeterComponentType { Text, JobIcon, ProgressBar, Background }
 
 public class ComponentSettings
 {

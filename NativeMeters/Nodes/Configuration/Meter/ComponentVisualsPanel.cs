@@ -18,6 +18,8 @@ public sealed class ComponentVisualsPanel : VerticalListNode
     private readonly CheckboxNode backgroundCheckbox;
     private readonly ColorInputRow backgroundTextColorInput;
 
+    private bool isLoading = false;
+
     public Action? OnSettingsChanged { get; set; }
     public Action? OnLayoutChanged { get; set; }
 
@@ -39,7 +41,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             Size = new Vector2(Width, 22),
             OnClick = val =>
             {
-                if (settings == null) return;
+                if (settings == null || isLoading) return;
                 settings.UseJobColor = val;
                 OnSettingsChanged?.Invoke();
             }
@@ -53,7 +55,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             CurrentColor = settings?.TextColor ?? new ComponentSettings().TextColor,
             OnColorConfirmed = color =>
             {
-                if (settings == null) return;
+                if (settings == null || isLoading) return;
                 settings.TextColor = color;
                 OnSettingsChanged?.Invoke();
             }
@@ -67,7 +69,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             CurrentColor = settings?.TextOutlineColor ?? new ComponentSettings().TextOutlineColor,
             OnColorConfirmed = color =>
             {
-                if (settings == null) return;
+                if (settings == null || isLoading) return;
                 settings.TextOutlineColor = color;
                 OnSettingsChanged?.Invoke();
             }
@@ -81,7 +83,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             CurrentColor = settings?.TextBackgroundColor ?? new ComponentSettings().TextBackgroundColor,
             OnColorConfirmed = color =>
             {
-                if (settings == null) return;
+                if (settings == null || isLoading) return;
                 settings.TextBackgroundColor = color;
                 OnSettingsChanged?.Invoke();
             }
@@ -93,7 +95,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             Size = new Vector2(Width, 22),
             OnClick = val =>
             {
-                if (settings == null) return;
+                if (settings == null || isLoading) return;
                 settings.ShowBackground = val;
                 OnSettingsChanged?.Invoke();
             }
@@ -104,6 +106,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
     public void LoadSettings(ComponentSettings componentSettings)
     {
+        isLoading = true;
         settings = componentSettings;
 
         var isText = settings.Type == MeterComponentType.Text;
@@ -133,6 +136,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         backgroundCheckbox.IsChecked = settings.ShowBackground;
         backgroundTextColorInput.CurrentColor = settings.TextBackgroundColor;
 
+        isLoading = false;
         RecalculateLayout();
         if (wasVisible != IsVisible) OnLayoutChanged?.Invoke();
     }

@@ -82,6 +82,7 @@ public class BackgroundTextNode : SimpleComponentNode
         {
             Size = newSize;
         }
+        if (float.IsNaN(newSize.X) || float.IsNaN(newSize.Y)) return;
 
         Size = new Vector2(textWidth + Padding.X * 2, textHeight + Padding.Y * 2);
         TextNode.Position = Padding;

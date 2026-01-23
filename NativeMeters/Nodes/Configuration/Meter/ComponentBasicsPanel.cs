@@ -18,10 +18,8 @@ public sealed class ComponentBasicsPanel : VerticalListNode
     private readonly LabeledDropdownNode tagDropdown;
     private readonly LabeledDropdownNode barStatDropdown;
     private readonly LabeledDropdownNode jobIconTypeDropdown;
-    private readonly HorizontalListNode posRow;
     private readonly LabeledNumericInputNode posXInput;
     private readonly LabeledNumericInputNode posYInput;
-    private readonly HorizontalListNode sizeRow;
     private readonly LabeledNumericInputNode widthInput;
     private readonly LabeledNumericInputNode heightInput;
     private readonly LabeledNumericInputNode zIndexInput;
@@ -29,6 +27,8 @@ public sealed class ComponentBasicsPanel : VerticalListNode
     public Action? OnSettingsChanged { get; set; }
     public Action<string>? OnNameChanged { get; set; }
     public Action? OnLayoutChanged { get; set; }
+
+    private bool isLoading;
 
     public ComponentBasicsPanel()
     {
@@ -117,7 +117,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
-        posRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 8.0f };
+        var posRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 8.0f };
         posXInput = new LabeledNumericInputNode
         {
             LabelText = "Pos X:",
@@ -125,7 +125,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             Step = 10,
             OnValueUpdate = val =>
             {
-                if (settings == null) return;
+                if (settings == null || isLoading) return;
                 settings.Position = settings.Position with { X = val };
                 OnSettingsChanged?.Invoke();
             }
@@ -137,21 +137,21 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             Step = 10,
             OnValueUpdate = val =>
             {
-                if (settings == null) return;
+                if (settings == null || isLoading) return;
                 settings.Position = settings.Position with { Y = val };
                 OnSettingsChanged?.Invoke();
             }
         };
         posRow.AddNode([posXInput, posYInput]);
 
-        sizeRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 8.0f };
+        var sizeRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 8.0f };
         widthInput = new LabeledNumericInputNode
         {
             LabelText = "Width:",
             Size = new Vector2(166, 28),
             OnValueUpdate = val =>
             {
-                if (settings == null) return;
+                if (settings == null || isLoading) return;
                 settings.Size = settings.Size with { X = val };
                 OnSettingsChanged?.Invoke();
             }
@@ -162,7 +162,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             Size = new Vector2(166, 28),
             OnValueUpdate = val =>
             {
-                if (settings == null) return;
+                if (settings == null || isLoading) return;
                 settings.Size = settings.Size with { Y = val };
                 OnSettingsChanged?.Invoke();
             }
@@ -175,7 +175,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             Size = new Vector2(Width, 28),
             OnValueUpdate = val =>
             {
-                if (settings == null) return;
+                if (settings == null || isLoading) return;
                 settings.ZIndex = val;
                 OnSettingsChanged?.Invoke();
             }
@@ -186,6 +186,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
     public void LoadSettings(ComponentSettings componentSettings)
     {
+        isLoading = true;
         settings = componentSettings;
 
         nameInput.Text = settings.Name;
@@ -208,6 +209,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         if (isBar) barStatDropdown.SelectedOption = settings.DataSource;
         if (isIcon) jobIconTypeDropdown.SelectedOption = settings.JobIconType.ToString();
 
+        isLoading = false;
         RecalculateLayout();
         OnLayoutChanged?.Invoke();
     }

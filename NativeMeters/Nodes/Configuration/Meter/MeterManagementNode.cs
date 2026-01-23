@@ -74,8 +74,8 @@ public class MeterManagementNode : SimpleComponentNode
     {
         var newMeter = new MeterSettings {
             Name = $"New Meter {System.Config.Meters.Count + 1}",
-            RowComponents = MeterPresets.GetDefaultStylishComponents()
         };
+        MeterPresets.ApplyDefaultStylish(newMeter);
         System.Config.Meters.Add(newMeter);
         var wrapper = new MeterWrapper(newMeter);
         meterWrappers.Add(wrapper);

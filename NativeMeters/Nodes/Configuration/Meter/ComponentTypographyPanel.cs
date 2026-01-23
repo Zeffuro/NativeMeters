@@ -21,6 +21,8 @@ public sealed class ComponentTypographyPanel : VerticalListNode
     public Action? OnSettingsChanged { get; set; }
     public Action? OnLayoutChanged { get; set; }
 
+    private bool isLoading;
+
     public ComponentTypographyPanel()
     {
         FitContents = true;
@@ -40,7 +42,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             Options = Enum.GetNames<FontType>().ToList(),
             OnOptionSelected = val =>
             {
-                if (Enum.TryParse<FontType>(val, out var font) && settings != null)
+                if (Enum.TryParse<FontType>(val, out var font) && settings != null || !isLoading)
                 {
                     settings.FontType = font;
                     OnSettingsChanged?.Invoke();
@@ -55,7 +57,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             Options = Enum.GetNames<TextFlags>().ToList(),
             OnOptionSelected = val =>
             {
-                if (Enum.TryParse<TextFlags>(val, out var flags) && settings != null)
+                if (Enum.TryParse<TextFlags>(val, out var flags) && settings != null || !isLoading)
                 {
                     settings.TextFlags = flags;
                     OnSettingsChanged?.Invoke();
@@ -70,7 +72,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             Options = Enum.GetNames<AlignmentType>().ToList(),
             OnOptionSelected = val =>
             {
-                if (Enum.TryParse<AlignmentType>(val, out var align) && settings != null)
+                if (Enum.TryParse<AlignmentType>(val, out var align) && settings != null || !isLoading)
                 {
                     settings.AlignmentType = align;
                     OnSettingsChanged?.Invoke();
@@ -86,7 +88,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             Max = 72,
             OnValueUpdate = val =>
             {
-                if (settings == null) return;
+                if (settings == null || isLoading) return;
                 settings.FontSize = (uint)val;
                 OnSettingsChanged?.Invoke();
             }
@@ -97,6 +99,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
 
     public void LoadSettings(ComponentSettings componentSettings)
     {
+        isLoading = true;
         settings = componentSettings;
 
         var isText = settings.Type == MeterComponentType.Text;
@@ -115,6 +118,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
         alignmentDropdown.SelectedOption = settings.AlignmentType.ToString();
         fontSizeInput.Value = (int)settings.FontSize;
 
+        isLoading = false;
         RecalculateLayout();
         if (wasVisible != IsVisible) OnLayoutChanged?.Invoke();
     }

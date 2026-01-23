@@ -16,7 +16,7 @@ public class SystemConfiguration
         if (Meters.Count == 0)
         {
             var defaultMeter = new MeterSettings { Name = "DPS" };
-            defaultMeter.RowComponents = MeterPresets.GetDefaultStylishComponents();
+            MeterPresets.ApplyDefaultStylish(defaultMeter);
             Meters.Add(defaultMeter);
         }
     }

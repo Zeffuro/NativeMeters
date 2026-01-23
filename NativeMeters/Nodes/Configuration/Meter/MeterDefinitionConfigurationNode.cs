@@ -73,10 +73,13 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     public void SetMeter(MeterSettings meterSettings)
     {
         settings = meterSettings;
+
+        scrollingArea.IsVisible = false;
+
         foreach (var section in sections)
-        {
             section.Refresh();
-        }
+
+        scrollingArea.IsVisible = true;
         HandleLayoutChange();
     }
 

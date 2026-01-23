@@ -96,7 +96,6 @@ public sealed class MeterComponentsSection : MeterConfigSection
             var node = new ComponentSettingsNode {
                 Width = Width - 20.0f,
                 HeaderHeight = 24.0f,
-                RowComponent = component,
                 OnChanged = () => System.OverlayManager.Setup(),
                 OnDeleted = () => {
                     TargetList.Remove(component);
@@ -105,6 +104,8 @@ public sealed class MeterComponentsSection : MeterConfigSection
                 },
                 OnToggle = RefreshLayout
             };
+
+            node.RowComponent = component;
 
             listContainer.AddNode(node);
         }
