@@ -22,8 +22,6 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
     private ConnectionType CurrentConnectionType => System.Config.ConnectionSettings.SelectedConnectionType;
     private string ServerUri => System.Config.ConnectionSettings.WebSocketUrl;
 
-    public override event Action? CombatDataUpdated;
-
     public void Enable()
     {
         switch (CurrentConnectionType)
@@ -137,6 +135,8 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
 
     private void HandleMessage(string message)
     {
+        if (string.IsNullOrWhiteSpace(message)) return;
+
         try
         {
             var jsonNode = JsonNode.Parse(message);
@@ -151,7 +151,8 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
                 if (combatDataMessage == null) return;
 
                 CombatData = combatDataMessage;
-                CombatDataUpdated?.Invoke();
+
+                InvokeCombatDataUpdated();
             }
             else
             {
@@ -177,7 +178,8 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
         webSocketClient.OnConnected -= ShowConnectionNotification;
         webSocketClient.OnDisconnected -= HandleDisconnect;
         webSocketClient.OnMessageReceived -= EnqueueWebSocketMessage;
-        webSocketClient.Dispose();
+
+        _ = webSocketClient.StopAsync();
 
         iinactIpcClient.OnConnected -= ShowConnectionNotification;
         iinactIpcClient.Unsubscribe();
@@ -187,6 +189,8 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
     {
         _isManuallyDisabled = true;
         StopClients();
+        webSocketClient.Dispose();
+
         webSocketMessageQueue.Clear();
         ipcMessageQueue.Clear();
         CombatData = null;

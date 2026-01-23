@@ -17,6 +17,7 @@ public class IINACTIpcClient
     private const string ProviderEditEndpoint = "IINACT.IpcProvider." + SubscriptionName;
 
     public event Action? OnConnected;
+    private bool isSubscribed;
 
     public IINACTIpcClient()
     {
@@ -26,41 +27,56 @@ public class IINACTIpcClient
 
     public void Subscribe()
     {
+        if (isSubscribed) return;
+
         try
         {
-            var isRunning = Service.PluginInterface.GetIpcSubscriber<bool>(ListeningEndpoint).InvokeFunc();
-            if (!isRunning)
+            if (!IsIINACTRunning)
             {
-                Service.Logger.Error("IINACT doesn't seem to be running.");
+                Service.Logger.Debug("IINACT is not running, skipping subscribe.");
                 return;
             }
 
             var result = Service.PluginInterface.GetIpcSubscriber<string, bool>(SubscribeEndpoint).InvokeFunc(SubscriptionName);
-            Service.Logger.Information(result ? "Subscribed to IINACT" : "Failed to subscribe to IINACT");
             if (!result) return;
 
+            isSubscribed = true;
             OnConnected?.Invoke();
 
             var subscription = new SubscriptionRequest();
             var jsonNode = JsonNode.Parse(JsonSerializer.Serialize(subscription));
             var jObject = JObject.Parse(jsonNode?.ToJsonString() ?? string.Empty);
             Service.PluginInterface.GetIpcSubscriber<JObject, bool>(ProviderEditEndpoint).InvokeAction(jObject);
+
+            Service.Logger.Information("Successfully subscribed to IINACT.");
         }
         catch (Exception ex)
         {
-            if (System.Config.ConnectionSettings.LogConnectionErrors) Service.Logger.Debug($"IINACT Subscribe failed (IINACT likely not running): {ex.Message}");
+            isSubscribed = false;
+            if (System.Config.ConnectionSettings.LogConnectionErrors)
+                Service.Logger.Debug($"IINACT Subscribe failed: {ex.Message}");
         }
     }
 
     public void Unsubscribe()
     {
+        if (!isSubscribed) return;
+
         try
         {
-            Service.PluginInterface.GetIpcSubscriber<string, bool>(UnsubscribeEndpoint).InvokeFunc(SubscriptionName);
+            if (IsIINACTRunning)
+            {
+                Service.PluginInterface.GetIpcSubscriber<string, bool>(UnsubscribeEndpoint).InvokeFunc(SubscriptionName);
+            }
         }
         catch (Exception ex)
         {
-            if (System.Config.ConnectionSettings.LogConnectionErrors) Service.Logger.Debug($"IINACT Unsubscribe failed: {ex.Message}");
+            if (System.Config.ConnectionSettings.LogConnectionErrors)
+                Service.Logger.Debug($"IINACT Unsubscribe failed: {ex.Message}");
+        }
+        finally
+        {
+            isSubscribed = false;
         }
     }
 
@@ -70,7 +86,7 @@ public class IINACTIpcClient
         return true;
     }
 
-    public bool IsConnected
+    public bool IsIINACTRunning
     {
         get
         {
@@ -84,4 +100,6 @@ public class IINACTIpcClient
             }
         }
     }
+
+    public bool IsConnected => isSubscribed && IsIINACTRunning;
 }

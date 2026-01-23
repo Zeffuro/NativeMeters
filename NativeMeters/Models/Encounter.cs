@@ -8,13 +8,13 @@ public class Encounter
 {
     // String properties that do not need conversion
     [JsonPropertyName("n")]
-    public string N { get; set; }
+    public string N { get; set; } = null!;
     [JsonPropertyName("t")]
-    public string T { get; set; }
+    public string T { get; set; } = null!;
     [JsonPropertyName("title")]
-    public string Title { get; set; }
+    public string Title { get; set; } = null!;
     [JsonPropertyName("CurrentZoneName")]
-    public string CurrentZoneName { get; set; }
+    public string CurrentZoneName { get; set; } = null!;
 
     // Double properties for values with decimal places or large numbers with units
     [JsonPropertyName("duration")]
@@ -93,9 +93,9 @@ public class Encounter
     [JsonConverter(typeof(StringValueConverter<double>))]
     public double MAXHIT { get; set; }
     [JsonPropertyName("maxhit-*")]
-    public string MaxhitStar { get; set; }
+    public string MaxhitStar { get; set; } = null!;
     [JsonPropertyName("MAXHIT-*")]
-    public string MAXHITStar { get; set; }
+    public string MAXHITStar { get; set; } = null!;
     [JsonPropertyName("enchps")]
     [JsonConverter(typeof(StringValueConverter<double>))]
     public double Enchps { get; set; }

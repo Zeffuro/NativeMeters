@@ -12,8 +12,6 @@ public class TestMeterService : MeterServiceBase, IDisposable
     private readonly List<Combatant> fixedCombatants = FakeCombatantFactory.CreateFixedCombatants(20);
     private DateTime lastUpdate = DateTime.MinValue;
 
-    public override event Action? CombatDataUpdated;
-
     public void Tick()
     {
         if ((DateTime.Now - lastUpdate).TotalMilliseconds < 1000) return;
@@ -39,7 +37,7 @@ public class TestMeterService : MeterServiceBase, IDisposable
             Combatant = combatants
         };
 
-        CombatDataUpdated?.Invoke();
+        InvokeCombatDataUpdated();
     }
 
     public void Dispose()

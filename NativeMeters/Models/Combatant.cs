@@ -9,11 +9,11 @@ public class Combatant : IEquatable<Combatant>
 {
     // String properties that do not need conversion
     [JsonPropertyName("n")]
-    public string N { get; set; }
+    public string N { get; set; } = null!;
     [JsonPropertyName("t")]
-    public string T { get; set; }
+    public string T { get; set; } = null!;
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     // Double properties for values with decimal places or large numbers with units
     [JsonPropertyName("duration")]
@@ -98,9 +98,9 @@ public class Combatant : IEquatable<Combatant>
     [JsonConverter(typeof(StringValueConverter<double>))]
     public double MAXHIT { get; set; }
     [JsonPropertyName("maxhit-*")]
-    public string MaxhitStar { get; set; }
+    public string MaxhitStar { get; set; } = null!;
     [JsonPropertyName("MAXHIT-*")]
-    public string MAXHITStar { get; set; }
+    public string MAXHITStar { get; set; } = null!;
     [JsonPropertyName("healed%")]
     [JsonConverter(typeof(StringValueConverter<double>))]
     public double HealedPercent { get; set; }
@@ -266,11 +266,11 @@ public class Combatant : IEquatable<Combatant>
 
 
     [JsonPropertyName("crittypes")]
-    public string CritTypes { get; set; }
+    public string CritTypes { get; set; } = null!;
     [JsonPropertyName("threatstr")]
-    public string ThreatStr { get; set; }
+    public string ThreatStr { get; set; } = null!;
     [JsonPropertyName("threatdelta")]
-    public string ThreatDelta { get; set; }
+    public string ThreatDelta { get; set; } = null!;
     [JsonPropertyName("Job")]
     [JsonConverter(typeof(StringValueConverter<ClassJob>))]
     public ClassJob Job { get; set; }

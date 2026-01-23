@@ -13,7 +13,6 @@ public sealed class ComponentVisualsPanel : VerticalListNode
     private readonly LabelTextNode headerLabel;
     private readonly CheckboxNode jobColorCheckbox;
     private readonly ColorInputRow textColorInput;
-    private readonly CheckboxNode outlineCheckbox;
     private readonly ColorInputRow outlineColorInput;
     private readonly CheckboxNode backgroundCheckbox;
 
@@ -58,21 +57,6 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             }
         };
 
-        outlineCheckbox = new CheckboxNode
-        {
-            String = "Show Outline",
-            Size = new Vector2(Width, 22),
-            OnClick = val =>
-            {
-                if (settings == null) return;
-                settings.ShowOutline = val;
-                outlineColorInput.IsVisible = val;
-                RecalculateLayout();
-                OnLayoutChanged?.Invoke();
-                OnSettingsChanged?.Invoke();
-            }
-        };
-
         outlineColorInput = new ColorInputRow
         {
             Label = "Outline Color",
@@ -99,7 +83,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             }
         };
 
-        AddNode([headerLabel, jobColorCheckbox, textColorInput, outlineCheckbox, outlineColorInput, backgroundCheckbox]);
+        AddNode([headerLabel, jobColorCheckbox, textColorInput, outlineColorInput, backgroundCheckbox]);
     }
 
     public void LoadSettings(ComponentSettings componentSettings)
@@ -108,10 +92,10 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         var isText = settings.Type == MeterComponentType.Text;
         var isBar = settings.Type == MeterComponentType.ProgressBar;
-        var isBG = settings.Type == MeterComponentType.Background;
+        var isBg = settings.Type == MeterComponentType.Background;
         var wasVisible = IsVisible;
 
-        IsVisible = isText || isBar || isBG;
+        IsVisible = isText || isBar || isBg;
 
         if (!IsVisible)
         {
@@ -120,16 +104,14 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         }
 
         jobColorCheckbox.IsVisible = isText || isBar;
-        textColorInput.IsVisible = isText || isBG;
-        outlineCheckbox.IsVisible = isText;
-        outlineColorInput.IsVisible = isText && settings.ShowOutline;
+        textColorInput.IsVisible = isText || isBg;
+        outlineColorInput.IsVisible = isText;
         backgroundCheckbox.IsVisible = isText;
 
-        textColorInput.Label = isBG ? "Plate Color: " : "Static Color: ";
+        textColorInput.Label = isBg ? "Plate Color: " : "Static Color: ";
 
         jobColorCheckbox.IsChecked = settings.UseJobColor;
         textColorInput.CurrentColor = settings.TextColor;
-        outlineCheckbox.IsChecked = settings.ShowOutline;
         outlineColorInput.CurrentColor = settings.TextOutlineColor;
         backgroundCheckbox.IsChecked = settings.ShowBackground;
 
@@ -143,7 +125,6 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         headerLabel.Width = Width;
         jobColorCheckbox.Width = Width;
         textColorInput.Width = Width;
-        outlineCheckbox.Width = Width;
         outlineColorInput.Width = Width;
         backgroundCheckbox.Width = Width;
     }

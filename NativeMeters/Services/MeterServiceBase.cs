@@ -11,6 +11,11 @@ public abstract class MeterServiceBase : IMeterService
 
     public virtual event Action? CombatDataUpdated;
 
+    protected virtual void InvokeCombatDataUpdated()
+    {
+        CombatDataUpdated?.Invoke();
+    }
+
     public virtual IEnumerable<Combatant> GetCombatants()
         => CombatData?.Combatant?.Values ?? Enumerable.Empty<Combatant>();
 

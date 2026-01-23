@@ -122,6 +122,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         {
             LabelText = "Pos X:",
             Size = new Vector2(166, 28),
+            Step = 10,
             OnValueUpdate = val =>
             {
                 if (settings == null) return;
@@ -133,6 +134,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         {
             LabelText = "Pos Y:",
             Size = new Vector2(166, 28),
+            Step = 10,
             OnValueUpdate = val =>
             {
                 if (settings == null) return;

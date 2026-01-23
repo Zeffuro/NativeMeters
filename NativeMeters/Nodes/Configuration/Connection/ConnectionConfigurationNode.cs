@@ -1,17 +1,21 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Models;
-using NativeMeters.Nodes.Input; // Assuming TextInputNode or similar lives here
+using NativeMeters.Nodes.Input;
+using NativeMeters.Services; // Assuming TextInputNode or similar lives here
 
 namespace NativeMeters.Nodes.Configuration.Connection;
 
 internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 {
     private readonly LabeledNumericInputNode reconnectIntervalSlider;
+    private readonly LabeledTextButtonNode statusNode;
 
     public ConnectionConfigurationNode()
     {
@@ -26,6 +30,16 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         });
 
         AddTab(1);
+
+        statusNode = new LabeledTextButtonNode
+        {
+            Size = new Vector2(400, 28),
+            OnClick = () => System.MeterService.Reconnect(),
+            LabelText= "Status: Disconnected",
+            ButtonText = "Reconnect",
+        };
+
+        AddNode(statusNode);
 
         var typeDropDown = new LabeledDropdownNode
         {
@@ -78,8 +92,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             OnClick = isChecked =>
             {
                 config.AutoReconnect = isChecked;
-                if (reconnectIntervalSlider != null)
-                    reconnectIntervalSlider.IsEnabled = isChecked;
+                reconnectIntervalSlider?.IsEnabled = isChecked;
             }
         };
         AddNode(autoReconnectCheckbox);
@@ -113,5 +126,23 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         AddNode(logErrorsCheckbox);
 
         SubtractTab(1);
+
+        Service.Framework.Update += OnFrameworkUpdate;
+    }
+
+    private void OnFrameworkUpdate(IFramework framework)
+    {
+        bool isConnected = System.MeterService.IsConnected;
+
+        statusNode.LabelText = isConnected ? "Status: Connected" : "Status: Disconnected";
+        statusNode.LabelTextColor = isConnected
+            ? ColorHelper.GetColor(46) // Green
+            : ColorHelper.GetColor(14); // Red
+    }
+
+    protected override void Dispose(bool disposing, bool isNativeDestructor)
+    {
+        Service.Framework.Update -= OnFrameworkUpdate;
+        base.Dispose(disposing, isNativeDestructor);
     }
 }

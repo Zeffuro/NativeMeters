@@ -62,6 +62,9 @@ public class Plugin : IDalamudPlugin
         System.OverlayController.Dispose();
         System.TestMeterService.Dispose();
         System.MeterService.Dispose();
+        System.OverlayManager.Dispose();
+        System.CommandHandler.Dispose();
+        System.AddonConfigurationWindow.Dispose();
 
         Util.SaveConfig(System.Config);
         KamiToolKitLibrary.Dispose();
