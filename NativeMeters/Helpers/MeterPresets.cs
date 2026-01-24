@@ -16,7 +16,7 @@ public static class MeterPresets
         settings.FooterHeight = 24.0f;
         settings.HeaderEnabled = true;
         settings.FooterEnabled = true;
-        settings.Size = new Vector2(300, 350);
+        settings.Size = new Vector2(250, 350);
         settings.ShowWindowBackground = true;
 
         settings.HeaderComponents = GetDefaultHeaderComponents();
@@ -84,9 +84,9 @@ public static class MeterPresets
             Name = "Progress Bar",
             Type = MeterComponentType.ProgressBar,
             Position = new Vector2(32, 10),
-            Size = new Vector2(250, 26),
+            Size = new Vector2(200, 20),
             ZIndex = 0,
-            UseJobColor = true
+            ColorMode = ColorMode.Job,
         },
         new()
         {
@@ -106,7 +106,7 @@ public static class MeterPresets
             ZIndex = 2,
             FontSize = 14,
             TextFlags = TextFlags.Edge,
-            UseJobColor = true,
+            ColorMode = ColorMode.Job,
             TextColor = ColorHelper.GetColor(50)
         },
         new()
@@ -120,7 +120,7 @@ public static class MeterPresets
             FontSize = 14,
             AlignmentType = AlignmentType.Right,
             TextFlags = TextFlags.Edge,
-            UseJobColor = false,
+            ColorMode = ColorMode.Static,
             TextColor = new Vector4(1, 1, 1, 0.9f)
         }
     ];

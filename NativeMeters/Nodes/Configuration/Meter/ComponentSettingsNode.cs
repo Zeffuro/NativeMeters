@@ -81,6 +81,8 @@ public sealed class ComponentSettingsNode : CategoryNode
 
     private void NotifyChanged()
     {
+        if (MeterDefinitionConfigurationNode.IsRefreshing) return;
+
         Util.SaveConfig(System.Config);
         OnChanged?.Invoke();
     }

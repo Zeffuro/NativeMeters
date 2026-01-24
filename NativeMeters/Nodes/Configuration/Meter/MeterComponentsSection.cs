@@ -16,6 +16,8 @@ public sealed class MeterComponentsSection : MeterConfigSection
     private readonly Action onLayoutChanged;
     private readonly ComponentTarget target;
 
+    private List<string> lastComponentIds = new();
+
     public MeterComponentsSection(Func<MeterSettings> getSettings, Action onLayoutChanged, ComponentTarget target) : base(getSettings)
     {
         this.onLayoutChanged = onLayoutChanged;
@@ -70,6 +72,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
         };
 
         TargetList.Add(component);
+        lastComponentIds.Clear();
         Refresh();
         System.OverlayManager.Setup();
     }
@@ -84,6 +87,20 @@ public sealed class MeterComponentsSection : MeterConfigSection
 
     public override void Refresh()
     {
+        var currentIds = TargetList.Select(c => c.Id).ToList();
+        bool componentsChanged = !currentIds.SequenceEqual(lastComponentIds);
+
+        if (!componentsChanged && IsCollapsed)
+        {
+            return;
+        }
+
+        if (!componentsChanged && !IsCollapsed)
+        {
+            return;
+        }
+
+        lastComponentIds = currentIds;
         listContainer.Clear();
 
         // Since VerticalList will error out to 65532 if the list empty we add a dummy so the FitContents calculation works
@@ -91,6 +108,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
         {
             listContainer.AddNode(new ResNode { Height = 0, IsVisible = true });
         }
+
 
         foreach (var component in TargetList) {
             var node = new ComponentSettingsNode {

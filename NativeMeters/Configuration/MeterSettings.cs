@@ -28,7 +28,6 @@ public class MeterSettings
     public int MaxCombatants { get; set; } = 8;
     public bool ShowLimitBreak { get; set; } = true;
     public string StatToTrack { get; set; } = "ENCDPS";
-    public JobIconType JobIconType { get; set; } = JobIconType.Default;
     public ProgressBarType ProgressBarType { get; set; } = ProgressBarType.Cast;
     public bool ShowWindowBackground { get; set; } = true;
     public Vector4 WindowColor { get; set; } = new(0, 0, 0, 0.5f);

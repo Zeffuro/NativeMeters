@@ -160,7 +160,7 @@ public sealed class MeterListLayoutNode : OverlayNode
 
         var combatants = System.ActiveMeterService.GetCombatants().ToList();
 
-        if (combatants.Count == 0 && !System.Config.General.PreviewEnabled)
+        if (IsVisible && !System.Config.General.PreviewEnabled && !System.ActiveMeterService.HasCombatData())
         {
             combatants = FakeCombatantFactory.CreateFixedCombatants(MeterSettings.MaxCombatants);
         }

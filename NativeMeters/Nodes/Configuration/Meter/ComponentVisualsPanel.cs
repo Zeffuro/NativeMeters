@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
@@ -12,7 +13,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
     private ComponentSettings? settings;
 
     private readonly LabelTextNode headerLabel;
-    private readonly CheckboxNode jobColorCheckbox;
+    private readonly LabeledEnumDropdownNode<ColorMode> colorModeDropdown;
     private readonly ColorInputRow textColorInput;
     private readonly ColorInputRow outlineColorInput;
     private readonly CheckboxNode backgroundCheckbox;
@@ -43,14 +44,15 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             TextColor = new Vector4(0.7f, 0.7f, 1f, 1f)
         };
 
-        jobColorCheckbox = new CheckboxNode
+        colorModeDropdown = new LabeledEnumDropdownNode<ColorMode>
         {
-            String = "Use Job Color",
-            Size = new Vector2(Width, 22),
-            OnClick = val =>
+            LabelText = "Coloring Mode:",
+            Size = new Vector2(Width, 28),
+            Options = Enum.GetValues<ColorMode>().ToList(),
+            OnOptionSelected = val =>
             {
                 if (settings == null || isLoading) return;
-                settings.UseJobColor = val;
+                settings.ColorMode = val;
                 OnSettingsChanged?.Invoke();
             }
         };
@@ -122,7 +124,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             }
         };
 
-        AddNode([headerLabel, jobColorCheckbox, textColorInput, outlineColorInput, barColorInput, barBgColorInput, backgroundCheckbox, backgroundTextColorInput]);
+        AddNode([headerLabel, colorModeDropdown, textColorInput, outlineColorInput, barColorInput, barBgColorInput, backgroundCheckbox, backgroundTextColorInput]);
     }
 
     public void LoadSettings(ComponentSettings componentSettings)
@@ -143,7 +145,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             return;
         }
 
-        jobColorCheckbox.IsVisible = isText || isBar;
+        colorModeDropdown.IsVisible = isText || isBar;
         textColorInput.IsVisible = isText || isBg;
         outlineColorInput.IsVisible = isText;
         backgroundCheckbox.IsVisible = isText;
@@ -154,7 +156,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         backgroundTextColorInput.Label = isBar ? "Bar BG Color: " : "Background Color: ";
         textColorInput.Label = isBg ? "Plate Color: " : "Static Color: ";
 
-        jobColorCheckbox.IsChecked = settings.UseJobColor;
+        colorModeDropdown.SelectedOption = settings.ColorMode;
         textColorInput.CurrentColor = settings.TextColor;
         outlineColorInput.CurrentColor = settings.TextOutlineColor;
         backgroundCheckbox.IsChecked = settings.ShowBackground;
@@ -181,7 +183,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
     {
         base.OnSizeChanged();
         headerLabel.Width = Width;
-        jobColorCheckbox.Width = Width;
+        colorModeDropdown.Width = Width;
         textColorInput.Width = Width;
         outlineColorInput.Width = Width;
         backgroundCheckbox.Width = Width;

@@ -16,6 +16,7 @@ public class AddonConfigurationWindow : NativeAddon
     private GeneralScrollingAreaNode generalScrollingAreaNode = null!;
     private ConnectionScrollingAreaNode connectionScrollingAreaNode = null!;
     private MeterManagementNode meterManagementNode = null!;
+    private ColorConfigurationNode colorConfigurationNode = null!;
 
     private readonly List<NodeBase> tabContent = new();
 
@@ -58,13 +59,23 @@ public class AddonConfigurationWindow : NativeAddon
         };
         meterManagementNode.AttachNode(this);
 
+        colorConfigurationNode = new ColorConfigurationNode
+        {
+            Position = ContentStartPosition with { Y = tabContentY },
+            Size = ContentSize with { Y = tabContentHeight },
+            IsVisible = false,
+        };
+        colorConfigurationNode.AttachNode(this);
+
         tabContent.Add(generalScrollingAreaNode);
         tabContent.Add(connectionScrollingAreaNode);
         tabContent.Add(meterManagementNode);
+        tabContent.Add(colorConfigurationNode);
 
         tabBarNode.AddTab("General", () => SwitchTab(0));
         tabBarNode.AddTab("Connection", () => SwitchTab(1));
         tabBarNode.AddTab("Meters", () => SwitchTab(2));
+        tabBarNode.AddTab("Colors", () => SwitchTab(3));
 
         base.OnSetup(addon);
     }

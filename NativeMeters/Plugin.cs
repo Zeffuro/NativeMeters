@@ -12,6 +12,7 @@ using NativeMeters.Addons;
 using NativeMeters.Clients;
 using NativeMeters.Commands;
 using NativeMeters.Helpers;
+using NativeMeters.Nodes.Color;
 using NativeMeters.Services;
 
 namespace NativeMeters;
@@ -58,6 +59,8 @@ public class Plugin : IDalamudPlugin
     {
         Service.Framework.Update -= OnFrameworkUpdate;
         Service.ClientState.Login -= OnLogin;
+
+        ColorInputRow.DisposeSharedColorPicker();
 
         System.OverlayController.Dispose();
         System.TestMeterService.Dispose();

@@ -4,6 +4,7 @@ using NativeMeters.Clients;
 using NativeMeters.Models;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Dalamud.Game.Text;
 using Dalamud.Interface.ImGuiNotification;
 using NativeMeters.Configuration;
 using NativeMeters.Extensions;
@@ -13,9 +14,10 @@ namespace NativeMeters.Services;
 public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinactIpcClient)
     : MeterServiceBase, IDisposable
 {
-    private DateTime _lastReconnectAttempt = DateTime.MinValue;
-    private bool _isManuallyDisabled;
-    private bool _reconnectPending;
+    private DateTime lastReconnectAttempt = DateTime.MinValue;
+    private bool isManuallyDisabled;
+    private bool reconnectPending;
+    private bool wasInCombat;
 
     private readonly ConcurrentQueue<string> webSocketMessageQueue = new();
     private readonly ConcurrentQueue<string> ipcMessageQueue = new();
@@ -42,6 +44,47 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
         }
     }
 
+    public void ClearMeter()
+    {
+        CombatData = null;
+        InvokeCombatDataUpdated();
+
+        if (!System.Config.General.ClearActWithMeter) return;
+
+        // I hate that we have to do this but ACT has no handlers for doing this through websocket.
+        XivChatEntry clearMessage = new XivChatEntry
+        {
+            Message = "clear", Type = XivChatType.Echo
+        };
+        Service.ChatGui.Print(clearMessage);
+    }
+
+    public void EndEncounter()
+    {
+        // I hate that we have to do this but ACT has no handlers for doing this through websocket.
+        XivChatEntry endMessage = new XivChatEntry
+        {
+            Message = "end", Type = XivChatType.Echo
+        };
+        Service.ChatGui.Print(endMessage);
+
+    }
+
+    private void CheckForceEndCombat()
+    {
+        if (!System.Config.General.ForceEndEncounter) return;
+
+        bool isInCombat = Service.Condition[Dalamud.Game.ClientState.Conditions.ConditionFlag.InCombat];
+
+        if (wasInCombat && !isInCombat)
+        {
+            Service.Logger.Debug("Combat ended, forcing ACT encounter end.");
+            EndEncounter();
+        }
+
+        wasInCombat = isInCombat;
+    }
+
     private void ShowConnectionNotification()
     {
         string service = CurrentConnectionType == ConnectionType.WebSocket ? "ACT" : "IINACT";
@@ -54,14 +97,14 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
 
     private void CheckAutoReconnect()
     {
-        if (_isManuallyDisabled) return;
+        if (isManuallyDisabled) return;
         if (IsConnected) return;
         if (!System.Config.ConnectionSettings.AutoReconnect) return;
 
         var interval = System.Config.ConnectionSettings.AutoReconnectInterval;
-        if ((DateTime.Now - _lastReconnectAttempt).TotalSeconds >= interval)
+        if ((DateTime.Now - lastReconnectAttempt).TotalSeconds >= interval)
         {
-            _lastReconnectAttempt = DateTime.Now;
+            lastReconnectAttempt = DateTime.Now;
             Service.Logger.DebugOnly("Attempting auto-reconnect...");
             ActualReconnect();
         }
@@ -71,7 +114,7 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
 
     public void RequestReconnect()
     {
-        _reconnectPending = true;
+        reconnectPending = true;
     }
 
     public void ActualReconnect()
@@ -94,14 +137,15 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
     {
         try
         {
-            if (_reconnectPending)
+            if (reconnectPending)
             {
-                _reconnectPending = false;
+                reconnectPending = false;
                 ActualReconnect();
                 return;
             }
 
             CheckAutoReconnect();
+            CheckForceEndCombat();
 
             switch (CurrentConnectionType)
             {
@@ -130,7 +174,7 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
 
     private void HandleDisconnect()
     {
-        _lastReconnectAttempt = DateTime.Now;
+        lastReconnectAttempt = DateTime.Now;
     }
 
     private void HandleMessage(string message)
@@ -187,7 +231,7 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
 
     public void Dispose()
     {
-        _isManuallyDisabled = true;
+        isManuallyDisabled = true;
         StopClients();
         webSocketClient.Dispose();
 

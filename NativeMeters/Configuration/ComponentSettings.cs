@@ -9,6 +9,7 @@ using NativeMeters.Models;
 namespace NativeMeters.Configuration;
 
 public enum MeterComponentType { Text, JobIcon, ProgressBar, Background }
+public enum ColorMode { Static, Job, Role }
 
 public class ComponentSettings
 {
@@ -33,6 +34,6 @@ public class ComponentSettings
     public Vector4 TextBackgroundColor { get; set; } = KnownColor.Transparent.Vector();
     public Vector4 BarColor { get; set; } = ColorHelper.GetColor(50);
     public Vector4 BarBackgroundColor { get; set; } = KnownColor.Black.Vector();
-    public bool UseJobColor { get; set; } = true;
+    public ColorMode ColorMode { get; set; } = ColorMode.Job;
     public bool ShowBackground { get; set; }
 }

@@ -10,7 +10,7 @@ namespace NativeMeters.Nodes.Color;
 
 public class ColorInputRow : HorizontalListNode
 {
-    private ColorPickerAddon? colorPickerAddon;
+    private static ColorPickerAddon? _sharedColorPickerAddon;
     private readonly LabelTextNode labelTextNode;
     private readonly ColorPreviewButtonNode colorPreview;
 
@@ -32,26 +32,26 @@ public class ColorInputRow : HorizontalListNode
         {
             var snapshot = CurrentColor;
 
-            if (colorPickerAddon is not null)
+            if (_sharedColorPickerAddon is not null)
             {
-                colorPickerAddon.InitialColor = snapshot;
-                colorPickerAddon.DefaultColor = DefaultColor;
-                colorPickerAddon.Toggle();
+                _sharedColorPickerAddon.InitialColor = snapshot;
+                _sharedColorPickerAddon.DefaultColor = DefaultColor;
+                _sharedColorPickerAddon.Toggle();
 
-                colorPickerAddon.OnColorConfirmed = color =>
+                _sharedColorPickerAddon.OnColorConfirmed = color =>
                 {
                     CurrentColor = color;
                     node.Color = color;
                     OnColorConfirmed?.Invoke(color);
                 };
 
-                colorPickerAddon.OnColorPreviewed = color =>
+                _sharedColorPickerAddon.OnColorPreviewed = color =>
                 {
                     node.Color = color;
                     OnColorPreviewed?.Invoke(color);
                 };
 
-                colorPickerAddon.OnColorCancelled = () =>
+                _sharedColorPickerAddon.OnColorCancelled = () =>
                 {
                     CurrentColor = snapshot;
                     node.Color = snapshot;
@@ -65,9 +65,9 @@ public class ColorInputRow : HorizontalListNode
     }
 
     private void InitializeColorPicker() {
-        if (colorPickerAddon is not null) return;
+        if (_sharedColorPickerAddon is not null) return;
 
-        colorPickerAddon = new ColorPickerAddon {
+        _sharedColorPickerAddon = new ColorPickerAddon {
             InternalName = "ColorPicker_NativeMeters",
             Title = "Pick a color",
         };
@@ -75,9 +75,12 @@ public class ColorInputRow : HorizontalListNode
 
     protected override void Dispose(bool disposing, bool isNativeDestructor) {
         base.Dispose();
+    }
 
-        colorPickerAddon?.Dispose();
-        colorPickerAddon = null;
+    public static void DisposeSharedColorPicker()
+    {
+        _sharedColorPickerAddon?.Dispose();
+        _sharedColorPickerAddon = null;
     }
 
     public required string Label

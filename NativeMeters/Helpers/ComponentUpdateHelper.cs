@@ -1,3 +1,4 @@
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit;
 using KamiToolKit.Nodes;
@@ -20,7 +21,7 @@ public static class ComponentUpdateHelper
                 textNode.FontSize = (int)settings.FontSize;
                 textNode.FontType = settings.FontType;
                 textNode.TextFlags = settings.TextFlags;
-                textNode.TextColor = (settings.UseJobColor && data is Combatant c) ? c.GetColor() : settings.TextColor;
+                textNode.TextColor = data is Combatant c ? GetColorForCombatant(c, settings) : settings.TextColor;
                 textNode.TextOutlineColor = settings.TextOutlineColor;
                 textNode.BackgroundColor = settings.TextBackgroundColor;
                 textNode.ShowBackground = settings.ShowBackground;
@@ -44,7 +45,7 @@ public static class ComponentUpdateHelper
                     var selector = CombatantStatHelpers.GetStatSelector(statName);
                     double maxStat = System.ActiveMeterService.GetMaxCombatantStat(selector);
                     progressNode.Progress = MeterUtil.CalculateProgressRatio(selector(comb), maxStat > 0 ? maxStat : 1.0);
-                    progressNode.BarColor = settings.UseJobColor ? comb.GetColor() : settings.BarColor;
+                    progressNode.BarColor = GetColorForCombatant(comb, settings);
                     progressNode.BackgroundColor = settings.BarBackgroundColor;
                 }
                 break;
@@ -68,5 +69,32 @@ public static class ComponentUpdateHelper
             _ => settings.Position.X
         };
         node.Position = settings.Position with { X = x };
+    }
+
+    public static Vector4 GetColorForCombatant(Combatant combatant, ComponentSettings settings)
+    {
+        if (settings.ColorMode == ColorMode.Static)
+            return settings.TextColor;
+
+        var config = System.Config.General;
+
+        if (combatant.Name.Equals("Limit Break", global::System.StringComparison.OrdinalIgnoreCase))
+            return config.OtherColor;
+
+        if (settings.ColorMode == ColorMode.Role)
+        {
+            return combatant.Job.Role switch
+            {
+                1 => config.TankColor,
+                4 => config.HealerColor,
+                2 or 3 => config.DpsColor, // Melee or Ranged
+                _ => config.OtherColor
+            };
+        }
+
+        if (config.JobColors.TryGetValue(combatant.Job.RowId, out var jobColor))
+            return jobColor;
+
+        return config.OtherColor;
     }
 }

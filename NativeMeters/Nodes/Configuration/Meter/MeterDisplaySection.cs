@@ -21,6 +21,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
     private LabeledNumericInputNode? footerHeightInput;
     private LabeledNumericInputNode? rowHeightInput;
     private LabeledNumericInputNode? rowSpacingInput;
+    private CheckboxNode? showLimitBreakToggle;
 
     public MeterDisplaySection(Func<MeterSettings> getSettings) : base(getSettings) { }
 
@@ -37,6 +38,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         footerHeightInput!.Value = (int)Settings.FooterHeight;
         headerToggle!.IsChecked = Settings.HeaderEnabled;
         footerToggle!.IsChecked = Settings.FooterEnabled;
+        showLimitBreakToggle!.IsChecked = Settings.ShowLimitBreak;
 
         RecalculateLayout();
     }
@@ -115,6 +117,13 @@ public sealed class MeterDisplaySection : MeterConfigSection
             OnValueUpdate = val => Settings.FooterHeight = val
         };
 
-        AddNode([statDropdown, maxRowsInput, rowHeightInput, rowSpacingInput, backgroundCheckbox, headerToggle, headerHeightInput, footerToggle, footerHeightInput]);
+        showLimitBreakToggle = new CheckboxNode
+        {
+            Size = new Vector2(Width, 20),
+            String = "Show Limit Break",
+            OnClick = val => Settings.ShowLimitBreak = val
+        };
+
+        AddNode([statDropdown, maxRowsInput, rowHeightInput, rowSpacingInput, backgroundCheckbox, headerToggle, headerHeightInput, footerToggle, footerHeightInput, showLimitBreakToggle]);
     }
 }

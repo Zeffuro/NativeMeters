@@ -12,6 +12,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     private MeterSettings settings = new();
 
     private string? currentMeterId;
+    public static bool IsRefreshing { get; private set; } = false;
 
     private readonly ScrollingAreaNode<VerticalListNode> scrollingArea;
     private readonly VerticalListNode mainLayout;
@@ -80,12 +81,14 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         settings = meterSettings;
 
         scrollingArea.IsVisible = false;
+        IsRefreshing  = true;
 
         foreach (var section in sections)
         {
             section.Refresh();
         }
 
+        IsRefreshing = false;
         scrollingArea.IsVisible = true;
         HandleLayoutChange();
     }
