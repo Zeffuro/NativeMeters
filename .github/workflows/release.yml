@@ -55,7 +55,7 @@ jobs:
         id: build_step
         run: |
           dotnet restore `
-            && dotnet build --no-restore --configuration Release --output "${{ env.BUILD_OUTPUT }} `
+            && dotnet build --no-restore --configuration Release --output "${{ env.BUILD_OUTPUT }}"`
             && dotnet test --no-build --configuration Release
 
       - name: Prepare zip file
