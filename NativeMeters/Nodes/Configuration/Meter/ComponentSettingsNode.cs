@@ -3,6 +3,7 @@ using System.Numerics;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
+using NativeMeters.Helpers;
 using NativeMeters.Nodes.LayoutNodes;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
@@ -78,7 +79,11 @@ public sealed class ComponentSettingsNode : CategoryNode
         AddNode([basicsPanel, typographyPanel, visualsPanel, deleteBtn]);
     }
 
-    private void NotifyChanged() => OnChanged?.Invoke();
+    private void NotifyChanged()
+    {
+        Util.SaveConfig(System.Config);
+        OnChanged?.Invoke();
+    }
 
     private void RefreshLayout()
     {

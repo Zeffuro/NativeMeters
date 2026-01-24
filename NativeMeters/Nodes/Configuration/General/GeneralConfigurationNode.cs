@@ -1,6 +1,7 @@
 using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
+using NativeMeters.Helpers;
 
 namespace NativeMeters.Nodes.Configuration.General;
 
@@ -24,7 +25,12 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             IsVisible = true,
             String = "Enabled",
             IsChecked = config.IsEnabled,
-            OnClick = isChecked => { config.IsEnabled = isChecked; System.OverlayManager.Setup(); },
+            OnClick = isChecked =>
+            {
+                config.IsEnabled = isChecked;
+                Util.SaveConfig(System.Config);
+                System.OverlayManager.Setup();
+            },
         });
 
         AddNode(1, new CheckboxNode
@@ -48,6 +54,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             OnClick = isChecked =>
             {
                 config.HideWithNativeUi = isChecked;
+                Util.SaveConfig(System.Config);
             }
         });
 
@@ -60,6 +67,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             OnClick = isChecked =>
             {
                 config.ReplaceYou = isChecked;
+                Util.SaveConfig(System.Config);
             }
         });
 

@@ -77,6 +77,7 @@ public class MeterManagementNode : SimpleComponentNode
         };
         MeterPresets.ApplyDefaultStylish(newMeter);
         System.Config.Meters.Add(newMeter);
+        Util.SaveConfig(System.Config);
         var wrapper = new MeterWrapper(newMeter);
         meterWrappers.Add(wrapper);
         selectionListNode?.RefreshList();
@@ -86,6 +87,7 @@ public class MeterManagementNode : SimpleComponentNode
     private void OnRemoveMeter(MeterWrapper wrapper)
     {
         System.Config.Meters.Remove(wrapper.MeterSettings);
+        Util.SaveConfig(System.Config);
         meterWrappers.Remove(wrapper);
         selectionListNode?.RefreshList();
         System.OverlayManager.Setup();

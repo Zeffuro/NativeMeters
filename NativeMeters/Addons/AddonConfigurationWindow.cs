@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit;
 using KamiToolKit.Nodes;
+using NativeMeters.Helpers;
 using NativeMeters.Nodes.Configuration.Connection;
 using NativeMeters.Nodes.Configuration.General;
 using NativeMeters.Nodes.Configuration.Meter;
@@ -77,6 +78,8 @@ public class AddonConfigurationWindow : NativeAddon
     protected override unsafe void OnFinalize(AtkUnitBase* addon)
     {
         System.Config.General.PreviewEnabled = false;
+
+        Util.SaveConfig(System.Config);
         base.OnFinalize(addon);
     }
 }

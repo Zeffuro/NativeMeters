@@ -6,6 +6,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
+using NativeMeters.Helpers;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Input;
 using NativeMeters.Services; // Assuming TextInputNode or similar lives here
@@ -52,6 +53,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             {
                 config.SelectedConnectionType = selected;
                 System.MeterService.Reconnect();
+                Util.SaveConfig(System.Config);
             }
         };
         AddNode(typeDropDown);
@@ -65,6 +67,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             {
                 config.WebSocketUrl = text.ExtractText();
                 System.MeterService.Reconnect();
+                Util.SaveConfig(System.Config);
             }
         };
         AddNode(urlInputNode);
@@ -90,6 +93,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             {
                 config.AutoReconnect = isChecked;
                 reconnectIntervalSlider?.IsEnabled = isChecked;
+                Util.SaveConfig(System.Config);
             }
         };
         AddNode(autoReconnectCheckbox);
@@ -105,6 +109,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             OnValueUpdate = value =>
             {
                 config.AutoReconnectInterval = value;
+                Util.SaveConfig(System.Config);
             }
         };
         AddNode(reconnectIntervalSlider);
@@ -118,6 +123,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             OnClick = isChecked =>
             {
                 config.LogConnectionErrors = isChecked;
+                Util.SaveConfig(System.Config);
             }
         };
         AddNode(logErrorsCheckbox);
