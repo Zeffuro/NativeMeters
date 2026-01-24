@@ -72,26 +72,42 @@ jobs:
         shell: pwsh
         run: |
           $pluginJson = Get-Content "${{ env.BUILD_OUTPUT }}\${{ env.PLUGIN_NAME }}.json" | ConvertFrom-Json
+
           $repoJsonPath = "MyDalamudPlugins/repo.json"
-          $repoJson = Get-Content $repoJsonPath | ConvertFrom-Json
-          
+          if (Test-Path $repoJsonPath) {
+              $repoJson = Get-Content $repoJsonPath -Raw | ConvertFrom-Json
+          } else {
+              $repoJson = @() # Create empty array if file doesn't exist
+          }
+        
           if ($repoJson -isnot [System.Collections.IList]) { $repoJson = @($repoJson) }
-          
+        
           $tagName = "${{ github.event.release.tag_name }}"
           $downloadUrl = "https://github.com/${{ github.repository }}/releases/download/$tagName/latest.zip"
-          
-          foreach ($plugin in $repoJson) {
-            if ($plugin.InternalName -eq $pluginJson.InternalName) {
-              $plugin.DalamudApiLevel = $pluginJson.DalamudApiLevel
-              $plugin.AssemblyVersion = $pluginJson.AssemblyVersion
-              $plugin.LastUpdated = [int][double]::Parse((Get-Date -UFormat %s))
-              $plugin.ImageUrls = $pluginJson.ImageUrls
-              $plugin.DownloadLinkInstall = $downloadUrl
-              $plugin.DownloadLinkUpdate = $downloadUrl
-              $plugin.DownloadLinkTesting = $downloadUrl
-            }
+        
+          $existingPlugin = $repoJson | Where-Object { $_.InternalName -eq $pluginJson.InternalName }
+        
+          if ($existingPlugin) {
+              $existingPlugin.DalamudApiLevel = $pluginJson.DalamudApiLevel
+              $existingPlugin.AssemblyVersion = $pluginJson.AssemblyVersion
+              $existingPlugin.LastUpdated = [int][double]::Parse((Get-Date -UFormat %s))
+              $existingPlugin.ImageUrls = $pluginJson.ImageUrls
+              $existingPlugin.DownloadLinkInstall = $downloadUrl
+              $existingPlugin.DownloadLinkUpdate = $downloadUrl
+              $existingPlugin.DownloadLinkTesting = $downloadUrl
+              # Copy other metadata as needed
+              $existingPlugin.RepoUrl = $pluginJson.RepoUrl
+              Write-Host "Updated existing entry for ${{ env.PLUGIN_NAME }}"
+          } else {
+              $pluginJson | Add-Member -MemberType NoteProperty -Name "DownloadLinkInstall" -Value $downloadUrl
+              $pluginJson | Add-Member -MemberType NoteProperty -Name "DownloadLinkUpdate" -Value $downloadUrl
+              $pluginJson | Add-Member -MemberType NoteProperty -Name "DownloadLinkTesting" -Value $downloadUrl
+              $pluginJson | Add-Member -MemberType NoteProperty -Name "LastUpdated" -Value ([int][double]::Parse((Get-Date -UFormat %s)))
+        
+              $repoJson += $pluginJson
+              Write-Host "Added new entry for ${{ env.PLUGIN_NAME }}"
           }
-          
+        
           $repoJson | ConvertTo-Json -Depth 100 | Set-Content $repoJsonPath
 
       - name: Commit and push to MyDalamudPlugins
