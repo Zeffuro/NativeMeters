@@ -12,7 +12,6 @@ jobs:
     name: Release Build against Staging Dalamud and deploy to MyDalamudPlugins
     runs-on: windows-2022
 
-    # Define the plugin name and Dalamud version variables for this job
     env:
       PLUGIN_NAME: NativeMeters
       DALAMUD_VERSION_NAME: "Staging"
@@ -20,47 +19,32 @@ jobs:
       BUILD_OUTPUT: ${{ github.workspace }}\build_out
 
     steps:
-      # Checkout the repository code
       - name: Checkout and Initialise
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      # Install the required .NET SDK
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.x.x'
 
-      # Cache the nuget packages
-      - name: Cache Dependencies
-        id: cache-dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/${{ env.PLUGIN_NAME }}.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      # Create the required directory structure and download/extract Dalamud.
       - name: Download and extract Dalamud (${{ env.DALAMUD_VERSION_NAME }})
         run: |
           mkdir -p "$env:AppData\XIVLauncher\addon\Hooks\dev"
           Invoke-WebRequest -Uri "${{ env.DALAMUD_VERSION_URL }}" -OutFile "dalamud.zip"
           Expand-Archive -Path "dalamud.zip" -DestinationPath "$env:AppData\XIVLauncher\addon\Hooks\dev" -Force
 
-      # Restore, build, and test.
       - name: Build Release (${{ env.DALAMUD_VERSION_NAME }})
-        id: build_step
         run: |
           dotnet restore `
-            && dotnet build --no-restore --configuration Release --output "${{ env.BUILD_OUTPUT }}"`
+            && dotnet build --no-restore --configuration Release --output "${{ env.BUILD_OUTPUT }}" `
             && dotnet test --no-build --configuration Release
 
       - name: Prepare zip file
+        shell: pwsh
         run: |
-          mkdir output
+          mkdir output -Force
           Copy-Item "${{ env.BUILD_OUTPUT }}\${{ env.PLUGIN_NAME }}.json" -Destination "output\${{ env.PLUGIN_NAME }}.json" -Force
           Compress-Archive -Path "${{ env.BUILD_OUTPUT }}\*" -DestinationPath "output\latest.zip"
 
@@ -72,44 +56,43 @@ jobs:
 
       - name: Clone plugin hosting repo
         run: git clone https://github.com/${{ github.repository_owner }}/MyDalamudPlugins.git
-        env:
-          GIT_TERMINAL_PROMPT: 0
 
-      - name: Copy zip to plugins folder
+      - name: Create plugins directory and copy files
+        shell: pwsh
         run: |
-          Copy-Item output/latest.zip -Destination MyDalamudPlugins/plugins/${{ env.PLUGIN_NAME }}/latest.zip -Force
-          Copy-Item output/${{ env.PLUGIN_NAME }}.json -Destination MyDalamudPlugins/plugins/${{ env.PLUGIN_NAME }}/${{ env.PLUGIN_NAME }}.json -Force
+          # Create the directory path if it doesn't exist
+          $destDir = "MyDalamudPlugins/plugins/${{ env.PLUGIN_NAME }}"
+          if (!(Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir }
+          
+          # Now copy the files
+          Copy-Item output/latest.zip -Destination "$destDir/latest.zip" -Force
+          Copy-Item "output/${{ env.PLUGIN_NAME }}.json" -Destination "$destDir/${{ env.PLUGIN_NAME }}.json" -Force
 
       - name: Update repo.json with version and timestamp
         shell: pwsh
         run: |
-            $pluginJson = Get-Content "${{ env.BUILD_OUTPUT }}\${{ env.PLUGIN_NAME }}.json" | ConvertFrom-Json
-            $repoJsonPath = "MyDalamudPlugins/repo.json"
-            $repoJsonRaw = Get-Content $repoJsonPath -Raw
-            $repoJson = $repoJsonRaw | ConvertFrom-Json
-            
-            if ($repoJson -isnot [System.Collections.IList]) {
-              $repoJson = @($repoJson)
+          $pluginJson = Get-Content "${{ env.BUILD_OUTPUT }}\${{ env.PLUGIN_NAME }}.json" | ConvertFrom-Json
+          $repoJsonPath = "MyDalamudPlugins/repo.json"
+          $repoJson = Get-Content $repoJsonPath | ConvertFrom-Json
+          
+          if ($repoJson -isnot [System.Collections.IList]) { $repoJson = @($repoJson) }
+          
+          $tagName = "${{ github.event.release.tag_name }}"
+          $downloadUrl = "https://github.com/${{ github.repository }}/releases/download/$tagName/latest.zip"
+          
+          foreach ($plugin in $repoJson) {
+            if ($plugin.InternalName -eq $pluginJson.InternalName) {
+              $plugin.DalamudApiLevel = $pluginJson.DalamudApiLevel
+              $plugin.AssemblyVersion = $pluginJson.AssemblyVersion
+              $plugin.LastUpdated = [int][double]::Parse((Get-Date -UFormat %s))
+              $plugin.ImageUrls = $pluginJson.ImageUrls
+              $plugin.DownloadLinkInstall = $downloadUrl
+              $plugin.DownloadLinkUpdate = $downloadUrl
+              $plugin.DownloadLinkTesting = $downloadUrl
             }
-            
-            $tagName = "${{ github.event.release.tag_name }}"
-            $downloadUrl = "https://github.com/${{ github.repository }}/releases/download/$tagName/latest.zip"
-            
-            foreach ($plugin in $repoJson) {
-              if ($plugin.InternalName -eq $pluginJson.InternalName) {
-                $plugin.DalamudApiLevel = $pluginJson.DalamudApiLevel
-                $plugin.AssemblyVersion = $pluginJson.AssemblyVersion
-                $plugin.LastUpdated = [int][double]::Parse((Get-Date -UFormat %s))
-                $plugin.ImageUrls = $pluginJson.ImageUrls
-            
-                # This is using the GitHub Release
-                $plugin.DownloadLinkInstall = $downloadUrl
-                $plugin.DownloadLinkUpdate = $downloadUrl
-                $plugin.DownloadLinkTesting = $downloadUrl
-              }
-            }
-            
-            $repoJson | ConvertTo-Json -Depth 100 | Set-Content $repoJsonPath
+          }
+          
+          $repoJson | ConvertTo-Json -Depth 100 | Set-Content $repoJsonPath
 
       - name: Commit and push to MyDalamudPlugins
         run: |
