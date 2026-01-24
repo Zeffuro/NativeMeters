@@ -17,6 +17,7 @@ jobs:
       PLUGIN_NAME: NativeMeters
       DALAMUD_VERSION_NAME: "Staging"
       DALAMUD_VERSION_URL: "https://goatcorp.github.io/dalamud-distrib/stg/latest.zip"
+      BUILD_OUTPUT: ${{ github.workspace }}\build_out
 
     steps:
       # Checkout the repository code
@@ -54,17 +55,14 @@ jobs:
         id: build_step
         run: |
           dotnet restore `
-            && dotnet build --no-restore --configuration Release `
+            && dotnet build --no-restore --configuration Release --output "${{ env.BUILD_OUTPUT }} `
             && dotnet test --no-build --configuration Release
 
       - name: Prepare zip file
         run: |
           mkdir output
-          $pluginDir = Get-ChildItem -Path "${{ env.PLUGIN_NAME }}/bin/Release" -Filter "${{ env.PLUGIN_NAME }}.json" -Recurse | Select-Object -ExpandProperty DirectoryName -First 1
-          Write-Host "Found build output in: $pluginDir"
-          Copy-Item "$pluginDir/${{ env.PLUGIN_NAME }}.json" -Destination "output/${{ env.PLUGIN_NAME }}.json" -Force
-          Compress-Archive -Path "$pluginDir/*" -DestinationPath "output/latest.zip"
-          echo "FINAL_JSON_PATH=$pluginDir/${{ env.PLUGIN_NAME }}.json" >> $env:GITHUB_ENV
+          Copy-Item "${{ env.BUILD_OUTPUT }}\${{ env.PLUGIN_NAME }}.json" -Destination "output\${{ env.PLUGIN_NAME }}.json" -Force
+          Compress-Archive -Path "${{ env.BUILD_OUTPUT }}\*" -DestinationPath "output\latest.zip"
 
       - name: Upload zip to GitHub release
         uses: softprops/action-gh-release@v1
@@ -85,8 +83,7 @@ jobs:
       - name: Update repo.json with version and timestamp
         shell: pwsh
         run: |
-            $pluginJsonPath = "${{ env.FINAL_JSON_PATH }}"
-            $pluginJson = Get-Content $pluginJsonPath | ConvertFrom-Json
+            $pluginJson = Get-Content "${{ env.BUILD_OUTPUT }}\${{ env.PLUGIN_NAME }}.json" | ConvertFrom-Json
             $repoJsonPath = "MyDalamudPlugins/repo.json"
             $repoJsonRaw = Get-Content $repoJsonPath -Raw
             $repoJson = $repoJsonRaw | ConvertFrom-Json
