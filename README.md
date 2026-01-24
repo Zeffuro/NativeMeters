@@ -15,5 +15,5 @@ Native DPS Meters for Final Fantasy XIV, this uses KTK
 1. Open the Dalamud settings by typing `/xlsettings` in-game.
 2. Go to the **Settings** tab.
 3. Add the following URL to your Custom Plugin Repositories:
-   `https://raw.githubusercontent.com/Zeffuro/MyDalamudPlugins/main/repo.json`
+   `https://raw.githubusercontent.com/Zeffuro/MyDalamudPlugins/master/repo.json`
 4. Search for **NativeMeters** in the Plugin Installer.
