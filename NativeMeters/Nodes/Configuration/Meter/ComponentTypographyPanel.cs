@@ -5,6 +5,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Nodes.Input;
+using Serilog.Parsing;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
@@ -13,9 +14,9 @@ public sealed class ComponentTypographyPanel : VerticalListNode
     private ComponentSettings? settings;
 
     private readonly LabelTextNode headerLabel;
-    private readonly LabeledDropdownNode fontTypeDropdown;
-    private readonly LabeledDropdownNode textFlagsDropdown;
-    private readonly LabeledDropdownNode alignmentDropdown;
+    private readonly LabeledEnumDropdownNode<FontType> fontTypeEnumDropdown;
+    private readonly LabeledEnumDropdownNode<TextFlags> textFlagsEnumDropdown;
+    private readonly LabeledEnumDropdownNode<AlignmentType> alignmentEnumDropdown;
     private readonly LabeledNumericInputNode fontSizeInput;
 
     public Action? OnSettingsChanged { get; set; }
@@ -35,48 +36,39 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             TextColor = new Vector4(0.7f, 0.7f, 1f, 1f)
         };
 
-        fontTypeDropdown = new LabeledDropdownNode
+        fontTypeEnumDropdown = new LabeledEnumDropdownNode<FontType>
         {
             LabelText = "Font:",
             Size = new Vector2(Width, 28),
-            Options = Enum.GetNames<FontType>().ToList(),
+            Options = Enum.GetValues<FontType>().ToList(),
             OnOptionSelected = val =>
             {
-                if (Enum.TryParse<FontType>(val, out var font) && settings != null || !isLoading)
-                {
-                    settings.FontType = font;
-                    OnSettingsChanged?.Invoke();
-                }
+                settings?.FontType = val;
+                OnSettingsChanged?.Invoke();
             }
         };
 
-        textFlagsDropdown = new LabeledDropdownNode
+        textFlagsEnumDropdown = new LabeledEnumDropdownNode<TextFlags>
         {
             LabelText = "Style:",
             Size = new Vector2(Width, 28),
-            Options = Enum.GetNames<TextFlags>().ToList(),
+            Options = Enum.GetValues<TextFlags>().ToList(),
             OnOptionSelected = val =>
             {
-                if (Enum.TryParse<TextFlags>(val, out var flags) && settings != null || !isLoading)
-                {
-                    settings.TextFlags = flags;
-                    OnSettingsChanged?.Invoke();
-                }
+                settings?.TextFlags = val;
+                OnSettingsChanged?.Invoke();
             }
         };
 
-        alignmentDropdown = new LabeledDropdownNode
+        alignmentEnumDropdown = new LabeledEnumDropdownNode<AlignmentType>
         {
             LabelText = "Alignment:",
             Size = new Vector2(Width, 28),
-            Options = Enum.GetNames<AlignmentType>().ToList(),
+            Options = Enum.GetValues<AlignmentType>().ToList(),
             OnOptionSelected = val =>
             {
-                if (Enum.TryParse<AlignmentType>(val, out var align) && settings != null || !isLoading)
-                {
-                    settings.AlignmentType = align;
-                    OnSettingsChanged?.Invoke();
-                }
+                settings?.AlignmentType = val;
+                OnSettingsChanged?.Invoke();
             }
         };
 
@@ -94,7 +86,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             }
         };
 
-        AddNode([headerLabel, fontTypeDropdown, alignmentDropdown, fontSizeInput, textFlagsDropdown]);
+        AddNode([headerLabel, fontTypeEnumDropdown, alignmentEnumDropdown, fontSizeInput, textFlagsEnumDropdown]);
     }
 
     public void LoadSettings(ComponentSettings componentSettings)
@@ -113,9 +105,9 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             return;
         }
 
-        fontTypeDropdown.SelectedOption = settings.FontType.ToString();
-        textFlagsDropdown.SelectedOption = settings.TextFlags.ToString();
-        alignmentDropdown.SelectedOption = settings.AlignmentType.ToString();
+        fontTypeEnumDropdown.SelectedOption = settings.FontType;
+        textFlagsEnumDropdown.SelectedOption = settings.TextFlags;
+        alignmentEnumDropdown.SelectedOption = settings.AlignmentType;
         fontSizeInput.Value = (int)settings.FontSize;
 
         isLoading = false;
@@ -127,9 +119,9 @@ public sealed class ComponentTypographyPanel : VerticalListNode
     {
         base.OnSizeChanged();
         headerLabel.Width = Width;
-        fontTypeDropdown.Width = Width;
-        textFlagsDropdown.Width = Width;
-        alignmentDropdown.Width = Width;
+        fontTypeEnumDropdown.Width = Width;
+        textFlagsEnumDropdown.Width = Width;
+        alignmentEnumDropdown.Width = Width;
         fontSizeInput.Width = Width;
     }
 }

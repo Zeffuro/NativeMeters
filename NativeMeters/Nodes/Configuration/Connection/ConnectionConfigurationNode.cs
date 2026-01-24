@@ -41,20 +41,17 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         AddNode(statusNode);
 
-        var typeDropDown = new LabeledDropdownNode
+        var typeDropDown = new LabeledEnumDropdownNode<ConnectionType>
         {
             Size = new Vector2(400, 28),
             LabelText = "Connection Type",
             LabelTextFlags = TextFlags.AutoAdjustNodeSize,
-            Options = Enum.GetNames(typeof(ConnectionType)).ToList(),
-            SelectedOption = config.SelectedConnectionType.ToString(),
+            Options = Enum.GetValues<ConnectionType>().ToList(),
+            SelectedOption = config.SelectedConnectionType,
             OnOptionSelected = selected =>
             {
-                if (Enum.TryParse<ConnectionType>(selected, out var parsed))
-                {
-                    config.SelectedConnectionType = parsed;
-                    System.MeterService.Reconnect();
-                }
+                config.SelectedConnectionType = selected;
+                System.MeterService.Reconnect();
             }
         };
         AddNode(typeDropDown);

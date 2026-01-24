@@ -15,9 +15,9 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
     private readonly LabeledTextInputNode nameInput;
     private readonly LabeledTextInputNode sourceInput;
-    private readonly LabeledDropdownNode tagDropdown;
+    private readonly LabeledDropdownNode tagEnumDropdown;
     private readonly LabeledDropdownNode barStatDropdown;
-    private readonly LabeledDropdownNode jobIconTypeDropdown;
+    private readonly LabeledEnumDropdownNode<JobIconType> jobIconTypeEnumDropdown;
     private readonly LabeledNumericInputNode posXInput;
     private readonly LabeledNumericInputNode posYInput;
     private readonly LabeledNumericInputNode widthInput;
@@ -70,7 +70,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
-        tagDropdown = new LabeledDropdownNode
+        tagEnumDropdown = new LabeledDropdownNode
         {
             LabelText = "Insert Tag: ",
             Size = new Vector2(Width, 28),
@@ -84,7 +84,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
                 {
                     sourceInput.Text += tag;
                     sourceInput.InnerInput.OnInputComplete?.Invoke(sourceInput.Text);
-                    tagDropdown?.SelectedOption = TagDefinitions.DefaultDropdownLabel;
+                    tagEnumDropdown?.SelectedOption = TagDefinitions.DefaultDropdownLabel;
                 }
             }
         };
@@ -102,18 +102,15 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
-        jobIconTypeDropdown = new LabeledDropdownNode
+        jobIconTypeEnumDropdown = new LabeledEnumDropdownNode<JobIconType>
         {
             LabelText = "Icon Style: ",
             Size = new Vector2(Width, 28),
-            Options = Enum.GetNames<JobIconType>().ToList(),
+            Options = Enum.GetValues<JobIconType>().ToList(),
             OnOptionSelected = val =>
             {
-                if (Enum.TryParse<JobIconType>(val, out var type) && settings != null)
-                {
-                    settings.JobIconType = type;
-                    OnSettingsChanged?.Invoke();
-                }
+                settings?.JobIconType = val;
+                OnSettingsChanged?.Invoke();
             }
         };
 
@@ -181,7 +178,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
-        AddNode([nameInput, sourceInput, tagDropdown, barStatDropdown, jobIconTypeDropdown, posRow, sizeRow, zIndexInput]);
+        AddNode([nameInput, sourceInput, tagEnumDropdown, barStatDropdown, jobIconTypeEnumDropdown, posRow, sizeRow, zIndexInput]);
     }
 
     public void LoadSettings(ComponentSettings componentSettings)
@@ -202,12 +199,12 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         var isIcon = settings.Type == MeterComponentType.JobIcon;
 
         sourceInput.IsVisible = isText;
-        tagDropdown.IsVisible = isText;
+        tagEnumDropdown.IsVisible = isText;
         barStatDropdown.IsVisible = isBar;
-        jobIconTypeDropdown.IsVisible = isIcon;
+        jobIconTypeEnumDropdown.IsVisible = isIcon;
 
         if (isBar) barStatDropdown.SelectedOption = settings.DataSource;
-        if (isIcon) jobIconTypeDropdown.SelectedOption = settings.JobIconType.ToString();
+        if (isIcon) jobIconTypeEnumDropdown.SelectedOption = settings.JobIconType;
 
         isLoading = false;
         RecalculateLayout();
@@ -219,9 +216,9 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         base.OnSizeChanged();
         nameInput.Width = Width;
         sourceInput.Width = Width;
-        tagDropdown.Width = Width;
+        tagEnumDropdown.Width = Width;
         barStatDropdown.Width = Width;
-        jobIconTypeDropdown.Width = Width;
+        jobIconTypeEnumDropdown.Width = Width;
         zIndexInput.Width = Width;
     }
 }
