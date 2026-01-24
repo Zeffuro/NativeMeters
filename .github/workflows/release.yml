@@ -95,13 +95,14 @@ jobs:
               $existingPlugin.DownloadLinkInstall = $downloadUrl
               $existingPlugin.DownloadLinkUpdate = $downloadUrl
               $existingPlugin.DownloadLinkTesting = $downloadUrl
-              # Copy other metadata as needed
+
               $existingPlugin.RepoUrl = $pluginJson.RepoUrl
               Write-Host "Updated existing entry for ${{ env.PLUGIN_NAME }}"
           } else {
               $pluginJson | Add-Member -MemberType NoteProperty -Name "DownloadLinkInstall" -Value $downloadUrl
               $pluginJson | Add-Member -MemberType NoteProperty -Name "DownloadLinkUpdate" -Value $downloadUrl
               $pluginJson | Add-Member -MemberType NoteProperty -Name "DownloadLinkTesting" -Value $downloadUrl
+              $pluginJson | Add-Member -MemberType NoteProperty -Name "DownloadCount" -Value 0
               $pluginJson | Add-Member -MemberType NoteProperty -Name "LastUpdated" -Value ([int][double]::Parse((Get-Date -UFormat %s)))
         
               $repoJson += $pluginJson
