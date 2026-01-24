@@ -27,6 +27,8 @@
         <Punchline>Meters that feel like part of the game. Who needs ImGui when you have AtkNodes?</Punchline>
         <Description>Native DPS Meters for Final Fantasy XIV; highly WIP, config might be reset.</Description>
         <RepoUrl>https://github.com/Zeffuro/NativeMeters</RepoUrl>
+        <IconUrl>https://raw.githubusercontent.com/Zeffuro/NativeMeters/master/Media/icon.png</IconUrl>
+        <ImageUrls>https://raw.githubusercontent.com/Zeffuro/NativeMeters/master/Media/screenshot1.png;https://raw.githubusercontent.com/Zeffuro/NativeMeters/master/Media/screenshot2.png</ImageUrls>
         <Tags>dps;meters;combat;parse;parsing;damage;native;hud;stats;ui;raiding</Tags>
         <AcceptsFeedback>true</AcceptsFeedback>
     </PropertyGroup>

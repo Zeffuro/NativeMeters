@@ -80,25 +80,34 @@ jobs:
       - name: Update repo.json with version and timestamp
         shell: pwsh
         run: |
-          $pluginJsonPath = "${{ env.PLUGIN_NAME }}/bin/Release/${{ env.PLUGIN_NAME }}.json"
-          $pluginJson = Get-Content $pluginJsonPath | ConvertFrom-Json
-          $repoJsonPath = "MyDalamudPlugins/repo.json"
-          $repoJsonRaw = Get-Content $repoJsonPath -Raw
-          $repoJson = $repoJsonRaw | ConvertFrom-Json
-          
-          if ($repoJson -isnot [System.Collections.IList]) {
-            $repoJson = @($repoJson)
-          }
-          
-          foreach ($plugin in $repoJson) {
-            if ($plugin.InternalName -eq $pluginJson.InternalName) {
-              $plugin.DalamudApiLevel = $pluginJson.DalamudApiLevel
-              $plugin.AssemblyVersion = $pluginJson.AssemblyVersion
-              $plugin.LastUpdated = [int][double]::Parse((Get-Date -UFormat %s))
+            $pluginJsonPath = "${{ env.PLUGIN_NAME }}/bin/Release/${{ env.PLUGIN_NAME }}.json"
+            $pluginJson = Get-Content $pluginJsonPath | ConvertFrom-Json
+            $repoJsonPath = "MyDalamudPlugins/repo.json"
+            $repoJsonRaw = Get-Content $repoJsonPath -Raw
+            $repoJson = $repoJsonRaw | ConvertFrom-Json
+            
+            if ($repoJson -isnot [System.Collections.IList]) {
+              $repoJson = @($repoJson)
             }
-          }
-          
-          $repoJson | ConvertTo-Json -Depth 100 | Set-Content $repoJsonPath
+            
+            $tagName = "${{ github.event.release.tag_name }}"
+            $downloadUrl = "https://github.com/${{ github.repository }}/releases/download/$tagName/latest.zip"
+            
+            foreach ($plugin in $repoJson) {
+              if ($plugin.InternalName -eq $pluginJson.InternalName) {
+                $plugin.DalamudApiLevel = $pluginJson.DalamudApiLevel
+                $plugin.AssemblyVersion = $pluginJson.AssemblyVersion
+                $plugin.LastUpdated = [int][double]::Parse((Get-Date -UFormat %s))
+                $plugin.ImageUrls = $pluginJson.ImageUrls
+            
+                # This is using the GitHub Release
+                $plugin.DownloadLinkInstall = $downloadUrl
+                $plugin.DownloadLinkUpdate = $downloadUrl
+                $plugin.DownloadLinkTesting = $downloadUrl
+              }
+            }
+            
+            $repoJson | ConvertTo-Json -Depth 100 | Set-Content $repoJsonPath
 
       - name: Commit and push to MyDalamudPlugins
         run: |
