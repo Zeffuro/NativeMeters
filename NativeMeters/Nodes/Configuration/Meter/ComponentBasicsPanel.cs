@@ -151,7 +151,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
                 if (settings == null || isLoading) return;
                 settings.Size = settings.Size with { X = val };
                 OnSettingsChanged?.Invoke();
-            }
+            },
         };
         heightInput = new LabeledNumericInputNode
         {
@@ -162,7 +162,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
                 if (settings == null || isLoading) return;
                 settings.Size = settings.Size with { Y = val };
                 OnSettingsChanged?.Invoke();
-            }
+            },
         };
         sizeRow.AddNode([widthInput, heightInput]);
 

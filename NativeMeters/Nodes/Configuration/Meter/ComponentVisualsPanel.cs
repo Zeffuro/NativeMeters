@@ -17,6 +17,8 @@ public sealed class ComponentVisualsPanel : VerticalListNode
     private readonly ColorInputRow outlineColorInput;
     private readonly CheckboxNode backgroundCheckbox;
     private readonly ColorInputRow backgroundTextColorInput;
+    private readonly ColorInputRow barColorInput;
+    private readonly ColorInputRow barBgColorInput;
 
     private bool isLoading = false;
 
@@ -27,6 +29,12 @@ public sealed class ComponentVisualsPanel : VerticalListNode
     {
         FitContents = true;
         ItemSpacing = 4.0f;
+
+        var textBgColorCallback = CreateColorCallback(color => settings?.TextBackgroundColor = color);
+        var textColorCallback = CreateColorCallback(color => settings?.TextColor = color);
+        var outlineColorCallback = CreateColorCallback(color => settings?.TextOutlineColor = color);
+        var barColorCallback = CreateColorCallback(color => settings?.BarColor = color);
+        var barBgColorCallback = CreateColorCallback(color => settings?.BarBackgroundColor = color);
 
         headerLabel = new LabelTextNode
         {
@@ -53,12 +61,9 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             Size = new Vector2(Width, 28),
             DefaultColor = new ComponentSettings().TextColor,
             CurrentColor = settings?.TextColor ?? new ComponentSettings().TextColor,
-            OnColorConfirmed = color =>
-            {
-                if (settings == null || isLoading) return;
-                settings.TextColor = color;
-                OnSettingsChanged?.Invoke();
-            }
+            OnColorConfirmed = textColorCallback,
+            OnColorPreviewed = textColorCallback,
+            OnColorCanceled = textColorCallback
         };
 
         outlineColorInput = new ColorInputRow
@@ -67,12 +72,9 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             Size = new Vector2(Width, 28),
             DefaultColor = new ComponentSettings().TextOutlineColor,
             CurrentColor = settings?.TextOutlineColor ?? new ComponentSettings().TextOutlineColor,
-            OnColorConfirmed = color =>
-            {
-                if (settings == null || isLoading) return;
-                settings.TextOutlineColor = color;
-                OnSettingsChanged?.Invoke();
-            }
+            OnColorConfirmed = outlineColorCallback,
+            OnColorPreviewed = outlineColorCallback,
+            OnColorCanceled = outlineColorCallback
         };
 
         backgroundTextColorInput = new ColorInputRow
@@ -81,12 +83,31 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             Size = new Vector2(Width, 28),
             DefaultColor = new ComponentSettings().TextBackgroundColor,
             CurrentColor = settings?.TextBackgroundColor ?? new ComponentSettings().TextBackgroundColor,
-            OnColorConfirmed = color =>
-            {
-                if (settings == null || isLoading) return;
-                settings.TextBackgroundColor = color;
-                OnSettingsChanged?.Invoke();
-            }
+            OnColorConfirmed = textBgColorCallback,
+            OnColorPreviewed = textBgColorCallback,
+            OnColorCanceled = textBgColorCallback
+        };
+
+        barColorInput = new ColorInputRow
+        {
+            Label = "Bar Color: ",
+            Size = new Vector2(Width, 28),
+            DefaultColor = new ComponentSettings().BarColor,
+            CurrentColor = settings?.BarColor ?? new ComponentSettings().BarColor,
+            OnColorConfirmed = barColorCallback,
+            OnColorPreviewed = barColorCallback,
+            OnColorCanceled = barColorCallback
+        };
+
+        barBgColorInput = new ColorInputRow
+        {
+            Label = "Bar Background Color: ",
+            Size = new Vector2(Width, 28),
+            DefaultColor = new ComponentSettings().BarBackgroundColor,
+            CurrentColor = settings?.BarColor ?? new ComponentSettings().BarBackgroundColor,
+            OnColorConfirmed = barBgColorCallback,
+            OnColorPreviewed = barBgColorCallback,
+            OnColorCanceled = barBgColorCallback
         };
 
         backgroundCheckbox = new CheckboxNode
@@ -101,7 +122,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             }
         };
 
-        AddNode([headerLabel, jobColorCheckbox, textColorInput, outlineColorInput, backgroundCheckbox, backgroundTextColorInput]);
+        AddNode([headerLabel, jobColorCheckbox, textColorInput, outlineColorInput, barColorInput, barBgColorInput, backgroundCheckbox, backgroundTextColorInput]);
     }
 
     public void LoadSettings(ComponentSettings componentSettings)
@@ -127,7 +148,10 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         outlineColorInput.IsVisible = isText;
         backgroundCheckbox.IsVisible = isText;
         backgroundTextColorInput.IsVisible = isText;
+        barColorInput.IsVisible = isBar;
+        barBgColorInput.IsVisible = isBar;
 
+        backgroundTextColorInput.Label = isBar ? "Bar BG Color: " : "Background Color: ";
         textColorInput.Label = isBg ? "Plate Color: " : "Static Color: ";
 
         jobColorCheckbox.IsChecked = settings.UseJobColor;
@@ -135,10 +159,22 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         outlineColorInput.CurrentColor = settings.TextOutlineColor;
         backgroundCheckbox.IsChecked = settings.ShowBackground;
         backgroundTextColorInput.CurrentColor = settings.TextBackgroundColor;
+        barColorInput.CurrentColor = settings.BarColor;
+        barBgColorInput.CurrentColor = settings.BarBackgroundColor;
 
         isLoading = false;
         RecalculateLayout();
         if (wasVisible != IsVisible) OnLayoutChanged?.Invoke();
+    }
+
+    private Action<Vector4> CreateColorCallback(Action<Vector4> setter)
+    {
+        return color =>
+        {
+            if (settings == null || isLoading) return;
+            setter(color);
+            OnSettingsChanged?.Invoke();
+        };
     }
 
     protected override void OnSizeChanged()
@@ -150,5 +186,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         outlineColorInput.Width = Width;
         backgroundCheckbox.Width = Width;
         backgroundTextColorInput.Width = Width;
+        barColorInput.Width = Width;
+        barBgColorInput.Width = Width;
     }
 }

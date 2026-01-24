@@ -34,10 +34,12 @@ public sealed class MeterListLayoutNode : OverlayNode
         }
     }
 
-    private readonly ListNode<CombatantRowData, MeterRowListItemNode> listNode;
+    private ListNode<CombatantRowData, MeterRowListItemNode> listNode;
 
     public MeterListLayoutNode()
     {
+        MeterRowListItemNode.HeightHint = MeterSettings?.RowHeight ?? 36.0f;
+
         listNode = new ListNode<CombatantRowData, MeterRowListItemNode> {
             X = 0, Y = 0,
             Position = Vector2.Zero,
@@ -89,6 +91,29 @@ public sealed class MeterListLayoutNode : OverlayNode
         OnMoveComplete = node => MeterSettings.Position = node.Position;
         OnResizeComplete = node => MeterSettings.Size = node.Size;
 
+        RecreateList();
+    }
+
+    public void RecreateList()
+    {
+        if (MeterSettings == null) return;
+        listNode?.Dispose();
+        MeterRowListItemNode.HeightHint = MeterSettings.RowHeight;
+        listNode = new ListNode<CombatantRowData, MeterRowListItemNode> {
+            ItemSpacing = MeterSettings.RowSpacing,
+            OptionsList = []
+        };
+
+        if (MeterSettings.IsClickthrough)
+        {
+            listNode.DisableCollisionNode = true;
+        }
+
+        listNode.ScrollBarNode.IsVisible = false;
+        listNode.ScrollBarNode.IsEnabled = false;
+
+        listNode.AttachNode(this);
+
         RebuildList();
     }
 
@@ -117,6 +142,7 @@ public sealed class MeterListLayoutNode : OverlayNode
 
         listNode.Position = new Vector2(0, currentHeaderHeight);
         listNode.Size = new Vector2(Width, Math.Max(0, Height - currentHeaderHeight - currentFooterHeight));
+        if(Math.Abs(listNode.ItemSpacing - MeterSettings.RowSpacing) > 0.1) listNode.ItemSpacing = MeterSettings.RowSpacing;
 
         headerContainer?.Update();
         footerContainer?.Update();

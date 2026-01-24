@@ -17,6 +17,9 @@ public class MeterSettings
     public Vector2 Position { get; set; } = new(500, 500);
     public Vector2 Size { get; set; } = new(250, 300);
 
+    public float RowHeight { get; set; } = 36.0f;
+    public float RowSpacing { get; set; } = 0.0f;
+
     public bool HeaderEnabled { get; set; } = true;
     public bool FooterEnabled { get; set; } = true;
     public float HeaderHeight { get; set; } = 28.0f;

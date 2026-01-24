@@ -87,27 +87,6 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
         var encounter = System.ActiveMeterService.GetEncounter();
         if (encounter == null) return;
 
-        node.IsVisible = true;
-        node.Size = settings.Size;
-
-        float x = settings.AlignmentType switch {
-            AlignmentType.Right => Width - settings.Size.X - settings.Position.X,
-            AlignmentType.Center => (Width / 2.0f) - (settings.Size.X / 2.0f) + settings.Position.X,
-            _ => settings.Position.X
-        };
-        node.Position = settings.Position with { X = x };
-
-        if (node is BackgroundTextNode textNode)
-        {
-            textNode.String = TagProcessor.Process(settings.DataSource, encounter);
-            textNode.FontSize = (int)settings.FontSize;
-            textNode.FontType = settings.FontType;
-            textNode.TextFlags = settings.TextFlags;
-            textNode.AlignmentType = settings.AlignmentType;
-            textNode.TextColor = settings.TextColor;
-            textNode.TextOutlineColor = settings.TextOutlineColor;
-            textNode.BackgroundColor = settings.TextBackgroundColor;
-            textNode.ShowBackground = settings.ShowBackground;
-        }
+        ComponentUpdateHelper.Update(node, settings, Width, encounter);
     }
 }

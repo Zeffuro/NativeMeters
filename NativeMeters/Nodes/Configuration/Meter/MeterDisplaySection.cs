@@ -19,6 +19,8 @@ public sealed class MeterDisplaySection : MeterConfigSection
     private LabeledNumericInputNode? headerHeightInput;
     private CheckboxNode? footerToggle;
     private LabeledNumericInputNode? footerHeightInput;
+    private LabeledNumericInputNode? rowHeightInput;
+    private LabeledNumericInputNode? rowSpacingInput;
 
     public MeterDisplaySection(Func<MeterSettings> getSettings) : base(getSettings) { }
 
@@ -28,6 +30,8 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
         statDropdown!.SelectedOption = Settings.StatToTrack;
         maxRowsInput!.Value = Settings.MaxCombatants;
+        rowHeightInput!.Value = (int)Settings.RowHeight;
+        rowSpacingInput!.Value = (int)Settings.RowSpacing;
         backgroundCheckbox!.IsChecked = Settings.ShowWindowBackground;
         headerHeightInput!.Value = (int)Settings.HeaderHeight;
         footerHeightInput!.Value = (int)Settings.FooterHeight;
@@ -54,6 +58,26 @@ public sealed class MeterDisplaySection : MeterConfigSection
             LabelText = "Max Rows: ",
             Min = 1, Max = 40,
             OnValueUpdate = val => Settings.MaxCombatants = val,
+        };
+
+        rowHeightInput = new LabeledNumericInputNode
+        {
+            Size = new Vector2(Width, 28),
+            LabelText = "Row Height:",
+            Min = 10, Max = 100,
+            OnValueUpdate = val =>
+            {
+                Settings.RowHeight = val;
+                System.OverlayManager.Setup();
+            },
+        };
+
+        rowSpacingInput = new LabeledNumericInputNode
+        {
+            Size = new Vector2(Width, 28),
+            LabelText = "Row Spacing:",
+            Min = 0, Max = 100,
+            OnValueUpdate = val => Settings.RowSpacing = val,
         };
 
         backgroundCheckbox = new CheckboxNode
@@ -91,6 +115,6 @@ public sealed class MeterDisplaySection : MeterConfigSection
             OnValueUpdate = val => Settings.FooterHeight = val
         };
 
-        AddNode([statDropdown, maxRowsInput, backgroundCheckbox, headerToggle, headerHeightInput, footerToggle, footerHeightInput]);
+        AddNode([statDropdown, maxRowsInput, rowHeightInput, rowSpacingInput, backgroundCheckbox, headerToggle, headerHeightInput, footerToggle, footerHeightInput]);
     }
 }

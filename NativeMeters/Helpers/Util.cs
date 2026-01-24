@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 using NativeMeters.Configuration;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -78,10 +80,25 @@ public static class Util
     public static SystemConfiguration? DeserializeConfig(string input)
         => DeserializeCompressed<SystemConfiguration>(input, ConfigJsonOptions);
 
+
+    private static CancellationTokenSource? _cancellationTokenSource;
+
     public static void SaveConfig(SystemConfiguration config)
     {
-        FileInfo file = JsonFileHelper.GetFileInfo(SystemConfiguration.FileName);
-        JsonFileHelper.SaveFile(config, file.FullName);
+        _cancellationTokenSource?.Cancel();
+        _cancellationTokenSource = new CancellationTokenSource();
+        var token = _cancellationTokenSource.Token;
+
+        Task.Run(async () => {
+            try {
+                await Task.Delay(100, token);
+                if (token.IsCancellationRequested) return;
+
+                FileInfo file = JsonFileHelper.GetFileInfo(SystemConfiguration.FileName);
+                JsonFileHelper.SaveFile(config, file.FullName);
+            }
+            catch (OperationCanceledException) { /* Ignored */ }
+        }, token);
     }
 
     private static SystemConfiguration LoadConfig()
