@@ -27,5 +27,9 @@ public static class CombatantExtensions
 
         public Vector4 GetColor(ColorMode mode, ComponentSettings? settings = null)
             => ColorResolver.GetColor(combatant, mode, settings);
+
+        public bool IsLimitBreak => combatant.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase);
+
+        public bool IsYou => combatant.Name.Equals("YOU", StringComparison.OrdinalIgnoreCase);
     }
 }

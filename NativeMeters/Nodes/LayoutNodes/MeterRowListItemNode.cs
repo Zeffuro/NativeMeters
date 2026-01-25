@@ -11,7 +11,7 @@ namespace NativeMeters.Nodes.LayoutNodes;
 
 public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
 {
-    private readonly Dictionary<string, NodeBase> componentMap = new();
+    private readonly DynamicNodeList dynamicNodeList;
 
     private MeterSettings? MeterSettings => ItemData?.Settings;
     private Combatant? Combatant => ItemData?.Combatant;
@@ -22,6 +22,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
 
     public MeterRowListItemNode()
     {
+        dynamicNodeList = new DynamicNodeList(this);
         DisableInteractions();
     }
 
@@ -31,44 +32,14 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
     {
         if (ItemData == null || MeterSettings == null || Combatant == null) return;
 
-        if (HasStructureChanged())
-        {
-            RebuildStructure();
-        }
+        dynamicNodeList.Update(MeterSettings.RowComponents, CreateComponent);
 
         foreach (var settings in MeterSettings.RowComponents)
         {
-            if (componentMap.TryGetValue(settings.Id, out var node))
+            if (dynamicNodeList.Components.TryGetValue(settings.Id, out var node))
             {
                 UpdateComponentData(node, settings);
             }
-        }
-    }
-
-    private bool HasStructureChanged()
-    {
-        if (MeterSettings == null) return false;
-        if (componentMap.Count != MeterSettings.RowComponents.Count) return true;
-
-        foreach (var component in MeterSettings.RowComponents)
-        {
-            if (!componentMap.ContainsKey(component.Id)) return true;
-        }
-        return false;
-    }
-
-    private void RebuildStructure()
-    {
-        foreach (var node in componentMap.Values) node.Dispose();
-        componentMap.Clear();
-
-        var sorted = MeterSettings!.RowComponents.OrderBy(c => c.ZIndex).ToList();
-
-        foreach (var settings in sorted)
-        {
-            var node = CreateComponent(settings);
-            node.AttachNode(this);
-            componentMap[settings.Id] = node;
         }
     }
 
@@ -104,5 +75,11 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
         if (Combatant == null || MeterSettings == null) return;
 
         ComponentRenderer.Update(node, settings, Width, Combatant);
+    }
+
+    protected override void Dispose(bool disposing, bool isNativeDestructor)
+    {
+        dynamicNodeList.Dispose();
+        base.Dispose(disposing, isNativeDestructor);
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using NativeMeters.Configuration;
+using NativeMeters.Extensions;
 using NativeMeters.Models;
 
 namespace NativeMeters.Rendering;
@@ -11,7 +12,7 @@ public static class ColorResolver
     {
         var config = System.Config.General;
 
-        if (combatant.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase))
+        if (combatant.IsLimitBreak)
             return config.OtherColor;
 
         return mode switch
@@ -25,7 +26,7 @@ public static class ColorResolver
 
     public static Vector4 GetDefaultColor(Combatant combatant)
     {
-        if (combatant.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase))
+        if (combatant.IsLimitBreak)
             return JobColorMaps.DefaultColors[0];
 
         if (combatant.Job.RowId != 0 && JobColorMaps.DefaultColors.TryGetValue(combatant.Job.RowId, out var color))

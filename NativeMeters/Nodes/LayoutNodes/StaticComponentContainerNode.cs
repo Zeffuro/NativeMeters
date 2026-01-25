@@ -10,60 +10,32 @@ namespace NativeMeters.Nodes.LayoutNodes;
 
 public sealed class StaticComponentContainerNode : SimpleComponentNode
 {
-    private readonly Dictionary<string, NodeBase> componentMap = new();
+    private readonly DynamicNodeList graphManager;
     private readonly List<ComponentSettings> settingsList;
 
     public StaticComponentContainerNode(List<ComponentSettings> settings)
     {
         settingsList = settings;
+        graphManager = new DynamicNodeList(this);
         DisableCollisionNode = true;
     }
 
     public void Update()
     {
-        if (HasStructureChanged())
-        {
-            RebuildStructure();
-        }
+        graphManager.Update(settingsList, CreateComponent);
 
-        foreach (var settings in settingsList)
-        {
-            if (componentMap.TryGetValue(settings.Id, out var node))
-            {
-                UpdateComponentData(node, settings);
-            }
-        }
-    }
-
-    private bool HasStructureChanged()
-    {
-        if (componentMap.Count != settingsList.Count) return true;
-
-        foreach (var component in settingsList)
-        {
-            if (!componentMap.ContainsKey(component.Id)) return true;
-        }
-        return false;
-    }
-
-    private void RebuildStructure()
-    {
-        foreach (var node in componentMap.Values) node.Dispose();
-        componentMap.Clear();
-
-        // Since VerticalList will error out to 65532 if the list empty we add a dummy so the FitContents calculation works
-        if (settingsList.Count == 0)
+        if (settingsList.Count == 0 && CreatedNodes.Count == 0)
         {
             var guard = new SimpleComponentNode { Height = 0 };
             guard.AttachNode(this);
         }
-        var sortedComponents = settingsList.OrderBy(component => component.ZIndex).ToList();
 
-        foreach (var settings in sortedComponents)
+        foreach (var settings in settingsList)
         {
-            var node = CreateComponent(settings);
-            node.AttachNode(this);
-            componentMap[settings.Id] = node;
+            if (graphManager.Components.TryGetValue(settings.Id, out var node))
+            {
+                UpdateComponentData(node, settings);
+            }
         }
     }
 
@@ -96,5 +68,11 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
         if (encounter == null) return;
 
         ComponentRenderer.Update(node, settings, Width, encounter);
+    }
+
+    protected override void Dispose(bool disposing, bool isNativeDestructor)
+    {
+        graphManager.Dispose();
+        base.Dispose(disposing, isNativeDestructor);
     }
 }
