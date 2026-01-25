@@ -25,7 +25,7 @@ public class StringValueConverter<T> : JsonConverter<T>
             "Int64" => TryParseWithSuffix(stringValue, out double longVal) ? (long)longVal : 0L,
             "Double" => TryParseWithSuffix(stringValue, out double doubleVal) ? doubleVal : 0.0,
             "Boolean" => bool.TryParse(stringValue, out bool boolResult) && boolResult,
-            "TimeSpan" => TimeSpan.TryParse(stringValue, out TimeSpan tsResult) ? tsResult : TimeSpan.Zero,
+            "TimeSpan" => ParseTimeSpan(stringValue),
             "ClassJob" => Service.DataManager.GetClassJobByAbbreviation(stringValue),
             _ => default(T)
         };
@@ -63,5 +63,29 @@ public class StringValueConverter<T> : JsonConverter<T>
         }
 
         return false;
+    }
+
+    private static TimeSpan ParseTimeSpan(string? s)
+    {
+        if (string.IsNullOrEmpty(s)) return TimeSpan.Zero;
+
+        if (s.Contains(':'))
+        {
+            var parts = s.Split(':');
+            if (parts.Length == 2) // MM:SS
+            {
+                if (int.TryParse(parts[0], out var m) && int.TryParse(parts[1], out var s1))
+                    return new TimeSpan(0, 0, m, s1);
+            }
+            if (int.TryParse(parts[0], out var h) && int.TryParse(parts[1], out var m1) && int.TryParse(parts[2], out var s2))
+                return new TimeSpan(0, h, m1, s2);
+        }
+
+        if (double.TryParse(s, CultureInfo.InvariantCulture, out var seconds))
+        {
+            return TimeSpan.FromSeconds(seconds);
+        }
+
+        return TimeSpan.Zero;
     }
 }

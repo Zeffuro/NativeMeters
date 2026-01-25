@@ -21,8 +21,8 @@ public class Encounter
     [JsonConverter(typeof(StringValueConverter<TimeSpan>))]
     public TimeSpan Duration { get; set; }
     [JsonPropertyName("DURATION")]
-    [JsonConverter(typeof(StringValueConverter<TimeSpan>))]
-    public TimeSpan DURATION { get; set; }
+    [JsonConverter(typeof(StringValueConverter<double>))]
+    public double DURATION { get; set; }
     [JsonPropertyName("damage-m")]
     [JsonConverter(typeof(StringValueConverter<double>))]
     public double DamageM { get; set; }

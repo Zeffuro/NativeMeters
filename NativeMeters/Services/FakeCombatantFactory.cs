@@ -24,7 +24,7 @@ public static class FakeCombatantFactory
             T = "Player",
             Name = name,
             Duration = RandDuration(60, 600),
-            DURATION = RandDuration(60, 600),
+            DURATION = RandDouble(60, 600),
             DamageM = RandDouble(0, 10),
             DamageB = RandDouble(0, 1),
             DamageStar = RandDouble(0, 10),

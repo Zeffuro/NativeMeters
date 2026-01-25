@@ -20,6 +20,12 @@ public static class TagProcessor
     {
         foreach (var prop in typeof(Combatant).GetProperties()) CombatantCache[prop.Name] = prop;
         foreach (var prop in typeof(Encounter).GetProperties()) EncounterCache[prop.Name] = prop;
+        var durationProp = typeof(Encounter).GetProperty(nameof(Encounter.Duration));
+        if (durationProp != null)
+        {
+            EncounterCache["Duration"] = durationProp;
+        }
+
     }
 
     public static string Process(string input, object data)
@@ -51,6 +57,7 @@ public static class TagProcessor
             "hps" => "Enchps",
             "damage" or "damagetotal" => "Damage",
             "zone" => "CurrentZoneName",
+            "duration" => "Duration",
             _ => key
         };
 

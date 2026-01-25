@@ -54,7 +54,7 @@ public static class FakeEncounterFactory
             CurrentZoneName = "Fake Zone",
 
             Duration = AvgTs(c => c.Duration),
-            DURATION = AvgTs(c => c.DURATION),
+            DURATION = Avg(c => c.DURATION),
 
             DamageM = Sum(c => c.DamageM),
             DamageStar = Sum(c => c.DamageStar),
