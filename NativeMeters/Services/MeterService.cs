@@ -6,6 +6,7 @@ using Dalamud.Game.Text;
 using Dalamud.Interface.ImGuiNotification;
 using NativeMeters.Clients;
 using NativeMeters.Configuration;
+using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Services.Connections;
 
@@ -102,11 +103,7 @@ public class MeterService : MeterServiceBase, IDisposable
     private void ShowConnectionNotification()
     {
         var service = System.Config.ConnectionSettings.SelectedConnectionType == ConnectionType.WebSocket ? "ACT" : "IINACT";
-        Service.NotificationManager.AddNotification(new Notification
-        {
-            Content = $"[NativeMeters] Connected to {service}.",
-            Type = NotificationType.Success
-        });
+        Service.NotificationManager.Success($"Connected to {service}.");
     }
 
     public override bool IsConnected => activeConnection?.IsConnected ?? false;

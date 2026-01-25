@@ -126,7 +126,7 @@ public sealed class ColorConfigurationNode : ScrollingListNode
     {
         base.OnSizeChanged();
 
-        float listWidth = global::System.Math.Max(0, Width - 16.0f);
+        float listWidth = Math.Max(0, Width - 16.0f);
 
         if (roleCategory != null) roleCategory.Width = listWidth;
         if (jobCategory != null) jobCategory.Width = listWidth;
