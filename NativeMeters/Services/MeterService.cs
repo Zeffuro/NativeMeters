@@ -1,180 +1,69 @@
 using System;
 using System.Collections.Concurrent;
-using NativeMeters.Clients;
-using NativeMeters.Models;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Dalamud.Game.Text;
 using Dalamud.Interface.ImGuiNotification;
-using NativeMeters.Configuration;
-using NativeMeters.Extensions;
+using NativeMeters.Clients;
+using NativeMeters.Models;
+using NativeMeters.Services.Connections;
 
 namespace NativeMeters.Services;
 
-public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinactIpcClient)
-    : MeterServiceBase, IDisposable
+public class MeterService : MeterServiceBase, IDisposable
 {
-    private DateTime lastReconnectAttempt = DateTime.MinValue;
-    private bool isManuallyDisabled;
-    private bool reconnectPending;
-    private bool wasInCombat;
+    private readonly WebSocketClient webSocketClient;
+    private readonly IINACTIpcClient iinactIpcClient;
+    private readonly ReconnectionManager reconnectionManager = new();
+    private readonly CombatStateTracker combatStateTracker = new();
+    private readonly ConcurrentQueue<string> messageQueue = new();
 
-    private readonly ConcurrentQueue<string> webSocketMessageQueue = new();
-    private readonly ConcurrentQueue<string> ipcMessageQueue = new();
-    private ConnectionType CurrentConnectionType => System.Config.ConnectionSettings.SelectedConnectionType;
-    private string ServerUri => System.Config.ConnectionSettings.WebSocketUrl;
+    private IConnectionHandler? activeConnection;
+    private bool isManuallyDisabled;
+
+    public MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinactIpcClient)
+    {
+        this.webSocketClient = webSocketClient;
+        this.iinactIpcClient = iinactIpcClient;
+    }
 
     public void Enable()
     {
-        switch (CurrentConnectionType)
-        {
-            case ConnectionType.WebSocket:
-                webSocketClient.OnConnected += ShowConnectionNotification;
-                webSocketClient.OnDisconnected += HandleDisconnect;
-                _ = webSocketClient.StartAsync(new Uri(ServerUri));
-                webSocketClient.OnMessageReceived += EnqueueWebSocketMessage;
-                break;
-            case ConnectionType.IINACTIPC:
-                iinactIpcClient.OnConnected += ShowConnectionNotification;
-                iinactIpcClient.Subscribe();
-                break;
-            default:
-                Service.Logger.Error($"Unknown connection type: {CurrentConnectionType}");
-                break;
-        }
+        activeConnection = CreateConnectionHandler();
+        activeConnection.OnConnected += ShowConnectionNotification;
+        activeConnection.OnDisconnected += reconnectionManager.MarkDisconnected;
+        activeConnection.OnMessageReceived += msg => messageQueue.Enqueue(msg);
+        activeConnection.Start();
     }
 
-    public void ClearMeter()
+    private IConnectionHandler CreateConnectionHandler()
     {
-        CombatData = null;
-        InvokeCombatDataUpdated();
-
-        if (!System.Config.General.ClearActWithMeter) return;
-
-        // I hate that we have to do this but ACT has no handlers for doing this through websocket.
-        XivChatEntry clearMessage = new XivChatEntry
+        return System.Config.ConnectionSettings.SelectedConnectionType switch
         {
-            Message = "clear", Type = XivChatType.Echo
+            ConnectionType.WebSocket => new WebSocketConnectionHandler(webSocketClient),
+            ConnectionType.IINACTIPC => new IINACTConnectionHandler(iinactIpcClient, EnqueueIpcMessage),
+            _ => throw new InvalidOperationException("Unknown connection type")
         };
-        Service.ChatGui.Print(clearMessage);
     }
 
-    public void EndEncounter()
-    {
-        // I hate that we have to do this but ACT has no handlers for doing this through websocket.
-        XivChatEntry endMessage = new XivChatEntry
-        {
-            Message = "end", Type = XivChatType.Echo
-        };
-        Service.ChatGui.Print(endMessage);
-
-    }
-
-    private void CheckForceEndCombat()
-    {
-        if (!System.Config.General.ForceEndEncounter) return;
-
-        bool isInCombat = Service.Condition[Dalamud.Game.ClientState.Conditions.ConditionFlag.InCombat];
-
-        if (wasInCombat && !isInCombat)
-        {
-            Service.Logger.Debug("Combat ended, forcing ACT encounter end.");
-            EndEncounter();
-        }
-
-        wasInCombat = isInCombat;
-    }
-
-    private void ShowConnectionNotification()
-    {
-        string service = CurrentConnectionType == ConnectionType.WebSocket ? "ACT" : "IINACT";
-        Service.NotificationManager.AddNotification(new Notification
-        {
-            Content = $"[NativeMeters] Successfully connected to {service}.\nNativeMeters can now display Meters.",
-            Type = NotificationType.Success,
-        });
-    }
-
-    private void CheckAutoReconnect()
-    {
-        if (isManuallyDisabled) return;
-        if (IsConnected) return;
-        if (!System.Config.ConnectionSettings.AutoReconnect) return;
-
-        var interval = System.Config.ConnectionSettings.AutoReconnectInterval;
-        if ((DateTime.Now - lastReconnectAttempt).TotalSeconds >= interval)
-        {
-            lastReconnectAttempt = DateTime.Now;
-            Service.Logger.DebugOnly("Attempting auto-reconnect...");
-            ActualReconnect();
-        }
-    }
-
-    public void Reconnect() => RequestReconnect();
-
-    public void RequestReconnect()
-    {
-        reconnectPending = true;
-    }
-
-    public void ActualReconnect()
-    {
-        StopClients();
-        Enable();
-    }
-
-    private void EnqueueWebSocketMessage(string message)
-    {
-        webSocketMessageQueue.Enqueue(message);
-    }
-
-    public void EnqueueIpcMessage(string message)
-    {
-        ipcMessageQueue.Enqueue(message);
-    }
+    public void EnqueueIpcMessage(string message) => messageQueue.Enqueue(message);
 
     public void ProcessPendingMessages()
     {
-        try
+        if (reconnectionManager.ConsumePendingReconnect())
         {
-            if (reconnectPending)
-            {
-                reconnectPending = false;
-                ActualReconnect();
-                return;
-            }
-
-            CheckAutoReconnect();
-            CheckForceEndCombat();
-
-            switch (CurrentConnectionType)
-            {
-                case ConnectionType.WebSocket:
-                    while (webSocketMessageQueue.TryDequeue(out var message))
-                    {
-                        HandleMessage(message);
-                    }
-                    break;
-                case ConnectionType.IINACTIPC:
-                    while (ipcMessageQueue.TryDequeue(out var ipcMessage))
-                    {
-                        HandleMessage(ipcMessage);
-                    }
-                    break;
-                default:
-                    Service.Logger.Error($"Unknown connection type: {CurrentConnectionType}");
-                    break;
-            }
+            Reconnect();
+            return;
         }
-        catch (Exception ex)
-        {
-            Service.Logger.Error($"Error in ProcessPendingMessages: {ex.Message}");
-        }
-    }
 
-    private void HandleDisconnect()
-    {
-        lastReconnectAttempt = DateTime.Now;
+        if (reconnectionManager.ShouldReconnect(IsConnected, isManuallyDisabled))
+            Reconnect();
+
+        if (combatStateTracker.CheckCombatEnded())
+            EndEncounter();
+
+        while (messageQueue.TryDequeue(out var message))
+            HandleMessage(message);
     }
 
     private void HandleMessage(string message)
@@ -184,59 +73,48 @@ public class MeterService(WebSocketClient webSocketClient, IINACTIpcClient iinac
         try
         {
             var jsonNode = JsonNode.Parse(message);
-            if (jsonNode == null) return;
-
-            var messageType = jsonNode["type"]?.ToString() ?? jsonNode["Type"]?.ToString();
+            var messageType = jsonNode?["type"]?.ToString() ?? jsonNode?["Type"]?.ToString();
 
             if (messageType is "CombatData" or "broadcast")
             {
-                Service.Logger.DebugOnly($"Received combat message: {message}");
-                var combatDataMessage = JsonSerializer.Deserialize<CombatDataMessage>(message);
-                if (combatDataMessage == null) return;
-
-                CombatData = combatDataMessage;
-
+                CombatData = JsonSerializer.Deserialize<CombatDataMessage>(message);
                 InvokeCombatDataUpdated();
             }
-            else
-            {
-                Service.Logger.DebugOnly($"Received non-combat message type: {messageType}");
-            }
-        }
-        catch (JsonException ex)
-        {
-            Service.Logger.Error($"JSON structure error: {ex.Message}");
         }
         catch (Exception ex)
         {
-            Service.Logger.Error($"CombatDataMessage deserialization error: {ex}");
+            Service.Logger.Error($"Message handling error: {ex.Message}");
         }
     }
 
-    public override bool IsConnected => CurrentConnectionType == ConnectionType.WebSocket
-        ? webSocketClient.IsConnected
-        : iinactIpcClient.IsConnected;
+    public void Reconnect() { activeConnection?.Stop(); Enable(); }
+    public void RequestReconnect() => reconnectionManager.RequestReconnect();
+    public void ClearMeter() { CombatData = null; InvokeCombatDataUpdated(); SendChatCommand("clear"); }
+    public void EndEncounter() => SendChatCommand("end");
 
-    private void StopClients()
+    private void SendChatCommand(string command)
     {
-        webSocketClient.OnConnected -= ShowConnectionNotification;
-        webSocketClient.OnDisconnected -= HandleDisconnect;
-        webSocketClient.OnMessageReceived -= EnqueueWebSocketMessage;
-
-        _ = webSocketClient.StopAsync();
-
-        iinactIpcClient.OnConnected -= ShowConnectionNotification;
-        iinactIpcClient.Unsubscribe();
+        if (command == "clear" && !System.Config.General.ClearActWithMeter) return;
+        Service.ChatGui.Print(new XivChatEntry { Message = command, Type = XivChatType.Echo });
     }
+
+    private void ShowConnectionNotification()
+    {
+        var service = System.Config.ConnectionSettings.SelectedConnectionType == ConnectionType.WebSocket ? "ACT" : "IINACT";
+        Service.NotificationManager.AddNotification(new Notification
+        {
+            Content = $"[NativeMeters] Connected to {service}.",
+            Type = NotificationType.Success
+        });
+    }
+
+    public override bool IsConnected => activeConnection?.IsConnected ?? false;
 
     public void Dispose()
     {
         isManuallyDisabled = true;
-        StopClients();
-        webSocketClient.Dispose();
-
-        webSocketMessageQueue.Clear();
-        ipcMessageQueue.Clear();
+        activeConnection?.Dispose();
+        messageQueue.Clear();
         CombatData = null;
     }
 }
