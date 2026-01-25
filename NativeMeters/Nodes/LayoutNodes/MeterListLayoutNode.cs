@@ -5,7 +5,7 @@ using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using KamiToolKit.Overlay;
 using NativeMeters.Configuration;
-using NativeMeters.Helpers;
+using NativeMeters.Data.Stats;
 using NativeMeters.Models;
 using NativeMeters.Services;
 
@@ -169,7 +169,7 @@ public sealed class MeterListLayoutNode : OverlayNode
             combatants.RemoveAll(combatant => combatant.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase));
         }
 
-        var selector = CombatantStatHelpers.GetStatSelector(MeterSettings.StatToTrack);
+        var selector = StatSelector.GetStatSelector(MeterSettings.StatToTrack);
         combatants.Sort((left, right) => selector(right).CompareTo(selector(left)));
 
         listNode.OptionsList = combatants

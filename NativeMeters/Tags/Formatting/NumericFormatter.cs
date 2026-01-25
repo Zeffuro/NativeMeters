@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 
-namespace NativeMeters.Helpers.Formatting;
+namespace NativeMeters.Tags.Formatting;
 
 public class NumericFormatter : IValueFormatter
 {

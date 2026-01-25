@@ -1,8 +1,7 @@
 using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
-using NativeMeters.Helpers;
-using NativeMeters.Nodes.Input;
+using NativeMeters.Configuration.Persistence;
 
 namespace NativeMeters.Nodes.Configuration.General;
 
@@ -29,7 +28,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             OnClick = isChecked =>
             {
                 config.IsEnabled = isChecked;
-                Util.SaveConfig(System.Config);
+                ConfigRepository.Save(System.Config);
                 System.OverlayManager.Setup();
             },
         });
@@ -55,7 +54,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             OnClick = isChecked =>
             {
                 config.HideWithNativeUi = isChecked;
-                Util.SaveConfig(System.Config);
+                ConfigRepository.Save(System.Config);
             }
         });
 
@@ -68,7 +67,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             OnClick = isChecked =>
             {
                 config.ReplaceYou = isChecked;
-                Util.SaveConfig(System.Config);
+                ConfigRepository.Save(System.Config);
             }
         });
 
@@ -82,7 +81,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             OnClick = val =>
             {
                 config.ClearActWithMeter = val;
-                Util.SaveConfig(System.Config);
+                ConfigRepository.Save(System.Config);
             }
         });
 
@@ -94,7 +93,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             OnClick = val =>
             {
                 config.ForceEndEncounter = val;
-                Util.SaveConfig(System.Config);
+                ConfigRepository.Save(System.Config);
             },
             TextTooltip = "I highly recommend enabling the \"End ACT encounter after wipe/out of combat\" option under Plugins -> OverlayPlugin -> Event Settings instead of using this."
         });

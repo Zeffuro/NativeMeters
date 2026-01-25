@@ -1,6 +1,8 @@
 using System;
 using System.Numerics;
+using NativeMeters.Configuration;
 using NativeMeters.Models;
+using NativeMeters.Rendering;
 
 namespace NativeMeters.Extensions;
 
@@ -12,33 +14,18 @@ public static class CombatantExtensions
     {
         public uint GetIconId(JobIconType iconType = JobIconType.Default)
         {
-            // Check for Limit Break specifically
             if (string.Equals(combatant.Name, "Limit Break", StringComparison.OrdinalIgnoreCase))
-            {
                 return LimitBreakIconId;
-            }
 
             if (combatant.Job.RowId == 0)
-            {
                 return 0;
-            }
 
             return JobIconMaps.GetIcon(combatant.Job.RowId, iconType);
         }
 
-        public Vector4 GetColor()
-        {
-            if (string.Equals(combatant.Name, "Limit Break", StringComparison.OrdinalIgnoreCase))
-            {
-                return JobColorMaps.DefaultColors[0];
-            }
+        public Vector4 GetColor() => ColorResolver.GetDefaultColor(combatant);
 
-            if (combatant.Job.RowId != 0 && JobColorMaps.DefaultColors.TryGetValue(combatant.Job.RowId, out var color))
-            {
-                return color;
-            }
-
-            return JobColorMaps.DefaultColors[0];
-        }
+        public Vector4 GetColor(ColorMode mode, ComponentSettings? settings = null)
+            => ColorResolver.GetColor(combatant, mode, settings);
     }
 }

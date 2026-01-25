@@ -1,11 +1,11 @@
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.ImGuiNotification;
-using NativeMeters.Configuration;
+using NativeMeters.Configuration.Persistence;
 using NativeMeters.Services;
 
-namespace NativeMeters.Helpers;
+namespace NativeMeters.Configuration.ImportExport;
 
-public abstract class ImportExportResetHelper {
+public abstract class ConfigPorter {
     public static void TryImportConfigFromClipboard()
     {
         var clipboard = ImGui.GetClipboardText();
@@ -13,11 +13,11 @@ public abstract class ImportExportResetHelper {
 
         if (!string.IsNullOrWhiteSpace(clipboard))
         {
-            var imported = Util.DeserializeConfig(clipboard);
+            var imported = ConfigSerializer.DeserializeConfig(clipboard);
             if (imported != null)
             {
                 System.Config = imported;
-                Util.SaveConfig(System.Config);
+                ConfigRepository.Save(System.Config);
                 Service.Logger.Info("Configuration imported from clipboard.");
             }
             else
@@ -40,7 +40,7 @@ public abstract class ImportExportResetHelper {
     public static void TryExportConfigToClipboard(
         SystemConfiguration config)
     {
-        var exportString = Util.SerializeConfig(config);
+        var exportString = ConfigSerializer.SerializeConfig(config);
         ImGui.SetClipboardText(exportString);
         Service.NotificationManager.AddNotification(
             new Notification { Content = "Configuration exported to clipboard.", Type = NotificationType.Success }
@@ -50,8 +50,8 @@ public abstract class ImportExportResetHelper {
 
     public static void TryResetConfig()
     {
-        System.Config = Util.ResetConfig();
-        Util.SaveConfig(System.Config);
+        System.Config = ConfigRepository.Reset();
+        ConfigRepository.Save(System.Config);
 
         Service.NotificationManager.AddNotification(
             new Notification { Content = "Configuration reset to default.", Type = NotificationType.Success }
@@ -61,7 +61,7 @@ public abstract class ImportExportResetHelper {
 
     public static void TryExportMeterToClipboard(MeterSettings meter)
     {
-        var exportString = Util.SerializeCompressed(meter);
+        var exportString = ConfigSerializer.SerializeCompressed(meter);
 
         ImGui.SetClipboardText(exportString);
         Service.NotificationManager.AddNotification(
@@ -84,7 +84,7 @@ public abstract class ImportExportResetHelper {
 
         try
         {
-            var imported = Util.DeserializeCompressed<MeterSettings>(clipboard);
+            var imported = ConfigSerializer.DeserializeCompressed<MeterSettings>(clipboard);
 
             if (imported == null)
             {

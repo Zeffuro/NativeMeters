@@ -1,6 +1,6 @@
 using Lumina.Excel.Sheets;
 
-namespace NativeMeters.Helpers.Formatting;
+namespace NativeMeters.Tags.Formatting;
 
 public class ClassJobFormatter : IValueFormatter
 {

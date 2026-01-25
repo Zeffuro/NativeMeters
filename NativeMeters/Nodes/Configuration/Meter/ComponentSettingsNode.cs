@@ -1,9 +1,8 @@
 using System;
 using System.Numerics;
-using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
-using NativeMeters.Helpers;
+using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.LayoutNodes;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
@@ -100,7 +99,7 @@ public sealed class ComponentSettingsNode : CategoryNode
     {
         if (MeterDefinitionConfigurationNode.IsRefreshing) return;
 
-        Util.SaveConfig(System.Config);
+        ConfigRepository.Save(System.Config);
         OnChanged?.Invoke();
     }
 

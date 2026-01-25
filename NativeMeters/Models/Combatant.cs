@@ -1,7 +1,7 @@
 using System;
 using System.Text.Json.Serialization;
 using Lumina.Excel.Sheets;
-using NativeMeters.Helpers;
+using NativeMeters.Data.Serialization;
 
 namespace NativeMeters.Models;
 

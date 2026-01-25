@@ -8,7 +8,9 @@ using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
-using NativeMeters.Helpers;
+using NativeMeters.Configuration.ImportExport;
+using NativeMeters.Configuration.Persistence;
+using NativeMeters.Configuration.Presets;
 using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
@@ -84,7 +86,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
             Width = 28, Height = 28,
             TexturePath = Path.Combine(Service.PluginInterface.AssemblyLocation.Directory?.FullName!, @"Assets\Icons\upload.png"),
             TextTooltip = "Export Meter to Clipboard",
-            OnClick = () => ImportExportResetHelper.TryExportMeterToClipboard(settings)
+            OnClick = () => ConfigPorter.TryExportMeterToClipboard(settings)
         });
 
         scrollingArea = new ScrollingAreaNode<VerticalListNode> {
@@ -205,7 +207,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         if (presetName == "Default")
         {
             MeterPresets.ApplyDefaultStylish(settings);
-            Util.SaveConfig(System.Config);
+            ConfigRepository.Save(System.Config);
             System.OverlayManager.Setup();
             RefreshAllSections();
         }
@@ -214,12 +216,12 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     private void HandleImport()
     {
         if (!Service.KeyState[VirtualKey.SHIFT]) return;
-        var newSettings = ImportExportResetHelper.TryImportMeterFromClipboard();
+        var newSettings = ConfigPorter.TryImportMeterFromClipboard();
         if (newSettings == null) return;
 
         ImportSettings(newSettings, settings);
 
-        Util.SaveConfig(System.Config);
+        ConfigRepository.Save(System.Config);
         System.OverlayManager.Setup();
         RefreshAllSections();
     }

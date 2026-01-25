@@ -1,10 +1,11 @@
 using System;
 using System.Text.RegularExpressions;
-using NativeMeters.Helpers.Formatting;
+using NativeMeters.Tags.Formatting;
+using NativeMeters.Tags.Reflection;
 
-namespace NativeMeters.Helpers;
+namespace NativeMeters.Tags;
 
-public static class TagProcessor
+public static class TagEngine
 {
     private static readonly Regex TagRegex = new(
         @"\[(?<key>[^:\]\._]+)(?:_(?<subKey>[^:\]\.]+))?(?::(?<format>[^\]\.]+))?(?:\.(?<precision>\d+))?\]",

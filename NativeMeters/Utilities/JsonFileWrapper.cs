@@ -2,56 +2,62 @@ using System;
 using System.IO;
 using System.Text.Json;
 using Dalamud.Utility;
+using NativeMeters.Configuration;
 using NativeMeters.Services;
 
-namespace NativeMeters.Helpers;
+namespace NativeMeters.Utilities;
 
-public static class JsonFileHelper {
+public static class JsonFileWrapper {
     private static readonly JsonSerializerOptions SerializerOptions = new() {
         WriteIndented = true,
         IncludeFields = true,
     };
 
-    public static T LoadFile<T>(string filePath) where T : new() {
+    public static T LoadFile<T>(string filePath) where T : new()
+    {
         var fileInfo = new FileInfo(filePath);
-        if (fileInfo is { Exists: true }) {
-            try {
+        if (fileInfo is { Exists: true })
+        {
+            try
+            {
                 var fileText = File.ReadAllText(fileInfo.FullName);
-                var dataObject = JsonSerializer.Deserialize<T>(fileText, SerializerOptions);
+                var dataObject = JsonSerializer.Deserialize<T>(fileText, JsonSerializerConfig.Default);
 
-                // If deserialize result is null, create a new instance instead and save it.
-                if (dataObject is null) {
+                if (dataObject is null)
+                {
                     dataObject = new T();
                     SaveFile(dataObject, filePath);
                 }
 
                 return dataObject;
             }
-            catch (Exception e) {
-                // If there is any kind of error loading the file, generate a new one instead and save it.
+            catch (Exception e)
+            {
                 Service.Logger.Error(e, $"Error trying to load file {filePath}, creating a new one instead.");
-
                 SaveFile(new T(), filePath);
             }
         }
 
         var newFile = new T();
         SaveFile(newFile, filePath);
-
         return newFile;
     }
 
-    public static void SaveFile<T>(T? file, string filePath) {
-        try {
-            if (file is null) {
+    public static void SaveFile<T>(T? file, string filePath)
+    {
+        try
+        {
+            if (file is null)
+            {
                 Service.Logger.Error("Null file provided.");
                 return;
             }
 
-            var fileText = JsonSerializer.Serialize(file, file.GetType(), SerializerOptions);
+            var fileText = JsonSerializer.Serialize(file, file.GetType(), JsonSerializerConfig.Default);
             FilesystemUtil.WriteAllTextSafe(filePath, fileText);
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             Service.Logger.Error(e, $"Error trying to save file {filePath}");
         }
     }

@@ -1,8 +1,8 @@
 using System;
 
-namespace NativeMeters.Helpers;
+namespace NativeMeters.Rendering;
 
-public static class MeterUtil
+public static class ViewUtils
 {
     public static float CalculateProgressRatio(double value, double max)
     {

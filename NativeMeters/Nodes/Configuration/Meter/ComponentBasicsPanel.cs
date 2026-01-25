@@ -3,9 +3,10 @@ using System.Linq;
 using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
-using NativeMeters.Helpers;
+using NativeMeters.Data.Stats;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Input;
+using NativeMeters.Tags;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
@@ -93,7 +94,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         {
             LabelText = "Fill Stat: ",
             Size = new Vector2(Width, 28),
-            Options = CombatantStatHelpers.GetAvailableStatSelectors(),
+            Options = StatSelector.GetAvailableStatSelectors(),
             OnOptionSelected = val =>
             {
                 if (settings == null) return;

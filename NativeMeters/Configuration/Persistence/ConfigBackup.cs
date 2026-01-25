@@ -1,18 +1,17 @@
-using Dalamud.Plugin;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
-using NativeMeters;
+using Dalamud.Plugin;
 using NativeMeters.Services;
 
-namespace NativeMeters.Helpers;
+namespace NativeMeters.Configuration.Persistence;
 
 // Taken and adapted for StatusTimers using zips from https://github.com/Caraxi/SimpleHeels/blob/0a0fe3c02a0a2c5a7c96b3304952d5078cd338aa/Plugin.cs#L392
 // Thanks Caraxi
-public static class BackupHelper {
+public static class ConfigBackup {
     private const int MaxBackups = 10;
     private const string Name = "NativeMeters";
     public static void DoConfigBackup(IDalamudPluginInterface pluginInterface) {

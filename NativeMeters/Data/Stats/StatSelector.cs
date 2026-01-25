@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using NativeMeters.Models;
 
-namespace NativeMeters.Helpers;
+namespace NativeMeters.Data.Stats;
 
-public static class CombatantStatHelpers
+public static class StatSelector
 {
     // TODO: Add all / do it better.
     public static List<string> GetAvailableStatSelectors() =>

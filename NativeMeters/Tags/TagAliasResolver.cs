@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace NativeMeters.Helpers;
+namespace NativeMeters.Tags;
 
 public static class TagAliasResolver
 {

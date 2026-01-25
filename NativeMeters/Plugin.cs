@@ -1,17 +1,13 @@
 using System;
 using System.Numerics;
 using Dalamud.Plugin;
-using Dalamud.Game.Command;
 using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using KamiToolKit;
 using KamiToolKit.Overlay;
 using NativeMeters.Addons;
 using NativeMeters.Clients;
 using NativeMeters.Commands;
-using NativeMeters.Helpers;
+using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Color;
 using NativeMeters.Services;
 
@@ -22,8 +18,8 @@ public class Plugin : IDalamudPlugin
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
-        System.Config = Util.LoadConfigOrDefault();
-        BackupHelper.DoConfigBackup(pluginInterface);
+        System.Config = ConfigRepository.LoadOrDefault();
+        ConfigBackup.DoConfigBackup(pluginInterface);
 
         KamiToolKitLibrary.Initialize(pluginInterface);
         System.OverlayController = new OverlayController();
@@ -69,7 +65,7 @@ public class Plugin : IDalamudPlugin
         System.CommandHandler.Dispose();
         System.AddonConfigurationWindow.Dispose();
 
-        Util.SaveConfig(System.Config);
+        ConfigRepository.Save(System.Config);
         KamiToolKitLibrary.Dispose();
     }
 

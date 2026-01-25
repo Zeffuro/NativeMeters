@@ -2,12 +2,11 @@ using System;
 using System.Numerics;
 using System.Linq;
 using KamiToolKit.Nodes;
-using NativeMeters.Configuration;
-using NativeMeters.Helpers;
 using NativeMeters.Nodes.Color;
 using NativeMeters.Nodes.LayoutNodes;
 using NativeMeters.Services;
 using Lumina.Excel.Sheets;
+using NativeMeters.Configuration.Persistence;
 using NativeMeters.Models;
 
 namespace NativeMeters.Nodes.Configuration.General;
@@ -56,7 +55,7 @@ public sealed class ColorConfigurationNode : ScrollingListNode
                 Size = new Vector2(300, 28),
                 DefaultColor = def.Default,
                 CurrentColor = def.Current,
-                OnColorConfirmed = c => { def.Setter(c); Util.SaveConfig(System.Config); },
+                OnColorConfirmed = c => { def.Setter(c); ConfigRepository.Save(System.Config); },
                 OnColorPreviewed = c => def.Setter(c),
                 OnColorCanceled = c => def.Setter(c),
             });
@@ -99,7 +98,7 @@ public sealed class ColorConfigurationNode : ScrollingListNode
                 Size = new Vector2(300, 28),
                 DefaultColor = JobColorMaps.DefaultColors.TryGetValue(jobId, out var def) ? def : config.OtherColor,
                 CurrentColor = config.JobColors.TryGetValue(jobId, out var color) ? color : config.OtherColor,
-                OnColorConfirmed = c => { config.JobColors[jobId] = c; Util.SaveConfig(System.Config); },
+                OnColorConfirmed = c => { config.JobColors[jobId] = c; ConfigRepository.Save(System.Config); },
                 OnColorPreviewed = c => config.JobColors[jobId] = c,
                 OnColorCanceled = c => config.JobColors[jobId] = c,
             });

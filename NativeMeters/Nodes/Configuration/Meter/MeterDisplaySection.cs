@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
-using NativeMeters.Helpers;
-using NativeMeters.Models;
+using NativeMeters.Data.Stats;
 using NativeMeters.Nodes.Input;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
@@ -50,7 +47,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         {
             Size = new Vector2(Width, 28),
             LabelText = "Sort By: ",
-            Options = CombatantStatHelpers.GetAvailableStatSelectors(),
+            Options = StatSelector.GetAvailableStatSelectors(),
             OnOptionSelected = val => Settings.StatToTrack = val,
         };
 

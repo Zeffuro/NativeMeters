@@ -3,7 +3,7 @@ using Dalamud.Game.ClientState.Keys;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using NativeMeters.Helpers;
+using NativeMeters.Configuration.ImportExport;
 using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.Configuration.General;
@@ -53,7 +53,7 @@ public sealed class ImportExportResetNode : HorizontalListNode
 
     private static void ResetConfig()
     {
-        ImportExportResetHelper.TryResetConfig();
+        ConfigPorter.TryResetConfig();
         System.AddonConfigurationWindow.Close();
     }
 
@@ -61,9 +61,9 @@ public sealed class ImportExportResetNode : HorizontalListNode
     {
         if (!Service.KeyState[VirtualKey.SHIFT]) return;
 
-        ImportExportResetHelper.TryImportConfigFromClipboard();
+        ConfigPorter.TryImportConfigFromClipboard();
         System.AddonConfigurationWindow.Close();
     }
 
-    private static void ExportConfig() => ImportExportResetHelper.TryExportConfigToClipboard(System.Config);
+    private static void ExportConfig() => ConfigPorter.TryExportConfigToClipboard(System.Config);
 }

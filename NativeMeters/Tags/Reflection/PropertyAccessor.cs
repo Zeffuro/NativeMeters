@@ -4,7 +4,7 @@ using System.Reflection;
 using NativeMeters.Models;
 using NativeMeters.Services;
 
-namespace NativeMeters.Helpers;
+namespace NativeMeters.Tags.Reflection;
 
 public static class PropertyAccessor
 {

@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
-using NativeMeters.Configuration;
 
-namespace NativeMeters.Helpers;
+namespace NativeMeters.Configuration.Presets;
 
 public static class MeterPresets
 {

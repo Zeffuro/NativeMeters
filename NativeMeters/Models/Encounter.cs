@@ -1,6 +1,6 @@
 using System;
 using System.Text.Json.Serialization;
-using NativeMeters.Helpers;
+using NativeMeters.Data.Serialization;
 
 namespace NativeMeters.Models;
 

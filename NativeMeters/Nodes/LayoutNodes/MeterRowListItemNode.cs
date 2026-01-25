@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
-using NativeMeters.Extensions;
 using NativeMeters.Models;
-using NativeMeters.Helpers;
+using NativeMeters.Rendering;
 
 namespace NativeMeters.Nodes.LayoutNodes;
 
@@ -105,6 +103,6 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
     {
         if (Combatant == null || MeterSettings == null) return;
 
-        ComponentUpdateHelper.Update(node, settings, Width, Combatant);
+        ComponentRenderer.Update(node, settings, Width, Combatant);
     }
 }

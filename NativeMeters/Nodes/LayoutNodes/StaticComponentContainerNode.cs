@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
-using NativeMeters.Helpers;
+using NativeMeters.Rendering;
 
 namespace NativeMeters.Nodes.LayoutNodes;
 
@@ -96,6 +95,6 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
         var encounter = System.ActiveMeterService.GetEncounter();
         if (encounter == null) return;
 
-        ComponentUpdateHelper.Update(node, settings, Width, encounter);
+        ComponentRenderer.Update(node, settings, Width, encounter);
     }
 }

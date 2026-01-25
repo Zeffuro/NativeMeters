@@ -1,6 +1,6 @@
 using System;
 
-namespace NativeMeters.Helpers.Formatting;
+namespace NativeMeters.Tags.Formatting;
 
 public class TimeSpanFormatter : IValueFormatter
 {

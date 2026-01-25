@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace NativeMeters.Helpers.Formatting;
+namespace NativeMeters.Tags.Formatting;
 
 public class ValueFormatterChain
 {

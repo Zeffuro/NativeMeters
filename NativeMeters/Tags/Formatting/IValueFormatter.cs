@@ -1,4 +1,4 @@
-namespace NativeMeters.Helpers.Formatting;
+namespace NativeMeters.Tags.Formatting;
 
 public interface IValueFormatter
 {

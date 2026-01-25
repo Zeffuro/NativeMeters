@@ -7,7 +7,8 @@ using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Addons;
-using NativeMeters.Helpers; // For MeterWrapper
+using NativeMeters.Configuration.Persistence;
+using NativeMeters.Configuration.Presets;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
@@ -16,7 +17,7 @@ public class MeterManagementNode : SimpleComponentNode
     private readonly ModifyListNode<MeterWrapper, MeterListItemNode>? selectionListNode;
     private readonly MeterConfigurationNode? configNode;
     private readonly TextNode? nothingSelectedTextNode;
-    private readonly List<MeterWrapper> meterWrappers = new();
+    private readonly List<MeterWrapper> meterWrappers;
 
     public MeterManagementNode()
     {
@@ -77,7 +78,7 @@ public class MeterManagementNode : SimpleComponentNode
         };
         MeterPresets.ApplyDefaultStylish(newMeter);
         System.Config.Meters.Add(newMeter);
-        Util.SaveConfig(System.Config);
+        ConfigRepository.Save(System.Config);
         var wrapper = new MeterWrapper(newMeter);
         meterWrappers.Add(wrapper);
         selectionListNode?.RefreshList();
@@ -87,7 +88,7 @@ public class MeterManagementNode : SimpleComponentNode
     private void OnRemoveMeter(MeterWrapper wrapper)
     {
         System.Config.Meters.Remove(wrapper.MeterSettings);
-        Util.SaveConfig(System.Config);
+        ConfigRepository.Save(System.Config);
         meterWrappers.Remove(wrapper);
         selectionListNode?.RefreshList();
         System.OverlayManager.Setup();

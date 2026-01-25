@@ -5,6 +5,7 @@ using System.Text.Json.Nodes;
 using Dalamud.Game.Text;
 using Dalamud.Interface.ImGuiNotification;
 using NativeMeters.Clients;
+using NativeMeters.Configuration;
 using NativeMeters.Models;
 using NativeMeters.Services.Connections;
 
@@ -77,7 +78,7 @@ public class MeterService : MeterServiceBase, IDisposable
 
             if (messageType is "CombatData" or "broadcast")
             {
-                CombatData = JsonSerializer.Deserialize<CombatDataMessage>(message);
+                CombatData = JsonSerializer.Deserialize<CombatDataMessage>(message, JsonSerializerConfig.CaseSensitive);
                 InvokeCombatDataUpdated();
             }
         }

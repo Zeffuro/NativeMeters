@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit;
 using KamiToolKit.Nodes;
-using NativeMeters.Helpers;
+using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Configuration.Connection;
 using NativeMeters.Nodes.Configuration.General;
 using NativeMeters.Nodes.Configuration.Meter;
@@ -90,7 +90,7 @@ public class AddonConfigurationWindow : NativeAddon
     {
         System.Config.General.PreviewEnabled = false;
 
-        Util.SaveConfig(System.Config);
+        ConfigRepository.Save(System.Config);
         base.OnFinalize(addon);
     }
 }

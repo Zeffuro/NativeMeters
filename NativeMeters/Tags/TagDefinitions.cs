@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NativeMeters.Helpers;
+namespace NativeMeters.Tags;
 
 public static class TagDefinitions
 {
