@@ -14,7 +14,6 @@ namespace NativeMeters.Nodes.LayoutNodes;
 public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
 {
     private readonly Dictionary<string, NodeBase> componentMap = new();
-    private int lastComponentCount = -1;
 
     private MeterSettings? MeterSettings => ItemData?.Settings;
     private Combatant? Combatant => ItemData?.Combatant;
@@ -34,10 +33,9 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
     {
         if (ItemData == null || MeterSettings == null || Combatant == null) return;
 
-        if (lastComponentCount != MeterSettings.RowComponents.Count)
+        if (HasStructureChanged())
         {
             RebuildStructure();
-            lastComponentCount = MeterSettings.RowComponents.Count;
         }
 
         foreach (var settings in MeterSettings.RowComponents)
@@ -47,6 +45,18 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
                 UpdateComponentData(node, settings);
             }
         }
+    }
+
+    private bool HasStructureChanged()
+    {
+        if (MeterSettings == null) return false;
+        if (componentMap.Count != MeterSettings.RowComponents.Count) return true;
+
+        foreach (var component in MeterSettings.RowComponents)
+        {
+            if (!componentMap.ContainsKey(component.Id)) return true;
+        }
+        return false;
     }
 
     private void RebuildStructure()

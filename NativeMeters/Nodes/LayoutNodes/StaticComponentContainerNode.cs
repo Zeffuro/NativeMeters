@@ -13,7 +13,6 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
 {
     private readonly Dictionary<string, NodeBase> componentMap = new();
     private readonly List<ComponentSettings> settingsList;
-    private int lastComponentCount = -1;
 
     public StaticComponentContainerNode(List<ComponentSettings> settings)
     {
@@ -23,10 +22,9 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
 
     public void Update()
     {
-        if (lastComponentCount != settingsList.Count)
+        if (HasStructureChanged())
         {
             RebuildStructure();
-            lastComponentCount = settingsList.Count;
         }
 
         foreach (var settings in settingsList)
@@ -36,6 +34,17 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
                 UpdateComponentData(node, settings);
             }
         }
+    }
+
+    private bool HasStructureChanged()
+    {
+        if (componentMap.Count != settingsList.Count) return true;
+
+        foreach (var component in settingsList)
+        {
+            if (!componentMap.ContainsKey(component.Id)) return true;
+        }
+        return false;
     }
 
     private void RebuildStructure()
