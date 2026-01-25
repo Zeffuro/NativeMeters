@@ -36,4 +36,15 @@ public class ComponentSettings
     public Vector4 BarBackgroundColor { get; set; } = KnownColor.Black.Vector();
     public ColorMode ColorMode { get; set; } = ColorMode.Job;
     public bool ShowBackground { get; set; }
+
+    public ComponentSettings DeepCopy()
+    {
+        var clone = (ComponentSettings) MemberwiseClone();
+
+        clone.Id = Guid.NewGuid().ToString();
+        clone.Name = Name + " (Copy)";
+        clone.Position = Position + new Vector2(10, 10);
+
+        return clone;
+    }
 }

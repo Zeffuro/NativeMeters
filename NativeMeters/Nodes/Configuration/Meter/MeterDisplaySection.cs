@@ -124,6 +124,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
             OnClick = val => Settings.ShowLimitBreak = val
         };
 
+
         AddNode([statDropdown, maxRowsInput, rowHeightInput, rowSpacingInput, backgroundCheckbox, headerToggle, headerHeightInput, footerToggle, footerHeightInput, showLimitBreakToggle]);
     }
 }

@@ -58,6 +58,9 @@ public static class TagProcessor
             "damage" or "damagetotal" => "Damage",
             "zone" => "CurrentZoneName",
             "duration" => "Duration",
+            "healedpct" => "HealedPercent",
+            "crithitpct" => "CrithitPercent",
+            "crithealpct" => "CrithealPercent",
             _ => key
         };
 

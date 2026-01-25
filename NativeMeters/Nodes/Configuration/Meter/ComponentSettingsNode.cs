@@ -15,10 +15,11 @@ public sealed class ComponentSettingsNode : CategoryNode
     private readonly ComponentBasicsPanel basicsPanel;
     private readonly ComponentTypographyPanel typographyPanel;
     private readonly ComponentVisualsPanel visualsPanel;
-    private readonly TextButtonNode deleteBtn;
+    private readonly HorizontalListNode buttonRow;
 
     public Action? OnChanged { get; set; }
     public Action? OnDeleted { get; set; }
+    public Action<ComponentSettings>? OnDuplicate { get; set; }
 
     public ComponentSettings? RowComponent
     {
@@ -68,15 +69,31 @@ public sealed class ComponentSettingsNode : CategoryNode
             OnLayoutChanged = RefreshLayout
         };
 
-        deleteBtn = new TextButtonNode
-        {
-            String = "Delete Component",
+        buttonRow = new HorizontalListNode {
             Size = new Vector2(Width, 24),
-            Color = ColorHelper.GetColor(17),
+            ItemSpacing = 4.0f
+        };
+
+        var deleteButton = new TextButtonNode()
+        {
+            String = "Delete",
+            Size = new Vector2(100, 24),
             OnClick = () => OnDeleted?.Invoke()
         };
 
-        AddNode([basicsPanel, typographyPanel, visualsPanel, deleteBtn]);
+        var duplicateButton = new TextButtonNode()
+        {
+            String = "Duplicate",
+            Size = new Vector2(100, 24),
+            OnClick = () =>
+            {
+                if(settings != null) OnDuplicate?.Invoke(settings);
+            }
+        };
+
+        buttonRow.AddNode([duplicateButton, deleteButton]);
+
+        AddNode([basicsPanel, typographyPanel, visualsPanel, buttonRow]);
     }
 
     private void NotifyChanged()
@@ -97,12 +114,12 @@ public sealed class ComponentSettingsNode : CategoryNode
     protected override void OnSizeChanged()
     {
         base.OnSizeChanged();
-        if (deleteBtn == null) return;
+
+        if (basicsPanel == null || typographyPanel == null || visualsPanel == null || buttonRow == null) return;
 
         var innerWidth = Math.Max(0, Width - 30.0f);
         basicsPanel.Width = innerWidth;
         typographyPanel.Width = innerWidth;
         visualsPanel.Width = innerWidth;
-        deleteBtn.Width = innerWidth;
     }
 }

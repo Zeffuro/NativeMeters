@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Text.Json;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 
@@ -117,6 +118,18 @@ public sealed class MeterComponentsSection : MeterConfigSection
                 OnChanged = () => System.OverlayManager.Setup(),
                 OnDeleted = () => {
                     TargetList.Remove(component);
+                    Refresh();
+                    System.OverlayManager.Setup();
+                },
+                OnDuplicate = (source) => {
+                    var copy = source.DeepCopy();
+
+                    int index = TargetList.IndexOf(source);
+                    if (index != -1 && index < TargetList.Count - 1)
+                        TargetList.Insert(index + 1, copy);
+                    else
+                        TargetList.Add(copy);
+
                     Refresh();
                     System.OverlayManager.Setup();
                 },

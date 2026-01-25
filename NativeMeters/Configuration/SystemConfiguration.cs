@@ -6,6 +6,7 @@ namespace NativeMeters.Configuration;
 public class SystemConfiguration
 {
     public const string FileName = "NativeMeters.json";
+    public int ConfigVersion { get; set; } = 1;
     public GeneralSettings General { get; set; } = new();
     public ConnectionSettings ConnectionSettings { get; set; } = new();
 
