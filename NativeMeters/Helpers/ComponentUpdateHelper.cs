@@ -23,6 +23,7 @@ public static class ComponentUpdateHelper
                 textNode.TextFlags = settings.TextFlags;
                 textNode.TextColor = data is Combatant c ? GetColorForCombatant(c, settings) : settings.TextColor;
                 textNode.TextOutlineColor = settings.TextOutlineColor;
+                textNode.AlignmentType = settings.AlignmentType;
                 textNode.BackgroundColor = settings.TextBackgroundColor;
                 textNode.ShowBackground = settings.ShowBackground;
                 textNode.String = TagProcessor.Process(settings.DataSource, data);
@@ -65,14 +66,8 @@ public static class ComponentUpdateHelper
             node.Size = settings.Size with { X = componentWidth };
         }
 
-        float x = settings.AlignmentType switch {
-            AlignmentType.TopRight or AlignmentType.Right or AlignmentType.BottomRight
-                => containerWidth - node.Width - settings.Position.X,
-            AlignmentType.Top or AlignmentType.Center or AlignmentType.Bottom
-                => (containerWidth / 2.0f) - (node.Width / 2.0f) + settings.Position.X,
-            _ => settings.Position.X
-        };
-        node.Position = settings.Position with { X = x };
+
+        node.Position = settings.Position;
     }
 
     public static Vector4 GetColorForCombatant(Combatant combatant, ComponentSettings settings)

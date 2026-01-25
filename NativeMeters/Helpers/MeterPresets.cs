@@ -10,13 +10,13 @@ public static class MeterPresets
 {
     public static void ApplyDefaultStylish(MeterSettings settings)
     {
-        settings.RowHeight = 36.0f;
+        settings.RowHeight = 32.0f;
         settings.RowSpacing = 0f;
         settings.HeaderHeight = 24.0f;
         settings.FooterHeight = 24.0f;
         settings.HeaderEnabled = true;
         settings.FooterEnabled = true;
-        settings.Size = new Vector2(250, 350);
+        settings.Size = new Vector2(280, 320);
         settings.ShowWindowBackground = true;
 
         settings.HeaderComponents = GetDefaultHeaderComponents();
@@ -43,10 +43,10 @@ public static class MeterPresets
             Name = "Encounter Name",
             Type = MeterComponentType.Text,
             DataSource = "[name]",
-            Position = new Vector2(86, 10),
+            Position = new Vector2(250, 10),
             Size = new Vector2(200, 40),
-            FontSize = 14,
-            AlignmentType = AlignmentType.Left,
+            FontSize = 16,
+            AlignmentType = AlignmentType.Right,
             ZIndex = 1
         }
     ];
@@ -58,7 +58,7 @@ public static class MeterPresets
             Name = "Deaths Label",
             Type = MeterComponentType.Text,
             DataSource = "Deaths: [deaths]",
-            Position = new Vector2(10, 2),
+            Position = new Vector2(0, 2),
             Size = Vector2.Zero,
             FontSize = 14,
             AlignmentType = AlignmentType.Left,
@@ -69,7 +69,7 @@ public static class MeterPresets
             Name = "Raid DPS Label",
             Type = MeterComponentType.Text,
             DataSource = "Raid DPS: [dps]",
-            Position = new Vector2(10, 2),
+            Position = new Vector2(250, 2),
             Size = Vector2.Zero,
             FontSize = 14,
             AlignmentType = AlignmentType.Right,
@@ -84,7 +84,7 @@ public static class MeterPresets
             Name = "Progress Bar",
             Type = MeterComponentType.ProgressBar,
             Position = new Vector2(32, 10),
-            Size = new Vector2(200, 20),
+            Size = new Vector2(230, 20),
             ZIndex = 0,
             ColorMode = ColorMode.Job,
         },
@@ -114,7 +114,7 @@ public static class MeterPresets
             Name = "Stat Value",
             Type = MeterComponentType.Text,
             DataSource = "[ENCDPS]",
-            Position = new Vector2(5, 5),
+            Position = new Vector2(250, 5),
             Size = new Vector2(60, 20),
             ZIndex = 2,
             FontSize = 14,
