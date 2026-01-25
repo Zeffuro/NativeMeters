@@ -58,4 +58,53 @@ public abstract class ImportExportResetHelper {
         );
         Service.Logger.Info("Configuration reset to default.");
     }
+
+    public static void TryExportMeterToClipboard(MeterSettings meter)
+    {
+        var exportString = Util.SerializeCompressed(meter);
+
+        ImGui.SetClipboardText(exportString);
+        Service.NotificationManager.AddNotification(
+            new Notification { Content = $"Meter '{meter.Name}' exported to clipboard.", Type = NotificationType.Success }
+        );
+        Service.Logger.Info($"Meter '{meter.Name}' exported to clipboard.");
+    }
+
+    public static MeterSettings? TryImportMeterFromClipboard()
+    {
+        var clipboard = ImGui.GetClipboardText();
+
+        if (string.IsNullOrWhiteSpace(clipboard))
+        {
+            Service.NotificationManager.AddNotification(
+                new Notification { Content = "Clipboard is empty.", Type = NotificationType.Warning }
+            );
+            return null;
+        }
+
+        try
+        {
+            var imported = Util.DeserializeCompressed<MeterSettings>(clipboard);
+
+            if (imported == null)
+            {
+                Service.NotificationManager.AddNotification(
+                    new Notification { Content = "Clipboard data could not be parsed.", Type = NotificationType.Error }
+                );
+                return null;
+            }
+
+            Service.NotificationManager.AddNotification(
+                new Notification { Content = "Meter settings imported.", Type = NotificationType.Success }
+            );
+            return imported;
+        }
+        catch
+        {
+            Service.NotificationManager.AddNotification(
+                new Notification { Content = "Invalid meter data in clipboard.", Type = NotificationType.Error }
+            );
+            return null;
+        }
+    }
 }

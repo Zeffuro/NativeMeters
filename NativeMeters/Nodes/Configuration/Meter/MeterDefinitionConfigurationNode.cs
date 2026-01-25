@@ -1,7 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Numerics;
+using System.Reflection;
+using Dalamud.Game.ClientState.Keys;
+using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
+using NativeMeters.Helpers;
+using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
@@ -14,6 +22,9 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     private string? currentMeterId;
     public static bool IsRefreshing { get; private set; } = false;
 
+    private readonly VerticalListNode containerLayout;
+    private readonly SimpleComponentNode headerContainer;
+    private readonly HorizontalListNode buttonsList;
     private readonly ScrollingAreaNode<VerticalListNode> scrollingArea;
     private readonly VerticalListNode mainLayout;
 
@@ -21,11 +32,66 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 
     public MeterDefinitionConfigurationNode()
     {
+        containerLayout = new VerticalListNode
+        {
+            ItemSpacing = 4.0f,
+            FitContents = false
+        };
+        containerLayout.AttachNode(this);
+
+        headerContainer = new SimpleComponentNode
+        {
+            Height = 32,
+        };
+        containerLayout.AddNode(headerContainer);
+
+        var titleLabel = new LabelTextNode
+        {
+            String = "Meter Configuration",
+            FontSize = 18,
+            TextColor = ColorHelper.GetColor(50),
+            Size = new Vector2(200, 32),
+            Position = new Vector2(5, 0)
+        };
+        titleLabel.AttachNode(headerContainer);
+
+        buttonsList = new HorizontalListNode
+        {
+            Height = 32,
+            ItemSpacing = 2.0f,
+            Alignment = HorizontalListAnchor.Right
+        };
+        buttonsList.AttachNode(headerContainer);
+
+        var presetsDropdown = new TextDropDownNode
+        {
+            Size = new Vector2(120, 28),
+            Options = new List<string> { "Presets...", "Default" },
+            OnOptionSelected = HandlePresetSelection
+        };
+        buttonsList.AddNode(presetsDropdown);
+
+        buttonsList.AddNode(new ImGuiIconButtonNode
+        {
+            Width = 28, Height = 28,
+            TexturePath = Path.Combine(Service.PluginInterface.AssemblyLocation.Directory?.FullName!, @"Assets\Icons\download.png"),
+            TextTooltip = "Import Meter from Clipboard (Overwrites current)\n(hold shift to confirm)",
+            OnClick = HandleImport
+        });
+
+        buttonsList.AddNode(new ImGuiIconButtonNode
+        {
+            Width = 28, Height = 28,
+            TexturePath = Path.Combine(Service.PluginInterface.AssemblyLocation.Directory?.FullName!, @"Assets\Icons\upload.png"),
+            TextTooltip = "Export Meter to Clipboard",
+            OnClick = () => ImportExportResetHelper.TryExportMeterToClipboard(settings)
+        });
+
         scrollingArea = new ScrollingAreaNode<VerticalListNode> {
             AutoHideScrollBar = true,
             ContentHeight = 10f,
         };
-        scrollingArea.AttachNode(this);
+        containerLayout.AddNode(scrollingArea);
 
         mainLayout = scrollingArea.ContentAreaNode;
         mainLayout.FitContents = true;
@@ -62,13 +128,26 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     protected override void OnSizeChanged()
     {
         base.OnSizeChanged();
-        scrollingArea.Size = Size;
+
+        containerLayout.Size = Size;
+
+        headerContainer.Width = Width;
+
+        float buttonsWidth = Math.Max(200, Width * 0.6f);
+        buttonsList.Size = new Vector2(buttonsWidth, 32);
+        buttonsList.Position = new Vector2(Width - buttonsWidth - 10, 2);
+        buttonsList.RecalculateLayout();
+
+        var scrollHeight = Math.Max(0, Height - headerContainer.Height - containerLayout.ItemSpacing);
+        scrollingArea.Size = Size with { Y = scrollHeight };
 
         var listWidth = Math.Max(0, Width - 16.0f);
         mainLayout.Width = listWidth;
 
         foreach (var section in sections)
+        {
             section.Width = listWidth;
+        }
 
         HandleLayoutChange();
     }
@@ -93,12 +172,73 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         HandleLayoutChange();
     }
 
+    private void RefreshAllSections()
+    {
+        scrollingArea.IsVisible = false;
+        IsRefreshing = true;
+
+        foreach (var section in sections)
+        {
+            section.Refresh();
+        }
+
+        IsRefreshing = false;
+        scrollingArea.IsVisible = true;
+        HandleLayoutChange();
+    }
+
     private void HandleLayoutChange()
     {
         mainLayout.RecalculateLayout();
 
         scrollingArea.ContentHeight = mainLayout.Height;
 
+        containerLayout.RecalculateLayout();
+
         OnLayoutChanged?.Invoke();
+    }
+
+    private void HandlePresetSelection(string presetName)
+    {
+        if (settings == null) return;
+
+        if (presetName == "Default")
+        {
+            MeterPresets.ApplyDefaultStylish(settings);
+            Util.SaveConfig(System.Config);
+            System.OverlayManager.Setup();
+            RefreshAllSections();
+        }
+    }
+
+    private void HandleImport()
+    {
+        if (!Service.KeyState[VirtualKey.SHIFT]) return;
+        var newSettings = ImportExportResetHelper.TryImportMeterFromClipboard();
+        if (newSettings == null) return;
+
+        ImportSettings(newSettings, settings);
+
+        Util.SaveConfig(System.Config);
+        System.OverlayManager.Setup();
+        RefreshAllSections();
+    }
+
+    private void ImportSettings(MeterSettings source, MeterSettings target)
+    {
+        var oldId = target.Id;
+        var oldPos = target.Position;
+
+        foreach (var prop in typeof(MeterSettings).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            if (prop.CanWrite && prop.CanRead)
+            {
+                var value = prop.GetValue(source);
+                prop.SetValue(target, value);
+            }
+        }
+
+        target.Id = oldId;
+        target.Position = oldPos;
     }
 }

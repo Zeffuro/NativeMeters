@@ -31,7 +31,7 @@ public static class MeterPresets
             Name = "Duration",
             Type = MeterComponentType.Text,
             DataSource = "[duration]",
-            Position = new Vector2(28, 10),
+            Position = new Vector2(32, 10),
             Size = new Vector2(80, 40),
             FontSize = 16,
             TextColor = ColorHelper.GetColor(37),
