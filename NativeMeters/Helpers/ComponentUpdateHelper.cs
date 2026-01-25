@@ -74,7 +74,7 @@ public static class ComponentUpdateHelper
     public static Vector4 GetColorForCombatant(Combatant combatant, ComponentSettings settings)
     {
         if (settings.ColorMode == ColorMode.Static)
-            return settings.TextColor;
+            return settings.BarColor;
 
         var config = System.Config.General;
 
