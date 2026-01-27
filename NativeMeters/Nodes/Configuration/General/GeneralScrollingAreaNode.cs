@@ -2,6 +2,7 @@ using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Addons;
 using NativeMeters.Configuration;
+using NativeMeters.Nodes.Configuration.Dtr;
 
 namespace NativeMeters.Nodes.Configuration.General;
 
@@ -16,6 +17,8 @@ public sealed class GeneralScrollingAreaNode : ScrollingListNode
         ItemSpacing = 10;
 
         AddNode(new GeneralConfigurationNode());
+
+        AddNode(new DtrConfigurationNode());
 
         AddNode(new CheckboxNode
         {

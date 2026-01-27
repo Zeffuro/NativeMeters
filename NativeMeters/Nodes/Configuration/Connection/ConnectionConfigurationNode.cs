@@ -22,7 +22,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
     {
         ConnectionSettings config = System.Config.ConnectionSettings;
 
-        ItemVerticalSpacing = 5;
+        ItemVerticalSpacing = 2;
 
         AddNode(new CategoryTextNode
         {

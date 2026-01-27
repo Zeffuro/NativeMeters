@@ -11,6 +11,7 @@ public class SystemConfiguration
     public ConnectionSettings ConnectionSettings { get; set; } = new();
 
     public List<MeterSettings> Meters { get; set; } = new();
+    public DtrSettings DtrSettings { get; set; } = new();
 
     public void EnsureInitialized()
     {

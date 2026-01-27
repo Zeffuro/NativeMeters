@@ -44,6 +44,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
                 System.OverlayManager.UpdateActiveService();
             }
         });
+        AddNode(new ResNode { Height = 10 });
 
         AddNode(1, new CheckboxNode
         {

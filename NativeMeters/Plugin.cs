@@ -28,6 +28,8 @@ public class Plugin : IDalamudPlugin
         System.TestMeterService = new TestMeterService();
         System.ActiveMeterService = System.MeterService;
 
+        System.DtrService = new DtrService();
+
         System.AddonConfigurationWindow = new AddonConfigurationWindow
         {
             InternalName = "NativeMeters Config",
@@ -59,6 +61,7 @@ public class Plugin : IDalamudPlugin
         ColorInputRow.DisposeSharedColorPicker();
 
         System.OverlayController.Dispose();
+        System.DtrService.Dispose();
         System.TestMeterService.Dispose();
         System.MeterService.Dispose();
         System.OverlayManager.Dispose();
