@@ -6,6 +6,7 @@ using NativeMeters.Data.Stats;
 using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Nodes;
+using NativeMeters.Nodes.Components;
 using NativeMeters.Tags;
 
 namespace NativeMeters.Rendering;
@@ -61,6 +62,9 @@ public static class ComponentRenderer
 
             case NineGridNode backgroundNode:
                 backgroundNode.Color = settings.TextColor;
+                break;
+
+            case HeaderMenuButtonNode menuButton:
                 break;
         }
 

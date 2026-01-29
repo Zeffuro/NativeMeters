@@ -13,6 +13,7 @@ public class MeterSettings
     public bool IsEnabled { get; set; } = true;
     public bool IsLocked { get; set; } = false;
     public bool IsClickthrough { get; set; } = false;
+    public bool IsCollapsed { get; set; } = false;
 
     public Vector2 Position { get; set; } = new(500, 500);
     public Vector2 Size { get; set; } = new(250, 300);

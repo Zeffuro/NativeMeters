@@ -79,7 +79,8 @@ public class MeterService : MeterServiceBase, IDisposable
 
             if (messageType is "CombatData" or "broadcast")
             {
-                CombatData = JsonSerializer.Deserialize<CombatDataMessage>(message, JsonSerializerConfig.CaseSensitive);
+                var newData = JsonSerializer.Deserialize<CombatDataMessage>(message, JsonSerializerConfig.CaseSensitive);
+                HandleNewCombatData(newData);
                 InvokeCombatDataUpdated();
             }
         }
@@ -92,7 +93,14 @@ public class MeterService : MeterServiceBase, IDisposable
     public void Reconnect() { activeConnection?.Stop(); Enable(); }
     public void RequestReconnect() => reconnectionManager.RequestReconnect();
     public void ClearMeter() { CombatData = null; InvokeCombatDataUpdated(); SendChatCommand("clear"); }
-    public void EndEncounter() => SendChatCommand("end");
+    public void EndEncounter()
+    {
+        if (System.Config.General.EnableEncounterHistory)
+        {
+            ArchiveCurrentEncounter();
+        }
+        SendChatCommand("end");
+    }
 
     private void SendChatCommand(string command)
     {

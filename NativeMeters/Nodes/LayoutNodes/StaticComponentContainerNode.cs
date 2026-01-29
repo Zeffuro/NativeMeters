@@ -4,6 +4,7 @@ using System.Numerics;
 using KamiToolKit;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
+using NativeMeters.Nodes.Components;
 using NativeMeters.Rendering;
 
 namespace NativeMeters.Nodes.LayoutNodes;
@@ -12,6 +13,12 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
 {
     private readonly DynamicNodeList graphManager;
     private readonly List<ComponentSettings> settingsList;
+
+    public MeterSettings? MeterSettings
+    {
+        get;
+        set;
+    }
 
     public StaticComponentContainerNode(List<ComponentSettings> settings)
     {
@@ -51,6 +58,7 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
                 TextureSize = new Vector2(32.0f, 24.0f),
                 TopOffset = 10, BottomOffset = 10, LeftOffset = 15, RightOffset = 15,
             },
+            MeterComponentType.MenuButton => new HeaderMenuButtonNode{ MeterSettings = MeterSettings},
             _ => new SimpleComponentNode()
         };
 

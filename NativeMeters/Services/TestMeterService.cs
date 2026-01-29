@@ -34,7 +34,8 @@ public class TestMeterService : MeterServiceBase, IDisposable
         {
             Type = "test",
             Encounter = FakeEncounterFactory.CreateFakeEncounter(combatants.Values),
-            Combatant = combatants
+            Combatant = combatants,
+            IsActive = "true"
         };
 
         InvokeCombatDataUpdated();

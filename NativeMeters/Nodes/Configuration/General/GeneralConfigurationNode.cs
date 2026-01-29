@@ -2,6 +2,7 @@ using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
+using NativeMeters.Nodes.Input;
 
 namespace NativeMeters.Nodes.Configuration.General;
 
@@ -72,11 +73,68 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             }
         });
 
+        AddNode(1, new CheckboxNode
+        {
+            Size = Size with { Y = 18 },
+            IsVisible = true,
+            String = "Privacy Mode",
+            IsChecked = config.PrivacyMode,
+            TextTooltip = "Shows player jobs instead of names.",
+            OnClick = isChecked =>
+            {
+                config.PrivacyMode = isChecked;
+                ConfigRepository.Save(System.Config);
+            }
+        });
+
         AddNode(new ResNode { Height = 10 });
 
         AddNode(1, new CheckboxNode
         {
-            Size = new Vector2(Width, 20),
+            Size = Size with { Y = 18 },
+            IsVisible = true,
+            String = "Enable Encounter History",
+            IsChecked = config.EnableEncounterHistory,
+            OnClick = isChecked =>
+            {
+                config.EnableEncounterHistory = isChecked;
+                ConfigRepository.Save(System.Config);
+            }
+        });
+
+        AddNode(2, new CheckboxNode
+        {
+            Size = Size with { Y = 18 },
+            IsVisible = true,
+            String = "Auto-switch to live when new fight starts",
+            IsChecked = config.AutoSwitchToLiveEncounter,
+            OnClick = isChecked =>
+            {
+                config.AutoSwitchToLiveEncounter = isChecked;
+                ConfigRepository.Save(System.Config);
+            }
+        });
+
+        AddNode(2, new LabeledNumericInputNode()
+        {
+            Size = new Vector2(300, 28),
+            IsVisible = true,
+            LabelText = "Max History Size",
+            Min = 1,
+            Max = 50,
+            Value = config.MaxEncounterHistory,
+            OnValueUpdate = val =>
+            {
+                System.Config.General.MaxEncounterHistory = val;
+                ConfigRepository.Save(System.Config);
+            }
+        });
+
+        AddNode(new ResNode { Height = 10 });
+
+        AddNode(1, new CheckboxNode
+        {
+            Size = Size with { Y = 18 },
             String = "Clear ACT when clearing Meter",
             IsChecked = config.ClearActWithMeter,
             OnClick = val =>
@@ -88,7 +146,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
 
         AddNode(1, new CheckboxNode
         {
-            Size = new Vector2(Width, 20),
+            Size = Size with { Y = 18 },
             String = "Force ACT to end encounter after combat",
             IsChecked = config.ForceEndEncounter,
             OnClick = val =>

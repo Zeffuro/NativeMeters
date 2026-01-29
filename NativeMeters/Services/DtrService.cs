@@ -62,7 +62,7 @@ public class DtrService : IDisposable
     private SeString FormatDtrText()
     {
         if (!System.ActiveMeterService.HasCombatData())
-            return new SeStringBuilder().AddText(Settings.DisconnectedText).Build();
+            return new SeStringBuilder().AddText("Idle").Build();
 
         var combatant = System.ActiveMeterService.GetCombatant("YOU");
         var encounter = System.ActiveMeterService.GetEncounter();

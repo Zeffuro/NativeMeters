@@ -84,11 +84,11 @@ public sealed class MeterListLayoutNode : OverlayNode
         Size = MeterSettings.Size;
 
         headerContainer?.Dispose();
-        headerContainer = new StaticComponentContainerNode(MeterSettings.HeaderComponents);
+        headerContainer = new StaticComponentContainerNode(MeterSettings.HeaderComponents){ MeterSettings = MeterSettings};
         headerContainer.AttachNode(this);
 
         footerContainer?.Dispose();
-        footerContainer = new StaticComponentContainerNode(MeterSettings.FooterComponents);
+        footerContainer = new StaticComponentContainerNode(MeterSettings.FooterComponents){ MeterSettings = MeterSettings};
         footerContainer.AttachNode(this);
 
         OnMoveComplete = node => MeterSettings.Position = node.Position;
@@ -127,29 +127,35 @@ public sealed class MeterListLayoutNode : OverlayNode
         bool hasActiveData = System.ActiveMeterService.HasCombatData();
         bool isEditing = !MeterSettings.IsLocked || System.Config.General.PreviewEnabled;
 
-        IsVisible = MeterSettings.IsEnabled && (hasActiveData || isEditing);
+        IsVisible = MeterSettings.IsEnabled && (hasActiveData || isEditing || MeterSettings.IsCollapsed);
 
         EnableMoving = !MeterSettings.IsLocked;
-        EnableResizing = !MeterSettings.IsLocked;
+        EnableResizing = !MeterSettings.IsLocked && !MeterSettings.IsCollapsed;
 
         float currentHeaderHeight = MeterSettings.HeaderEnabled ? MeterSettings.HeaderHeight : 0;
-        float currentFooterHeight = MeterSettings.FooterEnabled ? MeterSettings.FooterHeight : 0;
+        float currentFooterHeight = MeterSettings.FooterEnabled && !MeterSettings.IsCollapsed ? MeterSettings.FooterHeight : 0;
 
-        headerContainer?.IsVisible = MeterSettings.HeaderEnabled;
-        headerContainer?.Position = Vector2.Zero;
-        headerContainer?.Size = new Vector2(Width, currentHeaderHeight);
+        headerContainer!.IsVisible = MeterSettings.HeaderEnabled;
+        headerContainer.Position = Vector2.Zero;
+        headerContainer.Size = new Vector2(Width, currentHeaderHeight);
 
-        footerContainer?.IsVisible = MeterSettings.FooterEnabled;
-        footerContainer?.Position = new Vector2(0, Height - currentFooterHeight);
-        footerContainer?.Size = new Vector2(Width, currentFooterHeight);
+        footerContainer!.IsVisible = MeterSettings.FooterEnabled && !MeterSettings.IsCollapsed;
+        footerContainer.Position = new Vector2(0, Height - currentFooterHeight);
+        footerContainer.Size = new Vector2(Width, currentFooterHeight);
 
+        listNode.IsVisible = !MeterSettings.IsCollapsed;
         listNode.Position = new Vector2(0, currentHeaderHeight);
         listNode.Size = new Vector2(Width, Math.Max(0, Height - currentHeaderHeight - currentFooterHeight));
-        if(Math.Abs(listNode.ItemSpacing - MeterSettings.RowSpacing) > 0.1) listNode.ItemSpacing = MeterSettings.RowSpacing;
 
-        headerContainer?.Update();
-        footerContainer?.Update();
-        listNode.Update();
+        if (Math.Abs(listNode.ItemSpacing - MeterSettings.RowSpacing) > 0.1)
+            listNode.ItemSpacing = MeterSettings.RowSpacing;
+
+        headerContainer.Update();
+        if (!MeterSettings.IsCollapsed)
+        {
+            footerContainer.Update();
+            listNode.Update();
+        }
     }
 
     private void OnCombatDataUpdated()

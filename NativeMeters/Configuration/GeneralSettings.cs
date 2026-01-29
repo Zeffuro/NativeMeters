@@ -11,7 +11,11 @@ public class GeneralSettings
     public bool IsEnabled { get; set; } = true;
     public bool PreviewEnabled { get; set; }
     public bool ReplaceYou { get; set; } = false;
+    public bool PrivacyMode { get; set; } = false;
 
+    public bool EnableEncounterHistory { get; set; } = true;
+    public int MaxEncounterHistory { get; set; } = 10;
+    public bool AutoSwitchToLiveEncounter { get; set; } = true;
 
     public bool ClearActWithMeter { get; set; } = false;
     public bool ForceEndEncounter { get; set; } = false;

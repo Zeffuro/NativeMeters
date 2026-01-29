@@ -42,6 +42,13 @@ public static class PropertyAccessor
 
         var value = prop?.GetValue(data);
 
+        if (System.Config.General.PrivacyMode &&
+            key.Equals("name", StringComparison.OrdinalIgnoreCase) &&
+            data is Combatant combatant)
+        {
+            return combatant.Job.NameEnglish;
+        }
+
         if (!isEncounter && key.Equals("name", StringComparison.OrdinalIgnoreCase) &&
             value is string s && s.Equals("YOU", StringComparison.OrdinalIgnoreCase))
         {

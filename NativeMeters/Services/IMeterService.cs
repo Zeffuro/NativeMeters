@@ -13,4 +13,10 @@ public interface IMeterService
     double GetMaxCombatantStat(Func<Combatant, double> selector);
     bool HasCombatData();
     bool IsConnected { get; }
+    IReadOnlyList<CombatDataMessage> GetEncounterHistory();
+    void SelectEncounter(int index);
+    void SelectLiveEncounter();
+    bool IsViewingHistory { get; }
+    int SelectedHistoryIndex { get; }
+    void ClearHistory();
 }

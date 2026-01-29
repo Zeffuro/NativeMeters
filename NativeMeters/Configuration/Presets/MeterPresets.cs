@@ -27,6 +27,14 @@ public static class MeterPresets
     [
         new()
         {
+            Name = "Menu Button",
+            Type = MeterComponentType.MenuButton,
+            Position = new Vector2(6, 0),
+            Size = new Vector2(24, 24),
+            ZIndex = 2
+        },
+        new()
+        {
             Name = "Duration",
             Type = MeterComponentType.Text,
             DataSource = "[duration]",
@@ -91,7 +99,7 @@ public static class MeterPresets
         {
             Name = "Job Icon",
             Type = MeterComponentType.JobIcon,
-            Position = new Vector2(2, 4),
+            Position = new Vector2(2, -4),
             Size = new Vector2(32),
             ZIndex = 1
         },
