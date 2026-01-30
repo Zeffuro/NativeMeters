@@ -43,7 +43,7 @@ public class HeaderMenuButtonNode : SimpleComponentNode
         _menuButton.Position = Vector2.Zero;
     }
 
-    public void Dispose()
+    public new void Dispose()
     {
         _contextMenu?.Dispose();
     }

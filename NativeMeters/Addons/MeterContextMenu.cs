@@ -1,7 +1,14 @@
+using System.ComponentModel;
+using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiToolKit.ContextMenu;
+using KamiToolKit.Enums;
 using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
+using NativeMeters.Extensions;
+using NativeMeters.Nodes.LayoutNodes;
 using NativeMeters.Services;
+using ContextMenu = KamiToolKit.ContextMenu.ContextMenu;
 
 namespace NativeMeters.Addons;
 
@@ -14,9 +21,20 @@ public static class MeterContextMenu
         OnClick = () => { }
     };
 
+    // Temporary method, since OwnerAddon is never set for Overlays we need to set this or else the contextmenu will close immediately
+    // TODO: Figure out how to do this in the ContextMenu itself or have Kami come up with a solution
+    // The better solution is to use agentContextMenu->OpenContextMenu(false, true); in KTK when it's an overlay so it doesn't bind to the addon
+    private static unsafe void SetAgentOwnerAddon()
+    {
+        var agentContext = AgentContext.Instance();
+        agentContext->OwnerAddon = RaptureAtkUnitManager.Instance()->GetAddonByName(OverlayLayer.BehindUserInterface.Description)->Id;
+    }
+
     public static void Open(MeterSettings meterSettings, ContextMenu menu)
     {
         if (menu == null || meterSettings == null) return;
+
+        SetAgentOwnerAddon();
 
         menu.Clear();
 
