@@ -3,6 +3,7 @@ using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
+using NativeMeters.Nodes.Color;
 using NativeMeters.Nodes.Input;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
@@ -12,6 +13,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
     private LabeledDropdownNode? statDropdown;
     private LabeledNumericInputNode? maxRowsInput;
     private CheckboxNode? backgroundCheckbox;
+    private ColorInputRow? backgroundColorInput;
     private CheckboxNode? headerToggle;
     private LabeledNumericInputNode? headerHeightInput;
     private CheckboxNode? footerToggle;
@@ -31,6 +33,8 @@ public sealed class MeterDisplaySection : MeterConfigSection
         rowHeightInput!.Value = (int)Settings.RowHeight;
         rowSpacingInput!.Value = (int)Settings.RowSpacing;
         backgroundCheckbox!.IsChecked = Settings.ShowWindowBackground;
+        backgroundColorInput!.CurrentColor = Settings.WindowColor;
+        backgroundColorInput!.DefaultColor = new MeterSettings().WindowColor;
         headerHeightInput!.Value = (int)Settings.HeaderHeight;
         footerHeightInput!.Value = (int)Settings.FooterHeight;
         headerToggle!.IsChecked = Settings.HeaderEnabled;
@@ -86,6 +90,17 @@ public sealed class MeterDisplaySection : MeterConfigSection
             OnClick = val => Settings.ShowWindowBackground = val,
         };
 
+        backgroundColorInput = new ColorInputRow
+        {
+            Label = "Background Color: ",
+            Size = new Vector2(Width, 28),
+            DefaultColor = new MeterSettings().WindowColor,
+            CurrentColor = Settings.WindowColor,
+            OnColorConfirmed = color => Settings.WindowColor = color,
+            OnColorCanceled = color => Settings.WindowColor = color,
+            OnColorPreviewed = color => Settings.WindowColor = color,
+        };
+
         headerToggle = new CheckboxNode
         {
             Size = new Vector2(Width, 20),
@@ -122,6 +137,6 @@ public sealed class MeterDisplaySection : MeterConfigSection
         };
 
 
-        AddNode([statDropdown, maxRowsInput, rowHeightInput, rowSpacingInput, backgroundCheckbox, headerToggle, headerHeightInput, footerToggle, footerHeightInput, showLimitBreakToggle]);
+        AddNode([statDropdown, maxRowsInput, rowHeightInput, rowSpacingInput, backgroundCheckbox, backgroundColorInput, headerToggle, headerHeightInput, footerToggle, footerHeightInput, showLimitBreakToggle]);
     }
 }

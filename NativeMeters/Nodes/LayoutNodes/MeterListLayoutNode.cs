@@ -24,6 +24,7 @@ public sealed class MeterListLayoutNode : OverlayNode
     private bool cachedClickThrough;
     private float cachedRowHeight;
 
+    private MeterBackgroundNode? backgroundNode;
     private StaticComponentContainerNode? headerContainer;
     private StaticComponentContainerNode? footerContainer;
 
@@ -83,6 +84,14 @@ public sealed class MeterListLayoutNode : OverlayNode
         Position = MeterSettings.Position;
         Size = MeterSettings.Size;
 
+        backgroundNode?.Dispose();
+        backgroundNode = new MeterBackgroundNode {
+            Size = Size,
+            BackgroundColor = MeterSettings.WindowColor,
+            IsVisible = MeterSettings.ShowWindowBackground
+        };
+        backgroundNode.AttachNode(this);
+
         headerContainer?.Dispose();
         headerContainer = new StaticComponentContainerNode(MeterSettings.HeaderComponents){ MeterSettings = MeterSettings};
         headerContainer.AttachNode(this);
@@ -131,6 +140,13 @@ public sealed class MeterListLayoutNode : OverlayNode
 
         EnableMoving = !MeterSettings.IsLocked;
         EnableResizing = !MeterSettings.IsLocked && !MeterSettings.IsCollapsed;
+
+        if (backgroundNode != null)
+        {
+            backgroundNode.IsVisible = MeterSettings.ShowWindowBackground;
+            backgroundNode.Size = Size;
+            backgroundNode.BackgroundColor = MeterSettings.WindowColor;
+        }
 
         float currentHeaderHeight = MeterSettings.HeaderEnabled ? MeterSettings.HeaderHeight : 0;
         float currentFooterHeight = MeterSettings.FooterEnabled && !MeterSettings.IsCollapsed ? MeterSettings.FooterHeight : 0;

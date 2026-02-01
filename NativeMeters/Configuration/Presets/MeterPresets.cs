@@ -11,12 +11,12 @@ public static class MeterPresets
     {
         settings.RowHeight = 32.0f;
         settings.RowSpacing = 0f;
-        settings.HeaderHeight = 24.0f;
+        settings.HeaderHeight = 34.0f;
         settings.FooterHeight = 24.0f;
         settings.HeaderEnabled = true;
         settings.FooterEnabled = true;
-        settings.Size = new Vector2(280, 320);
-        settings.ShowWindowBackground = true;
+        settings.Size = new Vector2(270, 320);
+        settings.ShowWindowBackground = false;
 
         settings.HeaderComponents = GetDefaultHeaderComponents();
         settings.RowComponents = GetDefaultStylishComponents();
@@ -38,8 +38,8 @@ public static class MeterPresets
             Name = "Duration",
             Type = MeterComponentType.Text,
             DataSource = "[duration]",
-            Position = new Vector2(32, 10),
-            Size = new Vector2(80, 40),
+            Position = new Vector2(32, 2),
+            Size = new Vector2(60, 20),
             FontSize = 16,
             TextColor = ColorHelper.GetColor(37),
             AlignmentType = AlignmentType.Left,
@@ -50,11 +50,18 @@ public static class MeterPresets
             Name = "Encounter Name",
             Type = MeterComponentType.Text,
             DataSource = "[name]",
-            Position = new Vector2(250, 10),
-            Size = new Vector2(200, 40),
+            Position = new Vector2(88, 2),
+            Size = new Vector2(170, 20),
             FontSize = 16,
             AlignmentType = AlignmentType.Right,
             ZIndex = 1
+        },
+        new ()
+        {
+            Name = "Separator",
+            Type = MeterComponentType.Separator,
+            Position = new Vector2(8, 25),
+            Size = new Vector2(254, 4),
         }
     ];
 
@@ -65,8 +72,8 @@ public static class MeterPresets
             Name = "Deaths Label",
             Type = MeterComponentType.Text,
             DataSource = "Deaths: [deaths]",
-            Position = new Vector2(0, 2),
-            Size = Vector2.Zero,
+            Position = new Vector2(5, 2),
+            Size = new Vector2(270, 20),
             FontSize = 14,
             AlignmentType = AlignmentType.Left,
             ZIndex = 1
@@ -76,8 +83,8 @@ public static class MeterPresets
             Name = "Raid DPS Label",
             Type = MeterComponentType.Text,
             DataSource = "Raid DPS: [dps]",
-            Position = new Vector2(250, 2),
-            Size = Vector2.Zero,
+            Position = new Vector2(-14, 2),
+            Size = new Vector2(270, 20),
             FontSize = 14,
             AlignmentType = AlignmentType.Right,
             ZIndex = 1
@@ -99,7 +106,7 @@ public static class MeterPresets
         {
             Name = "Job Icon",
             Type = MeterComponentType.JobIcon,
-            Position = new Vector2(2, -4),
+            Position = new Vector2(2, 0),
             Size = new Vector2(32),
             ZIndex = 1
         },
@@ -108,7 +115,7 @@ public static class MeterPresets
             Name = "Player Name",
             Type = MeterComponentType.Text,
             DataSource = "[name]",
-            Position = new Vector2(32, 5),
+            Position = new Vector2(36, -5),
             Size = new Vector2(150, 20),
             ZIndex = 2,
             FontSize = 14,
@@ -121,8 +128,8 @@ public static class MeterPresets
             Name = "Stat Value",
             Type = MeterComponentType.Text,
             DataSource = "[ENCDPS]",
-            Position = new Vector2(250, 5),
-            Size = new Vector2(60, 20),
+            Position = new Vector2(26, -5),
+            Size = new Vector2(230, 20),
             ZIndex = 2,
             FontSize = 14,
             AlignmentType = AlignmentType.Right,

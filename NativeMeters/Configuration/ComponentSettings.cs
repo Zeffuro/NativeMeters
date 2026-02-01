@@ -31,7 +31,7 @@ public class ComponentSettings
     public AlignmentType AlignmentType { get; set; } = AlignmentType.Left;
     public Vector4 TextColor { get; set; } = ColorHelper.GetColor(50);
     public Vector4 TextOutlineColor { get; set; } = ColorHelper.GetColor(51);
-    public Vector4 TextBackgroundColor { get; set; } = KnownColor.Transparent.Vector();
+    public Vector4 TextBackgroundColor { get; set; } = KnownColor.Black.Vector();
     public Vector4 BarColor { get; set; } = ColorHelper.GetColor(50);
     public Vector4 BarBackgroundColor { get; set; } = KnownColor.Black.Vector();
     public ColorMode ColorMode { get; set; } = ColorMode.Job;

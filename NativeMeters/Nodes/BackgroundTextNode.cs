@@ -1,5 +1,8 @@
+using System;
+using System.Drawing;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Extensions;
 using KamiToolKit.Nodes;
 using Lumina.Text.ReadOnly;
 
@@ -17,7 +20,8 @@ public class BackgroundTextNode : SimpleComponentNode
             TextureCoordinates = Vector2.Zero,
             TextureSize = new Vector2(32.0f, 24.0f),
             TopOffset = 10, BottomOffset = 10, LeftOffset = 15, RightOffset = 15,
-            Position = new Vector2(-2, -7),
+            Position = Vector2.Zero,
+            AddColor = KnownColor.Black.Vector3()
         };
         BackgroundNode.AttachNode(this);
 
@@ -40,20 +44,47 @@ public class BackgroundTextNode : SimpleComponentNode
         if (currentString == lastLayoutString) return;
         lastLayoutString = currentString;
 
+        RecalculateBackgroundSize();
+    }
+
+    private void RecalculateBackgroundSize()
+    {
         var textSize = TextNode.GetTextDrawSize(considerScale: false);
 
-        float textWidth = textSize.X > 0 ? textSize.X + 2.0f : 10.0f;
+        float textWidth = textSize.X > 0 ? textSize.X : 10.0f;
         float textHeight = textSize.Y > 0 ? textSize.Y : 10.0f;
 
-        var newSize = new Vector2(textWidth + Padding.X * 2, textHeight + Padding.Y * 2);
+        // Background size based on actual text size plus padding
+        var bgSize = new Vector2(
+            Math.Max(30.0f, textWidth + Padding.X * 2),
+            Math.Max(20.0f, textHeight + Padding.Y * 2)
+        );
 
-        if (newSize.X < 30.0f) newSize.X = 30.0f;
-        if (newSize.Y < 20.0f) newSize.Y = 20.0f;
+        BackgroundNode.Size = bgSize;
 
-        Size = newSize;
+        float bgX = TextNode.AlignmentType switch
+        {
+            AlignmentType.Center or AlignmentType.Top or AlignmentType.Bottom
+                => (TextNode.Width - bgSize.X) / 2,
 
-        TextNode.Position = Padding;
-        BackgroundNode.Size = newSize;
+            AlignmentType.Right or AlignmentType.TopRight or AlignmentType.BottomRight
+                => TextNode.Width - bgSize.X + Padding.X,
+
+            _ => -Padding.X
+        };
+
+        float bgY = TextNode.AlignmentType switch
+        {
+            AlignmentType.Bottom or AlignmentType.BottomLeft or AlignmentType.BottomRight
+                => TextNode.Height - bgSize.Y + Padding.Y,
+
+            AlignmentType.Top or AlignmentType.TopLeft or AlignmentType.TopRight
+                => -Padding.Y,
+
+            _ => (TextNode.Height - bgSize.Y) / 2
+        };
+
+        BackgroundNode.Position = new Vector2(bgX, bgY);
     }
 
     public ReadOnlySeString String
@@ -87,8 +118,13 @@ public class BackgroundTextNode : SimpleComponentNode
 
     public Vector4 BackgroundColor
     {
-        get => TextNode.BackgroundColor;
-        set => TextNode.BackgroundColor = value;
+        get;
+        set
+        {
+            field = value;
+            BackgroundNode.Color = new Vector4(1, 1, 1, value.W);
+            BackgroundNode.AddColor = new Vector3(value.X, value.Y, value.Z);
+        }
     }
 
     public Vector4 TextColor
@@ -116,15 +152,18 @@ public class BackgroundTextNode : SimpleComponentNode
     public AlignmentType AlignmentType
     {
         get => TextNode.AlignmentType;
-        set => TextNode.AlignmentType = value;
+        set
+        {
+            TextNode.AlignmentType = value;
+            RecalculateBackgroundSize();
+        }
     }
+
     public Vector2 Padding { get; set; } = new(6, 2);
 
     protected override void OnSizeChanged()
     {
-        if (BackgroundNode.Size != Size)
-        {
-            BackgroundNode.Size = Size;
-        }
+        TextNode.Size = Size;
+        RecalculateBackgroundSize();
     }
 }
