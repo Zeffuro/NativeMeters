@@ -59,6 +59,7 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
                 TopOffset = 10, BottomOffset = 10, LeftOffset = 15, RightOffset = 15,
             },
             MeterComponentType.MenuButton => new HeaderMenuButtonNode{ MeterSettings = MeterSettings},
+            MeterComponentType.Separator => new HorizontalLineNode(),
             _ => new SimpleComponentNode()
         };
 

@@ -1,4 +1,5 @@
 using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
@@ -60,11 +61,12 @@ public static class ComponentRenderer
                 }
                 break;
 
-            case NineGridNode backgroundNode:
-                backgroundNode.Color = settings.TextColor;
+            case HeaderMenuButtonNode:
+            case HorizontalLineNode:
                 break;
 
-            case HeaderMenuButtonNode menuButton:
+            case NineGridNode backgroundNode:
+                backgroundNode.Color = settings.TextColor;
                 break;
         }
 

@@ -59,6 +59,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
                 TextureSize = new Vector2(32.0f, 24.0f),
                 TopOffset = 10, BottomOffset = 10, LeftOffset = 15, RightOffset = 15,
             },
+            MeterComponentType.Separator => new HorizontalLineNode(),
             _ => new SimpleComponentNode()
         };
 
