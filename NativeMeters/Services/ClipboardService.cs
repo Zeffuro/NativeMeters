@@ -52,13 +52,13 @@ public static class ClipboardService
                     ImGui.SetClipboardText(text);
                     Service.NotificationManager.Success("Encounter copied to clipboard!");
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     Service.NotificationManager.Error("Failed to copy to clipboard.");
                 }
             });
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             Service.NotificationManager.Error("Failed to copy encounter summary");
         }

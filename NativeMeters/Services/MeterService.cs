@@ -43,7 +43,7 @@ public class MeterService : MeterServiceBase, IDisposable
         return System.Config.ConnectionSettings.SelectedConnectionType switch
         {
             ConnectionType.WebSocket => new WebSocketConnectionHandler(webSocketClient),
-            ConnectionType.IINACTIPC => new IINACTConnectionHandler(iinactIpcClient, EnqueueIpcMessage),
+            ConnectionType.IINACTIPC => new IINACTConnectionHandler(iinactIpcClient),
             _ => throw new InvalidOperationException("Unknown connection type")
         };
     }

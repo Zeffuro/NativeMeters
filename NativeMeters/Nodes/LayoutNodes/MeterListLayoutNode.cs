@@ -21,9 +21,6 @@ public sealed class MeterListLayoutNode : OverlayNode
     private IMeterService? hookedService;
     private bool isDisposing;
 
-    private bool cachedClickThrough;
-    private float cachedRowHeight;
-
     private MeterBackgroundNode? backgroundNode;
     private StaticComponentContainerNode? headerContainer;
     private StaticComponentContainerNode? footerContainer;

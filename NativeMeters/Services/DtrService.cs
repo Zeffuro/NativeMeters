@@ -9,10 +9,10 @@ namespace NativeMeters.Services;
 
 public class DtrService : IDisposable
 {
-    private readonly IDtrBarEntry dtrEntry;
+    private readonly IDtrBarEntry? dtrEntry;
     private DtrSettings Settings => System.Config.DtrSettings;
 
-    private DateTime _lastUpdate = DateTime.MinValue;
+    private DateTime lastUpdate = DateTime.MinValue;
 
     public DtrService()
     {
@@ -31,8 +31,8 @@ public class DtrService : IDisposable
     {
         if (dtrEntry == null || !Settings.Enabled) return;
 
-        if ((DateTime.Now - _lastUpdate).TotalMilliseconds < 250) return;
-        _lastUpdate = DateTime.Now;
+        if ((DateTime.Now - lastUpdate).TotalMilliseconds < 250) return;
+        lastUpdate = DateTime.Now;
 
         UpdateBar();
     }
@@ -43,20 +43,20 @@ public class DtrService : IDisposable
         {
             if (Settings.ShowWhenDisconnected)
             {
-                dtrEntry.Text = new SeStringBuilder().AddText(Settings.DisconnectedText).Build();
-                dtrEntry.Tooltip = "Not connected to ACT/IINACT";
-                dtrEntry.Shown = true;
+                dtrEntry?.Text = new SeStringBuilder().AddText(Settings.DisconnectedText).Build();
+                dtrEntry?.Tooltip = "Not connected to ACT/IINACT";
+                dtrEntry?.Shown = true;
             }
             else
             {
-                dtrEntry.Shown = false;
+                dtrEntry?.Shown = false;
             }
             return;
         }
 
-        dtrEntry.Shown = true;
-        dtrEntry.Text = FormatDtrText();
-        dtrEntry.Tooltip = BuildTooltip();
+        dtrEntry?.Shown = true;
+        dtrEntry?.Text = FormatDtrText();
+        dtrEntry?.Tooltip = BuildTooltip();
     }
 
     private SeString FormatDtrText()

@@ -14,7 +14,7 @@ public class CombatDataMessage
     public required Dictionary<string, Combatant> Combatant { get; set; }
 
     [JsonPropertyName("isActive")]
-    public string IsActive { get; set; }
+    public string? IsActive { get; set; }
 
     public bool IsEncounterActive() => IsActive?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? true;
 

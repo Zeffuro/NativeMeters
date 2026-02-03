@@ -3,7 +3,7 @@ using NativeMeters.Clients;
 
 namespace NativeMeters.Services.Connections;
 
-public class IINACTConnectionHandler(IINACTIpcClient client, Action<string> enqueueMessage) : IConnectionHandler
+public class IINACTConnectionHandler(IINACTIpcClient client) : IConnectionHandler
 {
     public event Action? OnConnected;
     public event Action? OnDisconnected;
@@ -14,16 +14,20 @@ public class IINACTConnectionHandler(IINACTIpcClient client, Action<string> enqu
     public void Start()
     {
         client.OnConnected += HandleConnected;
+        client.OnDisconnected += HandleDisconnected;
+        client.OnMessageReceived += HandleMessageReceived;
         client.Subscribe();
     }
 
     private void HandleConnected() => OnConnected?.Invoke();
-
-    public void EnqueueMessage(string message) => OnMessageReceived?.Invoke(message);
+    private void HandleDisconnected() => OnDisconnected?.Invoke();
+    private void HandleMessageReceived(string message) => OnMessageReceived?.Invoke(message);
 
     public void Stop()
     {
         client.OnConnected -= HandleConnected;
+        client.OnDisconnected -= HandleDisconnected;
+        client.OnMessageReceived -= HandleMessageReceived;
         client.Unsubscribe();
     }
 

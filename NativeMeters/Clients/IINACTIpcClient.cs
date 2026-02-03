@@ -17,6 +17,8 @@ public class IINACTIpcClient
     private const string ProviderEditEndpoint = "IINACT.IpcProvider." + SubscriptionName;
 
     public event Action? OnConnected;
+    public event Action? OnDisconnected;
+    public event Action<string>? OnMessageReceived;
     private bool isSubscribed;
 
     public IINACTIpcClient()
@@ -76,13 +78,18 @@ public class IINACTIpcClient
         }
         finally
         {
+            var wasSubscribed = isSubscribed;
             isSubscribed = false;
+            if (wasSubscribed)
+            {
+                OnDisconnected?.Invoke();
+            }
         }
     }
 
     private bool HandleJObject(JObject json)
     {
-        System.MeterService.EnqueueIpcMessage(json.ToString());
+        OnMessageReceived?.Invoke(json.ToString());
         return true;
     }
 
