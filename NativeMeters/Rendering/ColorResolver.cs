@@ -17,7 +17,7 @@ public static class ColorResolver
 
         return mode switch
         {
-            ColorMode.Static => settings?.BarColor ?? config.OtherColor,
+            ColorMode.Static => GetStaticColor(settings, config),
             ColorMode.Role => GetRoleColor(combatant.Job.Role, config),
             ColorMode.Job => GetJobColor(combatant.Job.RowId, config),
             _ => config.OtherColor
@@ -49,5 +49,17 @@ public static class ColorResolver
             return jobColor;
 
         return config.OtherColor;
+    }
+
+    private static Vector4 GetStaticColor(ComponentSettings? settings, GeneralSettings config)
+    {
+        if (settings == null) return config.OtherColor;
+
+        return settings.Type switch
+        {
+            MeterComponentType.Text or MeterComponentType.Background => settings.TextColor,
+            MeterComponentType.ProgressBar => settings.BarColor,
+            _ => settings.BarColor
+        };
     }
 }
