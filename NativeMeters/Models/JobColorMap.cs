@@ -24,7 +24,7 @@ public static class JobColorMaps
         { 20, new Vector4(214f / 255f, 156f / 255f, 0f / 255f, 1f) },   // MNK
         { 22, new Vector4(65f / 255f, 100f / 255f, 205f / 255f, 1f) },  // DRG
         { 30, new Vector4(175f / 255f, 25f / 255f, 100f / 255f, 1f) },  // NIN
-        { 35, new Vector4(228f / 255f, 109f / 255f, 4f / 255f, 1f) },   // SAM
+        { 34, new Vector4(228f / 255f, 109f / 255f, 4f / 255f, 1f) },   // SAM
         { 39, new Vector4(150f / 255f, 90f / 255f, 144f / 255f, 1f) },  // RPR
         { 41, new Vector4(16f / 255f, 130f / 255f, 16f / 255f, 1f) },   // VPR
 
@@ -37,7 +37,7 @@ public static class JobColorMaps
         { 25, new Vector4(165f / 255f, 121f / 255f, 214f / 255f, 1f) }, // BLM
         { 27, new Vector4(45f / 255f, 155f / 255f, 120f / 255f, 1f) },  // SMN
         { 36, new Vector4(0f / 255f, 185f / 255f, 247f / 255f, 1f) },   // BLU
-        { 34, new Vector4(232f / 255f, 123f / 255f, 123f / 255f, 1f) }, // RDM
+        { 35, new Vector4(232f / 255f, 123f / 255f, 123f / 255f, 1f) }, // RDM
         { 42, new Vector4(252f / 255f, 146f / 255f, 225f / 255f, 1f) }, // PCT
 
         // Unknown/Limit Break
