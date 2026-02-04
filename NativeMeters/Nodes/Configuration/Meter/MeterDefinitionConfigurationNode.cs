@@ -68,7 +68,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         var presetsDropdown = new TextDropDownNode
         {
             Size = new Vector2(120, 28),
-            Options = new List<string> { "Presets...", "Default" },
+            Options = MeterPresets.GetPresetNames(),
             OnOptionSelected = HandlePresetSelection
         };
         buttonsList.AddNode(presetsDropdown);
@@ -204,13 +204,11 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     {
         if (settings == null) return;
 
-        if (presetName == "Default")
-        {
-            MeterPresets.ApplyDefaultStylish(settings);
-            ConfigRepository.Save(System.Config);
-            System.OverlayManager.Setup();
-            RefreshAllSections();
-        }
+        MeterPresets.ApplyPreset(presetName, settings);
+
+        ConfigRepository.Save(System.Config);
+        System.OverlayManager.Setup();
+        RefreshAllSections();
     }
 
     private void HandleImport()
@@ -219,28 +217,10 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         var newSettings = ConfigPorter.TryImportMeterFromClipboard();
         if (newSettings == null) return;
 
-        ImportSettings(newSettings, settings);
+        MeterPresets.ApplySettings(newSettings, settings);
 
         ConfigRepository.Save(System.Config);
         System.OverlayManager.Setup();
         RefreshAllSections();
-    }
-
-    private void ImportSettings(MeterSettings source, MeterSettings target)
-    {
-        var oldId = target.Id;
-        var oldPos = target.Position;
-
-        foreach (var prop in typeof(MeterSettings).GetProperties(BindingFlags.Public | BindingFlags.Instance))
-        {
-            if (prop.CanWrite && prop.CanRead)
-            {
-                var value = prop.GetValue(source);
-                prop.SetValue(target, value);
-            }
-        }
-
-        target.Id = oldId;
-        target.Position = oldPos;
     }
 }

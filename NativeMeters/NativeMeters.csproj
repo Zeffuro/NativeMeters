@@ -1,6 +1,6 @@
 <Project Sdk="Dalamud.NET.Sdk/14.0.1">
     <PropertyGroup>
-        <Version>1.0.1.3</Version>
+        <Version>1.0.1.4</Version>
         <LangVersion>Preview</LangVersion>
         <DebugType>portable</DebugType>
     </PropertyGroup>
@@ -16,6 +16,10 @@
             <Visible>false</Visible>
         </Content>
         <Content Include="Assets\Icons\*.*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
+        </Content>
+        <Content Include="Assets\Presets\*.*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Visible>false</Visible>
         </Content>

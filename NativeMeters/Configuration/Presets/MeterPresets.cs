@@ -1,12 +1,71 @@
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using NativeMeters.Configuration.Persistence;
+using NativeMeters.Services;
 
 namespace NativeMeters.Configuration.Presets;
 
 public static class MeterPresets
 {
+    private static string PresetsDirectory => Path.Combine(Service.PluginInterface.AssemblyLocation.Directory?.FullName!, "Assets", "Presets");
+
+    public static List<string> GetPresetNames()
+    {
+        var names = new List<string> { "Default Stylish" };
+
+        if (Directory.Exists(PresetsDirectory))
+        {
+            var files = Directory.GetFiles(PresetsDirectory, "*.txt")
+                .Select(Path.GetFileNameWithoutExtension);
+            names.AddRange(files!);
+        }
+
+        return names;
+    }
+
+    public static void ApplyPreset(string name, MeterSettings target)
+    {
+        if (name == "Default Stylish")
+        {
+            ApplyDefaultStylish(target);
+            return;
+        }
+
+        var filePath = Path.Combine(PresetsDirectory, $"{name}.txt");
+        if (File.Exists(filePath))
+        {
+            var blob = File.ReadAllText(filePath);
+            var imported = ConfigSerializer.DeserializeCompressed<MeterSettings>(blob);
+            if (imported != null)
+            {
+                ApplySettings(imported, target);
+            }
+        }
+    }
+
+    public static void ApplySettings(MeterSettings source, MeterSettings target)
+    {
+        var oldId = target.Id;
+        var oldPos = target.Position;
+
+        foreach (var prop in typeof(MeterSettings).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            if (prop is { CanWrite: true, CanRead: true })
+            {
+                var value = prop.GetValue(source);
+                prop.SetValue(target, value);
+            }
+        }
+
+        target.Id = oldId;
+        target.Position = oldPos;
+    }
+
     public static void ApplyDefaultStylish(MeterSettings settings)
     {
         settings.RowHeight = 32.0f;
