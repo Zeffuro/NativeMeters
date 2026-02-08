@@ -44,6 +44,7 @@ public class MeterService : MeterServiceBase, IDisposable
         {
             ConnectionType.WebSocket => new WebSocketConnectionHandler(webSocketClient),
             ConnectionType.IINACTIPC => new IINACTConnectionHandler(iinactIpcClient),
+            ConnectionType.Internal => new InternalConnectionHandler(),
             _ => throw new InvalidOperationException("Unknown connection type")
         };
     }

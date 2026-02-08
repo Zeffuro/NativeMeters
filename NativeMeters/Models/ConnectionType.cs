@@ -3,5 +3,6 @@ namespace NativeMeters.Models;
 public enum ConnectionType
 {
     WebSocket,
-    IINACTIPC
+    IINACTIPC,
+    Internal
 }
