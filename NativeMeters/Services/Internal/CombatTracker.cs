@@ -11,7 +11,6 @@ public class CombatTracker
 {
     private readonly Dictionary<ulong, CombatantTracker> trackers = new();
     private EncounterState encounterState = new();
-
     private readonly Dictionary<string, long> enemyDamageTaken = new();
 
     private bool wasInCombat;
@@ -45,9 +44,19 @@ public class CombatTracker
 
     public void HandleActionResult(ActionResultEvent evt)
     {
-        if (!encounterState.IsActive && evt.Damage > 0)
+        if (!encounterState.IsActive && evt.Damage > 0 && !evt.IsDamageTakenOnly)
         {
             encounterState.Start();
+        }
+
+        if (evt.IsDamageTakenOnly)
+        {
+            if (evt.IsPlayerTarget && evt.TargetId != 0)
+            {
+                var target = GetOrCreateTracker(evt.TargetId, evt.TargetName, evt.TargetJob);
+                target.AddDamageTaken(evt);
+            }
+            return;
         }
 
         var source = GetOrCreateTracker(evt.SourceId, evt.SourceName, evt.SourceJob);
@@ -83,13 +92,13 @@ public class CombatTracker
     public Dictionary<string, Combatant> GetCombatants()
     {
         var duration = encounterState.GetDuration();
+        var playerTrackers = trackers.Values.Where(t => t.IsPlayer).ToList();
+        var totalPartyDamage = playerTrackers.Sum(t => t.TotalDamage);
 
-        return trackers.Values
-            .Where(tracker => tracker.IsPlayer)
-            .ToDictionary(
-                tracker => tracker.Name,
-                tracker => tracker.ToCombatant(duration)
-            );
+        return playerTrackers.ToDictionary(
+            tracker => tracker.Name,
+            tracker => tracker.ToCombatant(duration, totalPartyDamage)
+        );
     }
 
     public Encounter BuildEncounter(IEnumerable<Combatant> combatants)
@@ -107,18 +116,15 @@ public class CombatTracker
             Title = encounterState.EncounterName ?? "Unknown",
             CurrentZoneName = encounterState.ZoneName ?? "Unknown",
 
-            // Duration
             Duration = duration,
             DURATION = duration.TotalSeconds,
 
-            // Damage aggregates
             Damage = totalDamage,
             DamageM = totalDamage / 1_000_000.0,
             DamageStar = totalDamage,
             DAMAGEK = totalDamage / 1_000.0,
             DAMAGEM = totalDamage / 1_000_000.0,
 
-            // DPS
             Dps = totalDamage / seconds,
             DPS = totalDamage / seconds,
             DPSK = totalDamage / seconds / 1_000.0,
@@ -132,7 +138,6 @@ public class CombatTracker
             ENCDPSK = list.Sum(c => c.ENCDPSK),
             ENCDPSM = list.Sum(c => c.ENCDPSM),
 
-            // Healing
             Enchps = list.Sum(c => c.Enchps),
             ENCHPS = list.Sum(c => c.ENCHPS),
             EnchpsStar = list.Sum(c => c.EnchpsStar),
@@ -140,7 +145,6 @@ public class CombatTracker
             ENCHPSK = list.Sum(c => c.ENCHPSK),
             ENCHPSM = list.Sum(c => c.ENCHPSM),
 
-            // Hit stats
             Hits = list.Sum(c => c.Hits),
             Crithits = list.Sum(c => c.Crithits),
             Misses = list.Sum(c => c.Misses),
@@ -149,11 +153,9 @@ public class CombatTracker
             Heals = list.Sum(c => c.Heals),
             Critheals = list.Sum(c => c.Critheals),
 
-            // Deaths/kills
             Deaths = list.Sum(c => c.Deaths),
             Kills = list.Sum(c => c.Kills),
 
-            // Crit%
             CrithitPercent = list.Sum(c => c.Swings) > 0
                 ? list.Sum(c => c.Crithits) * 100.0 / list.Sum(c => c.Swings)
                 : 0,
@@ -161,7 +163,6 @@ public class CombatTracker
                 ? list.Sum(c => c.Critheals) * 100.0 / list.Sum(c => c.Heals)
                 : 0,
 
-            // Damage taken
             Damagetaken = list.Sum(c => c.Damagetaken),
             DamagetakenStar = list.Sum(c => c.DamagetakenStar),
             Healstaken = list.Sum(c => c.Healstaken),
@@ -189,6 +190,11 @@ public class CombatTracker
             tracker = new CombatantTracker(actorId, name, job);
             trackers[actorId] = tracker;
         }
+        else if (job.RowId != 0 && tracker.Job.RowId != job.RowId)
+        {
+            tracker.Job = job;
+        }
+
         return tracker;
     }
 }

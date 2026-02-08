@@ -22,15 +22,17 @@ internal enum ActionEffectType : byte
 
 internal enum ActorControlCategory : uint
 {
-    DoT = 23,
-    HoT = 603,
-    Death = 6,
+    Death = 0x6,
+    HoT = 0x604,
+    DoT = 0x605,
 }
 
 public unsafe class NetworkCombatParser : IDisposable
 {
     public event Action<ActionResultEvent>? OnActionResult;
     public event Action<uint, string>? OnActorDeath;
+
+    private readonly StatusTracker statusTracker = new();
 
     private Hook<ActionEffectHandler.Delegates.Receive>? actionEffectHook;
     private Hook<PacketDispatcher.Delegates.HandleActorControlPacket>? actorControlHook;
@@ -56,10 +58,12 @@ public unsafe class NetworkCombatParser : IDisposable
         Service.Logger.Information("[Internal Parser] Hooks enabled");
     }
 
+    public void ResetTracking() => statusTracker.Clear();
+
     private void ActionEffectDetour(
-    uint casterEntityId, Character* casterPtr, Vector3* targetPos,
-    ActionEffectHandler.Header* header, ActionEffectHandler.TargetEffects* effects,
-    GameObjectId* targetEntityIds)
+        uint casterEntityId, Character* casterPtr, Vector3* targetPos,
+        ActionEffectHandler.Header* header, ActionEffectHandler.TargetEffects* effects,
+        GameObjectId* targetEntityIds)
     {
         actionEffectHook!.Original(casterEntityId, casterPtr, targetPos, header, effects, targetEntityIds);
 
@@ -78,12 +82,14 @@ public unsafe class NetworkCombatParser : IDisposable
                 {
                     resolvedSourceId = pcOwner.GameObjectId;
                     resolvedSourceName = pcOwner.Name.TextValue;
-                    resolvedSourceJob = Service.DataManager.GetExcelSheet<ClassJob>().GetRowOrDefault(pcOwner.ClassJob.RowId) ?? default;
+                    resolvedSourceJob = Service.DataManager.GetExcelSheet<ClassJob>()
+                        .GetRowOrDefault(pcOwner.ClassJob.RowId) ?? default;
                 }
             }
             else if (Service.ObjectTable.SearchById(casterEntityId) is IPlayerCharacter pc)
             {
-                resolvedSourceJob = Service.DataManager.GetExcelSheet<ClassJob>().GetRowOrDefault(pc.ClassJob.RowId) ?? default;
+                resolvedSourceJob = Service.DataManager.GetExcelSheet<ClassJob>()
+                    .GetRowOrDefault(pc.ClassJob.RowId) ?? default;
             }
 
             var actionId = (ActionType)header->ActionType switch
@@ -103,7 +109,8 @@ public unsafe class NetworkCombatParser : IDisposable
                 string targetName = targetObj?.Name.TextValue ?? "";
                 if (targetObj is IPlayerCharacter tpc)
                 {
-                    targetJob = Service.DataManager.GetExcelSheet<ClassJob>().GetRowOrDefault(tpc.ClassJob.RowId) ?? default;
+                    targetJob = Service.DataManager.GetExcelSheet<ClassJob>()
+                        .GetRowOrDefault(tpc.ClassJob.RowId) ?? default;
                 }
 
                 for (var j = 0; j < 8; j++)
@@ -173,44 +180,19 @@ public unsafe class NetworkCombatParser : IDisposable
 
         try
         {
-            if (Service.ObjectTable.SearchById(entityId) is not IPlayerCharacter pc) return;
-
-            var job = Service.DataManager.GetExcelSheet<ClassJob>()
-                .GetRowOrDefault(pc.ClassJob.RowId) ?? default;
-            var name = pc.Name.TextValue;
-
             switch ((ActorControlCategory)category)
             {
                 case ActorControlCategory.DoT:
-                    OnActionResult?.Invoke(new ActionResultEvent
-                    {
-                        SourceId = entityId,
-                        SourceName = name,
-                        SourceJob = job,
-                        TargetId = entityId,
-                        TargetName = name,
-                        TargetJob = job,
-                        IsPlayerTarget = true,
-                        Damage = arg2,
-                    });
+                    HandleDoTTick(entityId, arg1, arg2);
                     break;
 
                 case ActorControlCategory.HoT:
-                    OnActionResult?.Invoke(new ActionResultEvent
-                    {
-                        SourceId = entityId,
-                        SourceName = name,
-                        SourceJob = job,
-                        TargetId = entityId,
-                        TargetName = name,
-                        TargetJob = job,
-                        IsPlayerTarget = true,
-                        Healing = arg2,
-                    });
+                    HandleHoTTick(entityId, arg1, arg2);
                     break;
 
                 case ActorControlCategory.Death:
-                    OnActorDeath?.Invoke(entityId, name);
+                    if (Service.ObjectTable.SearchById(entityId) is IPlayerCharacter deadPc)
+                        OnActorDeath?.Invoke(entityId, deadPc.Name.TextValue);
                     break;
             }
         }
@@ -220,12 +202,98 @@ public unsafe class NetworkCombatParser : IDisposable
         }
     }
 
-    public void Tick() { }
+    // DoT/HoT damage is estimated, I'm not going to decompile FFXIV Plugin to copy how they simulate DoTs.
+    // If anyone wants to take a crack at it, be my guest but don't decompile Ravahn's FFXIV Plugin.
+    private void HandleDoTTick(uint entityId, uint statusId, uint amount)
+    {
+        var target = Service.ObjectTable.SearchById(entityId);
+
+        if (target is IPlayerCharacter pc)
+        {
+            var job = Service.DataManager.GetExcelSheet<ClassJob>()
+                .GetRowOrDefault(pc.ClassJob.RowId) ?? default;
+            OnActionResult?.Invoke(new ActionResultEvent
+            {
+                SourceId = 0,
+                SourceName = "DoT",
+                SourceJob = default,
+                TargetId = entityId,
+                TargetName = pc.Name.TextValue,
+                TargetJob = job,
+                IsPlayerTarget = true,
+                IsDamageTakenOnly = true,
+                Damage = amount,
+            });
+            return;
+        }
+
+        var sources = statusTracker.GetDoTSources(entityId);
+        if (sources.Count == 0) return;
+
+        var splitAmount = (uint)(amount / sources.Count);
+        foreach (var sourceId in sources)
+        {
+            if (Service.ObjectTable.SearchById(sourceId) is not IPlayerCharacter sourcePc) continue;
+
+            var sourceJob = Service.DataManager.GetExcelSheet<ClassJob>()
+                .GetRowOrDefault(sourcePc.ClassJob.RowId) ?? default;
+
+            OnActionResult?.Invoke(new ActionResultEvent
+            {
+                SourceId = sourceId,
+                SourceName = sourcePc.Name.TextValue,
+                SourceJob = sourceJob,
+                TargetId = entityId,
+                TargetName = target?.Name.TextValue ?? "",
+                TargetJob = default,
+                IsPlayerTarget = false,
+                Damage = splitAmount,
+            });
+        }
+    }
+
+    private void HandleHoTTick(uint entityId, uint statusId, uint amount)
+    {
+        if (Service.ObjectTable.SearchById(entityId) is not IPlayerCharacter pc) return;
+
+        var targetJob = Service.DataManager.GetExcelSheet<ClassJob>()
+            .GetRowOrDefault(pc.ClassJob.RowId) ?? default;
+
+        ulong resolvedSourceId = entityId;
+        string resolvedSourceName = pc.Name.TextValue;
+        ClassJob resolvedSourceJob = targetJob;
+
+        if (statusId != 0)
+        {
+            var sourceId = statusTracker.GetSource(entityId, statusId);
+            if (sourceId != null &&
+                Service.ObjectTable.SearchById(sourceId.Value) is IPlayerCharacter sourcePc)
+            {
+                resolvedSourceId = sourcePc.GameObjectId;
+                resolvedSourceName = sourcePc.Name.TextValue;
+                resolvedSourceJob = Service.DataManager.GetExcelSheet<ClassJob>()
+                    .GetRowOrDefault(sourcePc.ClassJob.RowId) ?? default;
+            }
+        }
+
+        OnActionResult?.Invoke(new ActionResultEvent
+        {
+            SourceId = resolvedSourceId,
+            SourceName = resolvedSourceName,
+            SourceJob = resolvedSourceJob,
+            TargetId = entityId,
+            TargetName = pc.Name.TextValue,
+            TargetJob = targetJob,
+            IsPlayerTarget = true,
+            Healing = amount,
+        });
+    }
 
     public void Dispose()
     {
         actionEffectHook?.Dispose();
         actorControlHook?.Dispose();
+        statusTracker.Clear();
         enabled = false;
     }
 }

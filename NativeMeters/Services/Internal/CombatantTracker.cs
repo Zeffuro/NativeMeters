@@ -8,11 +8,8 @@ public class CombatantTracker(ulong actorId, string name, ClassJob job)
 {
     public ulong ActorId => actorId;
     public string Name => name;
-    public ClassJob Job => job;
-    public bool IsPlayer => job.RowId != 0;
-
-    public DateTime? FirstAction { get; private set; }
-    public DateTime? LastAction { get; private set; }
+    public ClassJob Job { get; set; } = job;
+    public bool IsPlayer => Job.RowId != 0;
 
     public long TotalDamage { get; set; }
     public long TotalHealing { get; set; }
@@ -20,26 +17,20 @@ public class CombatantTracker(ulong actorId, string name, ClassJob job)
     public int CritHits { get; set; }
     public int DirectHits { get; set; }
     public int CritDirectHits { get; set; }
+    public int Misses { get; set; }
     public int Swings { get; set; }
     public int HealCount { get; set; }
     public int CritHeals { get; set; }
+    public int Deaths { get; set; }
+    public int Kills { get; set; }
     public long DamageTaken { get; set; }
     public long HealsTaken { get; set; }
     public long OverHeal { get; set; }
     public long MaxHitValue { get; set; }
     public long MaxHealValue { get; set; }
-    public int Deaths { get; set; }
-
-    private void UpdateActivity()
-    {
-        var now = DateTime.Now;
-        FirstAction ??= now;
-        LastAction = now;
-    }
 
     public void AddAction(ActionResultEvent evt)
     {
-        UpdateActivity();
         if (evt.Damage > 0)
         {
             TotalDamage += evt.Damage;
@@ -67,66 +58,85 @@ public class CombatantTracker(ulong actorId, string name, ClassJob job)
         if (evt.Healing > 0) HealsTaken += evt.Healing;
     }
 
-    public double GetActiveDuration()
+    public Combatant ToCombatant(TimeSpan duration, long totalPartyDamage)
     {
-        if (FirstAction == null || LastAction == null) return 0;
-        var diff = (LastAction.Value - FirstAction.Value).TotalSeconds;
-        return Math.Max(diff, 1.0);
-    }
-
-    public Combatant ToCombatant(TimeSpan encounterDuration)
-    {
-        double activeSeconds = GetActiveDuration();
-        double encounterSeconds = Math.Max(encounterDuration.TotalSeconds, 1.0);
-
-        double dps = TotalDamage / encounterSeconds;
-        double hps = TotalHealing / encounterSeconds;
+        double seconds = Math.Max(duration.TotalSeconds, 1.0);
+        double dps = TotalDamage / seconds;
+        double hps = TotalHealing / seconds;
+        double dmgPct = totalPartyDamage > 0 ? TotalDamage * 100.0 / totalPartyDamage : 0;
 
         return new Combatant
         {
-            N = Name,
+            N = "\n",
+            T = "\t",
             Name = Name,
             Job = Job,
-            Duration = TimeSpan.FromSeconds(activeSeconds),
-            DURATION = activeSeconds,
+            Duration = duration,
+            DURATION = seconds,
 
             Damage = TotalDamage,
+            DamageM = TotalDamage / 1_000_000.0,
+            DamageStar = TotalDamage,
+            DAMAGEK = TotalDamage / 1_000.0,
+            DAMAGEM = TotalDamage / 1_000_000.0,
+            DamagePercent = dmgPct,
+
             Dps = dps,
             DPS = dps,
+            DPSK = dps / 1_000.0,
+            DPSM = dps / 1_000_000.0,
+            DpsStar = dps,
+            DPSStar = dps,
             Encdps = dps,
+            EncdpsStar = dps,
             ENCDPS = dps,
-
-            DamageStar = TotalDamage,
-            DAMAGEK = TotalDamage / 1000.0,
-            DAMAGEM = TotalDamage / 1000000.0,
+            ENCDPSK = dps / 1_000.0,
+            ENCDPSM = dps / 1_000_000.0,
+            ENCDPSStar = dps,
 
             Enchps = hps,
+            EnchpsStar = hps,
             ENCHPS = hps,
+            ENCHPSK = hps / 1_000.0,
+            ENCHPSM = hps / 1_000_000.0,
+            ENCHPSStar = hps,
 
             Hits = Hits,
             Crithits = CritHits,
+            Misses = Misses,
             Swings = Swings,
-            Misses = Swings - Hits,
 
-            CrithitPercent = Hits > 0 ? (CritHits * 100.0 / Hits) : 0,
-            DirectHitPct = Hits > 0 ? (DirectHits * 100.0 / Hits) : 0,
-            CritDirectHitPct = Hits > 0 ? (CritDirectHits * 100.0 / Hits) : 0,
+            CrithitPercent = Swings > 0 ? (CritHits * 100.0 / Swings) : 0,
+            Tohit = Swings > 0 ? (Hits * 100.0 / Swings) : 0,
+            TOHIT = Swings > 0 ? (Hits * 100.0 / Swings) : 0,
 
             Maxhit = MaxHitValue,
             MAXHIT = MaxHitValue,
-            MaxhitStar = $"{MaxHitValue}",
-            MAXHITStar = $"{MaxHitValue}",
+            MaxhitStar = MaxHitValue > 0 ? MaxHitValue.ToString() : "",
+            MAXHITStar = MaxHitValue > 0 ? MaxHitValue.ToString() : "",
 
             Healed = (int)TotalHealing,
             Heals = HealCount,
             Critheals = CritHeals,
-            OverHeal = OverHeal,
-            OverHealPct = (TotalHealing + OverHeal) > 0 ? (OverHeal * 100.0 / (TotalHealing + OverHeal)) : 0,
+            CrithealPercent = HealCount > 0 ? (CritHeals * 100.0 / HealCount) : 0,
+            Maxheal = MaxHealValue,
+            MAXHEAL = MaxHealValue,
 
             Deaths = Deaths,
+            Kills = Kills,
+
             Damagetaken = DamageTaken,
+            DamagetakenStar = DamageTaken,
             Healstaken = HealsTaken,
-            IsActive = (DateTime.Now - (LastAction ?? DateTime.MinValue)).TotalSeconds < 6
+            HealstakenStar = HealsTaken,
+
+            DirectHitCount = DirectHits,
+            CritDirectHitCount = CritDirectHits,
+            DirectHitPct = Hits > 0 ? (DirectHits * 100.0 / Hits) : 0,
+            CritDirectHitPct = Hits > 0 ? (CritDirectHits * 100.0 / Hits) : 0,
+            OverHeal = OverHeal,
+
+            IsActive = true,
         };
     }
 }

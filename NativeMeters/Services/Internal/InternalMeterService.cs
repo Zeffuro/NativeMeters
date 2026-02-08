@@ -1,21 +1,20 @@
 using System;
 using System.Linq;
-using System.Text.Json;
+using NativeMeters.Extensions;
 using NativeMeters.Models;
-using NativeMeters.Services.Internal;
 
-namespace NativeMeters.Services.Connections;
+namespace NativeMeters.Services.Internal;
 
-public class InternalCombatProcessor : IDisposable
+public class InternalMeterService : MeterServiceBase, IDisposable
 {
-    public event Action<string>? OnCombatDataJson;
-
     private readonly CombatTracker combatTracker = new();
     private readonly NetworkCombatParser networkParser = new();
 
     private bool disposed;
     private DateTime lastEmit = DateTime.MinValue;
     private const int EmitIntervalMs = 500;
+
+    public override bool IsConnected => !disposed;
 
     public void Enable()
     {
@@ -24,8 +23,7 @@ public class InternalCombatProcessor : IDisposable
         networkParser.Enable();
 
         Service.Framework.Update += OnFrameworkTick;
-
-        Service.Logger.Information("[Internal Parser] Enabled (experimental)");
+        Service.NotificationManager.Success("Internal parser enabled (experimental).");
     }
 
     private void OnFrameworkTick(object? _)
@@ -33,35 +31,29 @@ public class InternalCombatProcessor : IDisposable
         if (disposed) return;
 
         combatTracker.UpdateCombatState();
-        networkParser.Tick();
+
+        if (combatTracker.DidEncounterJustEnd)
+        {
+            if (System.Config.General.EnableEncounterHistory)
+                ArchiveCurrentEncounter();
+        }
 
         if ((DateTime.Now - lastEmit).TotalMilliseconds < EmitIntervalMs) return;
         lastEmit = DateTime.Now;
 
         if (!combatTracker.HasData) return;
 
-        var json = BuildCombatDataJson();
-        if (json != null)
-            OnCombatDataJson?.Invoke(json);
+        UpdateCombatData();
     }
 
-    private string? BuildCombatDataJson()
+    private void UpdateCombatData()
     {
         var combatants = combatTracker.GetCombatants();
-        if (combatants.Count == 0) return null;
-
-        var totalDamage = combatants.Values.Sum(c => c.Damage);
-        if (totalDamage > 0)
-        {
-            foreach (var combatant in combatants.Values)
-            {
-                combatant.DamagePercent = combatant.Damage * 100.0 / totalDamage;
-            }
-        }
+        if (combatants.Count == 0) return;
 
         var encounter = combatTracker.BuildEncounter(combatants.Values);
 
-        var message = new CombatDataMessage
+        CombatData = new CombatDataMessage
         {
             Type = "CombatData",
             Encounter = encounter,
@@ -69,7 +61,23 @@ public class InternalCombatProcessor : IDisposable
             IsActive = combatTracker.IsInCombat ? "true" : "false"
         };
 
-        return JsonSerializer.Serialize(message);
+        InvokeCombatDataUpdated();
+    }
+
+    public void ClearMeter()
+    {
+        combatTracker.Reset();
+        networkParser.ResetTracking();
+        CombatData = null;
+        InvokeCombatDataUpdated();
+    }
+
+    public void EndEncounter()
+    {
+        if (System.Config.General.EnableEncounterHistory)
+            ArchiveCurrentEncounter();
+
+        combatTracker.ForceEndEncounter();
     }
 
     public void Dispose()
@@ -81,5 +89,7 @@ public class InternalCombatProcessor : IDisposable
         networkParser.OnActionResult -= combatTracker.HandleActionResult;
         networkParser.OnActorDeath -= combatTracker.HandleDeath;
         networkParser.Dispose();
+        combatTracker.Reset();
+        CombatData = null;
     }
 }

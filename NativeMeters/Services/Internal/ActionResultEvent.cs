@@ -21,4 +21,5 @@ public record ActionResultEvent
     public bool IsDirectHit { get; init; }
 
     public uint ActionId { get; init; }
+    public bool IsDamageTakenOnly { get; init; }
 }
