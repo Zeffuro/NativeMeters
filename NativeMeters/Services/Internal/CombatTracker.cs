@@ -26,11 +26,8 @@ public class CombatTracker
 
         if (!wasInCombat && isInCombat)
         {
-            if (!encounterState.IsActive)
-            {
-                Reset();
-                encounterState.Start();
-            }
+            Reset();
+            encounterState.Start();
         }
         else if (wasInCombat && !isInCombat)
         {
@@ -44,10 +41,7 @@ public class CombatTracker
 
     public void HandleActionResult(ActionResultEvent evt)
     {
-        if (!encounterState.IsActive && evt.Damage > 0 && !evt.IsDamageTakenOnly)
-        {
-            encounterState.Start();
-        }
+        if (!encounterState.IsActive) return;
 
         if (evt.IsDamageTakenOnly)
         {
@@ -92,8 +86,8 @@ public class CombatTracker
     public Dictionary<string, Combatant> GetCombatants()
     {
         var duration = encounterState.GetDuration();
-        var playerTrackers = trackers.Values.Where(t => t.IsPlayer).ToList();
-        var totalPartyDamage = playerTrackers.Sum(t => t.TotalDamage);
+        var playerTrackers = trackers.Values.Where(tracker => tracker.IsPlayer).ToList();
+        var totalPartyDamage = playerTrackers.Sum(tracker => tracker.TotalDamage);
 
         return playerTrackers.ToDictionary(
             tracker => tracker.Name,
