@@ -20,6 +20,7 @@ public sealed class MeterListLayoutNode : OverlayNode
 
     private IMeterService? hookedService;
     private bool isDisposing;
+    private bool isPreWarmed;
 
     private MeterBackgroundNode? backgroundNode;
     private StaticComponentContainerNode? headerContainer;
@@ -103,7 +104,7 @@ public sealed class MeterListLayoutNode : OverlayNode
         RecreateList();
     }
 
-    public void RecreateList()
+    private void RecreateList()
     {
         if (MeterSettings == null) return;
         listNode?.Dispose();
@@ -123,7 +124,25 @@ public sealed class MeterListLayoutNode : OverlayNode
 
         listNode.AttachNode(this);
 
-        RebuildList();
+        PreWarmNodes();
+    }
+
+    private void PreWarmNodes()
+    {
+        if (MeterSettings == null) return;
+
+        float currentHeaderHeight = MeterSettings.HeaderEnabled ? MeterSettings.HeaderHeight : 0;
+        float currentFooterHeight = MeterSettings.FooterEnabled ? MeterSettings.FooterHeight : 0;
+        listNode.Size = new Vector2(Width, Math.Max(0, Height - currentHeaderHeight - currentFooterHeight));
+
+        var dummies = FakeCombatantFactory.CreateFixedCombatants(MeterSettings.MaxCombatants);
+        listNode.OptionsList = dummies
+            .Select(c => new CombatantRowData(c, MeterSettings))
+            .ToList();
+
+        listNode.Update();
+
+        isPreWarmed = true;
     }
 
     protected override void OnUpdate()
@@ -133,7 +152,7 @@ public sealed class MeterListLayoutNode : OverlayNode
         bool hasActiveData = System.ActiveMeterService.HasCombatData();
         bool isEditing = !MeterSettings.IsLocked || System.Config.General.PreviewEnabled;
 
-        IsVisible = MeterSettings.IsEnabled && (hasActiveData || isEditing || MeterSettings.IsCollapsed);
+        IsVisible = MeterSettings.IsEnabled && (hasActiveData || isEditing || MeterSettings.IsCollapsed) && !isPreWarmed;
 
         EnableMoving = !MeterSettings.IsLocked;
         EnableResizing = !MeterSettings.IsLocked && !MeterSettings.IsCollapsed;
@@ -174,6 +193,7 @@ public sealed class MeterListLayoutNode : OverlayNode
     private void OnCombatDataUpdated()
     {
         if (isDisposing) return;
+        isPreWarmed = false;
         RebuildList();
     }
 
