@@ -162,13 +162,13 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
         AddNode(1, new TextButtonNode {
             String = "End Encounter",
             Size = new Vector2(120, 28),
-            OnClick = () => System.MeterService.EndEncounter()
+            OnClick = () => System.ActiveMeterService.EndEncounter()
         });
 
         AddNode(1, new TextButtonNode {
             String = "Clear Meter",
             Size = new Vector2(120, 28),
-            OnClick = () => System.MeterService.ClearMeter()
+            OnClick = () => System.ActiveMeterService.ClearMeter()
         });
 
         SubtractTab(1);

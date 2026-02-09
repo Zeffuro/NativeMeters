@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NativeMeters.Models;
 using NativeMeters.Nodes.LayoutNodes;
 
 namespace NativeMeters.Services;
@@ -46,11 +47,30 @@ public class OverlayManager : IDisposable {
         }
     }
 
+    public void UpdateSettings()
+    {
+        foreach (var node in activeMeters.Values)
+        {
+            node.UpdateSettings();
+        }
+    }
+
     public void UpdateActiveService()
     {
-        IMeterService newService = System.Config.General.PreviewEnabled
-            ? System.TestMeterService
-            : System.MeterService;
+        IMeterService newService;
+
+        if (System.Config.General.PreviewEnabled)
+        {
+            newService = System.TestMeterService;
+        }
+        else if (System.Config.ConnectionSettings.SelectedConnectionType == ConnectionType.Internal)
+        {
+            newService = System.InternalMeterService;
+        }
+        else
+        {
+            newService = System.MeterService;
+        }
 
         if (System.ActiveMeterService == newService) return;
 

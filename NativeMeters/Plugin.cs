@@ -8,8 +8,10 @@ using NativeMeters.Addons;
 using NativeMeters.Clients;
 using NativeMeters.Commands;
 using NativeMeters.Configuration.Persistence;
+using NativeMeters.Models;
 using NativeMeters.Nodes.Color;
 using NativeMeters.Services;
+using NativeMeters.Services.Internal;
 
 namespace NativeMeters;
 
@@ -25,8 +27,11 @@ public class Plugin : IDalamudPlugin
         System.OverlayController = new OverlayController();
 
         System.MeterService = new MeterService(new WebSocketClient(), new IINACTIpcClient());
+        System.InternalMeterService = new InternalMeterService();
         System.TestMeterService = new TestMeterService();
-        System.ActiveMeterService = System.MeterService;
+        System.ActiveMeterService = System.Config.ConnectionSettings.SelectedConnectionType == ConnectionType.Internal
+            ? System.InternalMeterService
+            : System.MeterService;
 
         System.DtrService = new DtrService();
 
@@ -53,6 +58,24 @@ public class Plugin : IDalamudPlugin
         }
     }
 
+    private void OnFrameworkUpdate(IFramework framework) {
+        System.MeterService.ProcessPendingMessages();
+
+        if (System.Config.General.PreviewEnabled) System.TestMeterService.Tick();
+    }
+
+    private void OnLogin() {
+        if (System.Config.ConnectionSettings.SelectedConnectionType == ConnectionType.Internal)
+        {
+            System.InternalMeterService.Enable();
+        }
+        else
+        {
+            System.MeterService.Enable();
+        }
+        System.AddonConfigurationWindow.DebugOpen();
+    }
+
     public void Dispose()
     {
         Service.Framework.Update -= OnFrameworkUpdate;
@@ -63,6 +86,7 @@ public class Plugin : IDalamudPlugin
         System.OverlayController.Dispose();
         System.DtrService.Dispose();
         System.TestMeterService.Dispose();
+        System.InternalMeterService.Dispose();
         System.MeterService.Dispose();
         System.OverlayManager.Dispose();
         System.CommandHandler.Dispose();
@@ -70,16 +94,5 @@ public class Plugin : IDalamudPlugin
 
         ConfigRepository.Save(System.Config);
         KamiToolKitLibrary.Dispose();
-    }
-
-    private void OnFrameworkUpdate(IFramework framework) {
-        System.MeterService.ProcessPendingMessages();
-
-        if (System.Config.General.PreviewEnabled) System.TestMeterService.Tick();
-    }
-
-    private void OnLogin() {
-        System.MeterService.Enable();
-        System.AddonConfigurationWindow.DebugOpen();
     }
 }

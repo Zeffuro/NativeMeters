@@ -3,6 +3,7 @@ using NativeMeters.Addons;
 using NativeMeters.Commands;
 using NativeMeters.Configuration;
 using NativeMeters.Services;
+using NativeMeters.Services.Internal;
 
 namespace NativeMeters;
 
@@ -14,6 +15,7 @@ public static class System
     public static CommandHandler CommandHandler { get; set; } = null!;
     public static DtrService DtrService { get; set; } = null!;
     public static MeterService MeterService { get; set; } = null!;
+    public static InternalMeterService InternalMeterService { get; set; } = null!;
     public static OverlayController OverlayController { get; set; } = null!;
     public static OverlayManager OverlayManager { get; set; } = null!;
     public static TestMeterService TestMeterService { get; set; } = null!;

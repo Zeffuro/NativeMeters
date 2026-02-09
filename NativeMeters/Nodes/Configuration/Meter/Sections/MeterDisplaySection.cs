@@ -6,7 +6,7 @@ using NativeMeters.Data.Stats;
 using NativeMeters.Nodes.Color;
 using NativeMeters.Nodes.Input;
 
-namespace NativeMeters.Nodes.Configuration.Meter;
+namespace NativeMeters.Nodes.Configuration.Meter.Sections;
 
 public sealed class MeterDisplaySection : MeterConfigSection
 {
@@ -27,6 +27,8 @@ public sealed class MeterDisplaySection : MeterConfigSection
     public override void Refresh()
     {
         if (statDropdown == null) Initialize();
+
+        IsInitialized = true;
 
         statDropdown!.SelectedOption = Settings.StatToTrack;
         maxRowsInput!.Value = Settings.MaxCombatants;

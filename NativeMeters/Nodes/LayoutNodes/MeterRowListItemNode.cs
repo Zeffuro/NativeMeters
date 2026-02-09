@@ -32,9 +32,11 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
     {
         if (ItemData == null || MeterSettings == null || Combatant == null) return;
 
-        dynamicNodeList.Update(MeterSettings.RowComponents, CreateComponent);
+        var sortedComponents = MeterSettings.RowComponents.OrderBy(s => s.ZIndex).ToList();
 
-        foreach (var settings in MeterSettings.RowComponents)
+        dynamicNodeList.Update(sortedComponents, CreateComponent);
+
+        foreach (var settings in sortedComponents)
         {
             if (dynamicNodeList.Components.TryGetValue(settings.Id, out var node))
             {
@@ -46,7 +48,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
     private NodeBase CreateComponent(ComponentSettings settings)
     {
         NodeBase node = settings.Type switch {
-            MeterComponentType.JobIcon => new IconImageNode { FitTexture = true },
+            MeterComponentType.JobIcon or MeterComponentType.Icon => new IconImageNode { FitTexture = true },
             MeterComponentType.ProgressBar => MeterSettings!.ProgressBarType switch {
                 ProgressBarType.Cast => new ProgressBarCastNode(),
                 ProgressBarType.EnemyCast => new ProgressBarEnemyCastNode(),

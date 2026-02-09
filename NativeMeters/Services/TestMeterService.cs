@@ -9,7 +9,7 @@ namespace NativeMeters.Services;
 public class TestMeterService : MeterServiceBase, IDisposable
 {
     private bool disposed;
-    private readonly List<Combatant> fixedCombatants = FakeCombatantFactory.CreateFixedCombatants(20);
+    private readonly List<Combatant> fixedCombatants = FakeCombatantFactory.CreateFixedCombatants(40);
     private DateTime lastUpdate = DateTime.MinValue;
 
     public void Tick()
@@ -39,6 +39,26 @@ public class TestMeterService : MeterServiceBase, IDisposable
         };
 
         InvokeCombatDataUpdated();
+    }
+
+    public override void ClearMeter()
+    {
+        CombatData = null;
+        InvokeCombatDataUpdated();
+    }
+
+    public override void EndEncounter()
+    {
+        if (CombatData != null)
+        {
+            CombatData.IsActive = "false";
+            ArchiveCurrentEncounter();
+        }
+    }
+
+    public override void Reconnect()
+    {
+        GenerateFakeData();
     }
 
     public void Dispose()

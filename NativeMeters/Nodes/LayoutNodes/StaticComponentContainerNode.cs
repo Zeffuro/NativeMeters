@@ -4,6 +4,7 @@ using System.Numerics;
 using KamiToolKit;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
+using NativeMeters.Models;
 using NativeMeters.Nodes.Components;
 using NativeMeters.Rendering;
 
@@ -29,7 +30,9 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
 
     public void Update()
     {
-        graphManager.Update(settingsList, CreateComponent);
+        var sortedSettings = settingsList.OrderBy(s => s.ZIndex).ToList();
+
+        graphManager.Update(sortedSettings, CreateComponent);
 
         if (settingsList.Count == 0 && CreatedNodes.Count == 0)
         {
@@ -37,7 +40,7 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
             guard.AttachNode(this);
         }
 
-        foreach (var settings in settingsList)
+        foreach (var settings in sortedSettings)
         {
             if (graphManager.Components.TryGetValue(settings.Id, out var node))
             {
@@ -49,7 +52,7 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
     private NodeBase CreateComponent(ComponentSettings settings)
     {
         NodeBase node = settings.Type switch {
-            MeterComponentType.JobIcon => new IconImageNode { FitTexture = true },
+            MeterComponentType.JobIcon or MeterComponentType.Icon => new IconImageNode { FitTexture = true },
             MeterComponentType.ProgressBar => new ProgressBarNode(),
             MeterComponentType.Text => new BackgroundTextNode(),
             MeterComponentType.Background => new SimpleNineGridNode {
@@ -74,7 +77,13 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
     private void UpdateComponentData(NodeBase node, ComponentSettings settings)
     {
         var encounter = System.ActiveMeterService.GetEncounter();
-        if (encounter == null) return;
+        if (encounter == null)
+        {
+            encounter = new Encounter
+            {
+                Title = "No Encounter",
+            };
+        }
 
         ComponentRenderer.Update(node, settings, Width, encounter);
     }

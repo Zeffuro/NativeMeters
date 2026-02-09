@@ -8,7 +8,7 @@ using NativeMeters.Models;
 
 namespace NativeMeters.Configuration;
 
-public enum MeterComponentType { Text, JobIcon, ProgressBar, Background, MenuButton, Separator }
+public enum MeterComponentType { Text, JobIcon, ProgressBar, Background, MenuButton, Separator, Icon }
 public enum ColorMode { Static, Job, Role }
 
 public class ComponentSettings
@@ -24,6 +24,7 @@ public class ComponentSettings
     public string DataSource { get; set; } = "[name]";
 
     public JobIconType JobIconType { get; set; } = JobIconType.Default;
+    public uint IconId { get; set; } = 0;
 
     public uint FontSize { get; set; } = 14;
     public FontType FontType { get; set; } = FontType.Axis;

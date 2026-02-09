@@ -31,6 +31,9 @@ public class MeterService : MeterServiceBase, IDisposable
 
     public void Enable()
     {
+        if (System.Config.ConnectionSettings.SelectedConnectionType == ConnectionType.Internal)
+            return;
+
         activeConnection = CreateConnectionHandler();
         activeConnection.OnConnected += ShowConnectionNotification;
         activeConnection.OnDisconnected += reconnectionManager.MarkDisconnected;
@@ -52,6 +55,9 @@ public class MeterService : MeterServiceBase, IDisposable
 
     public void ProcessPendingMessages()
     {
+        if (System.Config.ConnectionSettings.SelectedConnectionType == ConnectionType.Internal)
+            return;
+
         if (reconnectionManager.ConsumePendingReconnect())
         {
             Reconnect();
@@ -90,10 +96,17 @@ public class MeterService : MeterServiceBase, IDisposable
         }
     }
 
-    public void Reconnect() { activeConnection?.Stop(); Enable(); }
+    public override void Reconnect()
+    {
+        activeConnection?.Stop();
+        activeConnection?.Dispose();
+        activeConnection = null;
+        Enable();
+    }
+
     public void RequestReconnect() => reconnectionManager.RequestReconnect();
-    public void ClearMeter() { CombatData = null; InvokeCombatDataUpdated(); SendChatCommand("clear"); }
-    public void EndEncounter()
+    public override void ClearMeter() { CombatData = null; InvokeCombatDataUpdated(); SendChatCommand("clear"); }
+    public override void EndEncounter()
     {
         if (System.Config.General.EnableEncounterHistory)
         {

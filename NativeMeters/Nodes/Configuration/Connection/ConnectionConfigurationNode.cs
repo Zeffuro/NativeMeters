@@ -17,6 +17,18 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 {
     private readonly LabeledNumericInputNode reconnectIntervalSlider;
     private readonly LabeledTextButtonNode statusNode;
+    private readonly CircleButtonNode warningButton;
+    private readonly LabeledTextInputNode urlInputNode;
+    private readonly CircleButtonNode urlResetButton;
+
+    private const string InternalWarningTooltip =
+        "Internal Parser (Experimental)\n\n" +
+        "• DoT/HoT damage is estimated, not simulated.\n" +
+        "  Expect ~5-10% variance vs ACT/IINACT.\n" +
+        "• DoT ticks are attributed by scanning active\n" +
+        "  statuses, multi-DoT party accuracy is approximate.\n" +
+        "• No damage shield or limit break tracking.\n\n" +
+        "For accurate parsing, use ACT/IINACT instead.";
 
     public ConnectionConfigurationNode()
     {
@@ -34,43 +46,79 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         statusNode = new LabeledTextButtonNode
         {
-            Size = new Vector2(400, 28),
-            OnClick = () => System.MeterService.Reconnect(),
-            LabelText= "Status: Disconnected",
+            Size = new Vector2(368, 28),
+            OnClick = OnReconnectClicked,
+            LabelText = "Status: Disconnected",
             ButtonText = "Reconnect",
         };
-
         AddNode(statusNode);
+
+        var typeContainer = new SimpleComponentNode
+        {
+            Size = new Vector2(400, 28),
+        };
 
         var typeDropDown = new LabeledEnumDropdownNode<ConnectionType>
         {
-            Size = new Vector2(400, 28),
+            Size = new Vector2(370, 28),
             LabelText = "Connection Type",
             LabelTextFlags = TextFlags.AutoAdjustNodeSize,
             Options = Enum.GetValues<ConnectionType>().ToList(),
             SelectedOption = config.SelectedConnectionType,
-            OnOptionSelected = selected =>
-            {
-                config.SelectedConnectionType = selected;
-                System.MeterService.Reconnect();
-                ConfigRepository.Save(System.Config);
-            }
+            OnOptionSelected = OnConnectionTypeSelected
         };
-        AddNode(typeDropDown);
+        typeDropDown.AttachNode(typeContainer);
 
-        var urlInputNode = new LabeledTextInputNode
+        warningButton = new CircleButtonNode
+        {
+            Icon = ButtonIcon.Exclamation,
+            Size = new Vector2(24f),
+            Position = new Vector2(374, 2),
+            IsVisible = config.SelectedConnectionType == ConnectionType.Internal,
+            TextTooltip = InternalWarningTooltip,
+        };
+        warningButton.AttachNode(typeContainer);
+
+        AddNode(typeContainer);
+
+        var urlContainer = new SimpleComponentNode
         {
             Size = new Vector2(400, 28),
+            IsVisible = config.SelectedConnectionType == ConnectionType.WebSocket,
+        };
+
+        urlInputNode = new LabeledTextInputNode
+        {
+            Size = new Vector2(370, 28),
             LabelText = "WebSocket URL",
             Text = config.WebSocketUrl,
             OnInputComplete = text =>
             {
                 config.WebSocketUrl = text.ExtractText();
-                System.MeterService.Reconnect();
+                OnReconnectClicked();
                 ConfigRepository.Save(System.Config);
             }
         };
-        AddNode(urlInputNode);
+        urlInputNode.AttachNode(urlContainer);
+
+        urlResetButton = new CircleButtonNode
+        {
+            Icon = ButtonIcon.Undo,
+            Size = new Vector2(24f),
+            Position = new Vector2(374, 2),
+            TextTooltip = "Reset to default URL",
+            OnClick = () =>
+            {
+                var defaultUrl = new ConnectionSettings().WebSocketUrl;
+                config.WebSocketUrl = defaultUrl;
+                urlInputNode.Text = defaultUrl;
+                OnReconnectClicked();
+                ConfigRepository.Save(System.Config);
+            }
+        };
+        urlResetButton.AttachNode(urlContainer);
+
+        AddNode(urlContainer);
 
         SubtractTab(1);
         AddNode(new ResNode { Height = 10 });
@@ -133,14 +181,62 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         Service.Framework.Update += OnFrameworkUpdate;
     }
 
+    private void OnConnectionTypeSelected(ConnectionType selected)
+    {
+        var previousType = System.Config.ConnectionSettings.SelectedConnectionType;
+        System.Config.ConnectionSettings.SelectedConnectionType = selected;
+        ConfigRepository.Save(System.Config);
+
+        warningButton.IsVisible = selected == ConnectionType.Internal;
+        urlInputNode.IsVisible = selected == ConnectionType.WebSocket;
+        urlResetButton.IsVisible = selected == ConnectionType.WebSocket;
+
+        if (previousType == ConnectionType.Internal)
+        {
+            System.InternalMeterService.Dispose();
+            System.InternalMeterService = new Services.Internal.InternalMeterService();
+        }
+        else
+        {
+            System.MeterService.Reconnect();
+        }
+
+        if (selected == ConnectionType.Internal)
+        {
+            System.InternalMeterService.Enable();
+        }
+        else
+        {
+            System.MeterService.Reconnect();
+        }
+
+        System.OverlayManager.UpdateActiveService();
+        RecalculateLayout();
+    }
+
+    private void OnReconnectClicked()
+    {
+        if (System.Config.ConnectionSettings.SelectedConnectionType == ConnectionType.Internal)
+        {
+            System.InternalMeterService.Dispose();
+            System.InternalMeterService = new Services.Internal.InternalMeterService();
+            System.InternalMeterService.Enable();
+            System.OverlayManager.UpdateActiveService();
+        }
+        else
+        {
+            System.MeterService.Reconnect();
+        }
+    }
+
     private void OnFrameworkUpdate(IFramework framework)
     {
-        bool isConnected = System.MeterService.IsConnected;
+        bool isConnected = System.ActiveMeterService.IsConnected;
 
         statusNode.LabelText = isConnected ? "Status: Connected" : "Status: Disconnected";
         statusNode.LabelTextColor = isConnected
-            ? ColorHelper.GetColor(46) // Green
-            : ColorHelper.GetColor(14); // Red
+            ? ColorHelper.GetColor(46)
+            : ColorHelper.GetColor(14);
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor)

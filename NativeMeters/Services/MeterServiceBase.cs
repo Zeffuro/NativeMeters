@@ -15,6 +15,10 @@ public abstract class MeterServiceBase : IMeterService
     protected int MaxHistorySize => System.Config?.General?.MaxEncounterHistory ?? 10;
     public virtual event Action? CombatDataUpdated;
 
+    public abstract void ClearMeter();
+    public abstract void EndEncounter();
+    public abstract void Reconnect();
+
     protected virtual void InvokeCombatDataUpdated()
     {
         CombatDataUpdated?.Invoke();
