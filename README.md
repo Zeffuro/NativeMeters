@@ -3,13 +3,14 @@
 
 Meters that feel like part of the game. Who needs ImGui when you have AtkNodes?
 
-![Preview](Media/screenshot1.png) ![Preview](Media/screenshot2.png)
+![Preview](Media/screenshot1.png) ![Preview](Media/screenshot2.png) ![Preview](Media/screenshot3.png)
 
 ## Description
-Native DPS Meters for Final Fantasy XIV, this uses KTK 
+Native DPS Meters for Final Fantasy XIV, this uses KTK.
+You can fully customize the meters and their appearance (it will use any UI theme you may have installed through Penumbra).
 
 > [!CAUTION]
-> This plugin is in VERY early development (alpha) and may contain bugs and may reset your settings in the future.
+> This plugin is in early development (beta) and may contain bugs and may reset your settings in the future (but I highly avoid that).
 
 ## Installation
 1. Open the Dalamud settings by typing `/xlsettings` in-game.
