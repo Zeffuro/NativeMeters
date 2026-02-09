@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Game.ClientState.Objects.Enums;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
-using Lumina.Excel.Sheets;
 
 namespace NativeMeters.Services.Internal;
 
@@ -17,31 +16,22 @@ public unsafe class StatusTracker
         var statusManager = chara->GetStatusManager();
         if (statusManager == null) return sources;
 
-        var statusSheet = Service.DataManager.GetExcelSheet<Status>();
-        var seenSources = new HashSet<ulong>();
-
         foreach (ref var status in statusManager->Status)
         {
             if (status.StatusId == 0 || status.SourceObject == 0) continue;
 
-            if (Service.ObjectTable.SearchById(status.SourceObject) is not IPlayerCharacter) continue;
-
-            var statusRow = statusSheet.GetRowOrDefault(status.StatusId);
-            if (statusRow == null) continue;
-
-            if (seenSources.Add(status.SourceObject))
+            var sourceObj = Service.ObjectTable.SearchById(status.SourceObject);
+            if (sourceObj != null && sourceObj.ObjectKind == ObjectKind.Player)
             {
-                sources.Add(status.SourceObject);
+                if (!sources.Contains(status.SourceObject))
+                    sources.Add(status.SourceObject);
             }
         }
-
         return sources;
     }
 
     public ulong? GetSource(uint targetId, uint statusId)
     {
-        if (statusId == 0) return null;
-
         var targetObj = Service.ObjectTable.SearchById(targetId);
         if (targetObj == null || targetObj.Address == nint.Zero) return null;
 
@@ -52,11 +42,8 @@ public unsafe class StatusTracker
         foreach (ref var status in statusManager->Status)
         {
             if (status.StatusId == statusId && status.SourceObject != 0)
-            {
                 return status.SourceObject;
-            }
         }
-
         return null;
     }
 

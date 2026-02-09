@@ -64,7 +64,7 @@ public class InternalMeterService : MeterServiceBase, IDisposable
         InvokeCombatDataUpdated();
     }
 
-    public void ClearMeter()
+    public override void ClearMeter()
     {
         combatTracker.Reset();
         networkParser.ResetTracking();
@@ -72,12 +72,16 @@ public class InternalMeterService : MeterServiceBase, IDisposable
         InvokeCombatDataUpdated();
     }
 
-    public void EndEncounter()
+    public override void EndEncounter()
     {
         if (System.Config.General.EnableEncounterHistory)
             ArchiveCurrentEncounter();
 
         combatTracker.ForceEndEncounter();
+    }
+
+    public override void Reconnect()
+    {
     }
 
     public void Dispose()

@@ -1,15 +1,17 @@
 using System;
+using System.Collections.Generic;
 using Lumina.Excel.Sheets;
 using NativeMeters.Models;
+using NativeMeters.Models.Internal;
 
 namespace NativeMeters.Services.Internal;
 
-public class CombatantTracker(ulong actorId, string name, ClassJob job)
+public class CombatantTracker(ulong actorId, string name, uint jobId)
 {
     public ulong ActorId => actorId;
     public string Name => name;
-    public ClassJob Job { get; set; } = job;
-    public bool IsPlayer => Job.RowId != 0;
+    public uint JobId { get; set; } = jobId;
+    public bool IsPlayer => JobId != 0;
 
     public long TotalDamage { get; set; }
     public long TotalHealing { get; set; }
@@ -29,26 +31,64 @@ public class CombatantTracker(ulong actorId, string name, ClassJob job)
     public long MaxHitValue { get; set; }
     public long MaxHealValue { get; set; }
 
+    public Dictionary<uint, ActionStat> ActionBreakdown { get; } = new();
+
     public void AddAction(ActionResultEvent evt)
     {
-        if (evt.Damage > 0)
+        switch (evt)
         {
-            TotalDamage += evt.Damage;
-            Hits++;
-            Swings++;
-            if (evt.IsCrit) CritHits++;
-            if (evt.IsDirectHit) DirectHits++;
-            if (evt.IsCrit && evt.IsDirectHit) CritDirectHits++;
-            if (evt.Damage > MaxHitValue) MaxHitValue = evt.Damage;
+            case { Damage: > 0 }:
+                TotalDamage += evt.Damage;
+                Hits++;
+                Swings++;
+                if (evt.IsCrit) CritHits++;
+                if (evt.IsDirectHit) DirectHits++;
+                if (evt.IsCrit && evt.IsDirectHit) CritDirectHits++;
+                if (evt.Damage > MaxHitValue) MaxHitValue = evt.Damage;
+                UpdateBreakdown(evt, true);
+                break;
+
+            case { IsMiss: true }:
+                Misses++;
+                Swings++;
+                break;
+
+            case { Healing: > 0 }:
+                long needed = (evt.TargetMaxHp > evt.TargetCurrentHp)
+                    ? (evt.TargetMaxHp - evt.TargetCurrentHp) : 0;
+                long overHealAmount = Math.Max(0, evt.Healing - needed);
+
+                TotalHealing += evt.Healing;
+                OverHeal += overHealAmount;
+                HealCount++;
+                if (evt.IsCrit) CritHeals++;
+                if (evt.Healing > MaxHealValue) MaxHealValue = evt.Healing;
+                UpdateBreakdown(evt, false);
+                break;
+        }
+    }
+
+    private void UpdateBreakdown(ActionResultEvent evt, bool isDamage)
+    {
+        if (!ActionBreakdown.TryGetValue(evt.ActionId, out var stat))
+        {
+            stat = new ActionStat { ActionId = evt.ActionId };
+            ActionBreakdown[evt.ActionId] = stat;
         }
 
-        if (evt.Healing > 0)
+        stat.Hits++;
+        if (isDamage)
         {
-            TotalHealing += evt.Healing;
-            HealCount++;
-            if (evt.IsCrit) CritHeals++;
-            if (evt.Healing > MaxHealValue) MaxHealValue = evt.Healing;
-            if (evt.OverHeal > 0) OverHeal += evt.OverHeal;
+            stat.TotalDamage += evt.Damage;
+            if (evt.IsCrit) stat.CritHits++;
+            if (evt.IsDirectHit) stat.DirectHits++;
+            if (evt.Damage > stat.MaxHit) stat.MaxHit = evt.Damage;
+        }
+        else
+        {
+            stat.TotalHealing += evt.Healing;
+            if (evt.IsCrit) stat.CritHits++;
+            if (evt.Healing > stat.MaxHit) stat.MaxHit = evt.Healing;
         }
     }
 
@@ -60,6 +100,7 @@ public class CombatantTracker(ulong actorId, string name, ClassJob job)
 
     public Combatant ToCombatant(TimeSpan duration, long totalPartyDamage)
     {
+        var job = Service.DataManager.GetExcelSheet<ClassJob>().GetRowOrDefault(JobId) ?? default;
         double seconds = Math.Max(duration.TotalSeconds, 1.0);
         double dps = TotalDamage / seconds;
         double hps = TotalHealing / seconds;
@@ -70,7 +111,7 @@ public class CombatantTracker(ulong actorId, string name, ClassJob job)
             N = "\n",
             T = "\t",
             Name = Name,
-            Job = Job,
+            Job = job,
             Duration = duration,
             DURATION = seconds,
 

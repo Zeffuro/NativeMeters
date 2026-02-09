@@ -41,6 +41,26 @@ public class TestMeterService : MeterServiceBase, IDisposable
         InvokeCombatDataUpdated();
     }
 
+    public override void ClearMeter()
+    {
+        CombatData = null;
+        InvokeCombatDataUpdated();
+    }
+
+    public override void EndEncounter()
+    {
+        if (CombatData != null)
+        {
+            CombatData.IsActive = "false";
+            ArchiveCurrentEncounter();
+        }
+    }
+
+    public override void Reconnect()
+    {
+        GenerateFakeData();
+    }
+
     public void Dispose()
     {
         if (disposed) return;

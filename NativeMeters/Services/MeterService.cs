@@ -96,7 +96,7 @@ public class MeterService : MeterServiceBase, IDisposable
         }
     }
 
-    public void Reconnect()
+    public override void Reconnect()
     {
         activeConnection?.Stop();
         activeConnection?.Dispose();
@@ -105,8 +105,8 @@ public class MeterService : MeterServiceBase, IDisposable
     }
 
     public void RequestReconnect() => reconnectionManager.RequestReconnect();
-    public void ClearMeter() { CombatData = null; InvokeCombatDataUpdated(); SendChatCommand("clear"); }
-    public void EndEncounter()
+    public override void ClearMeter() { CombatData = null; InvokeCombatDataUpdated(); SendChatCommand("clear"); }
+    public override void EndEncounter()
     {
         if (System.Config.General.EnableEncounterHistory)
         {

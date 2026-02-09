@@ -13,6 +13,13 @@ public interface IMeterService
     double GetMaxCombatantStat(Func<Combatant, double> selector);
     bool HasCombatData();
     bool IsConnected { get; }
+
+    // --- Management Methods ---
+    void ClearMeter();
+    void EndEncounter();
+    void Reconnect();
+
+    // --- History Methods ---
     IReadOnlyList<CombatDataMessage> GetEncounterHistory();
     void SelectEncounter(int index);
     void SelectLiveEncounter();

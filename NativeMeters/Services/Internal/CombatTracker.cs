@@ -4,6 +4,7 @@ using System.Linq;
 using Dalamud.Game.ClientState.Conditions;
 using Lumina.Excel.Sheets;
 using NativeMeters.Models;
+using NativeMeters.Models.Internal;
 
 namespace NativeMeters.Services.Internal;
 
@@ -14,6 +15,7 @@ public class CombatTracker
     private readonly Dictionary<string, long> enemyDamageTaken = new();
 
     private bool wasInCombat;
+    private const double CombatIdleTimeoutSeconds = 3.0;
 
     public bool IsInCombat { get; private set; }
     public bool HasData => trackers.Count > 0 && encounterState.StartTime != DateTime.MinValue;
@@ -26,8 +28,11 @@ public class CombatTracker
 
         if (!wasInCombat && isInCombat)
         {
-            Reset();
-            encounterState.Start();
+            if (!encounterState.IsActive)
+            {
+                Reset();
+                encounterState.Start();
+            }
         }
         else if (wasInCombat && !isInCombat)
         {
@@ -41,24 +46,27 @@ public class CombatTracker
 
     public void HandleActionResult(ActionResultEvent evt)
     {
-        if (!encounterState.IsActive) return;
-
-        if (evt.IsDamageTakenOnly)
+        if (evt.Damage > 0)
         {
-            if (evt.IsPlayerTarget && evt.TargetId != 0)
+            if (!encounterState.IsActive)
             {
-                var target = GetOrCreateTracker(evt.TargetId, evt.TargetName, evt.TargetJob);
-                target.AddDamageTaken(evt);
+                Reset();
+                encounterState.EnsureStarted();
             }
-            return;
+            encounterState.UpdateLastAction();
         }
 
-        var source = GetOrCreateTracker(evt.SourceId, evt.SourceName, evt.SourceJob);
-        source.AddAction(evt);
+        if (!encounterState.IsActive) return;
+
+        if (!evt.IsDamageTakenOnly)
+        {
+            var source = GetOrCreateTracker(evt.SourceId, evt.SourceName, evt.SourceJobId);
+            source.AddAction(evt);
+        }
 
         if (evt.TargetId != 0 && evt.IsPlayerTarget)
         {
-            var target = GetOrCreateTracker(evt.TargetId, evt.TargetName, evt.TargetJob);
+            var target = GetOrCreateTracker(evt.TargetId, evt.TargetName, evt.TargetJobId);
             target.AddDamageTaken(evt);
         }
 
@@ -66,16 +74,12 @@ public class CombatTracker
         {
             enemyDamageTaken.TryGetValue(evt.TargetName, out var existing);
             enemyDamageTaken[evt.TargetName] = existing + evt.Damage;
-
             var strongest = enemyDamageTaken.MaxBy(kv => kv.Value);
-            if (!string.IsNullOrEmpty(strongest.Key))
-            {
-                encounterState.EncounterName = strongest.Key;
-            }
+            if (strongest.Value > 0) encounterState.EncounterName = strongest.Key;
         }
     }
 
-    public void HandleDeath(uint actorId, string actorName)
+    public void HandleDeath(ulong actorId, string actorName)
     {
         if (trackers.TryGetValue(actorId, out var tracker))
         {
@@ -177,16 +181,16 @@ public class CombatTracker
         encounterState = new EncounterState();
     }
 
-    private CombatantTracker GetOrCreateTracker(ulong actorId, string name, ClassJob job)
+    private CombatantTracker GetOrCreateTracker(ulong actorId, string name, uint jobId)
     {
         if (!trackers.TryGetValue(actorId, out var tracker))
         {
-            tracker = new CombatantTracker(actorId, name, job);
+            tracker = new CombatantTracker(actorId, name, jobId);
             trackers[actorId] = tracker;
         }
-        else if (job.RowId != 0 && tracker.Job.RowId != job.RowId)
+        else if (jobId != 0 && tracker.JobId != jobId)
         {
-            tracker.Job = job;
+            tracker.JobId = jobId;
         }
 
         return tracker;

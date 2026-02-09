@@ -1,24 +1,15 @@
 using System;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Network;
-using Lumina.Excel.Sheets;
+using NativeMeters.Models.Internal;
 
 namespace NativeMeters.Services.Internal;
-
-internal enum ActionEffectType : byte
-{
-    Nothing = 0,
-    Miss = 1,
-    Damage = 3,
-    Heal = 4,
-    BlockedDamage = 5,
-    ParriedDamage = 6,
-}
 
 internal enum ActorControlCategory : uint
 {
@@ -30,7 +21,27 @@ internal enum ActorControlCategory : uint
 public unsafe class NetworkCombatParser : IDisposable
 {
     public event Action<ActionResultEvent>? OnActionResult;
-    public event Action<uint, string>? OnActorDeath;
+    public event Action<ulong, string>? OnActorDeath;
+
+    private const uint InvalidGameObjectId = 0xE0000000;
+    private const uint MountActionOffset = 0xD000000;
+    private const uint ItemActionOffset = 0x2000000;
+    private const uint StrikingDummyNameId = 541;
+
+    [Flags]
+    private enum EffectFlags : byte
+    {
+        None = 0,
+        Critical = 0x20,
+        DirectHit = 0x40,
+    }
+
+    [Flags]
+    private enum AmountFlags : byte
+    {
+        None = 0,
+        HasHighBytes = 0x40,
+    }
 
     private readonly StatusTracker statusTracker = new();
 
@@ -73,29 +84,27 @@ public unsafe class NetworkCombatParser : IDisposable
 
             ulong resolvedSourceId = casterEntityId;
             string resolvedSourceName = casterPtr->NameString;
-            ClassJob resolvedSourceJob = default;
+            uint resolvedSourceJobId = 0;
 
-            if (casterPtr->GameObject.OwnerId != 0xE0000000)
+            if (casterPtr->GameObject.OwnerId != InvalidGameObjectId)
             {
                 var owner = Service.ObjectTable.SearchById(casterPtr->GameObject.OwnerId);
                 if (owner is IPlayerCharacter pcOwner)
                 {
                     resolvedSourceId = pcOwner.GameObjectId;
                     resolvedSourceName = pcOwner.Name.TextValue;
-                    resolvedSourceJob = Service.DataManager.GetExcelSheet<ClassJob>()
-                        .GetRowOrDefault(pcOwner.ClassJob.RowId) ?? default;
+                    resolvedSourceJobId = pcOwner.ClassJob.RowId;
                 }
             }
             else if (Service.ObjectTable.SearchById(casterEntityId) is IPlayerCharacter pc)
             {
-                resolvedSourceJob = Service.DataManager.GetExcelSheet<ClassJob>()
-                    .GetRowOrDefault(pc.ClassJob.RowId) ?? default;
+                resolvedSourceJobId = pc.ClassJob.RowId;
             }
 
             var actionId = (ActionType)header->ActionType switch
             {
-                ActionType.Mount => 0xD000000u + header->ActionId,
-                ActionType.Item => 0x2000000u + header->ActionId,
+                ActionType.Mount => MountActionOffset + header->ActionId,
+                ActionType.Item => ItemActionOffset + header->ActionId,
                 _ => header->SpellId
             };
 
@@ -103,72 +112,80 @@ public unsafe class NetworkCombatParser : IDisposable
             {
                 var targetId = (uint)(targetEntityIds[i] & uint.MaxValue);
                 var targetObj = Service.ObjectTable.SearchById(targetId);
-                bool isPlayerTarget = targetObj is IPlayerCharacter;
+                if (targetObj == null) continue;
 
-                ClassJob targetJob = default;
-                string targetName = targetObj?.Name.TextValue ?? "";
-                if (targetObj is IPlayerCharacter tpc)
+                uint currentHp = 0;
+                uint maxHp = 0;
+
+                if (targetObj is IBattleChara bc)
                 {
-                    targetJob = Service.DataManager.GetExcelSheet<ClassJob>()
-                        .GetRowOrDefault(tpc.ClassJob.RowId) ?? default;
+                    currentHp = bc.CurrentHp;
+                    maxHp = bc.MaxHp;
                 }
 
                 for (var j = 0; j < 8; j++)
                 {
                     ref var effect = ref effects[i].Effects[j];
-                    if (effect.Type == 0) continue;
+                    var type = (ActionEffectType)effect.Type;
+                    if (type == ActionEffectType.Nothing) continue;
+
+                    if (type != ActionEffectType.Damage &&
+                        type != ActionEffectType.Heal &&
+                        type != ActionEffectType.BlockedDamage &&
+                        type != ActionEffectType.ParriedDamage &&
+                        type != ActionEffectType.Miss) continue;
+
+                    var amountFlags = (AmountFlags)effect.Param4;
 
                     uint amount = effect.Value;
-                    if ((effect.Param4 & 0x40) == 0x40)
-                        amount += (uint)effect.Param3 << 16;
-
-                    var effectType = (ActionEffectType)effect.Type;
-
-                    switch (effectType)
+                    if (amountFlags.HasFlag(AmountFlags.HasHighBytes))
                     {
-                        case ActionEffectType.Miss:
+                        amount += (uint)effect.Param3 << 16;
+                    }
+
+                    var evt = new ActionResultEvent
+                    {
+                        SourceId = resolvedSourceId,
+                        SourceName = resolvedSourceName,
+                        SourceJobId = resolvedSourceJobId,
+                        TargetId = targetId,
+                        TargetName = targetObj.Name.TextValue,
+                        TargetCurrentHp = currentHp,
+                        TargetMaxHp = maxHp,
+                        TargetJobId = (targetObj is IPlayerCharacter tpc) ? tpc.ClassJob.RowId : 0,
+                        IsPlayerTarget = targetObj is IPlayerCharacter,
+                        ActionId = actionId,
+                    };
+
+                    switch (type)
+                    {
                         case ActionEffectType.Damage:
                         case ActionEffectType.BlockedDamage:
                         case ActionEffectType.ParriedDamage:
-                            OnActionResult?.Invoke(new ActionResultEvent
-                            {
-                                SourceId = resolvedSourceId,
-                                SourceName = resolvedSourceName,
-                                SourceJob = resolvedSourceJob,
-                                TargetId = targetId,
-                                TargetName = targetName,
-                                TargetJob = targetJob,
-                                IsPlayerTarget = isPlayerTarget,
-                                Damage = effectType == ActionEffectType.Miss ? 0 : amount,
-                                IsCrit = (effect.Param0 & 0x20) == 0x20,
-                                IsDirectHit = (effect.Param0 & 0x40) == 0x40,
-                                ActionId = actionId,
+                            var damageFlags = (EffectFlags)effect.Param0;
+                            OnActionResult?.Invoke(evt with {
+                                Damage = amount,
+                                IsCrit = damageFlags.HasFlag(EffectFlags.Critical),
+                                IsDirectHit = damageFlags.HasFlag(EffectFlags.DirectHit),
                             });
                             break;
 
                         case ActionEffectType.Heal:
-                            OnActionResult?.Invoke(new ActionResultEvent
-                            {
-                                SourceId = resolvedSourceId,
-                                SourceName = resolvedSourceName,
-                                SourceJob = resolvedSourceJob,
-                                TargetId = targetId,
-                                TargetName = targetName,
-                                TargetJob = targetJob,
-                                IsPlayerTarget = isPlayerTarget,
+                            var healFlags = (EffectFlags)effect.Param1;
+                            OnActionResult?.Invoke(evt with {
                                 Healing = amount,
-                                IsCrit = (effect.Param1 & 0x20) == 0x20,
-                                ActionId = actionId,
+                                IsCrit = healFlags.HasFlag(EffectFlags.Critical),
                             });
+                            break;
+
+                        case ActionEffectType.Miss:
+                            OnActionResult?.Invoke(evt with { Damage = 0, IsMiss = true });
                             break;
                     }
                 }
             }
         }
-        catch (Exception ex)
-        {
-            Service.Logger.Error($"[Internal Parser] ActionEffect error: {ex.Message}");
-        }
+        catch (Exception ex) { Service.Logger.Error($"[Internal Parser] {ex}"); }
     }
 
     private void ActorControlDetour(
@@ -207,72 +224,88 @@ public unsafe class NetworkCombatParser : IDisposable
     private void HandleDoTTick(uint entityId, uint statusId, uint amount)
     {
         var target = Service.ObjectTable.SearchById(entityId);
+        var localPlayer = Service.ObjectTable.LocalPlayer;
+        if (localPlayer == null) return;
 
-        if (target is IPlayerCharacter pc)
+        if (statusId != 0)
         {
-            var job = Service.DataManager.GetExcelSheet<ClassJob>()
-                .GetRowOrDefault(pc.ClassJob.RowId) ?? default;
-            OnActionResult?.Invoke(new ActionResultEvent
+            var sourceId = statusTracker.GetSource(entityId, statusId);
+            if (sourceId != null && Service.ObjectTable.SearchById((uint)sourceId) is IPlayerCharacter pc)
             {
-                SourceId = 0,
-                SourceName = "DoT",
-                SourceJob = default,
-                TargetId = entityId,
-                TargetName = pc.Name.TextValue,
-                TargetJob = job,
-                IsPlayerTarget = true,
-                IsDamageTakenOnly = true,
-                Damage = amount,
-            });
-            return;
+                InvokeDoT(pc.GameObjectId, pc.Name.TextValue, pc.ClassJob.RowId,
+                           entityId, target?.Name.TextValue ?? "", amount);
+                return;
+            }
         }
 
         var sources = statusTracker.GetDoTSources(entityId);
-        if (sources.Count == 0) return;
+
+        if (sources.Count == 0)
+        {
+            if (target is IBattleChara battle &&
+                (battle.NameId == StrikingDummyNameId || battle.TargetObjectId == localPlayer.GameObjectId))
+            {
+                InvokeDoT(localPlayer.GameObjectId, localPlayer.Name.TextValue,
+                           localPlayer.ClassJob.RowId, entityId,
+                           target.Name.TextValue, amount);
+            }
+            return;
+        }
+
+        if (sources.Count == 1)
+        {
+            var sourceObj = Service.ObjectTable.SearchById((uint)sources[0]);
+            if (sourceObj is IPlayerCharacter pc)
+            {
+                InvokeDoT(sources[0], pc.Name.TextValue, pc.ClassJob.RowId,
+                           entityId, target?.Name.TextValue ?? "", amount);
+            }
+            return;
+        }
 
         var splitAmount = (uint)(amount / sources.Count);
         foreach (var sourceId in sources)
         {
-            if (Service.ObjectTable.SearchById(sourceId) is not IPlayerCharacter sourcePc) continue;
-
-            var sourceJob = Service.DataManager.GetExcelSheet<ClassJob>()
-                .GetRowOrDefault(sourcePc.ClassJob.RowId) ?? default;
-
-            OnActionResult?.Invoke(new ActionResultEvent
+            var sourceObj = Service.ObjectTable.SearchById((uint)sourceId);
+            if (sourceObj is IPlayerCharacter pc)
             {
-                SourceId = sourceId,
-                SourceName = sourcePc.Name.TextValue,
-                SourceJob = sourceJob,
-                TargetId = entityId,
-                TargetName = target?.Name.TextValue ?? "",
-                TargetJob = default,
-                IsPlayerTarget = false,
-                Damage = splitAmount,
-            });
+                InvokeDoT(sourceId, pc.Name.TextValue, pc.ClassJob.RowId,
+                           entityId, target?.Name.TextValue ?? "", splitAmount);
+            }
         }
+    }
+
+    private void InvokeDoT(ulong sourceId, string sourceName, uint sourceJobId, uint targetId, string targetName, uint amount)
+    {
+        OnActionResult?.Invoke(new ActionResultEvent
+        {
+            SourceId = sourceId,
+            SourceName = sourceName,
+            SourceJobId = sourceJobId,
+            TargetId = targetId,
+            TargetName = targetName,
+            IsPlayerTarget = false,
+            Damage = amount,
+            ActionId = 0,
+        });
     }
 
     private void HandleHoTTick(uint entityId, uint statusId, uint amount)
     {
         if (Service.ObjectTable.SearchById(entityId) is not IPlayerCharacter pc) return;
 
-        var targetJob = Service.DataManager.GetExcelSheet<ClassJob>()
-            .GetRowOrDefault(pc.ClassJob.RowId) ?? default;
-
         ulong resolvedSourceId = entityId;
         string resolvedSourceName = pc.Name.TextValue;
-        ClassJob resolvedSourceJob = targetJob;
+        uint resolvedSourceJobId = pc.ClassJob.RowId;
 
         if (statusId != 0)
         {
             var sourceId = statusTracker.GetSource(entityId, statusId);
-            if (sourceId != null &&
-                Service.ObjectTable.SearchById(sourceId.Value) is IPlayerCharacter sourcePc)
+            if (sourceId != null && Service.ObjectTable.SearchById(sourceId.Value) is IPlayerCharacter sourcePc)
             {
                 resolvedSourceId = sourcePc.GameObjectId;
                 resolvedSourceName = sourcePc.Name.TextValue;
-                resolvedSourceJob = Service.DataManager.GetExcelSheet<ClassJob>()
-                    .GetRowOrDefault(sourcePc.ClassJob.RowId) ?? default;
+                resolvedSourceJobId = sourcePc.ClassJob.RowId;
             }
         }
 
@@ -280,10 +313,10 @@ public unsafe class NetworkCombatParser : IDisposable
         {
             SourceId = resolvedSourceId,
             SourceName = resolvedSourceName,
-            SourceJob = resolvedSourceJob,
+            SourceJobId = resolvedSourceJobId,
             TargetId = entityId,
             TargetName = pc.Name.TextValue,
-            TargetJob = targetJob,
+            TargetJobId = pc.ClassJob.RowId,
             IsPlayerTarget = true,
             Healing = amount,
         });

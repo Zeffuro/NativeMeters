@@ -1,16 +1,16 @@
-using Lumina.Excel.Sheets;
+namespace NativeMeters.Models.Internal;
 
-namespace NativeMeters.Services.Internal;
-
-public record ActionResultEvent
+public readonly struct ActionResultEvent
 {
     public ulong SourceId { get; init; }
-    public string SourceName { get; init; } = "";
-    public ClassJob SourceJob { get; init; }
+    public string SourceName { get; init; }
+    public uint SourceJobId { get; init; }
 
     public uint TargetId { get; init; }
-    public string TargetName { get; init; } = "";
-    public ClassJob TargetJob { get; init; }
+    public string TargetName { get; init; }
+    public uint TargetJobId { get; init; }
+    public uint TargetCurrentHp { get; init; }
+    public uint TargetMaxHp { get; init; }
     public bool IsPlayerTarget { get; init; }
 
     public long Damage { get; init; }
@@ -19,6 +19,7 @@ public record ActionResultEvent
 
     public bool IsCrit { get; init; }
     public bool IsDirectHit { get; init; }
+    public bool IsMiss { get; init; }
 
     public uint ActionId { get; init; }
     public bool IsDamageTakenOnly { get; init; }
