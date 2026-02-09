@@ -36,11 +36,22 @@ public static class ComponentRenderer
                 break;
 
             case IconImageNode iconNode:
-                if (data is Combatant combatant)
+                switch (settings.Type)
                 {
-                    var iconId = combatant.GetIconId(settings.JobIconType);
-                    iconNode.IsVisible = iconId != 0;
-                    if (iconId != 0) iconNode.IconId = iconId;
+                    case MeterComponentType.JobIcon when data is Combatant combatant:
+                    {
+                        var iconId = combatant.GetIconId(settings.JobIconType);
+                        iconNode.IsVisible = iconId != 0;
+                        if (iconId != 0) iconNode.IconId = iconId;
+                        break;
+                    }
+                    case MeterComponentType.JobIcon:
+                        iconNode.IsVisible = false;
+                        break;
+                    case MeterComponentType.Icon:
+                        iconNode.IconId = settings.IconId;
+                        iconNode.IsVisible = settings.IconId != 0;
+                        break;
                 }
                 break;
 

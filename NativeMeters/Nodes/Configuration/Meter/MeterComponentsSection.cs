@@ -72,7 +72,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
             ZIndex = TargetList.Count > 0 ? TargetList.Max(c => c.ZIndex) + 1 : 0
         };
 
-        if (component.Type is MeterComponentType.JobIcon or MeterComponentType.MenuButton) component.Size = new Vector2(24);
+        if (component.Type is MeterComponentType.Icon or MeterComponentType.JobIcon or MeterComponentType.MenuButton) component.Size = new Vector2(24);
 
         TargetList.Add(component);
         lastComponentIds.Clear();

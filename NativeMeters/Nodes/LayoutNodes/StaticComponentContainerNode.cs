@@ -49,7 +49,7 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
     private NodeBase CreateComponent(ComponentSettings settings)
     {
         NodeBase node = settings.Type switch {
-            MeterComponentType.JobIcon => new IconImageNode { FitTexture = true },
+            MeterComponentType.JobIcon or MeterComponentType.Icon => new IconImageNode { FitTexture = true },
             MeterComponentType.ProgressBar => new ProgressBarNode(),
             MeterComponentType.Text => new BackgroundTextNode(),
             MeterComponentType.Background => new SimpleNineGridNode {

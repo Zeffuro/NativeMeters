@@ -6,6 +6,7 @@ using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Input;
+using NativeMeters.Services;
 using NativeMeters.Tags;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
@@ -13,17 +14,24 @@ namespace NativeMeters.Nodes.Configuration.Meter;
 public sealed class ComponentBasicsPanel : VerticalListNode
 {
     private ComponentSettings? settings;
+    private IconSearchAddon? iconPicker;
 
     private readonly LabeledTextInputNode nameInput;
     private readonly LabeledTextInputNode sourceInput;
     private readonly LabeledDropdownNode tagEnumDropdown;
     private readonly LabeledDropdownNode barStatDropdown;
     private readonly LabeledEnumDropdownNode<JobIconType> jobIconTypeEnumDropdown;
+
+    private readonly HorizontalListNode iconRow;
+    private readonly LabeledNumericInputNode iconIdInput;
+    private readonly CircleButtonNode browseIconButton;
+
     private readonly LabeledNumericInputNode posXInput;
     private readonly LabeledNumericInputNode posYInput;
     private readonly LabeledNumericInputNode widthInput;
     private readonly LabeledNumericInputNode heightInput;
     private readonly LabeledNumericInputNode zIndexInput;
+
 
     public Action? OnSettingsChanged { get; set; }
     public Action<string>? OnNameChanged { get; set; }
@@ -115,6 +123,28 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
+        iconIdInput = new LabeledNumericInputNode
+        {
+            LabelText = "Icon ID:",
+            Size = new Vector2(200, 28),
+            OnValueUpdate = val =>
+            {
+                if (settings == null || isLoading) return;
+                settings.IconId = (uint)val;
+                OnSettingsChanged?.Invoke();
+            }
+        };
+
+        browseIconButton = new CircleButtonNode()
+        {
+            Icon = ButtonIcon.MagnifyingGlass,
+            Size = new Vector2(28, 28),
+            OnClick = OpenIconPicker
+        };
+
+        iconRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 8.0f };
+        iconRow.AddNode([iconIdInput, browseIconButton]);
+
         var posRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 8.0f };
         posXInput = new LabeledNumericInputNode
         {
@@ -183,7 +213,27 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
-        AddNode([nameInput, sourceInput, tagEnumDropdown, barStatDropdown, jobIconTypeEnumDropdown, posRow, sizeRow, zIndexInput]);
+        AddNode([nameInput, sourceInput, tagEnumDropdown, barStatDropdown, jobIconTypeEnumDropdown, iconRow, posRow, sizeRow, zIndexInput]);
+    }
+
+    private void OpenIconPicker()
+    {
+        IconRegistry.Initialize(Service.DataManager);
+        iconPicker ??= new IconSearchAddon
+        {
+            Title = "Select Icon",
+            InternalName = "NativeMeters_IconPicker",
+        };
+
+        iconPicker.SelectionResult = iconId =>
+        {
+            if (settings == null) return;
+            settings.IconId = iconId;
+            iconIdInput.Value = (int)iconId;
+            OnSettingsChanged?.Invoke();
+        };
+
+        iconPicker.Open();
     }
 
     public void LoadSettings(ComponentSettings componentSettings)
@@ -201,15 +251,17 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         var isText = settings.Type == MeterComponentType.Text;
         var isBar = settings.Type == MeterComponentType.ProgressBar;
-        var isIcon = settings.Type == MeterComponentType.JobIcon;
+        var isJobIcon = settings.Type == MeterComponentType.JobIcon;
+        var isIcon = settings.Type == MeterComponentType.Icon;
 
         sourceInput.IsVisible = isText;
         tagEnumDropdown.IsVisible = isText;
         barStatDropdown.IsVisible = isBar;
-        jobIconTypeEnumDropdown.IsVisible = isIcon;
+        jobIconTypeEnumDropdown.IsVisible = isJobIcon;
+        iconRow.IsVisible = isIcon;
 
         if (isBar) barStatDropdown.SelectedOption = settings.DataSource;
-        if (isIcon) jobIconTypeEnumDropdown.SelectedOption = settings.JobIconType;
+        if (isJobIcon) jobIconTypeEnumDropdown.SelectedOption = settings.JobIconType;
 
         isLoading = false;
         RecalculateLayout();
