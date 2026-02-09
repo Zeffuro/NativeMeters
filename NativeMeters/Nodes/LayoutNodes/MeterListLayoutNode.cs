@@ -22,9 +22,14 @@ public sealed class MeterListLayoutNode : OverlayNode
     private bool isDisposing;
     private bool isPreWarmed;
 
+    private record StructuralState(bool Clickthrough, float RowHeight, int MaxRows, int StructureHash);    private StructuralState? lastState;
+
     private MeterBackgroundNode? backgroundNode;
     private StaticComponentContainerNode? headerContainer;
     private StaticComponentContainerNode? footerContainer;
+    private ListNode<CombatantRowData, MeterRowListItemNode> listNode;
+
+    public void UpdateSettings() => InitializeFromSettings();
 
     public required MeterSettings? MeterSettings
     {
@@ -36,29 +41,10 @@ public sealed class MeterListLayoutNode : OverlayNode
         }
     }
 
-    private ListNode<CombatantRowData, MeterRowListItemNode> listNode;
-
     public MeterListLayoutNode()
     {
-        MeterRowListItemNode.HeightHint = MeterSettings?.RowHeight ?? 36.0f;
-
-        listNode = new ListNode<CombatantRowData, MeterRowListItemNode> {
-            X = 0, Y = 0,
-            Position = Vector2.Zero,
-            Size = new Vector2(500, 300),
-            ItemSpacing = 0.0f,
-            OptionsList = []
-        };
-
-        if (MeterSettings?.IsClickthrough == true)
-        {
-            listNode.DisableCollisionNode = true;
-        }
-
-        listNode.AttachNode(this);
-
-        listNode.ScrollBarNode.IsVisible = false;
-        listNode.ScrollBarNode.IsEnabled = false;
+        OnMoveComplete = node => MeterSettings!.Position = node.Position;
+        OnResizeComplete = node => MeterSettings!.Size = node.Size;
 
         SubscribeToCombatDataUpdates();
     }
@@ -73,16 +59,40 @@ public sealed class MeterListLayoutNode : OverlayNode
     {
         if (MeterSettings == null) return;
 
-        if (MeterSettings.IsClickthrough)
-        {
-            DisableCollisionNode = true;
-            listNode.DisableCollisionNode = true;
-        }
-
         Position = MeterSettings.Position;
         Size = MeterSettings.Size;
 
+        int currentHash = CalculateStructureHash();
+        var currentState = new StructuralState(MeterSettings.IsClickthrough, MeterSettings.RowHeight, MeterSettings.MaxCombatants, currentHash);
+
+        if (lastState != currentState)
+        {
+            RecreateList();
+            lastState = currentState;
+        }
+    }
+
+    private int CalculateStructureHash()
+    {
+        if (MeterSettings == null) return 0;
+        HashCode hash = new();
+        foreach (var c in MeterSettings.HeaderComponents) { hash.Add(c.Id); hash.Add(c.ZIndex); }
+        foreach (var c in MeterSettings.RowComponents) { hash.Add(c.Id); hash.Add(c.ZIndex); }
+        foreach (var c in MeterSettings.FooterComponents) { hash.Add(c.Id); hash.Add(c.ZIndex); }
+        return hash.ToHashCode();
+    }
+
+    private void RecreateList()
+    {
+        if (MeterSettings == null) return;
+
+        isPreWarmed = false;
+
         backgroundNode?.Dispose();
+        headerContainer?.Dispose();
+        footerContainer?.Dispose();
+        listNode?.Dispose();
+
         backgroundNode = new MeterBackgroundNode {
             Size = Size,
             BackgroundColor = MeterSettings.WindowColor,
@@ -90,24 +100,12 @@ public sealed class MeterListLayoutNode : OverlayNode
         };
         backgroundNode.AttachNode(this);
 
-        headerContainer?.Dispose();
-        headerContainer = new StaticComponentContainerNode(MeterSettings.HeaderComponents){ MeterSettings = MeterSettings};
+        headerContainer = new StaticComponentContainerNode(MeterSettings.HeaderComponents) { MeterSettings = MeterSettings };
         headerContainer.AttachNode(this);
 
-        footerContainer?.Dispose();
-        footerContainer = new StaticComponentContainerNode(MeterSettings.FooterComponents){ MeterSettings = MeterSettings};
+        footerContainer = new StaticComponentContainerNode(MeterSettings.FooterComponents) { MeterSettings = MeterSettings };
         footerContainer.AttachNode(this);
 
-        OnMoveComplete = node => MeterSettings.Position = node.Position;
-        OnResizeComplete = node => MeterSettings.Size = node.Size;
-
-        RecreateList();
-    }
-
-    private void RecreateList()
-    {
-        if (MeterSettings == null) return;
-        listNode?.Dispose();
         MeterRowListItemNode.HeightHint = MeterSettings.RowHeight;
         listNode = new ListNode<CombatantRowData, MeterRowListItemNode> {
             ItemSpacing = MeterSettings.RowSpacing,
@@ -116,30 +114,15 @@ public sealed class MeterListLayoutNode : OverlayNode
 
         if (MeterSettings.IsClickthrough)
         {
+            DisableCollisionNode = true;
             listNode.DisableCollisionNode = true;
         }
 
         listNode.ScrollBarNode.IsVisible = false;
         listNode.ScrollBarNode.IsEnabled = false;
-
         listNode.AttachNode(this);
 
-        PreWarmNodes();
-    }
-
-    private void PreWarmNodes()
-    {
-        if (MeterSettings == null) return;
-
-        float currentHeaderHeight = MeterSettings.HeaderEnabled ? MeterSettings.HeaderHeight : 0;
-        float currentFooterHeight = MeterSettings.FooterEnabled ? MeterSettings.FooterHeight : 0;
-        listNode.Size = new Vector2(Width, Math.Max(0, Height - currentHeaderHeight - currentFooterHeight));
-
-        var dummies = FakeCombatantFactory.CreateFixedCombatants(MeterSettings.MaxCombatants);
-        listNode.OptionsList = dummies
-            .Select(c => new CombatantRowData(c, MeterSettings))
-            .ToList();
-
+        RebuildList();
         listNode.Update();
 
         isPreWarmed = true;
@@ -147,45 +130,49 @@ public sealed class MeterListLayoutNode : OverlayNode
 
     protected override void OnUpdate()
     {
-        if (MeterSettings == null) return;
+        if (MeterSettings == null || !isPreWarmed) return;
 
         bool hasActiveData = System.ActiveMeterService.HasCombatData();
         bool isEditing = !MeterSettings.IsLocked || System.Config.General.PreviewEnabled;
-
-        IsVisible = MeterSettings.IsEnabled && (hasActiveData || isEditing || MeterSettings.IsCollapsed) && !isPreWarmed;
-
+        IsVisible = MeterSettings.IsEnabled && (hasActiveData || isEditing || MeterSettings.IsCollapsed);
         EnableMoving = !MeterSettings.IsLocked;
         EnableResizing = !MeterSettings.IsLocked && !MeterSettings.IsCollapsed;
+
+        float headerH = MeterSettings.HeaderEnabled ? MeterSettings.HeaderHeight : 0;
+        float footerH = (MeterSettings.FooterEnabled && !MeterSettings.IsCollapsed) ? MeterSettings.FooterHeight : 0;
 
         if (backgroundNode != null)
         {
             backgroundNode.IsVisible = MeterSettings.ShowWindowBackground;
-            backgroundNode.Size = Size;
             backgroundNode.BackgroundColor = MeterSettings.WindowColor;
+            backgroundNode.Size = Size;
         }
 
-        float currentHeaderHeight = MeterSettings.HeaderEnabled ? MeterSettings.HeaderHeight : 0;
-        float currentFooterHeight = MeterSettings.FooterEnabled && !MeterSettings.IsCollapsed ? MeterSettings.FooterHeight : 0;
-
-        headerContainer!.IsVisible = MeterSettings.HeaderEnabled;
-        headerContainer.Position = Vector2.Zero;
-        headerContainer.Size = new Vector2(Width, currentHeaderHeight);
-
-        footerContainer!.IsVisible = MeterSettings.FooterEnabled && !MeterSettings.IsCollapsed;
-        footerContainer.Position = new Vector2(0, Height - currentFooterHeight);
-        footerContainer.Size = new Vector2(Width, currentFooterHeight);
-
-        listNode.IsVisible = !MeterSettings.IsCollapsed;
-        listNode.Position = new Vector2(0, currentHeaderHeight);
-        listNode.Size = new Vector2(Width, Math.Max(0, Height - currentHeaderHeight - currentFooterHeight));
-
-        if (Math.Abs(listNode.ItemSpacing - MeterSettings.RowSpacing) > 0.1)
-            listNode.ItemSpacing = MeterSettings.RowSpacing;
-
-        headerContainer.Update();
-        if (!MeterSettings.IsCollapsed)
+        if (headerContainer != null)
         {
+            headerContainer.IsVisible = MeterSettings.HeaderEnabled;
+            headerContainer.Size = new Vector2(Width, headerH);
+            headerContainer.Position = Vector2.Zero;
+            headerContainer.Update();
+        }
+
+        if (footerContainer != null)
+        {
+            footerContainer.IsVisible = MeterSettings.FooterEnabled && !MeterSettings.IsCollapsed;
+            footerContainer.Size = new Vector2(Width, footerH);
+            footerContainer.Position = new Vector2(0, Height - footerH);
             footerContainer.Update();
+        }
+
+        if (listNode != null)
+        {
+            listNode.IsVisible = !MeterSettings.IsCollapsed;
+            listNode.Position = new Vector2(0, headerH);
+            listNode.Size = new Vector2(Width, Math.Max(0, Height - headerH - footerH));
+
+            if (Math.Abs(listNode.ItemSpacing - MeterSettings.RowSpacing) > 0.1f)
+                listNode.ItemSpacing = MeterSettings.RowSpacing;
+
             listNode.Update();
         }
     }
@@ -193,19 +180,17 @@ public sealed class MeterListLayoutNode : OverlayNode
     private void OnCombatDataUpdated()
     {
         if (isDisposing) return;
-        isPreWarmed = false;
         RebuildList();
     }
 
-    private void RebuildList() {
-        if (MeterSettings == null) return;
+    private void RebuildList()
+    {
+        if (MeterSettings == null || listNode == null) return;
 
-        var combatants = System.ActiveMeterService.GetCombatants().ToList();
-
-        if (IsVisible && !System.Config.General.PreviewEnabled && !System.ActiveMeterService.HasCombatData())
-        {
-            combatants = FakeCombatantFactory.CreateFixedCombatants(MeterSettings.MaxCombatants);
-        }
+        var hasCombat = System.ActiveMeterService.HasCombatData();
+        var combatants = hasCombat
+            ? System.ActiveMeterService.GetCombatants().ToList()
+            : FakeCombatantFactory.CreateFixedCombatants(MeterSettings.MaxCombatants);
 
         if (!MeterSettings.ShowLimitBreak) {
             combatants.RemoveAll(combatant => combatant.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase));
@@ -223,10 +208,10 @@ public sealed class MeterListLayoutNode : OverlayNode
     public void OnDispose()
     {
         isDisposing = true;
-
-        if (hookedService == null) return;
-
-        hookedService.CombatDataUpdated -= OnCombatDataUpdated;
-        hookedService = null;
+        if (hookedService != null)
+        {
+            hookedService.CombatDataUpdated -= OnCombatDataUpdated;
+            hookedService = null;
+        }
     }
 }

@@ -32,9 +32,11 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
     {
         if (ItemData == null || MeterSettings == null || Combatant == null) return;
 
-        dynamicNodeList.Update(MeterSettings.RowComponents, CreateComponent);
+        var sortedComponents = MeterSettings.RowComponents.OrderBy(s => s.ZIndex).ToList();
 
-        foreach (var settings in MeterSettings.RowComponents)
+        dynamicNodeList.Update(sortedComponents, CreateComponent);
+
+        foreach (var settings in sortedComponents)
         {
             if (dynamicNodeList.Components.TryGetValue(settings.Id, out var node))
             {

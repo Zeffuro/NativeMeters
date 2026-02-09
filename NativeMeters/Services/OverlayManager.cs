@@ -47,6 +47,14 @@ public class OverlayManager : IDisposable {
         }
     }
 
+    public void UpdateSettings()
+    {
+        foreach (var node in activeMeters.Values)
+        {
+            node.UpdateSettings();
+        }
+    }
+
     public void UpdateActiveService()
     {
         IMeterService newService;

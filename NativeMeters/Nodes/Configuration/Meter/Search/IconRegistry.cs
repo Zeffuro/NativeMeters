@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dalamud.Plugin.Services;
 
-namespace NativeMeters.Nodes.Configuration.Meter;
+namespace NativeMeters.Nodes.Configuration.Meter.Search;
 
 public static class IconRegistry
 {

@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using KamiToolKit.Premade.SearchAddons;
-using Dalamud.Interface.Internal;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Premade.SearchAddons;
 using NativeMeters.Services;
 
-namespace NativeMeters.Nodes.Configuration.Meter;
+namespace NativeMeters.Nodes.Configuration.Meter.Search;
 
 public class IconSearchAddon : BaseSearchAddon<uint, IconListItemNode>
 {

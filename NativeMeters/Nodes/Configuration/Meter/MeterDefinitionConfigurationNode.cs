@@ -11,6 +11,7 @@ using NativeMeters.Configuration;
 using NativeMeters.Configuration.ImportExport;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Configuration.Presets;
+using NativeMeters.Nodes.Configuration.Meter.Sections;
 using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
@@ -122,7 +123,16 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 
         foreach (var section in sections)
         {
-            section.OnToggle = HandleLayoutChange;
+            section.OnToggle = () =>
+            {
+                if (!section.IsCollapsed && !section.IsInitialized)
+                {
+                    section.Refresh();
+                }
+
+                HandleLayoutChange();
+            };
+
             mainLayout.AddNode(section);
         }
     }
@@ -158,19 +168,17 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     {
         if (currentMeterId == meterSettings.Id) return;
         currentMeterId = meterSettings.Id;
-
         settings = meterSettings;
 
-        scrollingArea.IsVisible = false;
-        IsRefreshing  = true;
+        IsRefreshing = true;
 
         foreach (var section in sections)
         {
+            section.IsCollapsed = section is MeterComponentsSection;
             section.Refresh();
         }
 
         IsRefreshing = false;
-        scrollingArea.IsVisible = true;
         HandleLayoutChange();
     }
 
@@ -181,6 +189,8 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 
         foreach (var section in sections)
         {
+            section.IsInitialized = false;
+            section.IsCollapsed = section is MeterComponentsSection;
             section.Refresh();
         }
 

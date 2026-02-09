@@ -4,7 +4,7 @@ using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Nodes.Input;
 
-namespace NativeMeters.Nodes.Configuration.Meter;
+namespace NativeMeters.Nodes.Configuration.Meter.Sections;
 
 public sealed class MeterGeneralSection : MeterConfigSection
 {
@@ -18,6 +18,8 @@ public sealed class MeterGeneralSection : MeterConfigSection
     public override void Refresh()
     {
         if (nameInput == null) Initialize();
+
+        IsInitialized = true;
 
         nameInput!.Text = Settings.Name;
         enabledCheckbox!.IsChecked = Settings.IsEnabled;

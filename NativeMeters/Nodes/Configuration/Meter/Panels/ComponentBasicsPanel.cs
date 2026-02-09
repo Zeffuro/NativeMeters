@@ -5,11 +5,12 @@ using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
 using NativeMeters.Models;
+using NativeMeters.Nodes.Configuration.Meter.Search;
 using NativeMeters.Nodes.Input;
 using NativeMeters.Services;
 using NativeMeters.Tags;
 
-namespace NativeMeters.Nodes.Configuration.Meter;
+namespace NativeMeters.Nodes.Configuration.Meter.Panels;
 
 public sealed class ComponentBasicsPanel : VerticalListNode
 {
@@ -24,7 +25,6 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
     private readonly HorizontalListNode iconRow;
     private readonly LabeledNumericInputNode iconIdInput;
-    private readonly CircleButtonNode browseIconButton;
 
     private readonly LabeledNumericInputNode posXInput;
     private readonly LabeledNumericInputNode posYInput;
@@ -135,7 +135,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
-        browseIconButton = new CircleButtonNode()
+        var browseIconButton = new CircleButtonNode()
         {
             Icon = ButtonIcon.MagnifyingGlass,
             Size = new Vector2(28, 28),
@@ -243,6 +243,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         nameInput.Text = settings.Name;
         sourceInput.Text = settings.DataSource;
+        iconIdInput.Value = (int)settings.IconId;
         posXInput.Value = (int)settings.Position.X;
         posYInput.Value = (int)settings.Position.Y;
         widthInput.Value = (int)settings.Size.X;

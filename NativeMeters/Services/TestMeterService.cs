@@ -9,7 +9,7 @@ namespace NativeMeters.Services;
 public class TestMeterService : MeterServiceBase, IDisposable
 {
     private bool disposed;
-    private readonly List<Combatant> fixedCombatants = FakeCombatantFactory.CreateFixedCombatants(20);
+    private readonly List<Combatant> fixedCombatants = FakeCombatantFactory.CreateFixedCombatants(40);
     private DateTime lastUpdate = DateTime.MinValue;
 
     public void Tick()

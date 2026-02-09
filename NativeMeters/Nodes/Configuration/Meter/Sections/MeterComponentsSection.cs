@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text.Json;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
+using NativeMeters.Configuration.Persistence;
 
-namespace NativeMeters.Nodes.Configuration.Meter;
+namespace NativeMeters.Nodes.Configuration.Meter.Sections;
 
 public enum ComponentTarget { Header, Row, Footer }
 
@@ -90,34 +90,29 @@ public sealed class MeterComponentsSection : MeterConfigSection
 
     public override void Refresh()
     {
+        if (IsCollapsed)
+        {
+            IsInitialized = false;
+            listContainer.Clear();
+            return;
+        }
+
+        IsInitialized = true;
         var currentIds = TargetList.Select(c => c.Id).ToList();
-        bool componentsChanged = !currentIds.SequenceEqual(lastComponentIds);
-
-        if (!componentsChanged && IsCollapsed)
-        {
-            return;
-        }
-
-        if (!componentsChanged && !IsCollapsed)
-        {
-            return;
-        }
-
         lastComponentIds = currentIds;
+
         listContainer.Clear();
-
-        // Since VerticalList will error out to 65532 if the list empty we add a dummy so the FitContents calculation works
-        if (TargetList.Count == 0)
-        {
-            listContainer.AddNode(new ResNode { Height = 0, IsVisible = true });
-        }
-
 
         foreach (var component in TargetList) {
             var node = new ComponentSettingsNode {
                 Width = Width - 20.0f,
                 HeaderHeight = 24.0f,
-                OnChanged = () => System.OverlayManager.Setup(),
+                RowComponent = component,
+                OnChanged = () =>
+                {
+                    ConfigRepository.Save(System.Config);
+                    System.OverlayManager.UpdateSettings();
+                },
                 OnDeleted = () => {
                     TargetList.Remove(component);
                     Refresh();
@@ -137,8 +132,6 @@ public sealed class MeterComponentsSection : MeterConfigSection
                 },
                 OnToggle = RefreshLayout
             };
-
-            node.RowComponent = component;
 
             listContainer.AddNode(node);
         }
