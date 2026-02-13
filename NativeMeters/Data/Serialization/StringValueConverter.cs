@@ -22,9 +22,9 @@ public class StringValueConverter<T> : JsonConverter<T>
 
         object? result = typeToConvert.Name switch
         {
-            "Int32" => NumericParser.TryParse(stringValue, out double intVal) ? (int)intVal : 0,
-            "Int64" => NumericParser.TryParse(stringValue, out double longVal) ? (long)longVal : 0L,
-            "Double" => NumericParser.TryParse(stringValue, out double doubleVal) ? doubleVal : 0.0,
+            "Int32" => (int)CleanAndParseNumeric(stringValue),
+            "Int64" => (long)CleanAndParseNumeric(stringValue),
+            "Double" => CleanAndParseNumeric(stringValue),
             "Boolean" => bool.TryParse(stringValue, out bool boolResult) && boolResult,
             "TimeSpan" => ParseTimeSpan(stringValue),
             "ClassJob" => Service.DataManager.GetClassJobByAbbreviation(stringValue),
@@ -37,6 +37,27 @@ public class StringValueConverter<T> : JsonConverter<T>
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
     {
         writer.WriteStringValue(value?.ToString());
+    }
+
+    private static double CleanAndParseNumeric(string s)
+    {
+        if (string.IsNullOrWhiteSpace(s)) return 0;
+
+        if (s == "NaN" || s == "--" || s == "---")
+            return 0;
+
+        ReadOnlySpan<char> span = s.AsSpan().Trim();
+        if (span.EndsWith("%"))
+        {
+            span = span.Slice(0, span.Length - 1);
+        }
+
+        if (NumericParser.TryParse(span.ToString(), out double result))
+        {
+            return result;
+        }
+
+        return 0;
     }
 
     private static TimeSpan ParseTimeSpan(string? s)

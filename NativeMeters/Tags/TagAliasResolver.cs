@@ -11,6 +11,7 @@ public static class TagAliasResolver
         { "hps", ("Enchps", "Enchps") },
         { "damage", ("Damage", "Damage") },
         { "damagetotal", ("Damage", "Damage") },
+        { "damagepct", ("DamagePercent", "DamagePercent") },
         { "zone", ("CurrentZoneName", "CurrentZoneName") },
         { "duration", ("Duration", "Duration") },
         { "healedpct", ("HealedPercent", "HealedPercent") },

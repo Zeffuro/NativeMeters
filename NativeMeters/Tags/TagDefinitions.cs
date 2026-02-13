@@ -20,6 +20,7 @@ public static class TagDefinitions
         { "DPS: Raw (No Comma)", "[dps:r.0]" },
         { "DPS: Kilo", "[dps:k.1]" },
         { "Dmg: Total", "[damage.0]" },
+        { "Dmg: Percent", "[damagepct]%" },
 
         { "MaxHit: Skill Only", "[maxhit_skill]" },
         { "MaxHit: Val Only", "[maxhit_val.0]" },
