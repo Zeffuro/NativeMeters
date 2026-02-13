@@ -9,54 +9,67 @@ namespace NativeMeters.Services;
 
 public class DtrService : IDisposable
 {
-    private readonly IDtrBarEntry? dtrEntry;
+    private IDtrBarEntry? dtrEntry;
     private DtrSettings Settings => System.Config.DtrSettings;
 
     private DateTime lastUpdate = DateTime.MinValue;
 
     public DtrService()
     {
-        dtrEntry = Service.DtrBar.Get("NativeMeters");
-
-        if (dtrEntry != null)
-        {
-            dtrEntry.Shown = Settings.Enabled;
-            dtrEntry.OnClick += OnDtrClick;
-        }
-
         Service.Framework.Update += OnFrameworkUpdate;
     }
 
     private void OnFrameworkUpdate(IFramework framework)
     {
-        if (dtrEntry == null || !Settings.Enabled) return;
-
         if ((DateTime.Now - lastUpdate).TotalMilliseconds < 250) return;
         lastUpdate = DateTime.Now;
 
         UpdateBar();
     }
 
-    private void UpdateBar()
+    public void UpdateBar()
     {
-        if (!System.ActiveMeterService.IsConnected)
+        if (!Settings.Enabled)
         {
-            if (Settings.ShowWhenDisconnected)
+            if (dtrEntry != null)
             {
-                dtrEntry?.Text = new SeStringBuilder().AddText(Settings.DisconnectedText).Build();
-                dtrEntry?.Tooltip = "Not connected to ACT/IINACT";
-                dtrEntry?.Shown = true;
-            }
-            else
-            {
-                dtrEntry?.Shown = false;
+                dtrEntry.OnClick -= OnDtrClick;
+                dtrEntry.Remove();
+                dtrEntry = null;
             }
             return;
         }
 
-        dtrEntry?.Shown = true;
-        dtrEntry?.Text = FormatDtrText();
-        dtrEntry?.Tooltip = BuildTooltip();
+        if (dtrEntry == null)
+        {
+            dtrEntry = Service.DtrBar.Get("NativeMeters");
+            if (dtrEntry != null)
+            {
+                dtrEntry.Shown = true;
+                dtrEntry.OnClick += OnDtrClick;
+            }
+        }
+
+        if (dtrEntry == null) return;
+
+        if (!System.ActiveMeterService.IsConnected)
+        {
+            if (Settings.ShowWhenDisconnected)
+            {
+                dtrEntry.Text = new SeStringBuilder().AddText(Settings.DisconnectedText).Build();
+                dtrEntry.Tooltip = "Not connected to ACT/IINACT";
+                dtrEntry.Shown = true;
+            }
+            else
+            {
+                dtrEntry.Shown = false;
+            }
+            return;
+        }
+
+        dtrEntry.Shown = true;
+        dtrEntry.Text = FormatDtrText();
+        dtrEntry.Tooltip = BuildTooltip();
     }
 
     private SeString FormatDtrText()
@@ -69,15 +82,8 @@ public class DtrService : IDisposable
 
         var format = Settings.FormatString;
 
-        if (encounter != null)
-        {
-            format = TagEngine.Process(format, encounter);
-        }
-
-        if (combatant != null)
-        {
-            format = TagEngine.Process(format, combatant);
-        }
+        if (encounter != null) format = TagEngine.Process(format, encounter);
+        if (combatant != null) format = TagEngine.Process(format, combatant);
 
         return new SeStringBuilder().AddText(format).Build();
     }
@@ -118,6 +124,7 @@ public class DtrService : IDisposable
         {
             dtrEntry.OnClick -= OnDtrClick;
             dtrEntry.Remove();
+            dtrEntry = null;
         }
     }
 }

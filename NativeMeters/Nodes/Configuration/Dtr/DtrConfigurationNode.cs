@@ -30,6 +30,7 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
             OnClick = isChecked =>
             {
                 settings.Enabled = isChecked;
+                System.DtrService?.UpdateBar();
                 ConfigRepository.Save(System.Config);
             }
         };
