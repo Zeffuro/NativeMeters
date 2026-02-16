@@ -46,7 +46,10 @@ public static class PropertyAccessor
             key.Equals("name", StringComparison.OrdinalIgnoreCase) &&
             data is Combatant combatant)
         {
-            return combatant.Job.NameEnglish.ExtractText();
+            var jobName = combatant.Job.NameEnglish.ToString();
+            return combatant.PrivacyIndex.HasValue
+                ? $"{jobName} {combatant.PrivacyIndex.Value}"
+                : jobName;
         }
 
         if (!isEncounter && key.Equals("name", StringComparison.OrdinalIgnoreCase) &&

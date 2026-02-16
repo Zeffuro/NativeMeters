@@ -14,9 +14,9 @@ public class StringFormatter : IValueFormatter
         {
             var parts = s.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             if (subKey.Equals("first", StringComparison.OrdinalIgnoreCase))
-                s = parts.Length > 0 ? parts[0] : s;
+                s = parts.Length > 1 ? string.Join(" ", parts[..^1]) : (parts.Length > 0 ? parts[0] : s);
             else if (subKey.Equals("last", StringComparison.OrdinalIgnoreCase))
-                s = parts.Length > 1 ? parts[1] : (parts.Length > 0 ? parts[0] : s);
+                s = parts.Length > 1 ? parts[^1] : (parts.Length > 0 ? parts[0] : s);
         }
 
         return precision.HasValue && s.Length > precision.Value ? s[..precision.Value] : s;

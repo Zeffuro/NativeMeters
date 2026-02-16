@@ -275,6 +275,9 @@ public class Combatant : IEquatable<Combatant>
     [JsonConverter(typeof(StringValueConverter<ClassJob>))]
     public ClassJob Job { get; set; }
 
+    [JsonIgnore]
+    public int? PrivacyIndex { get; set; }
+
     public bool Equals(Combatant? other)
     {
         if (other is null) return false;

@@ -24,6 +24,16 @@ public abstract class MeterServiceBase : IMeterService
         CombatDataUpdated?.Invoke();
     }
 
+    private static void AssignPrivacyIndices(IEnumerable<Combatant> combatants)
+    {
+        var list = combatants.ToList();
+        int index = 1;
+        foreach (var combatant in list)
+        {
+            combatant.PrivacyIndex = index++;
+        }
+    }
+
     protected void ArchiveCurrentEncounter()
     {
         if (CombatData == null) return;
@@ -85,7 +95,14 @@ public abstract class MeterServiceBase : IMeterService
     }
 
     public virtual IEnumerable<Combatant> GetCombatants()
-        => GetViewedCombatData()?.Combatant?.Values ?? Enumerable.Empty<Combatant>();
+    {
+        var combatants = GetViewedCombatData()?.Combatant?.Values ?? Enumerable.Empty<Combatant>();
+
+        if (System.Config.General.PrivacyMode)
+            AssignPrivacyIndices(combatants);
+
+        return combatants;
+    }
 
     public virtual Combatant? GetCombatant(string name)
         => GetViewedCombatData()?.Combatant?.GetValueOrDefault(name);
