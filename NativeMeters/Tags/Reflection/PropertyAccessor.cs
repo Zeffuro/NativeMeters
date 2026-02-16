@@ -46,7 +46,7 @@ public static class PropertyAccessor
             key.Equals("name", StringComparison.OrdinalIgnoreCase) &&
             data is Combatant combatant)
         {
-            return combatant.Job.NameEnglish;
+            return combatant.Job.NameEnglish.ExtractText();
         }
 
         if (!isEncounter && key.Equals("name", StringComparison.OrdinalIgnoreCase) &&
