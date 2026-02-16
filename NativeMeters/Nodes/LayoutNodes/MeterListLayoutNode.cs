@@ -196,6 +196,11 @@ public sealed class MeterListLayoutNode : OverlayNode
             combatants.RemoveAll(combatant => combatant.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase));
         }
 
+        if (!MeterSettings.ShowNonPlayerCombatants) {
+            combatants.RemoveAll(combatant => combatant.Job.RowId == 0
+                                              && !combatant.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase));
+        }
+
         var selector = StatSelector.GetStatSelector(MeterSettings.StatToTrack);
         combatants.Sort((left, right) => selector(right).CompareTo(selector(left)));
 

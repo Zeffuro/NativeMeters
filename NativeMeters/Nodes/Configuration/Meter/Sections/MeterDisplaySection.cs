@@ -21,6 +21,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
     private LabeledNumericInputNode? rowHeightInput;
     private LabeledNumericInputNode? rowSpacingInput;
     private CheckboxNode? showLimitBreakToggle;
+    private CheckboxNode? showNonPlayerToggle;
 
     public MeterDisplaySection(Func<MeterSettings> getSettings) : base(getSettings) { }
 
@@ -42,6 +43,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         headerToggle!.IsChecked = Settings.HeaderEnabled;
         footerToggle!.IsChecked = Settings.FooterEnabled;
         showLimitBreakToggle!.IsChecked = Settings.ShowLimitBreak;
+        showNonPlayerToggle!.IsChecked = Settings.ShowNonPlayerCombatants;
 
         RecalculateLayout();
     }
@@ -138,7 +140,14 @@ public sealed class MeterDisplaySection : MeterConfigSection
             OnClick = val => Settings.ShowLimitBreak = val
         };
 
+        showNonPlayerToggle = new CheckboxNode
+        {
+            Size = new Vector2(Width, 20),
+            String = "Show Non Player Combatants",
+            OnClick = val => Settings.ShowNonPlayerCombatants = val
+        };
 
-        AddNode([statDropdown, maxRowsInput, rowHeightInput, rowSpacingInput, backgroundCheckbox, backgroundColorInput, headerToggle, headerHeightInput, footerToggle, footerHeightInput, showLimitBreakToggle]);
+
+        AddNode([statDropdown, maxRowsInput, rowHeightInput, rowSpacingInput, backgroundCheckbox, backgroundColorInput, headerToggle, headerHeightInput, footerToggle, footerHeightInput, showLimitBreakToggle, showNonPlayerToggle]);
     }
 }
