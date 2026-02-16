@@ -27,7 +27,6 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         "  Expect ~5-10% variance vs ACT/IINACT.\n" +
         "• DoT ticks are attributed by scanning active\n" +
         "  statuses, multi-DoT party accuracy is approximate.\n" +
-        "• No damage shield or limit break tracking.\n\n" +
         "For accurate parsing, use ACT/IINACT instead.";
 
     public ConnectionConfigurationNode()

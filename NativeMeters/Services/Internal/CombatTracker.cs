@@ -60,8 +60,16 @@ public class CombatTracker
 
         if (!evt.IsDamageTakenOnly)
         {
-            var source = GetOrCreateTracker(evt.SourceId, evt.SourceName, evt.SourceJobId);
-            source.AddAction(evt);
+            if (evt.IsLimitBreak)
+            {
+                var lbTracker = GetOrCreateTracker(0, "Limit Break", 0);
+                lbTracker.AddAction(evt);
+            }
+            else
+            {
+                var source = GetOrCreateTracker(evt.SourceId, evt.SourceName, evt.SourceJobId);
+                source.AddAction(evt);
+            }
         }
 
         if (evt.TargetId != 0 && evt.IsPlayerTarget)
@@ -90,7 +98,9 @@ public class CombatTracker
     public Dictionary<string, Combatant> GetCombatants()
     {
         var duration = encounterState.GetDuration();
-        var playerTrackers = trackers.Values.Where(tracker => tracker.IsPlayer).ToList();
+        var playerTrackers = trackers.Values
+            .Where(tracker => tracker.IsPlayer || tracker.Name == "Limit Break")
+            .ToList();
         var totalPartyDamage = playerTrackers.Sum(tracker => tracker.TotalDamage);
 
         return playerTrackers.ToDictionary(

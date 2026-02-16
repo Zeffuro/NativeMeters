@@ -23,4 +23,5 @@ public readonly struct ActionResultEvent
 
     public uint ActionId { get; init; }
     public bool IsDamageTakenOnly { get; init; }
+    public bool IsLimitBreak { get; init; }
 }

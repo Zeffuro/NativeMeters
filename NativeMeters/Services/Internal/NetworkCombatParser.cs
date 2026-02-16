@@ -108,6 +108,17 @@ public unsafe class NetworkCombatParser : IDisposable
                 _ => header->SpellId
             };
 
+            var isLimitBreak = false;
+            if (actionId is > 0 and < MountActionOffset and < ItemActionOffset)
+            {
+                var action = Service.DataManager.GetExcelSheet<Lumina.Excel.Sheets.Action>()
+                    .GetRowOrDefault(actionId);
+                if (action.HasValue)
+                {
+                    isLimitBreak = action.Value.ActionCategory.RowId == 9;
+                }
+            }
+
             for (var i = 0; i < header->NumTargets; i++)
             {
                 var targetId = (uint)(targetEntityIds[i] & uint.MaxValue);
@@ -167,6 +178,7 @@ public unsafe class NetworkCombatParser : IDisposable
                                 Damage = amount,
                                 IsCrit = damageFlags.HasFlag(EffectFlags.Critical),
                                 IsDirectHit = damageFlags.HasFlag(EffectFlags.DirectHit),
+                                IsLimitBreak = isLimitBreak,
                             });
                             break;
 
@@ -175,11 +187,12 @@ public unsafe class NetworkCombatParser : IDisposable
                             OnActionResult?.Invoke(evt with {
                                 Healing = amount,
                                 IsCrit = healFlags.HasFlag(EffectFlags.Critical),
+                                IsLimitBreak = isLimitBreak,
                             });
                             break;
 
                         case ActionEffectType.Miss:
-                            OnActionResult?.Invoke(evt with { Damage = 0, IsMiss = true });
+                            OnActionResult?.Invoke(evt with { Damage = 0, IsMiss = true, IsLimitBreak = isLimitBreak });
                             break;
                     }
                 }
