@@ -37,12 +37,13 @@ public class CommandHandler : IDisposable
         switch (subCommand)
         {
             case "":
-            case "toggle":
-                System.Config.General.IsEnabled = !System.Config.General.IsEnabled;
-                break;
-
             case "config":
                 System.AddonConfigurationWindow.Toggle();
+                break;
+
+            case "toggle":
+                System.Config.General.IsEnabled = !System.Config.General.IsEnabled;
+                System.OverlayManager.Setup();
                 break;
 
             case "help":
