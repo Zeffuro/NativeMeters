@@ -17,12 +17,23 @@ public class NumericFormatter : IValueFormatter
 
         if (format.Equals("k", StringComparison.OrdinalIgnoreCase))
         {
+            if (Math.Abs(num) < 1000.0)
+                return num.ToString($"N{precision ?? 0}", CultureInfo.InvariantCulture);
+
             num /= 1000.0;
             return num.ToString($"F{precision ?? 0}", CultureInfo.InvariantCulture) + "k";
         }
 
         if (format.Equals("m", StringComparison.OrdinalIgnoreCase))
         {
+            if (Math.Abs(num) < 1000.0)
+                return num.ToString($"N{precision ?? 0}", CultureInfo.InvariantCulture);
+            if (Math.Abs(num) < 1_000_000.0)
+            {
+                num /= 1000.0;
+                return num.ToString($"F{precision ?? 0}", CultureInfo.InvariantCulture) + "k";
+            }
+
             num /= 1000000.0;
             return num.ToString($"F{precision ?? 0}", CultureInfo.InvariantCulture) + "m";
         }
