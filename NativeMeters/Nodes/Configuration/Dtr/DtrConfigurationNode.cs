@@ -50,7 +50,7 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
                           "Example: [dps:k.1] -> 12.3k",
             OnInputComplete = text =>
             {
-                settings.FormatString = text.ExtractText();
+                settings.FormatString = text.ToString();
                 ConfigRepository.Save(System.Config);
             }
         };
@@ -69,7 +69,7 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
                 {
                     formatInput.Text += tag;
 
-                    settings.FormatString = formatInput.Text.ExtractText();
+                    settings.FormatString = formatInput.Text.ToString();
                     ConfigRepository.Save(System.Config);
 
                     tagDropdown?.SelectedOption = TagDefinitions.DefaultDropdownLabel;
@@ -99,7 +99,7 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
             Text = settings.DisconnectedText,
             OnInputComplete = text =>
             {
-                settings.DisconnectedText = text.ExtractText();
+                settings.DisconnectedText = text.ToString();
                 ConfigRepository.Save(System.Config);
             }
         };

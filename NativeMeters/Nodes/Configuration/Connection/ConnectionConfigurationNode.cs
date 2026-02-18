@@ -93,7 +93,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             Text = config.WebSocketUrl,
             OnInputComplete = text =>
             {
-                config.WebSocketUrl = text.ExtractText();
+                config.WebSocketUrl = text.ToString();
                 OnReconnectClicked();
                 ConfigRepository.Save(System.Config);
             }
