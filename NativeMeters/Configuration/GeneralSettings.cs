@@ -13,7 +13,7 @@ public class GeneralSettings
     public bool ReplaceYou { get; set; } = false;
     public bool PrivacyMode { get; set; } = false;
 
-    public bool EnableInternalParserForBreakdown { get; set; } = false;
+    public bool EnableInternalParserForBreakdown { get; set; } = true;
     public bool EnableEncounterHistory { get; set; } = true;
     public int MaxEncounterHistory { get; set; } = 10;
     public bool AutoSwitchToLiveEncounter { get; set; } = true;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -8,10 +9,10 @@ namespace NativeMeters.Nodes.Breakdown;
 
 public sealed class BreakdownTableHeaderNode : SimpleComponentNode
 {
-    private static readonly Vector4 HeaderColor = new(0.6f, 0.6f, 0.6f, 1f);
+    private static readonly Vector4 HeaderColor = new(0.85f, 0.85f, 0.85f, 1f);
     private const float TextHeight = 14f;
     private const float SeparatorHeight = 2f;
-    private const float TotalHeight = TextHeight + SeparatorHeight + 2f;
+    private const float TotalHeight = TextHeight + SeparatorHeight + 4f;
 
     private readonly List<TextNode> headerTexts = new();
     private readonly HorizontalLineNode separatorLine;
@@ -21,9 +22,9 @@ public sealed class BreakdownTableHeaderNode : SimpleComponentNode
     {
         separatorLine = new HorizontalLineNode
         {
-            Position = new Vector2(0, TextHeight + 1),
+            Position = new Vector2(0, TextHeight + 2),
             Size = new Vector2(500, SeparatorHeight),
-            Color = new Vector4(1f, 1f, 1f, 0.3f),
+            Color = new Vector4(1f, 1f, 1f, 0.2f),
             IsVisible = true,
         };
         separatorLine.AttachNode(this);
@@ -43,8 +44,9 @@ public sealed class BreakdownTableHeaderNode : SimpleComponentNode
             var text = new TextNode
             {
                 Size = new Vector2(col.Width > 0 ? col.Width : 60, TextHeight),
-                FontSize = 11,
+                FontSize = 10,
                 FontType = FontType.Axis,
+                TextFlags = TextFlags.Edge,
                 AlignmentType = col.Alignment switch
                 {
                     ColumnAlignment.Left => AlignmentType.Left,
@@ -75,8 +77,8 @@ public sealed class BreakdownTableHeaderNode : SimpleComponentNode
 
     protected override void OnSizeChanged()
     {
-        base.OnSizeChanged();
         RepositionHeaders();
+        base.OnSizeChanged();
     }
 
     private void RepositionHeaders()
@@ -88,9 +90,20 @@ public sealed class BreakdownTableHeaderNode : SimpleComponentNode
         var resolved = layout.Resolve(Width);
         for (int i = 0; i < resolved.Count && i < headerTexts.Count; i++)
         {
-            var (_, x, w) = resolved[i];
-            headerTexts[i].Position = new Vector2(x, 0);
-            headerTexts[i].Size = new Vector2(w, TextHeight);
+            var (col, x, w) = resolved[i];
+
+            x -= 10;
+
+            if (col.Key == "Action")
+            {
+                headerTexts[i].Position = new Vector2(x + BreakdownTableRowNode.ActionTextOffset - 20, 0);
+                headerTexts[i].Size = new Vector2(Math.Max(20, w - BreakdownTableRowNode.ActionTextOffset - 20), TextHeight);
+            }
+            else
+            {
+                headerTexts[i].Position = new Vector2(x, 0);
+                headerTexts[i].Size = new Vector2(w, TextHeight);
+            }
         }
     }
 }

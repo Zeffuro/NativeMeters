@@ -46,7 +46,7 @@ public class Plugin : IDalamudPlugin
         {
             InternalName = "NativeMeters_Breakdown",
             Title = "NativeMeters Breakdown",
-            Size = new Vector2(580, 480),
+            Size = new Vector2(640, 512),
         };
 
         Service.PluginInterface.UiBuilder.OpenMainUi += System.AddonConfigurationWindow.Toggle;

@@ -17,6 +17,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
     private TabBarNode tabBarNode = null!;
     private EncounterSummaryBarNode summaryBar = null!;
     private ScrollingListNode scrollingContent = null!;
+    private BreakdownTableHeaderNode tableHeader = null!;
 
     private TextButtonNode prevButton = null!;
     private TextButtonNode nextButton = null!;
@@ -29,7 +30,6 @@ public class AddonDetailedBreakdownWindow : NativeAddon
     private readonly List<BreakdownPlayerSectionNode> playerSections = new();
     private readonly BreakdownTableLayout tableLayout = new();
 
-    // Track the last known combatant count to know when to do a full rebuild
     private int lastCombatantCount;
 
     protected override unsafe void OnSetup(AtkUnitBase* addon)
@@ -72,16 +72,9 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         };
         nextButton.AttachNode(this);
 
-        summaryBar = new EncounterSummaryBarNode
-        {
-            Position = ContentStartPosition with { Y = contentY + 24 },
-            Size = new Vector2(contentW, 28),
-        };
-        summaryBar.AttachNode(this);
-
         tabBarNode = new TabBarNode
         {
-            Position = ContentStartPosition with { Y = contentY + 56 },
+            Position = ContentStartPosition with { Y = contentY + 26 },
             Size = new Vector2(contentW, 24),
             IsVisible = true,
         };
@@ -91,8 +84,23 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         tabBarNode.AddTab("Healing", () => SwitchTab(BreakdownTab.Healing));
         tabBarNode.AddTab("Damage Taken", () => SwitchTab(BreakdownTab.DamageTaken));
 
-        var scrollY = contentY + 84;
-        var scrollH = Math.Max(0, contentH - 84);
+        summaryBar = new EncounterSummaryBarNode
+        {
+            Position = ContentStartPosition with { Y = contentY + 54 },
+            Size = new Vector2(contentW, 28),
+        };
+        summaryBar.AttachNode(this);
+
+        tableHeader = new BreakdownTableHeaderNode
+        {
+            Position = ContentStartPosition with { X = ContentStartPosition.X + 10, Y = contentY + 84 },
+            Size = new Vector2(contentW - 28, 20),
+            IsVisible = true,
+        };
+        tableHeader.AttachNode(this);
+
+        var scrollY = contentY + 106;
+        var scrollH = Math.Max(0, contentH - 106);
 
         scrollingContent = new ScrollingListNode
         {
@@ -167,10 +175,6 @@ public class AddonDetailedBreakdownWindow : NativeAddon
             UpdateData();
     }
 
-    /// <summary>
-    /// Full rebuild: destroys all sections and recreates them.
-    /// Used when switching tabs, encounters, or when combatant list changes structurally.
-    /// </summary>
     private void FullRebuild()
     {
         if (scrollingContent == null) return;
@@ -184,16 +188,21 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         var (encounter, combatants) = GetCurrentData();
         if (encounter == null || combatants == null)
         {
-            summaryBar.Update(null);
+            summaryBar.Update(null, currentTab);
             lastCombatantCount = 0;
             return;
         }
 
-        summaryBar.Update(encounter);
+        summaryBar.Update(encounter, currentTab);
         SortCombatants(combatants);
 
-        double duration = encounter.DURATION > 0 ? encounter.DURATION : 1.0;
         float listWidth = Math.Max(0, scrollingContent.ContentWidth);
+        tableHeader.Width = Math.Max(0, listWidth - 18);
+        tableHeader.SetLayout(tableLayout);
+        bool isDamageMode = currentTab == BreakdownTab.Damage;
+        tableHeader.UpdateLabels(isDamageMode ? "Damage" : "Healing", isDamageMode ? "DPS" : "HPS");
+
+        double duration = encounter.DURATION > 0 ? encounter.DURATION : 1.0;
 
         foreach (var combatant in combatants)
         {
@@ -212,11 +221,6 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         scrollingContent.RecalculateLayout();
     }
 
-    /// <summary>
-    /// Data-only update: keeps existing sections, just refreshes their data.
-    /// Preserves collapsed/expanded state.
-    /// If combatant count changes, falls back to FullRebuild.
-    /// </summary>
     private void UpdateData()
     {
         if (scrollingContent == null) return;
@@ -226,14 +230,15 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         var (encounter, combatants) = GetCurrentData();
         if (encounter == null || combatants == null)
         {
-            summaryBar.Update(null);
+            summaryBar.Update(null, currentTab);
             return;
         }
 
-        summaryBar.Update(encounter);
+        summaryBar.Update(encounter, currentTab);
         SortCombatants(combatants);
 
-        // Structural change — need full rebuild
+        tableHeader.Width = Math.Max(0, scrollingContent.ContentWidth - 18);
+
         if (combatants.Count != lastCombatantCount)
         {
             FullRebuild();

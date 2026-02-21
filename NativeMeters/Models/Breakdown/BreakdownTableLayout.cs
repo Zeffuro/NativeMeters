@@ -7,23 +7,20 @@ public class BreakdownTableLayout
 {
     public List<BreakdownColumn> Columns { get; set; } =
     [
-        new("Action", "Action", 0, true, ColumnAlignment.Left),   // 0 = flex fill remaining
-        new("Hits", "Hits", 32),
-        new("Crit", "Crit%", 44),
-        new("DH", "DH%", 44),
-        new("Total", "Damage", 60),
-        new("PerSec", "DPS", 50),
-        new("Max", "Max", 52),
-        new("Active", "Active", 40),
+        new("Action", "Action", 0, true, ColumnAlignment.Left),
+        new("Hits", "Hits", 36),
+        new("Crit", "C%", 40),
+        new("DH", "DH%", 40),
+        new("Pct", "%", 46),
+        new("Total", "Damage", 64),
+        new("PerSec", "DPS", 48),
+        new("Max", "Max", 54),
+        new("Active", "Active", 42),
     ];
 
     public IReadOnlyList<BreakdownColumn> VisibleColumns
         => Columns.Where(c => c.IsVisible).ToList();
 
-    /// <summary>
-    /// Given the total available width, calculates (x, w) for each visible column.
-    /// Columns with Width=0 are flex and fill the remaining space.
-    /// </summary>
     public List<(BreakdownColumn Column, float X, float W)> Resolve(float totalWidth)
     {
         var visible = VisibleColumns;
