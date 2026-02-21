@@ -92,6 +92,18 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
         AddNode(1, new CheckboxNode
         {
             Size = Size with { Y = 18 },
+            String = "Run internal parser for detailed breakdown (even when using ACT/IINACT)",
+            IsChecked = config.EnableInternalParserForBreakdown,
+            OnClick = isChecked =>
+            {
+                config.EnableInternalParserForBreakdown = isChecked;
+                ConfigRepository.Save(System.Config);
+            }
+        });
+
+        AddNode(1, new CheckboxNode
+        {
+            Size = Size with { Y = 18 },
             IsVisible = true,
             String = "Enable Encounter History",
             IsChecked = config.EnableEncounterHistory,

@@ -137,6 +137,8 @@ public static class MeterContextMenu
 
         menu.AddItem(Separator);
 
+        menu.AddItem("Detailed Breakdown", () => System.AddonDetailedBreakdownWindow.Toggle());
+
         menu.AddItem("Settings", () => System.AddonConfigurationWindow.Toggle());
 
         menu.Open();

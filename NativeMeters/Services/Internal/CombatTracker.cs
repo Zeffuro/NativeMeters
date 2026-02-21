@@ -4,6 +4,7 @@ using System.Linq;
 using Dalamud.Game.ClientState.Conditions;
 using Lumina.Excel.Sheets;
 using NativeMeters.Models;
+using NativeMeters.Models.Breakdown;
 using NativeMeters.Models.Internal;
 
 namespace NativeMeters.Services.Internal;

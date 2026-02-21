@@ -37,8 +37,15 @@ public class Plugin : IDalamudPlugin
 
         System.AddonConfigurationWindow = new AddonConfigurationWindow
         {
-            InternalName = "NativeMeters Config",
+            InternalName = "NativeMeters_Config",
             Title = "NativeMeters Config",
+            Size = new Vector2(640, 512),
+        };
+
+        System.AddonDetailedBreakdownWindow = new AddonDetailedBreakdownWindow
+        {
+            InternalName = "NativeMeters_Breakdown",
+            Title = "NativeMeters Breakdown",
             Size = new Vector2(640, 512),
         };
 
@@ -72,6 +79,11 @@ public class Plugin : IDalamudPlugin
         else
         {
             System.MeterService.Enable();
+
+            if (System.Config.General.EnableInternalParserForBreakdown)
+            {
+                System.InternalMeterService.Enable();
+            }
         }
         System.AddonConfigurationWindow.DebugOpen();
     }
@@ -91,6 +103,7 @@ public class Plugin : IDalamudPlugin
         System.OverlayManager.Dispose();
         System.CommandHandler.Dispose();
         System.AddonConfigurationWindow.Dispose();
+        System.AddonDetailedBreakdownWindow.Dispose();
 
         ConfigRepository.Save(System.Config);
         KamiToolKitLibrary.Dispose();

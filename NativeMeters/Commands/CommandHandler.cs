@@ -46,6 +46,10 @@ public class CommandHandler : IDisposable
                 System.OverlayManager.Setup();
                 break;
 
+            case "breakdown":
+                System.AddonDetailedBreakdownWindow.Toggle();
+                break;
+
             case "help":
             case "?":
                 PrintHelp();
@@ -61,6 +65,8 @@ public class CommandHandler : IDisposable
     {
         var helpText = @"NativeMeters Commands:
   /ntm              - Toggle meters
+  /ntm config       - Open configuration window
+  /ntm breakdown    - Open detailed breakdown window
 ";
         PrintChat(helpText);
     }
