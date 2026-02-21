@@ -22,9 +22,6 @@ public class CombatTracker
     public bool HasData => trackers.Count > 0 && encounterState.StartTime != DateTime.MinValue;
     public bool DidEncounterJustEnd { get; private set; }
 
-    private readonly EncounterHistory encounterHistory = new();
-    public EncounterHistory History => encounterHistory;
-
     public void UpdateCombatState()
     {
         DidEncounterJustEnd = false;
@@ -42,18 +39,6 @@ public class CombatTracker
         {
             encounterState.End();
             DidEncounterJustEnd = true;
-
-            var combatants = GetCombatants();
-            var combatantList = combatants.Values.ToList();
-            var encounter = BuildEncounter(combatantList);
-            encounterHistory.Save(new EncounterSnapshot
-            {
-                EndTime = DateTime.UtcNow,
-                EncounterName = encounter.Title ?? "Unknown",
-                Duration = encounterState.GetDuration(),
-                Encounter = encounter,
-                Combatants = combatantList,
-            });
         }
 
         IsInCombat = isInCombat;

@@ -88,7 +88,6 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         if (selectedEncounterIndex < 0)
         {
-            // Live data
             if (!System.ActiveMeterService.HasCombatData())
             {
                 playerListNode.OptionsList = [];
@@ -100,7 +99,6 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         }
         else
         {
-            // Historical data
             var history = System.ActiveMeterService.GetEncounterHistory();
             if (selectedEncounterIndex >= history.Count)
             {
@@ -108,14 +106,12 @@ public class AddonDetailedBreakdownWindow : NativeAddon
                 summaryBar.Update(null);
                 return;
             }
-            var snapshot = history.Encounters[selectedEncounterIndex];
+            var snapshot = history[selectedEncounterIndex];
             encounter = snapshot.Encounter;
-            combatants = snapshot.Combatants;
+            combatants = snapshot.Combatant.Values.ToList();
         }
 
         summaryBar.Update(encounter);
-
-        var combatants = System.ActiveMeterService.GetCombatants().ToList();
 
         combatants.Sort((a, b) => currentTab switch
         {
