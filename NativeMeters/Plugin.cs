@@ -79,6 +79,11 @@ public class Plugin : IDalamudPlugin
         else
         {
             System.MeterService.Enable();
+
+            if (System.Config.General.EnableInternalParserForBreakdown)
+            {
+                System.InternalMeterService.Enable();
+            }
         }
         System.AddonConfigurationWindow.DebugOpen();
     }

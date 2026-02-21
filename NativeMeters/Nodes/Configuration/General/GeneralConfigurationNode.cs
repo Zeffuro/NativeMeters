@@ -89,7 +89,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
 
         AddNode(new ResNode { Height = 10 });
 
-        AddNode(new CheckboxNode
+        AddNode(1, new CheckboxNode
         {
             Size = Size with { Y = 18 },
             String = "Run internal parser for detailed breakdown (even when using ACT/IINACT)",

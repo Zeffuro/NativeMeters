@@ -18,10 +18,15 @@ public class AddonDetailedBreakdownWindow : NativeAddon
     private EncounterSummaryBarNode summaryBar = null!;
     private ListNode<BreakdownPlayerData, BreakdownPlayerListItemNode> playerListNode = null!;
 
+    // Encounter selector
+    private TextButtonNode prevButton = null!;
+    private TextButtonNode nextButton = null!;
+    private TextNode encounterLabelNode = null!;
+
     private BreakdownTab currentTab = BreakdownTab.Damage;
     private IMeterService? hookedService;
 
-    private int selectedEncounterIndex = -1;
+    private int selectedEncounterIndex = -1; // -1 = live
 
     protected override unsafe void OnSetup(AtkUnitBase* addon)
     {
@@ -29,16 +34,50 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         var contentW = ContentSize.X;
         var contentH = ContentSize.Y;
 
-        summaryBar = new EncounterSummaryBarNode
+        prevButton = new TextButtonNode
         {
             Position = ContentStartPosition,
+            Size = new Vector2(24, 22),
+            String = "◀",
+            IsVisible = true,
+            OnClick = () => NavigateEncounter(-1),
+        };
+        prevButton.AttachNode(this);
+
+        encounterLabelNode = new TextNode
+        {
+            Position = ContentStartPosition with { X = ContentStartPosition.X + 28 },
+            Size = new Vector2(contentW - 56, 22),
+            FontSize = 13,
+            FontType = FontType.Axis,
+            TextFlags = TextFlags.Edge,
+            AlignmentType = AlignmentType.Center,
+            TextColor = new Vector4(1f, 1f, 1f, 0.9f),
+            String = "Live",
+            IsVisible = true,
+        };
+        encounterLabelNode.AttachNode(this);
+
+        nextButton = new TextButtonNode
+        {
+            Position = ContentStartPosition with { X = ContentStartPosition.X + contentW - 24 },
+            Size = new Vector2(24, 22),
+            String = "▶",
+            IsVisible = true,
+            OnClick = () => NavigateEncounter(1),
+        };
+        nextButton.AttachNode(this);
+
+        summaryBar = new EncounterSummaryBarNode
+        {
+            Position = ContentStartPosition with { Y = contentY + 24 },
             Size = new Vector2(contentW, 28),
         };
         summaryBar.AttachNode(this);
 
         tabBarNode = new TabBarNode
         {
-            Position = ContentStartPosition with { Y = contentY + 32 },
+            Position = ContentStartPosition with { Y = contentY + 56 },
             Size = new Vector2(contentW, 24),
             IsVisible = true,
         };
@@ -48,8 +87,8 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         tabBarNode.AddTab("Healing", () => SwitchTab(BreakdownTab.Healing));
         tabBarNode.AddTab("Damage Taken", () => SwitchTab(BreakdownTab.DamageTaken));
 
-        var scrollY = contentY + 60;
-        var scrollH = Math.Max(0, contentH - 60);
+        var scrollY = contentY + 84;
+        var scrollH = Math.Max(0, contentH - 84);
 
         playerListNode = new ListNode<BreakdownPlayerData, BreakdownPlayerListItemNode>
         {
@@ -60,11 +99,60 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         };
         playerListNode.AttachNode(this);
 
-        hookedService = System.ActiveMeterService;
+        hookedService = System.InternalMeterService;
         hookedService.CombatDataUpdated += OnCombatDataUpdated;
         RefreshData();
 
         base.OnSetup(addon);
+    }
+
+    private void NavigateEncounter(int direction)
+    {
+        var history = System.InternalMeterService.GetEncounterHistory();
+        var maxIndex = history.Count - 1;
+
+        if (direction < 0)
+        {
+            if (selectedEncounterIndex < 0)
+                selectedEncounterIndex = 0;
+            else if (selectedEncounterIndex < maxIndex)
+                selectedEncounterIndex++;
+            else
+                return;
+        }
+        else
+        {
+            if (selectedEncounterIndex > 0)
+                selectedEncounterIndex--;
+            else if (selectedEncounterIndex == 0)
+                selectedEncounterIndex = -1;
+            else
+                return;
+        }
+
+        RefreshData();
+    }
+
+    private void UpdateEncounterLabel()
+    {
+        if (selectedEncounterIndex < 0)
+        {
+            encounterLabelNode.String = "● Live";
+            return;
+        }
+
+        var history = System.InternalMeterService.GetEncounterHistory();
+        if (selectedEncounterIndex < history.Count)
+        {
+            var enc = history[selectedEncounterIndex].Encounter;
+            var title = enc?.Title ?? "Unknown";
+            var dur = enc?.Duration.ToString(@"mm\:ss") ?? "0:00";
+            encounterLabelNode.String = $"{title} ({dur})";
+        }
+        else
+        {
+            encounterLabelNode.String = "No Data";
+        }
     }
 
     private void SwitchTab(BreakdownTab tab)
@@ -76,30 +164,33 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
     private void OnCombatDataUpdated()
     {
-        RefreshData();
+        if (selectedEncounterIndex < 0)
+            RefreshData();
     }
 
     private void RefreshData()
     {
         if (playerListNode == null) return;
 
+        UpdateEncounterLabel();
+
         Encounter? encounter;
         List<Combatant> combatants;
 
         if (selectedEncounterIndex < 0)
         {
-            if (!System.ActiveMeterService.HasCombatData())
+            if (!System.InternalMeterService.HasCombatData())
             {
                 playerListNode.OptionsList = [];
                 summaryBar.Update(null);
                 return;
             }
-            encounter = System.ActiveMeterService.GetEncounter();
-            combatants = System.ActiveMeterService.GetCombatants().ToList();
+            encounter = System.InternalMeterService.GetEncounter();
+            combatants = System.InternalMeterService.GetCombatants().ToList();
         }
         else
         {
-            var history = System.ActiveMeterService.GetEncounterHistory();
+            var history = System.InternalMeterService.GetEncounterHistory();
             if (selectedEncounterIndex >= history.Count)
             {
                 playerListNode.OptionsList = [];
