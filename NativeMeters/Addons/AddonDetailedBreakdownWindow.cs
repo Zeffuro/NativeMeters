@@ -27,10 +27,9 @@ public class AddonDetailedBreakdownWindow : NativeAddon
     private IMeterService? hookedService;
     private int selectedEncounterIndex = -1;
 
-    private readonly List<BreakdownPlayerSectionNode> playerSections = new();
-    private readonly BreakdownTableLayout tableLayout = new();
+    private readonly List<BreakdownPlayerSectionNode> sectionPool = new();
 
-    private int lastCombatantCount;
+    private readonly BreakdownTableLayout tableLayout = new();
 
     protected override unsafe void OnSetup(AtkUnitBase* addon)
     {
@@ -82,7 +81,6 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         tabBarNode.AddTab("Damage", () => SwitchTab(BreakdownTab.Damage));
         tabBarNode.AddTab("Healing", () => SwitchTab(BreakdownTab.Healing));
-        tabBarNode.AddTab("Damage Taken", () => SwitchTab(BreakdownTab.DamageTaken));
 
         summaryBar = new EncounterSummaryBarNode
         {
@@ -97,6 +95,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
             Size = new Vector2(contentW - 28, 20),
             IsVisible = true,
         };
+        tableHeader.SetLayout(tableLayout);
         tableHeader.AttachNode(this);
 
         var scrollY = contentY + 106;
@@ -114,7 +113,8 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         hookedService = System.InternalMeterService;
         hookedService.CombatDataUpdated += OnCombatDataUpdated;
-        FullRebuild();
+
+        RefreshData();
 
         base.OnSetup(addon);
     }
@@ -137,7 +137,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
             else return;
         }
 
-        FullRebuild();
+        RefreshData();
     }
 
     private void UpdateEncounterLabel()
@@ -166,91 +166,65 @@ public class AddonDetailedBreakdownWindow : NativeAddon
     {
         if (currentTab == tab) return;
         currentTab = tab;
-        FullRebuild();
+        RefreshData();
     }
 
     private void OnCombatDataUpdated()
     {
         if (selectedEncounterIndex < 0)
-            UpdateData();
+            RefreshData();
     }
 
-    private void FullRebuild()
+    private void RefreshData()
     {
         if (scrollingContent == null) return;
 
         UpdateEncounterLabel();
 
-        scrollingContent.Clear();
-        foreach (var section in playerSections) section.Dispose();
-        playerSections.Clear();
-
         var (encounter, combatants) = GetCurrentData();
+
         if (encounter == null || combatants == null)
         {
             summaryBar.Update(null, currentTab);
-            lastCombatantCount = 0;
+            for (int i = 0; i < sectionPool.Count; i++)
+                sectionPool[i].IsVisible = false;
+            scrollingContent.RecalculateLayout();
             return;
         }
 
         summaryBar.Update(encounter, currentTab);
         SortCombatants(combatants);
 
+        bool isDamageMode = currentTab == BreakdownTab.Damage;
         float listWidth = Math.Max(0, scrollingContent.ContentWidth);
         tableHeader.Width = Math.Max(0, listWidth - 18);
-        tableHeader.SetLayout(tableLayout);
-        bool isDamageMode = currentTab == BreakdownTab.Damage;
         tableHeader.UpdateLabels(isDamageMode ? "Damage" : "Healing", isDamageMode ? "DPS" : "HPS");
 
         double duration = encounter.DURATION > 0 ? encounter.DURATION : 1.0;
 
-        foreach (var combatant in combatants)
+        while (sectionPool.Count < combatants.Count)
         {
             var section = new BreakdownPlayerSectionNode
             {
                 Width = listWidth,
-                IsVisible = true,
+                IsVisible = false,
             };
-            section.SetData(combatant, currentTab, duration, tableLayout);
+            section.InitializeLayout(tableLayout);
             section.OnToggle = () => scrollingContent.RecalculateLayout();
-            playerSections.Add(section);
+            sectionPool.Add(section);
             scrollingContent.AddNode(section);
         }
 
-        lastCombatantCount = combatants.Count;
-        scrollingContent.RecalculateLayout();
-    }
-
-    private void UpdateData()
-    {
-        if (scrollingContent == null) return;
-
-        UpdateEncounterLabel();
-
-        var (encounter, combatants) = GetCurrentData();
-        if (encounter == null || combatants == null)
+        for (int i = 0; i < combatants.Count; i++)
         {
-            summaryBar.Update(null, currentTab);
-            return;
+            var section = sectionPool[i];
+            section.IsVisible = true;
+            section.Width = listWidth;
+            section.SetData(combatants[i], currentTab, duration);
         }
 
-        summaryBar.Update(encounter, currentTab);
-        SortCombatants(combatants);
-
-        tableHeader.Width = Math.Max(0, scrollingContent.ContentWidth - 18);
-
-        if (combatants.Count != lastCombatantCount)
-        {
-            FullRebuild();
-            return;
-        }
-
-        double duration = encounter.DURATION > 0 ? encounter.DURATION : 1.0;
-
-        for (int i = 0; i < combatants.Count && i < playerSections.Count; i++)
-        {
-            playerSections[i].SetData(combatants[i], currentTab, duration, tableLayout);
-        }
+        for (int i = combatants.Count; i < sectionPool.Count; i++)
+            sectionPool[i].IsVisible = false;
 
         scrollingContent.RecalculateLayout();
     }
@@ -280,7 +254,6 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         {
             BreakdownTab.Damage => b.ENCDPS.CompareTo(a.ENCDPS),
             BreakdownTab.Healing => b.ENCHPS.CompareTo(a.ENCHPS),
-            BreakdownTab.DamageTaken => b.Damagetaken.CompareTo(a.Damagetaken),
             _ => b.ENCDPS.CompareTo(a.ENCDPS),
         });
     }
@@ -293,8 +266,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
             hookedService = null;
         }
 
-        foreach (var section in playerSections) section.Dispose();
-        playerSections.Clear();
+        sectionPool.Clear();
 
         base.OnFinalize(addon);
     }

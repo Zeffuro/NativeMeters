@@ -17,6 +17,7 @@ public sealed class BreakdownTableHeaderNode : SimpleComponentNode
     private readonly List<TextNode> headerTexts = new();
     private readonly HorizontalLineNode separatorLine;
     private BreakdownTableLayout? layout;
+    private bool layoutInitialized;
 
     public BreakdownTableHeaderNode()
     {
@@ -34,10 +35,16 @@ public sealed class BreakdownTableHeaderNode : SimpleComponentNode
 
     public void SetLayout(BreakdownTableLayout tableLayout)
     {
-        foreach (var t in headerTexts) t.Dispose();
-        headerTexts.Clear();
+        if (layoutInitialized && layout == tableLayout) return;
+
+        if (layoutInitialized)
+        {
+            foreach (var t in headerTexts) t.Dispose();
+            headerTexts.Clear();
+        }
 
         layout = tableLayout;
+        layoutInitialized = true;
 
         foreach (var col in tableLayout.VisibleColumns)
         {
@@ -77,8 +84,8 @@ public sealed class BreakdownTableHeaderNode : SimpleComponentNode
 
     protected override void OnSizeChanged()
     {
-        RepositionHeaders();
         base.OnSizeChanged();
+        RepositionHeaders();
     }
 
     private void RepositionHeaders()
@@ -96,8 +103,8 @@ public sealed class BreakdownTableHeaderNode : SimpleComponentNode
 
             if (col.Key == "Action")
             {
-                headerTexts[i].Position = new Vector2(x + BreakdownTableRowNode.ActionTextOffset - 20, 0);
-                headerTexts[i].Size = new Vector2(Math.Max(20, w - BreakdownTableRowNode.ActionTextOffset - 20), TextHeight);
+                headerTexts[i].Position = new Vector2(x + BreakdownTableRowNode.ActionTextOffset, 0);
+                headerTexts[i].Size = new Vector2(Math.Max(20, w - BreakdownTableRowNode.ActionTextOffset), TextHeight);
             }
             else
             {

@@ -22,6 +22,7 @@ public sealed class BreakdownTableRowNode : SimpleComponentNode
     private readonly List<TextNode> cellTexts = new();
 
     private BreakdownTableLayout? layout;
+    private bool layoutInitialized;
 
     public const float RowHeight = 26f;
     private const float IconSize = 22f;
@@ -59,10 +60,16 @@ public sealed class BreakdownTableRowNode : SimpleComponentNode
 
     public void SetLayout(BreakdownTableLayout tableLayout)
     {
-        foreach (var t in cellTexts) t.Dispose();
-        cellTexts.Clear();
+        if (layoutInitialized && layout == tableLayout) return;
+
+        if (layoutInitialized)
+        {
+            foreach (var t in cellTexts) t.Dispose();
+            cellTexts.Clear();
+        }
 
         layout = tableLayout;
+        layoutInitialized = true;
 
         foreach (var col in tableLayout.VisibleColumns)
         {
@@ -94,7 +101,7 @@ public sealed class BreakdownTableRowNode : SimpleComponentNode
         RepositionCells();
     }
 
-    public void SetData(ActionStatView action, bool isDamageMode, double contributionPct)
+    public void SetData(ActionStatView action, bool isDamageMode, double contributionPct = 0)
     {
         if (layout == null) return;
 
@@ -156,7 +163,7 @@ public sealed class BreakdownTableRowNode : SimpleComponentNode
     {
         if (layout == null || cellTexts.Count == 0) return;
 
-        contributionBar.Position = new Vector2(0, 0);
+        contributionBar.Position = Vector2.Zero;
 
         var resolved = layout.Resolve(Width);
 

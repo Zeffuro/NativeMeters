@@ -20,7 +20,8 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
     private readonly IconImageNode jobIconNode;
     private readonly TextNode primaryStatText;
 
-    private readonly List<BreakdownTableRowNode> tableRows = new();
+    private readonly List<BreakdownTableRowNode> rowPool = new();
+    private int visibleRowCount;
     private BreakdownTableLayout? tableLayout;
 
     public BreakdownPlayerSectionNode()
@@ -30,6 +31,7 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
         FontSize = 14;
         NestingIndent = 0.0f;
         CollapsibleContent.ItemVerticalSpacing = 1.0f;
+
         LabelNode.X = 52.0f;
         LabelNode.Height = 24f;
         LabelNode.Y = 4f;
@@ -57,10 +59,14 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
         primaryStatText.AttachNode(HeaderNode);
     }
 
-    public void SetData(Combatant combatant, BreakdownTab tab, double encounterDuration, BreakdownTableLayout layout)
+    public void InitializeLayout(BreakdownTableLayout layout)
     {
+        if (tableLayout == layout) return;
         tableLayout = layout;
+    }
 
+    public void SetData(Combatant combatant, BreakdownTab tab, double encounterDuration)
+    {
         String = GetDisplayName(combatant);
         LabelNode.TextColor = combatant.GetColor();
 
@@ -80,14 +86,17 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
                     ? combatant.ActiveTime.Value.TotalSeconds / encounterDuration * 100.0 : 0;
                 primaryStatText.String = $"HPS: {Formatter.Format(combatant.ENCHPS, "", "", 0)}  Uptime: {healUp:F0}%";
                 break;
-            case BreakdownTab.DamageTaken:
-                primaryStatText.String = $"Taken: {Formatter.Format(combatant.Damagetaken, "", "m", 1)}";
-                break;
         }
 
         bool wasExpanded = !IsCollapsed;
         PopulateActions(combatant, tab);
-        if (wasExpanded && IsCollapsed) IsCollapsed = false;
+
+        if (wasExpanded)
+        {
+            IsCollapsed = false;
+        }
+
+        RecalculateLayout();
     }
 
     private static string GetDisplayName(Combatant combatant)
@@ -112,13 +121,18 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
 
     private void PopulateActions(Combatant combatant, BreakdownTab tab)
     {
-        Clear();
-        foreach (var row in tableRows) row.Dispose();
-        tableRows.Clear();
+        foreach (var tableRowNode in rowPool)
+        {
+            tableRowNode.IsVisible = false;
+        }
+        visibleRowCount = 0;
 
-        if (tableLayout == null || tab == BreakdownTab.DamageTaken
+        if (tableLayout == null
             || combatant.ActionBreakdownList == null || combatant.ActionBreakdownList.Count == 0)
+        {
+            CollapsibleContent.RecalculateLayout();
             return;
+        }
 
         bool isDamageMode = tab == BreakdownTab.Damage;
         float rowWidth = Math.Max(0, Width - 18);
@@ -131,22 +145,32 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
             ? (isDamageMode ? actions.Max(a => a.TotalDamage) : actions.Max(a => a.TotalHealing))
             : 1;
 
-        foreach (var action in actions)
+        while (rowPool.Count < actions.Count)
         {
             var row = new BreakdownTableRowNode
             {
                 Size = new Vector2(rowWidth, BreakdownTableRowNode.RowHeight),
-                IsVisible = true,
+                IsVisible = false,
             };
             row.SetLayout(tableLayout);
-
-            long val = isDamageMode ? action.TotalDamage : action.TotalHealing;
-            double barPct = maxValue > 0 ? val * 100.0 / maxValue : 0;
-
-            row.SetData(action, isDamageMode, barPct);
-            tableRows.Add(row);
+            rowPool.Add(row);
             AddNode(row);
         }
+
+        for (int i = 0; i < actions.Count; i++)
+        {
+            var row = rowPool[i];
+            row.IsVisible = true;
+            row.Width = rowWidth;
+
+            long val = isDamageMode ? actions[i].TotalDamage : actions[i].TotalHealing;
+            double barPct = maxValue > 0 ? val * 100.0 / maxValue : 0;
+            row.SetData(actions[i], isDamageMode, barPct);
+        }
+
+        visibleRowCount = actions.Count;
+
+        CollapsibleContent.RecalculateLayout();
     }
 
     protected override void OnSizeChanged()
@@ -157,6 +181,7 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
         primaryStatText.Size = new Vector2(Math.Max(0, Width - 60), 20);
 
         float rowWidth = Math.Max(0, Width - 18);
-        foreach (var row in tableRows) row.Width = rowWidth;
+        for (int i = 0; i < visibleRowCount && i < rowPool.Count; i++)
+            rowPool[i].Width = rowWidth;
     }
 }

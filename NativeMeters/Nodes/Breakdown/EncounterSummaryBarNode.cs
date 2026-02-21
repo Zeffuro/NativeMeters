@@ -80,12 +80,6 @@ public sealed class EncounterSummaryBarNode : SimpleComponentNode
                 primaryValueText.String = $"{Formatter.Format(encounter.Healed, "", "m", 2)} Healed";
                 secondaryValueText.String = $"{Formatter.Format(encounter.ENCHPS, "", "", 0)} rHPS";
                 break;
-            case BreakdownTab.DamageTaken:
-                primaryValueText.String = $"{Formatter.Format(encounter.Damagetaken, "", "m", 2)} Taken";
-                secondaryValueText.String = encounter.DURATION > 0
-                    ? $"{Formatter.Format(encounter.Damagetaken / encounter.DURATION, "", "", 0)} DTPS"
-                    : "0 DTPS";
-                break;
         }
 
         durationText.String = $"{encounter.Duration:mm\\:ss}";

@@ -1,3 +1,3 @@
 namespace NativeMeters.Models.Breakdown;
 
-public enum BreakdownTab { Damage, Healing, DamageTaken }
+public enum BreakdownTab { Damage, Healing }
