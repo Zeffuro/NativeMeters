@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lumina.Excel.Sheets;
 using NativeMeters.Models;
 using NativeMeters.Models.Internal;
+using Action = Lumina.Excel.Sheets.Action;
 
 namespace NativeMeters.Services.Internal;
 
@@ -31,10 +33,17 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
     public long MaxHitValue { get; set; }
     public long MaxHealValue { get; set; }
 
+    public DateTime? FirstActionTime { get; set; }
+    public DateTime? LastActionTime { get; set; }
+
     public Dictionary<uint, ActionStat> ActionBreakdown { get; } = new();
 
     public void AddAction(ActionResultEvent evt)
     {
+        var now = DateTime.UtcNow;
+        FirstActionTime ??= now;
+        LastActionTime = now;
+
         switch (evt)
         {
             case { Damage: > 0 }:
@@ -75,6 +84,10 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
             stat = new ActionStat { ActionId = evt.ActionId };
             ActionBreakdown[evt.ActionId] = stat;
         }
+
+        var now = DateTime.UtcNow;
+        stat.FirstUsed ??= now;
+        stat.LastUsed = now;
 
         stat.Hits++;
         if (isDamage)
@@ -178,6 +191,40 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
             OverHeal = OverHeal,
 
             IsActive = true,
+
+            ActiveTime = (FirstActionTime.HasValue && LastActionTime.HasValue)
+                ? LastActionTime.Value - FirstActionTime.Value
+                : null,
+
+            ActionBreakdownList = ActionBreakdown.Values
+                .Select(a =>
+                {
+                    var action = Service.DataManager.GetExcelSheet<Action>()
+                        .GetRowOrDefault(a.ActionId);
+                    return new ActionStatView
+                    {
+                        ActionId = a.ActionId,
+                        ActionName = action?.Name.ToString() ?? $"Action {a.ActionId}",
+                        ActionIconId = action?.Icon ?? 0,
+                        TotalDamage = a.TotalDamage,
+                        TotalHealing = a.TotalHealing,
+                        Hits = a.Hits,
+                        CritHits = a.CritHits,
+                        DirectHits = a.DirectHits,
+                        MaxHit = a.MaxHit,
+                        DamagePerSecond = a.TotalDamage / seconds,
+                        HealingPerSecond = a.TotalHealing / seconds,
+                        FirstUsed = a.FirstUsed,
+                        LastUsed = a.LastUsed,
+                        ActiveSpan = (a.FirstUsed.HasValue && a.LastUsed.HasValue)
+                            ? a.LastUsed.Value - a.FirstUsed.Value
+                            : TimeSpan.Zero,
+                        DamagePercent = TotalDamage > 0 ? a.TotalDamage * 100.0 / TotalDamage : 0,
+                        HealingPercent = TotalHealing > 0 ? a.TotalHealing * 100.0 / TotalHealing : 0,
+                    };
+                })
+                .OrderByDescending(a => a.TotalDamage)
+                .ToList(),
         };
     }
 }

@@ -1,3 +1,5 @@
+using System;
+
 namespace NativeMeters.Models.Internal;
 
 public class ActionStat
@@ -9,4 +11,7 @@ public class ActionStat
     public int CritHits { get; set; }
     public int DirectHits { get; set; }
     public long MaxHit { get; set; }
+
+    public DateTime? FirstUsed { get; set; }
+    public DateTime? LastUsed { get; set; }
 }

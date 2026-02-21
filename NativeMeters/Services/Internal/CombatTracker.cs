@@ -4,6 +4,7 @@ using System.Linq;
 using Dalamud.Game.ClientState.Conditions;
 using Lumina.Excel.Sheets;
 using NativeMeters.Models;
+using NativeMeters.Models.Breakdown;
 using NativeMeters.Models.Internal;
 
 namespace NativeMeters.Services.Internal;
@@ -20,6 +21,9 @@ public class CombatTracker
     public bool IsInCombat { get; private set; }
     public bool HasData => trackers.Count > 0 && encounterState.StartTime != DateTime.MinValue;
     public bool DidEncounterJustEnd { get; private set; }
+
+    private readonly EncounterHistory encounterHistory = new();
+    public EncounterHistory History => encounterHistory;
 
     public void UpdateCombatState()
     {
@@ -38,6 +42,18 @@ public class CombatTracker
         {
             encounterState.End();
             DidEncounterJustEnd = true;
+
+            var combatants = GetCombatants();
+            var combatantList = combatants.Values.ToList();
+            var encounter = BuildEncounter(combatantList);
+            encounterHistory.Save(new EncounterSnapshot
+            {
+                EndTime = DateTime.UtcNow,
+                EncounterName = encounter.Title ?? "Unknown",
+                Duration = encounterState.GetDuration(),
+                Encounter = encounter,
+                Combatants = combatantList,
+            });
         }
 
         IsInCombat = isInCombat;

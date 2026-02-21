@@ -11,6 +11,7 @@ public static class System
 {
     public static IMeterService ActiveMeterService { get; set; } = null!;
     public static AddonConfigurationWindow AddonConfigurationWindow { get; set; } = null!;
+    public static AddonDetailedBreakdownWindow AddonDetailedBreakdownWindow { get; set; } = null!;
     public static SystemConfiguration Config { get; set; } = null!;
     public static CommandHandler CommandHandler { get; set; } = null!;
     public static DtrService DtrService { get; set; } = null!;

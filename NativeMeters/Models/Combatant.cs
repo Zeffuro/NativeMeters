@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Lumina.Excel.Sheets;
 using NativeMeters.Data.Serialization;
@@ -277,6 +278,12 @@ public class Combatant : IEquatable<Combatant>
 
     [JsonIgnore]
     public int? PrivacyIndex { get; set; }
+
+    [JsonIgnore]
+    public List<ActionStatView>? ActionBreakdownList { get; set; }
+
+    [JsonIgnore]
+    public TimeSpan? ActiveTime { get; set; }
 
     public bool Equals(Combatant? other)
     {
