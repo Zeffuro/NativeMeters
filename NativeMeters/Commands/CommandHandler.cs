@@ -46,6 +46,10 @@ public class CommandHandler : IDisposable
                 System.OverlayManager.Setup();
                 break;
 
+            case "breakdown":
+                System.AddonDetailedBreakdownWindow.Toggle();
+                break;
+
             case "help":
             case "?":
                 PrintHelp();

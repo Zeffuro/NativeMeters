@@ -8,22 +8,37 @@ using NativeMeters.Tags.Formatting;
 
 namespace NativeMeters.Nodes.Breakdown;
 
-public sealed class EncounterSummaryBarNode : ResNode
+public sealed class EncounterSummaryBarNode : SimpleComponentNode
 {
     private static readonly NumericFormatter Formatter = new();
 
+    private readonly HorizontalLineNode topLine;
     private readonly TextNode totalDamageText;
     private readonly TextNode raidDpsText;
     private readonly TextNode durationText;
     private readonly TextNode deathsText;
+    private readonly HorizontalLineNode bottomLine;
+
+    private const float LineHeight = 2f;
+    private const float TextY = LineHeight + 4f;
+    private const float TextHeight = 20f;
 
     public EncounterSummaryBarNode()
     {
+        topLine = new HorizontalLineNode
+        {
+            Position = Vector2.Zero,
+            Size = new Vector2(560, LineHeight),
+            Color = new Vector4(1f, 1f, 1f, 0.25f),
+            IsVisible = true,
+        };
+        topLine.AttachNode(this);
+
         totalDamageText = new TextNode
         {
-            Position = new Vector2(8, 4),
-            Size = new Vector2(160, 20),
-            FontSize = 14,
+            Position = new Vector2(8, TextY),
+            Size = new Vector2(140, TextHeight),
+            FontSize = 13,
             FontType = FontType.Axis,
             TextFlags = TextFlags.Edge,
             AlignmentType = AlignmentType.Left,
@@ -33,9 +48,9 @@ public sealed class EncounterSummaryBarNode : ResNode
 
         raidDpsText = new TextNode
         {
-            Position = new Vector2(170, 4),
-            Size = new Vector2(140, 20),
-            FontSize = 14,
+            Position = new Vector2(150, TextY),
+            Size = new Vector2(120, TextHeight),
+            FontSize = 13,
             FontType = FontType.Axis,
             TextFlags = TextFlags.Edge,
             AlignmentType = AlignmentType.Left,
@@ -45,27 +60,36 @@ public sealed class EncounterSummaryBarNode : ResNode
 
         durationText = new TextNode
         {
-            Position = new Vector2(320, 4),
-            Size = new Vector2(120, 20),
-            FontSize = 14,
+            Position = new Vector2(280, TextY),
+            Size = new Vector2(120, TextHeight),
+            FontSize = 13,
             FontType = FontType.Axis,
             TextFlags = TextFlags.Edge,
-            AlignmentType = AlignmentType.Left,
-            TextColor = ColorHelper.GetColor(50),
+            AlignmentType = AlignmentType.Right,
+            TextColor = new Vector4(0.75f, 0.75f, 0.75f, 1f),
         };
         durationText.AttachNode(this);
 
         deathsText = new TextNode
         {
-            Position = new Vector2(440, 4),
-            Size = new Vector2(110, 20),
-            FontSize = 14,
+            Position = new Vector2(400, TextY),
+            Size = new Vector2(110, TextHeight),
+            FontSize = 13,
             FontType = FontType.Axis,
             TextFlags = TextFlags.Edge,
             AlignmentType = AlignmentType.Right,
-            TextColor = ColorHelper.GetColor(50),
+            TextColor = new Vector4(0.75f, 0.75f, 0.75f, 1f),
         };
         deathsText.AttachNode(this);
+
+        bottomLine = new HorizontalLineNode
+        {
+            Position = new Vector2(0, TextY + TextHeight + 2),
+            Size = new Vector2(560, LineHeight),
+            Color = new Vector4(1f, 1f, 1f, 0.25f),
+            IsVisible = true,
+        };
+        bottomLine.AttachNode(this);
 
         Size = new Vector2(560, 28);
     }
@@ -90,15 +114,21 @@ public sealed class EncounterSummaryBarNode : ResNode
     protected override void OnSizeChanged()
     {
         base.OnSizeChanged();
-        if (totalDamageText == null || raidDpsText == null || durationText == null || deathsText == null) return;
+        if (totalDamageText == null) return;
+
+        topLine.Size = new Vector2(Width, LineHeight);
 
         float quarter = Width / 4f;
-        totalDamageText.Size = new Vector2(quarter, 20);
-        raidDpsText.Position = new Vector2(quarter, 4);
-        raidDpsText.Size = new Vector2(quarter, 20);
-        durationText.Position = new Vector2(quarter * 2, 4);
-        durationText.Size = new Vector2(quarter, 20);
-        deathsText.Position = new Vector2(quarter * 3, 4);
-        deathsText.Size = new Vector2(quarter, 20);
+        totalDamageText.Position = new Vector2(8, TextY);
+        totalDamageText.Size = new Vector2(quarter - 8, TextHeight);
+        raidDpsText.Position = new Vector2(quarter, TextY);
+        raidDpsText.Size = new Vector2(quarter, TextHeight);
+        durationText.Position = new Vector2(quarter * 2, TextY);
+        durationText.Size = new Vector2(quarter, TextHeight);
+        deathsText.Position = new Vector2(quarter * 3, TextY);
+        deathsText.Size = new Vector2(quarter - 4, TextHeight);
+
+        bottomLine.Position = new Vector2(0, TextY + TextHeight + 2);
+        bottomLine.Size = new Vector2(Width, LineHeight);
     }
 }

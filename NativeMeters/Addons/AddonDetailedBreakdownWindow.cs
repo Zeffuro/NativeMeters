@@ -16,17 +16,21 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 {
     private TabBarNode tabBarNode = null!;
     private EncounterSummaryBarNode summaryBar = null!;
-    private ListNode<BreakdownPlayerData, BreakdownPlayerListItemNode> playerListNode = null!;
+    private ScrollingListNode scrollingContent = null!;
 
-    // Encounter selector
     private TextButtonNode prevButton = null!;
     private TextButtonNode nextButton = null!;
     private TextNode encounterLabelNode = null!;
 
     private BreakdownTab currentTab = BreakdownTab.Damage;
     private IMeterService? hookedService;
+    private int selectedEncounterIndex = -1;
 
-    private int selectedEncounterIndex = -1; // -1 = live
+    private readonly List<BreakdownPlayerSectionNode> playerSections = new();
+    private readonly BreakdownTableLayout tableLayout = new();
+
+    // Track the last known combatant count to know when to do a full rebuild
+    private int lastCombatantCount;
 
     protected override unsafe void OnSetup(AtkUnitBase* addon)
     {
@@ -37,8 +41,8 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         prevButton = new TextButtonNode
         {
             Position = ContentStartPosition,
-            Size = new Vector2(24, 22),
-            String = "◀",
+            Size = new Vector2(70, 22),
+            String = "Previous",
             IsVisible = true,
             OnClick = () => NavigateEncounter(-1),
         };
@@ -46,8 +50,8 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         encounterLabelNode = new TextNode
         {
-            Position = ContentStartPosition with { X = ContentStartPosition.X + 28 },
-            Size = new Vector2(contentW - 56, 22),
+            Position = ContentStartPosition with { X = ContentStartPosition.X + 74 },
+            Size = new Vector2(contentW - 148, 22),
             FontSize = 13,
             FontType = FontType.Axis,
             TextFlags = TextFlags.Edge,
@@ -60,9 +64,9 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         nextButton = new TextButtonNode
         {
-            Position = ContentStartPosition with { X = ContentStartPosition.X + contentW - 24 },
-            Size = new Vector2(24, 22),
-            String = "▶",
+            Position = ContentStartPosition with { X = ContentStartPosition.X + contentW - 70 },
+            Size = new Vector2(70, 22),
+            String = "Next",
             IsVisible = true,
             OnClick = () => NavigateEncounter(1),
         };
@@ -90,18 +94,19 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         var scrollY = contentY + 84;
         var scrollH = Math.Max(0, contentH - 84);
 
-        playerListNode = new ListNode<BreakdownPlayerData, BreakdownPlayerListItemNode>
+        scrollingContent = new ScrollingListNode
         {
             Position = ContentStartPosition with { Y = scrollY },
             Size = new Vector2(contentW, scrollH),
             ItemSpacing = 2f,
-            OptionsList = [],
+            FitContents = true,
+            IsVisible = true,
         };
-        playerListNode.AttachNode(this);
+        scrollingContent.AttachNode(this);
 
         hookedService = System.InternalMeterService;
         hookedService.CombatDataUpdated += OnCombatDataUpdated;
-        RefreshData();
+        FullRebuild();
 
         base.OnSetup(addon);
     }
@@ -113,31 +118,25 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         if (direction < 0)
         {
-            if (selectedEncounterIndex < 0)
-                selectedEncounterIndex = 0;
-            else if (selectedEncounterIndex < maxIndex)
-                selectedEncounterIndex++;
-            else
-                return;
+            if (selectedEncounterIndex < 0) selectedEncounterIndex = 0;
+            else if (selectedEncounterIndex < maxIndex) selectedEncounterIndex++;
+            else return;
         }
         else
         {
-            if (selectedEncounterIndex > 0)
-                selectedEncounterIndex--;
-            else if (selectedEncounterIndex == 0)
-                selectedEncounterIndex = -1;
-            else
-                return;
+            if (selectedEncounterIndex > 0) selectedEncounterIndex--;
+            else if (selectedEncounterIndex == 0) selectedEncounterIndex = -1;
+            else return;
         }
 
-        RefreshData();
+        FullRebuild();
     }
 
     private void UpdateEncounterLabel()
     {
         if (selectedEncounterIndex < 0)
         {
-            encounterLabelNode.String = "● Live";
+            encounterLabelNode.String = "Live";
             return;
         }
 
@@ -159,51 +158,119 @@ public class AddonDetailedBreakdownWindow : NativeAddon
     {
         if (currentTab == tab) return;
         currentTab = tab;
-        RefreshData();
+        FullRebuild();
     }
 
     private void OnCombatDataUpdated()
     {
         if (selectedEncounterIndex < 0)
-            RefreshData();
+            UpdateData();
     }
 
-    private void RefreshData()
+    /// <summary>
+    /// Full rebuild: destroys all sections and recreates them.
+    /// Used when switching tabs, encounters, or when combatant list changes structurally.
+    /// </summary>
+    private void FullRebuild()
     {
-        if (playerListNode == null) return;
+        if (scrollingContent == null) return;
 
         UpdateEncounterLabel();
 
-        Encounter? encounter;
-        List<Combatant> combatants;
+        scrollingContent.Clear();
+        foreach (var section in playerSections) section.Dispose();
+        playerSections.Clear();
 
-        if (selectedEncounterIndex < 0)
+        var (encounter, combatants) = GetCurrentData();
+        if (encounter == null || combatants == null)
         {
-            if (!System.InternalMeterService.HasCombatData())
-            {
-                playerListNode.OptionsList = [];
-                summaryBar.Update(null);
-                return;
-            }
-            encounter = System.InternalMeterService.GetEncounter();
-            combatants = System.InternalMeterService.GetCombatants().ToList();
-        }
-        else
-        {
-            var history = System.InternalMeterService.GetEncounterHistory();
-            if (selectedEncounterIndex >= history.Count)
-            {
-                playerListNode.OptionsList = [];
-                summaryBar.Update(null);
-                return;
-            }
-            var snapshot = history[selectedEncounterIndex];
-            encounter = snapshot.Encounter;
-            combatants = snapshot.Combatant.Values.ToList();
+            summaryBar.Update(null);
+            lastCombatantCount = 0;
+            return;
         }
 
         summaryBar.Update(encounter);
+        SortCombatants(combatants);
 
+        double duration = encounter.DURATION > 0 ? encounter.DURATION : 1.0;
+        float listWidth = Math.Max(0, scrollingContent.ContentWidth);
+
+        foreach (var combatant in combatants)
+        {
+            var section = new BreakdownPlayerSectionNode
+            {
+                Width = listWidth,
+                IsVisible = true,
+            };
+            section.SetData(combatant, currentTab, duration, tableLayout);
+            section.OnToggle = () => scrollingContent.RecalculateLayout();
+            playerSections.Add(section);
+            scrollingContent.AddNode(section);
+        }
+
+        lastCombatantCount = combatants.Count;
+        scrollingContent.RecalculateLayout();
+    }
+
+    /// <summary>
+    /// Data-only update: keeps existing sections, just refreshes their data.
+    /// Preserves collapsed/expanded state.
+    /// If combatant count changes, falls back to FullRebuild.
+    /// </summary>
+    private void UpdateData()
+    {
+        if (scrollingContent == null) return;
+
+        UpdateEncounterLabel();
+
+        var (encounter, combatants) = GetCurrentData();
+        if (encounter == null || combatants == null)
+        {
+            summaryBar.Update(null);
+            return;
+        }
+
+        summaryBar.Update(encounter);
+        SortCombatants(combatants);
+
+        // Structural change — need full rebuild
+        if (combatants.Count != lastCombatantCount)
+        {
+            FullRebuild();
+            return;
+        }
+
+        double duration = encounter.DURATION > 0 ? encounter.DURATION : 1.0;
+
+        for (int i = 0; i < combatants.Count && i < playerSections.Count; i++)
+        {
+            playerSections[i].SetData(combatants[i], currentTab, duration, tableLayout);
+        }
+
+        scrollingContent.RecalculateLayout();
+    }
+
+    private (Encounter? encounter, List<Combatant>? combatants) GetCurrentData()
+    {
+        if (selectedEncounterIndex < 0)
+        {
+            if (!System.InternalMeterService.HasCombatData())
+                return (null, null);
+
+            return (System.InternalMeterService.GetEncounter(),
+                    System.InternalMeterService.GetCombatants().ToList());
+        }
+
+        var history = System.InternalMeterService.GetEncounterHistory();
+        if (selectedEncounterIndex >= history.Count)
+            return (null, null);
+
+        var snapshot = history[selectedEncounterIndex];
+        return (snapshot.Encounter, snapshot.Combatant.Values.ToList());
+    }
+
+    private void SortCombatants(List<Combatant> combatants)
+    {
         combatants.Sort((a, b) => currentTab switch
         {
             BreakdownTab.Damage => b.ENCDPS.CompareTo(a.ENCDPS),
@@ -211,14 +278,6 @@ public class AddonDetailedBreakdownWindow : NativeAddon
             BreakdownTab.DamageTaken => b.Damagetaken.CompareTo(a.Damagetaken),
             _ => b.ENCDPS.CompareTo(a.ENCDPS),
         });
-
-        double duration = encounter?.DURATION ?? 1.0;
-
-        playerListNode.OptionsList = combatants
-            .Select(c => new BreakdownPlayerData(c, currentTab, duration))
-            .ToList();
-
-        playerListNode.Update();
     }
 
     protected override unsafe void OnFinalize(AtkUnitBase* addon)
@@ -228,6 +287,9 @@ public class AddonDetailedBreakdownWindow : NativeAddon
             hookedService.CombatDataUpdated -= OnCombatDataUpdated;
             hookedService = null;
         }
+
+        foreach (var section in playerSections) section.Dispose();
+        playerSections.Clear();
 
         base.OnFinalize(addon);
     }
