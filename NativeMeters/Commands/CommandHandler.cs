@@ -65,6 +65,8 @@ public class CommandHandler : IDisposable
     {
         var helpText = @"NativeMeters Commands:
   /ntm              - Toggle meters
+  /ntm config       - Open configuration window
+  /ntm breakdown    - Open detailed breakdown window
 ";
         PrintChat(helpText);
     }
