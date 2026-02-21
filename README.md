@@ -3,10 +3,9 @@
 
 Meters that feel like part of the game. Who needs ImGui when you have AtkNodes?
 
-![Preview](Media/screenshot1.png) ![Preview](Media/screenshot2.png)  
-![Preview](Media/screenshot3.png) ![Preview](Media/screenshot4.png)  
-
-![Preview](Media/screenshot5.png | width=400) ![Preview](Media/screenshot6.png | width=400)
+<img src="Media/screenshot1.png" height="400"><img src="Media/screenshot2.png" height="400">  
+<img src="Media/screenshot3.png" height="400"><img src="Media/screenshot4.png" height="400">  
+<img src="Media/screenshot5.png" width="400"><img src="Media/screenshot6.png" width="400">  
 
 ## Description
 Native DPS Meters for Final Fantasy XIV, this uses KTK.
