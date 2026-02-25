@@ -21,6 +21,7 @@ public sealed class MeterListLayoutNode : OverlayNode
     private IMeterService? hookedService;
     private bool isDisposing;
     private bool isPreWarmed;
+    private bool isAttached;
 
     private record StructuralState(bool Clickthrough, float RowHeight, int MaxRows, int StructureHash);    private StructuralState? lastState;
 
@@ -37,7 +38,7 @@ public sealed class MeterListLayoutNode : OverlayNode
         set
         {
             field = value;
-            if (value != null) InitializeFromSettings();
+            if (value != null && isAttached) InitializeFromSettings();
         }
     }
 
@@ -85,6 +86,7 @@ public sealed class MeterListLayoutNode : OverlayNode
     private void RecreateList()
     {
         if (MeterSettings == null) return;
+        if (!isAttached) return;
 
         isPreWarmed = false;
 
@@ -130,7 +132,16 @@ public sealed class MeterListLayoutNode : OverlayNode
 
     protected override void OnUpdate()
     {
-        if (MeterSettings == null || !isPreWarmed) return;
+        if (MeterSettings == null) return;
+
+        if (!isAttached)
+        {
+            isAttached = true;
+            InitializeFromSettings();
+            return;
+        }
+
+        if (!isPreWarmed) return;
 
         bool hasActiveData = System.ActiveMeterService.HasCombatData();
         bool isEditing = !MeterSettings.IsLocked || System.Config.General.PreviewEnabled;
