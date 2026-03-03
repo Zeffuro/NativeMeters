@@ -109,10 +109,16 @@ public sealed class MeterListLayoutNode : OverlayNode
         footerContainer.AttachNode(this);
 
         MeterRowListItemNode.HeightHint = MeterSettings.RowHeight;
+
+        // Prebuild settings
+        MeterRowListItemNode.PrebuildSettings = MeterSettings;
+
         listNode = new ListNode<CombatantRowData, MeterRowListItemNode> {
             ItemSpacing = MeterSettings.RowSpacing,
             OptionsList = []
         };
+
+        MeterRowListItemNode.PrebuildSettings = null;
 
         if (MeterSettings.IsClickthrough)
         {

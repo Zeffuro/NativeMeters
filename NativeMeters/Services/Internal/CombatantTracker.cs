@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lumina.Excel;
 using Lumina.Excel.Sheets;
 using NativeMeters.Models;
 using NativeMeters.Models.Internal;
@@ -37,6 +38,9 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
     public DateTime? LastActionTime { get; set; }
 
     public Dictionary<uint, ActionStat> ActionBreakdown { get; } = new();
+
+    private static readonly ExcelSheet<Action> ActionSheet = Service.DataManager.GetExcelSheet<Action>();
+    private static readonly ExcelSheet<ClassJob> JobSheet = Service.DataManager.GetExcelSheet<ClassJob>();
 
     public void AddAction(ActionResultEvent evt)
     {
@@ -113,7 +117,7 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
 
     public Combatant ToCombatant(TimeSpan duration, long totalPartyDamage)
     {
-        var job = Service.DataManager.GetExcelSheet<ClassJob>().GetRowOrDefault(JobId) ?? default;
+        var job = JobSheet.GetRowOrDefault(JobId) ?? default;
         double seconds = Math.Max(duration.TotalSeconds, 1.0);
         double dps = TotalDamage / seconds;
         double hps = TotalHealing / seconds;
@@ -199,8 +203,7 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
             ActionBreakdownList = ActionBreakdown.Values
                 .Select(a =>
                 {
-                    var action = Service.DataManager.GetExcelSheet<Action>()
-                        .GetRowOrDefault(a.ActionId);
+                    var action = ActionSheet.GetRowOrDefault(a.ActionId);
                     return new ActionStatView
                     {
                         ActionId = a.ActionId,

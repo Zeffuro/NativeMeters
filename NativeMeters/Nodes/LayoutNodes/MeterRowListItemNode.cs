@@ -13,7 +13,12 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
 {
     private readonly DynamicNodeList dynamicNodeList;
 
-    private MeterSettings? MeterSettings => ItemData?.Settings;
+    public static MeterSettings? PrebuildSettings;
+    private MeterSettings? cachedSettings;
+    private List<ComponentSettings>? cachedSortedComponents;
+    private int lastComponentHash;
+
+    private MeterSettings? MeterSettings => ItemData?.Settings ?? cachedSettings;
     private Combatant? Combatant => ItemData?.Combatant;
 
     public override float ItemHeight => MeterSettings?.RowHeight ?? HeightHint;
@@ -24,6 +29,18 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
     {
         dynamicNodeList = new DynamicNodeList(this);
         DisableInteractions();
+
+        if (PrebuildSettings != null)
+        {
+            PreBuildStructure(PrebuildSettings);
+        }
+    }
+
+    private void PreBuildStructure(MeterSettings settings)
+    {
+        cachedSettings = settings;
+        var sortedComponents = settings.RowComponents.OrderBy(s => s.ZIndex).ToList();
+        dynamicNodeList.Update(sortedComponents, CreateComponent);
     }
 
     protected override void SetNodeData(CombatantRowData itemData) { }
@@ -31,12 +48,19 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
     public override void Update()
     {
         if (ItemData == null || MeterSettings == null || Combatant == null) return;
+        cachedSettings = ItemData.Settings;
 
-        var sortedComponents = MeterSettings.RowComponents.OrderBy(s => s.ZIndex).ToList();
+        var components = MeterSettings.RowComponents;
+        int hash = components.Count;
+        if (cachedSortedComponents == null || lastComponentHash != hash)
+        {
+            cachedSortedComponents = components.OrderBy(s => s.ZIndex).ToList();
+            lastComponentHash = hash;
+        }
 
-        dynamicNodeList.Update(sortedComponents, CreateComponent);
+        dynamicNodeList.Update(cachedSortedComponents, CreateComponent);
 
-        foreach (var settings in sortedComponents)
+        foreach (var settings in cachedSortedComponents)
         {
             if (dynamicNodeList.Components.TryGetValue(settings.Id, out var node))
             {

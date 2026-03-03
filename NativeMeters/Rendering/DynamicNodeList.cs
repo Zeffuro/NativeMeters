@@ -35,9 +35,7 @@ public class DynamicNodeList(NodeBase parentNode) : IDisposable
     {
         _componentMap.DisposeValues();
 
-        var sorted = settings.OrderBy(c => c.ZIndex).ToList();
-
-        foreach (var setting in sorted)
+        foreach (var setting in settings)
         {
             var node = factory(setting);
             node.AttachNode(parentNode);

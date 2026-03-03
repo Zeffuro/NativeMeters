@@ -5,6 +5,9 @@ namespace NativeMeters.Models.Breakdown;
 
 public class BreakdownTableLayout
 {
+    private List<BreakdownColumn>? cachedVisible;
+    private int lastVisibleHash;
+
     public List<BreakdownColumn> Columns { get; set; } =
     [
         new("Action", "Action", 0, true, ColumnAlignment.Left),
@@ -19,7 +22,20 @@ public class BreakdownTableLayout
     ];
 
     public IReadOnlyList<BreakdownColumn> VisibleColumns
-        => Columns.Where(c => c.IsVisible).ToList();
+    {
+        get
+        {
+            int hash = Columns.Count(c => c.IsVisible);
+            if (cachedVisible == null || hash != lastVisibleHash)
+            {
+                cachedVisible = Columns.Where(c => c.IsVisible).ToList();
+                lastVisibleHash = hash;
+            }
+            return cachedVisible;
+        }
+    }
+    
+    public void InvalidateCache() => cachedVisible = null;
 
     public List<(BreakdownColumn Column, float X, float W)> Resolve(float totalWidth)
     {
