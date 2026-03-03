@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Dalamud.Game.Command;
 using NativeMeters.Services;
+using NativeMeters.Utilities;
 
 namespace NativeMeters.Commands;
 
@@ -9,71 +12,79 @@ public class CommandHandler : IDisposable
 {
     private const string MainCommand = "/nativemeters";
     private const string ShortCommand = "/ntm";
-    private const string HelpDescription = "Toggles your meters. Use '/nativemeters help' for more options.";
+
+    private record SubCommand(Action<string> Action, string Description, string Usage = "");
+
+    private readonly Dictionary<string, SubCommand> subCommands;
 
     public CommandHandler()
     {
-        Service.CommandManager.AddHandler(MainCommand, new CommandInfo(OnCommand)
+        subCommands = new Dictionary<string, SubCommand>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["config"] = new(args => System.AddonConfigurationWindow.Toggle(), "Open the configuration window"),
+            ["toggle"] = new(args => {
+                System.Config.General.IsEnabled = !System.Config.General.IsEnabled;
+                System.OverlayManager.Setup();
+                PrintChat($"Meters {(System.Config.General.IsEnabled ? "enabled" : "disabled")}.");
+            }, "Toggle the meter display on/off"),
+            ["breakdown"] = new(args => System.AddonDetailedBreakdownWindow.Toggle(), "Open the detailed breakdown window"),
+            ["resetenmity"] = new(args => EnmityUtilities.ResetAllStrikingDummies(), "Resets enmity on all nearby Striking Dummies"),
+            ["help"] = new(args => PrintHelp(), "Show this help message"),
+        };
+
+        var commandInfo = new CommandInfo(OnCommand)
         {
             DisplayOrder = 1,
             ShowInHelp = true,
-            HelpMessage = HelpDescription
-        });
+            HelpMessage = "Main command for NativeMeters. Use '/ntm help' for all options."
+        };
 
-        Service.CommandManager.AddHandler(ShortCommand, new CommandInfo(OnCommand)
-        {
-            DisplayOrder = 2,
-            ShowInHelp = true,
-            HelpMessage = HelpDescription
-        });
+        Service.CommandManager.AddHandler(MainCommand, commandInfo);
+        Service.CommandManager.AddHandler(ShortCommand, commandInfo);
     }
 
     private void OnCommand(string command, string args)
     {
-        var argsParts = args.Trim().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-        var subCommand = argsParts.Length > 0 ? argsParts[0].ToLowerInvariant() : string.Empty;
-        var subArgs = argsParts.Length > 1 ? argsParts[1] : string.Empty;
+        var parts = args.Trim().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
 
-        switch (subCommand)
+        if (parts.Length == 0)
         {
-            case "":
-            case "config":
-                System.AddonConfigurationWindow.Toggle();
-                break;
+            subCommands["config"].Action(string.Empty);
+            return;
+        }
 
-            case "toggle":
-                System.Config.General.IsEnabled = !System.Config.General.IsEnabled;
-                System.OverlayManager.Setup();
-                break;
+        var subCommandName = parts[0].ToLowerInvariant();
+        var subArgs = parts.Length > 1 ? parts[1] : string.Empty;
 
-            case "breakdown":
-                System.AddonDetailedBreakdownWindow.Toggle();
-                break;
-
-            case "help":
-            case "?":
-                PrintHelp();
-                break;
-
-            default:
-                PrintChat($"Unknown command: {subCommand}. Use '/nativemeters help' for available commands.");
-                break;
+        if (subCommands.TryGetValue(subCommandName, out var sub))
+        {
+            sub.Action(subArgs);
+        }
+        else
+        {
+            PrintChat($"Unknown command: {subCommandName}. Type '{command} help' for a list of commands.");
         }
     }
 
     private void PrintHelp()
     {
-        var helpText = @"NativeMeters Commands:
-  /ntm              - Toggle meters
-  /ntm config       - Open configuration window
-  /ntm breakdown    - Open detailed breakdown window
-";
-        PrintChat(helpText);
+        var sb = new StringBuilder("NativeMeters Help:\n");
+        sb.AppendLine($"{ShortCommand} → Open configuration");
+
+        foreach (var kvp in subCommands.OrderBy(x => x.Key))
+        {
+            if (kvp.Key == "help") continue;
+
+            var usage = string.IsNullOrEmpty(kvp.Value.Usage) ? "" : $" {kvp.Value.Usage}";
+            sb.AppendLine($"{ShortCommand} {kvp.Key}{usage} → {kvp.Value.Description}");
+        }
+
+        PrintChat(sb.ToString());
     }
 
     private static void PrintChat(string message)
     {
-        Service.ChatGui.Print(message, "NativeMeters");
+        Service.ChatGui.Print(message, "NativeMeters", 45);
     }
 
     public void Dispose()

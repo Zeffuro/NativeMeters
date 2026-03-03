@@ -8,6 +8,7 @@ using NativeMeters.Data.Stats;
 using NativeMeters.Extensions;
 using NativeMeters.Nodes.LayoutNodes;
 using NativeMeters.Services;
+using NativeMeters.Utilities;
 using ContextMenu = KamiToolKit.ContextMenu.ContextMenu;
 
 namespace NativeMeters.Addons;
@@ -128,6 +129,8 @@ public static class MeterContextMenu
         menu.AddItem("Copy to Clipboard", ClipboardService.CopyEncounterSummary);
 
         menu.AddItem(Separator);
+
+        menu.AddItem("Reset all dummies", EnmityUtilities.ResetAllStrikingDummies);
 
         menu.AddItem("End Encounter", () => System.MeterService.EndEncounter());
         menu.AddItem("Clear Meter", () => System.MeterService.ClearMeter());

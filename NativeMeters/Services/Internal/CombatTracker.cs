@@ -238,9 +238,13 @@ public class CombatTracker
             tracker = new CombatantTracker(actorId, name, jobId);
             trackers[actorId] = tracker;
         }
-        else if (jobId != 0 && tracker.JobId != jobId)
+        else
         {
-            tracker.JobId = jobId;
+            if (jobId != 0 && tracker.JobId != jobId)
+                tracker.JobId = jobId;
+
+            if (tracker.Name != name)
+                tracker.Name = name;
         }
 
         return tracker;

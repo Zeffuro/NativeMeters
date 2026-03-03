@@ -91,12 +91,15 @@ public unsafe class NetworkCombatParser : IDisposable
 
             if (casterPtr->GameObject.OwnerId != InvalidGameObjectId)
             {
-                var owner = Service.ObjectTable.SearchById(casterPtr->GameObject.OwnerId);
-                if (owner is IPlayerCharacter pcOwner)
+                if (System.Config.InternalParser.MergePetDamage)
                 {
-                    resolvedSourceId = pcOwner.GameObjectId;
-                    resolvedSourceName = pcOwner.Name.TextValue;
-                    resolvedSourceJobId = pcOwner.ClassJob.RowId;
+                    var owner = Service.ObjectTable.SearchById(casterPtr->GameObject.OwnerId);
+                    if (owner is IPlayerCharacter pcOwner)
+                    {
+                        resolvedSourceId = pcOwner.GameObjectId;
+                        resolvedSourceName = pcOwner.Name.TextValue;
+                        resolvedSourceJobId = pcOwner.ClassJob.RowId;
+                    }
                 }
             }
             else if (Service.ObjectTable.SearchById(casterEntityId) is IPlayerCharacter pc)
@@ -156,13 +159,17 @@ public unsafe class NetworkCombatParser : IDisposable
                         amount += (uint)effect.Param3 << 16;
                     }
 
+                    resolvedSourceName = GetResolvedName(resolvedSourceId, resolvedSourceName);
+
+                    var targetName = GetResolvedName(targetId, targetObj.Name.TextValue);
+
                     var evt = new ActionResultEvent
                     {
                         SourceId = resolvedSourceId,
                         SourceName = resolvedSourceName,
                         SourceJobId = resolvedSourceJobId,
                         TargetId = targetId,
-                        TargetName = targetObj.Name.TextValue,
+                        TargetName = targetName,
                         TargetCurrentHp = currentHp,
                         TargetMaxHp = maxHp,
                         TargetJobId = (targetObj is IPlayerCharacter tpc) ? tpc.ClassJob.RowId : 0,
@@ -295,10 +302,10 @@ public unsafe class NetworkCombatParser : IDisposable
         OnActionResult?.Invoke(new ActionResultEvent
         {
             SourceId = sourceId,
-            SourceName = sourceName,
+            SourceName = GetResolvedName(sourceId, sourceName),
             SourceJobId = sourceJobId,
             TargetId = targetId,
-            TargetName = targetName,
+            TargetName = GetResolvedName(targetId, targetName),
             IsPlayerTarget = false,
             Damage = amount,
             ActionId = 0,
@@ -327,14 +334,25 @@ public unsafe class NetworkCombatParser : IDisposable
         OnActionResult?.Invoke(new ActionResultEvent
         {
             SourceId = resolvedSourceId,
-            SourceName = resolvedSourceName,
+            SourceName = GetResolvedName(resolvedSourceId, resolvedSourceName),
             SourceJobId = resolvedSourceJobId,
             TargetId = entityId,
-            TargetName = pc.Name.TextValue,
+            TargetName = GetResolvedName(entityId, pc.Name.TextValue),
             TargetJobId = pc.ClassJob.RowId,
             IsPlayerTarget = true,
             Healing = amount,
         });
+    }
+
+    private string GetResolvedName(ulong id, string originalName)
+    {
+        if (System.Config.InternalParser.UseYouForLocalPlayer &&
+            Service.ObjectTable.LocalPlayer != null &&
+            id == Service.ObjectTable.LocalPlayer?.GameObjectId)
+        {
+            return "YOU";
+        }
+        return originalName;
     }
 
     public void Dispose()

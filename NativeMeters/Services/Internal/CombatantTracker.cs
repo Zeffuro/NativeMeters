@@ -12,7 +12,7 @@ namespace NativeMeters.Services.Internal;
 public class CombatantTracker(ulong actorId, string name, uint jobId)
 {
     public ulong ActorId => actorId;
-    public string Name => name;
+    public string Name { get; set; } = name;
     public uint JobId { get; set; } = jobId;
     public bool IsPlayer => JobId != 0;
 
@@ -51,6 +51,8 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
         FirstActionTime ??= now;
         LastActionTime = now;
 
+        TrackUptime(evt, now);
+
         switch (evt)
         {
             case { Damage: > 0 }:
@@ -61,7 +63,7 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
                 if (evt.IsDirectHit) DirectHits++;
                 if (evt.IsCrit && evt.IsDirectHit) CritDirectHits++;
                 if (evt.Damage > MaxHitValue) MaxHitValue = evt.Damage;
-                UpdateBreakdown(evt, true);
+                UpdateBreakdown(evt, true, now);
                 break;
 
             case { IsMiss: true }:
@@ -79,7 +81,7 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
                 HealCount++;
                 if (evt.IsCrit) CritHeals++;
                 if (evt.Healing > MaxHealValue) MaxHealValue = evt.Healing;
-                UpdateBreakdown(evt, false);
+                UpdateBreakdown(evt, false, now);
                 break;
         }
     }
@@ -113,7 +115,7 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
         LastGCDTime = now;
     }
 
-    private void UpdateBreakdown(ActionResultEvent evt, bool isDamage)
+    private void UpdateBreakdown(ActionResultEvent evt, bool isDamage, DateTime now)
     {
         if (!ActionBreakdown.TryGetValue(evt.ActionId, out var stat))
         {
@@ -121,7 +123,6 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
             ActionBreakdown[evt.ActionId] = stat;
         }
 
-        var now = DateTime.UtcNow;
         stat.FirstUsed ??= now;
         stat.LastUsed = now;
 

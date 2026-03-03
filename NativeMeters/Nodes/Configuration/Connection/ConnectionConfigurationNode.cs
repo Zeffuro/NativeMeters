@@ -21,6 +21,8 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
     private readonly LabeledTextInputNode urlInputNode;
     private readonly CircleButtonNode urlResetButton;
 
+    public Action<ConnectionType>? OnConnectionTypeChanged { get; set; }
+
     private const string InternalWarningTooltip =
         "Internal Parser (Experimental)\n\n" +
         "• DoT/HoT damage is estimated, not simulated.\n" +
@@ -209,6 +211,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             System.MeterService.Reconnect();
         }
 
+        OnConnectionTypeChanged?.Invoke(selected);
         System.OverlayManager.UpdateActiveService();
         RecalculateLayout();
     }

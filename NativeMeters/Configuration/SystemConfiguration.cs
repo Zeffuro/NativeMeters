@@ -9,6 +9,7 @@ public class SystemConfiguration
     public int ConfigVersion { get; set; } = 1;
     public GeneralSettings General { get; set; } = new();
     public ConnectionSettings ConnectionSettings { get; set; } = new();
+    public InternalParserSettings InternalParser { get; set; } = new();
 
     public List<MeterSettings> Meters { get; set; } = new();
     public DtrSettings DtrSettings { get; set; } = new();
