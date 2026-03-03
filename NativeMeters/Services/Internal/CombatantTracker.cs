@@ -37,6 +37,9 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
     public DateTime? FirstActionTime { get; set; }
     public DateTime? LastActionTime { get; set; }
 
+    private DateTime? LastGCDTime;
+    private double TotalIdleMs;
+
     public Dictionary<uint, ActionStat> ActionBreakdown { get; } = new();
 
     private static readonly ExcelSheet<Action> ActionSheet = Service.DataManager.GetExcelSheet<Action>();
@@ -79,6 +82,35 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
                 UpdateBreakdown(evt, false);
                 break;
         }
+    }
+
+    private void TrackUptime(ActionResultEvent evt, DateTime now)
+    {
+        // TODO: When DoTs/HoTs eventually are properly tracked checking for ActionId == 0 won't be enough.
+        if (evt.ActionId == 0) return;
+
+        var action = ActionSheet.GetRowOrDefault(evt.ActionId);
+        if (action == null) return;
+
+        // CooldownGroup 58 = GCD group. Skip oGCDs entirely.
+        if (action.Value.CooldownGroup != 58) return;
+
+        float baseRecastMs = action.Value.Recast100ms * 100f;
+        if (baseRecastMs <= 0) baseRecastMs = 2500f;
+
+        if (LastGCDTime.HasValue)
+        {
+            double gapMs = (now - LastGCDTime.Value).TotalMilliseconds;
+
+            double threshold = baseRecastMs + 1000;
+
+            if (gapMs > threshold)
+            {
+                TotalIdleMs += gapMs - baseRecastMs;
+            }
+        }
+
+        LastGCDTime = now;
     }
 
     private void UpdateBreakdown(ActionResultEvent evt, bool isDamage)
@@ -197,7 +229,8 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
             IsActive = true,
 
             ActiveTime = (FirstActionTime.HasValue && LastActionTime.HasValue)
-                ? LastActionTime.Value - FirstActionTime.Value
+                ? TimeSpan.FromMilliseconds(
+                    Math.Max(0, (LastActionTime.Value - FirstActionTime.Value).TotalMilliseconds - TotalIdleMs))
                 : null,
 
             ActionBreakdownList = ActionBreakdown.Values
