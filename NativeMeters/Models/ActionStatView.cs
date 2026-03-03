@@ -15,6 +15,7 @@ public class ActionStatView
     public long MaxHit { get; init; }
     public double DamagePerSecond { get; init; }
     public double HealingPerSecond { get; init; }
+    public long OverHeal { get; init; }
 
     public DateTime? FirstUsed { get; init; }
     public DateTime? LastUsed { get; init; }

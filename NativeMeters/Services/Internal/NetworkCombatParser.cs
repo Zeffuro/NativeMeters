@@ -7,7 +7,9 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Network;
+using Lumina.Excel;
 using NativeMeters.Models.Internal;
+using LuminaAction = Lumina.Excel.Sheets.Action;
 
 namespace NativeMeters.Services.Internal;
 
@@ -49,6 +51,7 @@ public unsafe class NetworkCombatParser : IDisposable
     private Hook<PacketDispatcher.Delegates.HandleActorControlPacket>? actorControlHook;
 
     private bool enabled;
+    private static readonly ExcelSheet<LuminaAction> ActionSheet = Service.DataManager.GetExcelSheet<LuminaAction>();
 
     public void Enable()
     {
@@ -111,8 +114,7 @@ public unsafe class NetworkCombatParser : IDisposable
             var isLimitBreak = false;
             if (actionId is > 0 and < MountActionOffset and < ItemActionOffset)
             {
-                var action = Service.DataManager.GetExcelSheet<Lumina.Excel.Sheets.Action>()
-                    .GetRowOrDefault(actionId);
+                var action = ActionSheet.GetRowOrDefault(actionId);
                 if (action.HasValue)
                 {
                     isLimitBreak = action.Value.ActionCategory.RowId == 9;

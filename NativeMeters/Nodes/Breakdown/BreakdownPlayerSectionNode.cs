@@ -79,12 +79,20 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
             case BreakdownTab.Damage:
                 var uptimePct = combatant.ActiveTime.HasValue && encounterDuration > 0
                     ? combatant.ActiveTime.Value.TotalSeconds / encounterDuration * 100.0 : 0;
-                primaryStatText.String = $"DPS: {Formatter.Format(combatant.ENCDPS, "", "", 0)}  Uptime: {uptimePct:F0}%";
+                var critPct = combatant.Swings > 0 ? combatant.Crithits * 100.0 / combatant.Swings : 0;
+                var dhPct = combatant.Hits > 0 ? combatant.DirectHitCount * 100.0 / combatant.Hits : 0;
+                primaryStatText.String = $"DPS: {Formatter.Format(combatant.ENCDPS, "", "", 0)}  "
+                                         + $"Crit: {critPct:F0}%  DH: {dhPct:F0}%  "
+                                         + $"Up: {uptimePct:F0}%";
                 break;
             case BreakdownTab.Healing:
                 var healUp = combatant.ActiveTime.HasValue && encounterDuration > 0
                     ? combatant.ActiveTime.Value.TotalSeconds / encounterDuration * 100.0 : 0;
-                primaryStatText.String = $"HPS: {Formatter.Format(combatant.ENCHPS, "", "", 0)}  Uptime: {healUp:F0}%";
+                var critHealPct = combatant.Heals > 0 ? combatant.Critheals * 100.0 / combatant.Heals : 0;
+                var ohPct = combatant.Healed > 0 ? combatant.OverHeal * 100.0 / combatant.Healed : 0;
+                primaryStatText.String = $"HPS: {Formatter.Format(combatant.ENCHPS, "", "", 0)}  "
+                                         + $"Crit: {critHealPct:F0}%  OH: {ohPct:F0}%  "
+                                         + $"Up: {healUp:F0}%";
                 break;
         }
 
@@ -142,7 +150,7 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
             : combatant.ActionBreakdownList.Where(a => a.TotalHealing > 0).OrderByDescending(a => a.TotalHealing).ToList();
 
         long maxValue = actions.Count > 0
-            ? (isDamageMode ? actions.Max(a => a.TotalDamage) : actions.Max(a => a.TotalHealing))
+            ? (isDamageMode ? actions[0].TotalDamage : actions[0].TotalHealing)
             : 1;
 
         while (rowPool.Count < actions.Count)

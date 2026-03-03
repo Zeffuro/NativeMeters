@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
@@ -100,6 +101,28 @@ public class DtrService : IDisposable
             builder.AddText($"\nDuration: {encounter.Duration:mm\\:ss}");
             builder.AddText($"\nRaid DPS: {encounter.ENCDPS:N0}");
             builder.AddText($"\nDeaths: {encounter.Deaths}");
+
+            if (System.ActiveMeterService.HasCombatData())
+            {
+                var combatants = System.ActiveMeterService.GetCombatants()
+                    .OrderByDescending(c => c.ENCDPS)
+                    .ToList();
+
+                if (combatants.Count > 0)
+                {
+                    builder.AddText("\n");
+                    foreach (var c in combatants)
+                    {
+                        if (c.Job.RowId == 0 && !c.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase))
+                            continue;
+
+                        var name = c.Job.Abbreviation.ToString();
+                        if (string.IsNullOrEmpty(name)) name = c.Name;
+
+                        builder.AddText($"\n{name,-4} {c.ENCDPS:N0}");
+                    }
+                }
+            }
         }
 
         if (Settings.ClickToOpenConfig)

@@ -136,6 +136,10 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
         else
         {
             stat.TotalHealing += evt.Healing;
+            long needed = (evt.TargetMaxHp > evt.TargetCurrentHp)
+                ? (evt.TargetMaxHp - evt.TargetCurrentHp) : 0;
+            stat.OverHeal += Math.Max(0, evt.Healing - needed);
+
             if (evt.IsCrit) stat.CritHits++;
             if (evt.Healing > stat.MaxHit) stat.MaxHit = evt.Healing;
         }

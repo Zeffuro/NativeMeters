@@ -11,6 +11,7 @@ public class ActionStat
     public int CritHits { get; set; }
     public int DirectHits { get; set; }
     public long MaxHit { get; set; }
+    public long OverHeal { get; set; }
 
     public DateTime? FirstUsed { get; set; }
     public DateTime? LastUsed { get; set; }

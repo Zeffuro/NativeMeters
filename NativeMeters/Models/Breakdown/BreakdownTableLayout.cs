@@ -19,6 +19,7 @@ public class BreakdownTableLayout
         new("PerSec", "DPS", 48),
         new("Max", "Max", 54),
         new("Active", "Active", 42),
+        new("Overheal", "OH%", 45),
     ];
 
     public IReadOnlyList<BreakdownColumn> VisibleColumns

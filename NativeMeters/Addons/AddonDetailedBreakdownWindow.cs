@@ -138,6 +138,16 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         }
 
         RefreshData();
+        UpdateNavigationButtons();
+    }
+
+    private void UpdateNavigationButtons()
+    {
+        var history = System.InternalMeterService.GetEncounterHistory();
+        var maxIndex = history.Count - 1;
+
+        prevButton.IsEnabled = maxIndex >= 0 && selectedEncounterIndex < maxIndex;
+        nextButton.IsEnabled = selectedEncounterIndex >= 0;
     }
 
     private void UpdateEncounterLabel()
@@ -227,6 +237,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
             sectionPool[i].IsVisible = false;
 
         scrollingContent.RecalculateLayout();
+        UpdateNavigationButtons();
     }
 
     private (Encounter? encounter, List<Combatant>? combatants) GetCurrentData()

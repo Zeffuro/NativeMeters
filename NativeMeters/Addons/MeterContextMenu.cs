@@ -87,9 +87,14 @@ public static class MeterContextMenu
                 bool isSelected = System.ActiveMeterService.IsViewingHistory &&
                                   System.ActiveMeterService.SelectedHistoryIndex == capturedIndex;
 
-                string name = encounter.Encounter?.Title ?? "Unknown";
-                string duration = encounter.Encounter?.Duration.ToString(@"mm\:ss") ?? "??:??";
-                string label = isSelected ? $"✓ {name} ({duration})" : $"  {name} ({duration})";
+                var enc = encounter.Encounter;
+                var title = enc?.Title ?? "Unknown";
+                var dur = enc?.Duration.ToString(@"mm\:ss") ?? "0:00";
+                var rdps = enc != null ? $"{enc.ENCDPS:N0}" : "0";
+
+                var label = isSelected
+                    ? $"✓ {title} ({dur}) - {rdps} rDPS"
+                    : $"{title} ({dur}) - {rdps} rDPS";
 
                 historySubMenu.AddItem(label, () =>
                 {

@@ -148,6 +148,7 @@ public sealed class BreakdownTableRowNode : SimpleComponentNode
                     : (action.HealingPerSecond > 0 ? Formatter.Format(action.HealingPerSecond, "", "", 0) : "0"),
                 "Max" => action.MaxHit > 0 ? Formatter.Format(action.MaxHit, "", "k", 1) : "-",
                 "Active" => action.ActiveSpan.TotalSeconds > 0 ? $"{action.ActiveSpan:m\\:ss}" : "-",
+                "Overheal" => action.OverHeal > 0 ? $"{action.OverHeal:F1}%" : "-",
                 _ => "",
             };
         }

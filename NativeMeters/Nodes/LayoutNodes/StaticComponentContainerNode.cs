@@ -17,6 +17,8 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
     private List<ComponentSettings>? cachedSortedSettings;
     private int lastSettingsCount;
 
+    private static readonly Encounter EmptyEncounter = new() { Title = "No Encounter" };
+
     public MeterSettings? MeterSettings
     {
         get;
@@ -83,15 +85,7 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
 
     private void UpdateComponentData(NodeBase node, ComponentSettings settings)
     {
-        var encounter = System.ActiveMeterService.GetEncounter();
-        if (encounter == null)
-        {
-            encounter = new Encounter
-            {
-                Title = "No Encounter",
-            };
-        }
-
+        var encounter = System.ActiveMeterService.GetEncounter() ?? EmptyEncounter;
         ComponentRenderer.Update(node, settings, Width, encounter);
     }
 

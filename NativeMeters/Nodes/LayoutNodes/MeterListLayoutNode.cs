@@ -52,6 +52,9 @@ public sealed class MeterListLayoutNode : OverlayNode
 
     public void SubscribeToCombatDataUpdates()
     {
+        if (hookedService != null)
+            hookedService.CombatDataUpdated -= OnCombatDataUpdated;
+
         hookedService = System.ActiveMeterService;
         hookedService.CombatDataUpdated += OnCombatDataUpdated;
     }
@@ -209,13 +212,31 @@ public sealed class MeterListLayoutNode : OverlayNode
             ? System.ActiveMeterService.GetCombatants().ToList()
             : FakeCombatantFactory.CreateFixedCombatants(MeterSettings.MaxCombatants);
 
-        if (!MeterSettings.ShowLimitBreak) {
-            combatants.RemoveAll(combatant => combatant.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase));
+        bool hideLB = !MeterSettings.ShowLimitBreak;
+        bool hideNonPlayer = !MeterSettings.ShowNonPlayerCombatants;
+
+        if (hideLB || hideNonPlayer)
+        {
+            combatants.RemoveAll(c =>
+            {
+                bool isLB = c.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase);
+                if (isLB && hideLB) return true;
+                if (!isLB && hideNonPlayer && c.Job.RowId == 0) return true;
+                return false;
+            });
         }
 
-        if (!MeterSettings.ShowNonPlayerCombatants) {
-            combatants.RemoveAll(combatant => combatant.Job.RowId == 0
-                                              && !combatant.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase));
+        if (MeterSettings.PinSelfToTop && hasCombat)
+        {
+            var selfIndex = combatants.FindIndex(combatant =>
+                combatant.Name.Equals("YOU", StringComparison.OrdinalIgnoreCase) || combatant.Name.Equals(Service.ObjectTable.LocalPlayer?.Name.ToString(), StringComparison.OrdinalIgnoreCase));
+
+            if (selfIndex > 0)
+            {
+                var self = combatants[selfIndex];
+                combatants.RemoveAt(selfIndex);
+                combatants.Insert(0, self);
+            }
         }
 
         var selector = StatSelector.GetStatSelector(MeterSettings.StatToTrack);
