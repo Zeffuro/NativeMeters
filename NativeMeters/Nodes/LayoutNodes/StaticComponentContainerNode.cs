@@ -14,6 +14,8 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
 {
     private readonly DynamicNodeList graphManager;
     private readonly List<ComponentSettings> settingsList;
+    private List<ComponentSettings>? cachedSortedSettings;
+    private int lastSettingsCount;
 
     public MeterSettings? MeterSettings
     {
@@ -30,9 +32,14 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
 
     public void Update()
     {
-        var sortedSettings = settingsList.OrderBy(s => s.ZIndex).ToList();
+        int count = settingsList.Count;
+        if (cachedSortedSettings == null || lastSettingsCount != count)
+        {
+            cachedSortedSettings = settingsList.OrderBy(s => s.ZIndex).ToList();
+            lastSettingsCount = count;
+        }
 
-        graphManager.Update(sortedSettings, CreateComponent);
+        graphManager.Update(cachedSortedSettings, CreateComponent);
 
         if (settingsList.Count == 0 && CreatedNodes.Count == 0)
         {
@@ -40,7 +47,7 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
             guard.AttachNode(this);
         }
 
-        foreach (var settings in sortedSettings)
+        foreach (var settings in cachedSortedSettings)
         {
             if (graphManager.Components.TryGetValue(settings.Id, out var node))
             {

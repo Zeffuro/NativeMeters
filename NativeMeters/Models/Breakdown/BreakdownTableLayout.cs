@@ -34,7 +34,7 @@ public class BreakdownTableLayout
             return cachedVisible;
         }
     }
-    
+
     public void InvalidateCache() => cachedVisible = null;
 
     public List<(BreakdownColumn Column, float X, float W)> Resolve(float totalWidth)
