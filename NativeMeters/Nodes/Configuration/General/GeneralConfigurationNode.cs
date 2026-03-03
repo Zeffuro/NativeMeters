@@ -2,6 +2,7 @@ using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
+using NativeMeters.Models;
 using NativeMeters.Nodes.Input;
 
 namespace NativeMeters.Nodes.Configuration.General;
@@ -98,6 +99,15 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             {
                 config.EnableInternalParserForBreakdown = isChecked;
                 ConfigRepository.Save(System.Config);
+
+                if (isChecked)
+                {
+                    System.InternalMeterService.Enable();
+                }
+                else if (!System.Config.ConnectionSettings.SelectedConnectionType.Equals(ConnectionType.Internal))
+                {
+                    System.InternalMeterService.Dispose();
+                }
             }
         });
 

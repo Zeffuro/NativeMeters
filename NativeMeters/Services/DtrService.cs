@@ -116,7 +116,7 @@ public class DtrService : IDisposable
                         if (c.Job.RowId == 0 && !c.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase))
                             continue;
 
-                        var name = c.Job.Abbreviation.ToString();
+                        var name = c.Job.RowId != 0 ? c.Job.Abbreviation.ToString() : null;
                         if (string.IsNullOrEmpty(name)) name = c.Name;
 
                         builder.AddText($"\n{name,-4} {c.ENCDPS:N0}");
