@@ -15,7 +15,7 @@ public static class EnmityUtilities
             {
                 bool isInCombat = Service.Condition[ConditionFlag.InCombat];
                 if (!isInCombat) continue;
-                
+
                 GameMain.ExecuteCommand(319, (int)dummy.GameObjectId);
             }
         }
