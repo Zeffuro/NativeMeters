@@ -114,9 +114,48 @@ public class CombatTracker
     {
         var list = combatants.ToList();
         var duration = encounterState.GetDuration();
-        var totalDamage = list.Sum(c => c.Damage);
-        var totalHealing = list.Sum(c => (long)c.Healed);
         double seconds = Math.Max(duration.TotalSeconds, 1.0);
+
+        long totalDamage = 0;
+        double sumEncdps = 0, sumEncdpsStar = 0, sumENCDPS = 0, sumENCDPSStar = 0;
+        double sumEncdpsk = 0, sumEncdpsm = 0;
+        double sumEnchps = 0, sumEnchpsStar = 0, sumENCHPS = 0, sumENCHPSStar = 0;
+        double sumEnchpsk = 0, sumEnchpsm = 0;
+        int totalHits = 0, totalCrithits = 0, totalMisses = 0, totalSwings = 0;
+        int totalHealed = 0, totalHeals = 0, totalCritheals = 0;
+        int totalDeaths = 0, totalKills = 0;
+        double totalDamagetaken = 0, totalDamagetakenStar = 0;
+        double totalHealstaken = 0, totalHealstakenStar = 0;
+
+        foreach (var c in list)
+        {
+            totalDamage += c.Damage;
+            sumEncdps += c.Encdps;
+            sumEncdpsStar += c.EncdpsStar;
+            sumENCDPS += c.ENCDPS;
+            sumENCDPSStar += c.ENCDPSStar;
+            sumEncdpsk += c.ENCDPSK;
+            sumEncdpsm += c.ENCDPSM;
+            sumEnchps += c.Enchps;
+            sumEnchpsStar += c.EnchpsStar;
+            sumENCHPS += c.ENCHPS;
+            sumENCHPSStar += c.ENCHPSStar;
+            sumEnchpsk += c.ENCHPSK;
+            sumEnchpsm += c.ENCHPSM;
+            totalHits += c.Hits;
+            totalCrithits += c.Crithits;
+            totalMisses += c.Misses;
+            totalSwings += c.Swings;
+            totalHealed += c.Healed;
+            totalHeals += c.Heals;
+            totalCritheals += c.Critheals;
+            totalDeaths += c.Deaths;
+            totalKills += c.Kills;
+            totalDamagetaken += c.Damagetaken;
+            totalDamagetakenStar += c.DamagetakenStar;
+            totalHealstaken += c.Healstaken;
+            totalHealstakenStar += c.HealstakenStar;
+        }
 
         return new Encounter
         {
@@ -140,42 +179,42 @@ public class CombatTracker
             DPSM = totalDamage / seconds / 1_000_000.0,
             DpsStar = totalDamage / seconds,
             DPSStar = totalDamage / seconds,
-            Encdps = list.Sum(c => c.Encdps),
-            ENCDPS = list.Sum(c => c.ENCDPS),
-            EncdpsStar = list.Sum(c => c.EncdpsStar),
-            ENCDPSStar = list.Sum(c => c.ENCDPSStar),
-            ENCDPSK = list.Sum(c => c.ENCDPSK),
-            ENCDPSM = list.Sum(c => c.ENCDPSM),
+            Encdps = sumEncdps,
+            ENCDPS = sumENCDPS,
+            EncdpsStar = sumEncdpsStar,
+            ENCDPSStar = sumENCDPSStar,
+            ENCDPSK = sumEncdpsk,
+            ENCDPSM = sumEncdpsm,
 
-            Enchps = list.Sum(c => c.Enchps),
-            ENCHPS = list.Sum(c => c.ENCHPS),
-            EnchpsStar = list.Sum(c => c.EnchpsStar),
-            ENCHPSStar = list.Sum(c => c.ENCHPSStar),
-            ENCHPSK = list.Sum(c => c.ENCHPSK),
-            ENCHPSM = list.Sum(c => c.ENCHPSM),
+            Enchps = sumEnchps,
+            ENCHPS = sumENCHPS,
+            EnchpsStar = sumEnchpsStar,
+            ENCHPSStar = sumENCHPSStar,
+            ENCHPSK = sumEnchpsk,
+            ENCHPSM = sumEnchpsm,
 
-            Hits = list.Sum(c => c.Hits),
-            Crithits = list.Sum(c => c.Crithits),
-            Misses = list.Sum(c => c.Misses),
-            Swings = list.Sum(c => c.Swings),
-            Healed = list.Sum(c => c.Healed),
-            Heals = list.Sum(c => c.Heals),
-            Critheals = list.Sum(c => c.Critheals),
+            Hits = totalHits,
+            Crithits = totalCrithits,
+            Misses = totalMisses,
+            Swings = totalSwings,
+            Healed = totalHealed,
+            Heals = totalHeals,
+            Critheals = totalCritheals,
 
-            Deaths = list.Sum(c => c.Deaths),
-            Kills = list.Sum(c => c.Kills),
+            Deaths = totalDeaths,
+            Kills = totalKills,
 
-            CrithitPercent = list.Sum(c => c.Swings) > 0
-                ? list.Sum(c => c.Crithits) * 100.0 / list.Sum(c => c.Swings)
+            CrithitPercent = totalSwings > 0
+                ? totalCrithits * 100.0 / totalSwings
                 : 0,
-            CrithealPercent = list.Sum(c => c.Heals) > 0
-                ? list.Sum(c => c.Critheals) * 100.0 / list.Sum(c => c.Heals)
+            CrithealPercent = totalHeals > 0
+                ? totalCritheals * 100.0 / totalHeals
                 : 0,
 
-            Damagetaken = list.Sum(c => c.Damagetaken),
-            DamagetakenStar = list.Sum(c => c.DamagetakenStar),
-            Healstaken = list.Sum(c => c.Healstaken),
-            HealstakenStar = list.Sum(c => c.HealstakenStar),
+            Damagetaken = totalDamagetaken,
+            DamagetakenStar = totalDamagetakenStar,
+            Healstaken = totalHealstaken,
+            HealstakenStar = totalHealstakenStar,
         };
     }
 
