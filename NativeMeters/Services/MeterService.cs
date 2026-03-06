@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 using Dalamud.Game.Text;
 using Dalamud.Interface.ImGuiNotification;
 using NativeMeters.Clients;
@@ -33,6 +34,9 @@ public class MeterService : MeterServiceBase, IDisposable
     {
         if (System.Config.ConnectionSettings.SelectedConnectionType == ConnectionType.Internal)
             return;
+
+        // Pre-warm the JSON deserializer to prevent a 500ms hitch on the first message
+        Task.Run(PreWarmJsonDeserializer);
 
         activeConnection = CreateConnectionHandler();
         activeConnection.OnConnected += ShowConnectionNotification;
@@ -70,8 +74,19 @@ public class MeterService : MeterServiceBase, IDisposable
         if (combatStateTracker.CheckCombatEnded())
             EndEncounter();
 
-        while (messageQueue.TryDequeue(out var message))
-            HandleMessage(message);
+        if (messageQueue.Count > 1)
+        {
+            string? lastMessage = null;
+            while (messageQueue.TryDequeue(out var msg))
+                lastMessage = msg;
+            if (lastMessage != null)
+                HandleMessage(lastMessage);
+        }
+        else
+        {
+            while (messageQueue.TryDequeue(out var message))
+                HandleMessage(message);
+        }
     }
 
     private void HandleMessage(string message)
@@ -93,6 +108,20 @@ public class MeterService : MeterServiceBase, IDisposable
         catch (Exception ex)
         {
             Service.Logger.Error($"Message handling error: {ex.Message}");
+        }
+    }
+
+    private static void PreWarmJsonDeserializer()
+    {
+        try
+        {
+            var jsonNode = JsonNode.Parse(JsonWarmupPayload);
+            _ = jsonNode?["type"]?.ToString();
+            _ = JsonSerializer.Deserialize<CombatDataMessage>(JsonWarmupPayload, JsonSerializerConfig.CaseSensitive);
+        }
+        catch
+        {
+            // Ignored
         }
     }
 
@@ -136,4 +165,30 @@ public class MeterService : MeterServiceBase, IDisposable
         messageQueue.Clear();
         CombatData = null;
     }
+
+    private const string JsonWarmupPayload = """
+    {
+        "type": "CombatData",
+        "Encounter": {
+            "title": "dummy",
+            "duration": "00:00",
+            "DURATION": "0",
+            "damage": "0",
+            "dps": "0",
+            "encdps": "0"
+        },
+        "Combatant": {
+            "Dummy": {
+                "name": "Dummy",
+                "duration": "00:00",
+                "DURATION": "0",
+                "damage": "0",
+                "dps": "0",
+                "encdps": "0",
+                "Job": ""
+            }
+        },
+        "isActive": "false"
+    }
+    """;
 }
