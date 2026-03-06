@@ -23,6 +23,7 @@ public sealed class MeterListLayoutNode : OverlayNode
     private bool isDisposing;
     private bool isPreWarmed;
     private bool isAttached;
+    private bool hasPendingRecreate;
 
     private List<CombatantRowData>? cachedOptionsList;
     private int lastCombatDataHash;
@@ -77,7 +78,7 @@ public sealed class MeterListLayoutNode : OverlayNode
 
         if (lastState != currentState)
         {
-            RecreateList();
+            hasPendingRecreate = true;
             lastState = currentState;
         }
     }
@@ -153,6 +154,14 @@ public sealed class MeterListLayoutNode : OverlayNode
         {
             isAttached = true;
             InitializeFromSettings();
+        }
+
+        if (!isAttached) return;
+
+        if (hasPendingRecreate)
+        {
+            hasPendingRecreate = false;
+            RecreateList();
             return;
         }
 

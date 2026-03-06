@@ -46,6 +46,19 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
             }
         });
 
+        AddNode(new CheckboxNode
+        {
+            Size = new Vector2(400, 20),
+            String = "Show Companions as Separate Entries",
+            IsChecked = config.ShowCompanions,
+            TextTooltip = "When enabled, damage from companions are shown as separate entries instead of being merged with the player.",
+            OnClick = isChecked =>
+            {
+                config.UseYouForLocalPlayer = isChecked;
+                ConfigRepository.Save(System.Config);
+            }
+        });
+
         SubtractTab(1);
     }
 }

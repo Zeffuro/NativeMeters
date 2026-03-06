@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
@@ -9,6 +10,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Network;
 using Lumina.Excel;
 using NativeMeters.Models.Internal;
+using BattleNpcSubKind = Dalamud.Game.ClientState.Objects.Enums.BattleNpcSubKind;
 using LuminaAction = Lumina.Excel.Sheets.Action;
 
 namespace NativeMeters.Services.Internal;
@@ -91,15 +93,19 @@ public unsafe class NetworkCombatParser : IDisposable
 
             if (casterPtr->GameObject.OwnerId != InvalidGameObjectId)
             {
-                if (System.Config.InternalParser.MergePetDamage)
+                var owner = Service.ObjectTable.SearchById(casterPtr->GameObject.OwnerId);
+                var casterObj = Service.ObjectTable.SearchById(casterEntityId);
+
+                if (System.Config.InternalParser.ShowCompanions &&
+                    casterObj is IBattleNpc npc && IsCompanionNpc(npc))
                 {
-                    var owner = Service.ObjectTable.SearchById(casterPtr->GameObject.OwnerId);
-                    if (owner is IPlayerCharacter pcOwner)
-                    {
-                        resolvedSourceId = pcOwner.GameObjectId;
-                        resolvedSourceName = pcOwner.Name.TextValue;
-                        resolvedSourceJobId = pcOwner.ClassJob.RowId;
-                    }
+                    resolvedSourceJobId = npc.ClassJob.RowId;
+                }
+                else if (System.Config.InternalParser.MergePetDamage && owner is IPlayerCharacter pcOwner)
+                {
+                    resolvedSourceId = pcOwner.GameObjectId;
+                    resolvedSourceName = pcOwner.Name.TextValue;
+                    resolvedSourceJobId = pcOwner.ClassJob.RowId;
                 }
             }
             else if (Service.ObjectTable.SearchById(casterEntityId) is IPlayerCharacter pc)
@@ -172,8 +178,15 @@ public unsafe class NetworkCombatParser : IDisposable
                         TargetName = targetName,
                         TargetCurrentHp = currentHp,
                         TargetMaxHp = maxHp,
-                        TargetJobId = (targetObj is IPlayerCharacter tpc) ? tpc.ClassJob.RowId : 0,
-                        IsPlayerTarget = targetObj is IPlayerCharacter,
+                        TargetJobId = targetObj switch
+                        {
+                            IPlayerCharacter tpc => tpc.ClassJob.RowId,
+                            IBattleNpc tnpc when System.Config.InternalParser.ShowCompanions
+                                                 && IsCompanionNpc(tnpc) => tnpc.ClassJob.RowId,
+                            _ => 0
+                        },
+                        IsPlayerTarget = targetObj is IPlayerCharacter ||
+                                         (System.Config.InternalParser.ShowCompanions && IsCompanionNpc(targetObj)),
                         ActionId = actionId,
                     };
 
@@ -230,8 +243,15 @@ public unsafe class NetworkCombatParser : IDisposable
                     break;
 
                 case ActorControlCategory.Death:
-                    if (Service.ObjectTable.SearchById(entityId) is IPlayerCharacter deadPc)
+                    var deadObj = Service.ObjectTable.SearchById(entityId);
+                    if (deadObj is IPlayerCharacter deadPc)
+                    {
                         OnActorDeath?.Invoke(entityId, deadPc.Name.TextValue);
+                    }
+                    else if (System.Config.InternalParser.ShowCompanions && deadObj != null && IsCompanionNpc(deadObj))
+                    {
+                        OnActorDeath?.Invoke(entityId, deadObj.Name.TextValue);
+                    }
                     break;
             }
         }
@@ -252,11 +272,22 @@ public unsafe class NetworkCombatParser : IDisposable
         if (statusId != 0)
         {
             var sourceId = statusTracker.GetSource(entityId, statusId);
-            if (sourceId != null && Service.ObjectTable.SearchById((uint)sourceId) is IPlayerCharacter pc)
+            if (sourceId != null)
             {
-                InvokeDoT(pc.GameObjectId, pc.Name.TextValue, pc.ClassJob.RowId,
-                           entityId, target?.Name.TextValue ?? "", amount);
-                return;
+                var sourceObj = Service.ObjectTable.SearchById((uint)sourceId);
+                if (sourceObj is IPlayerCharacter pc)
+                {
+                    InvokeDoT(pc.GameObjectId, pc.Name.TextValue, pc.ClassJob.RowId,
+                               entityId, target?.Name.TextValue ?? "", amount);
+                    return;
+                }
+                if (System.Config.InternalParser.ShowCompanions &&
+                    sourceObj is IBattleNpc npc && IsCompanionNpc(npc))
+                {
+                    InvokeDoT(npc.GameObjectId, npc.Name.TextValue, npc.ClassJob.RowId,
+                               entityId, target?.Name.TextValue ?? "", amount);
+                    return;
+                }
             }
         }
 
@@ -282,6 +313,12 @@ public unsafe class NetworkCombatParser : IDisposable
                 InvokeDoT(sources[0], pc.Name.TextValue, pc.ClassJob.RowId,
                            entityId, target?.Name.TextValue ?? "", amount);
             }
+            else if (System.Config.InternalParser.ShowCompanions &&
+                     sourceObj is IBattleNpc npc && IsCompanionNpc(npc))
+            {
+                InvokeDoT(sources[0], npc.Name.TextValue, npc.ClassJob.RowId,
+                           entityId, target?.Name.TextValue ?? "", amount);
+            }
             return;
         }
 
@@ -292,6 +329,12 @@ public unsafe class NetworkCombatParser : IDisposable
             if (sourceObj is IPlayerCharacter pc)
             {
                 InvokeDoT(sourceId, pc.Name.TextValue, pc.ClassJob.RowId,
+                           entityId, target?.Name.TextValue ?? "", splitAmount);
+            }
+            else if (System.Config.InternalParser.ShowCompanions &&
+                     sourceObj is IBattleNpc npc && IsCompanionNpc(npc))
+            {
+                InvokeDoT(sourceId, npc.Name.TextValue, npc.ClassJob.RowId,
                            entityId, target?.Name.TextValue ?? "", splitAmount);
             }
         }
@@ -314,20 +357,51 @@ public unsafe class NetworkCombatParser : IDisposable
 
     private void HandleHoTTick(uint entityId, uint statusId, uint amount)
     {
-        if (Service.ObjectTable.SearchById(entityId) is not IPlayerCharacter pc) return;
+        var hotTarget = Service.ObjectTable.SearchById(entityId);
+        if (hotTarget == null) return;
+
+        string hotName;
+        uint hotJobId;
+
+        if (hotTarget is IPlayerCharacter pc)
+        {
+            hotName = pc.Name.TextValue;
+            hotJobId = pc.ClassJob.RowId;
+        }
+        else if (System.Config.InternalParser.ShowCompanions &&
+                 hotTarget is IBattleNpc npc && IsCompanionNpc(npc))
+        {
+            hotName = npc.Name.TextValue;
+            hotJobId = npc.ClassJob.RowId;
+        }
+        else
+        {
+            return;
+        }
 
         ulong resolvedSourceId = entityId;
-        string resolvedSourceName = pc.Name.TextValue;
-        uint resolvedSourceJobId = pc.ClassJob.RowId;
+        string resolvedSourceName = hotName;
+        uint resolvedSourceJobId = hotJobId;
 
         if (statusId != 0)
         {
             var sourceId = statusTracker.GetSource(entityId, statusId);
-            if (sourceId != null && Service.ObjectTable.SearchById(sourceId.Value) is IPlayerCharacter sourcePc)
+            if (sourceId != null)
             {
-                resolvedSourceId = sourcePc.GameObjectId;
-                resolvedSourceName = sourcePc.Name.TextValue;
-                resolvedSourceJobId = sourcePc.ClassJob.RowId;
+                var sourceObj = Service.ObjectTable.SearchById(sourceId.Value);
+                if (sourceObj is IPlayerCharacter sourcePc)
+                {
+                    resolvedSourceId = sourcePc.GameObjectId;
+                    resolvedSourceName = sourcePc.Name.TextValue;
+                    resolvedSourceJobId = sourcePc.ClassJob.RowId;
+                }
+                else if (System.Config.InternalParser.ShowCompanions &&
+                         sourceObj is IBattleNpc sourceNpc && IsCompanionNpc(sourceNpc))
+                {
+                    resolvedSourceId = sourceNpc.GameObjectId;
+                    resolvedSourceName = sourceNpc.Name.TextValue;
+                    resolvedSourceJobId = sourceNpc.ClassJob.RowId;
+                }
             }
         }
 
@@ -337,8 +411,8 @@ public unsafe class NetworkCombatParser : IDisposable
             SourceName = GetResolvedName(resolvedSourceId, resolvedSourceName),
             SourceJobId = resolvedSourceJobId,
             TargetId = entityId,
-            TargetName = GetResolvedName(entityId, pc.Name.TextValue),
-            TargetJobId = pc.ClassJob.RowId,
+            TargetName = GetResolvedName(entityId, hotName),
+            TargetJobId = hotJobId,
             IsPlayerTarget = true,
             Healing = amount,
         });
@@ -353,6 +427,11 @@ public unsafe class NetworkCombatParser : IDisposable
             return "YOU";
         }
         return originalName;
+    }
+
+    private static bool IsCompanionNpc(IGameObject obj)
+    {
+        return obj is IBattleNpc { BattleNpcKind: BattleNpcSubKind.NpcPartyMember or BattleNpcSubKind.Chocobo };
     }
 
     public void Dispose()
