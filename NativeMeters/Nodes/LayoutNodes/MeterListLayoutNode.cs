@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using KamiToolKit.Enums;
@@ -22,6 +23,9 @@ public sealed class MeterListLayoutNode : OverlayNode
     private bool isDisposing;
     private bool isPreWarmed;
     private bool isAttached;
+
+    private List<CombatantRowData>? cachedOptionsList;
+    private int lastCombatDataHash;
 
     private record StructuralState(bool Clickthrough, float RowHeight, int MaxRows, int StructureHash);
     private StructuralState? lastState;
@@ -193,7 +197,7 @@ public sealed class MeterListLayoutNode : OverlayNode
         {
             listNode.IsVisible = !MeterSettings.IsCollapsed;
             listNode.Position = new Vector2(0, headerH);
-            
+
             var desiredListSize = new Vector2(Width, Math.Max(0, Height - headerH - footerH));
             if (listNode.Size != desiredListSize) listNode.Size = desiredListSize;
 
@@ -218,6 +222,19 @@ public sealed class MeterListLayoutNode : OverlayNode
         var combatants = hasCombat
             ? System.ActiveMeterService.GetCombatants().ToList()
             : FakeCombatantFactory.CreateFixedCombatants(MeterSettings.MaxCombatants);
+
+        int hash = combatants.Count;
+        foreach (var c in combatants)
+        {
+            hash = HashCode.Combine(hash, c.Name, c.Job.RowId, c.Damage);
+        }
+
+        if (hash == lastCombatDataHash && cachedOptionsList != null)
+        {
+            listNode.OptionsList = cachedOptionsList;
+            return;
+        }
+        lastCombatDataHash = hash;
 
         bool hideLB = !MeterSettings.ShowLimitBreak;
         bool hideNonPlayer = !MeterSettings.ShowNonPlayerCombatants;
@@ -249,10 +266,12 @@ public sealed class MeterListLayoutNode : OverlayNode
         var selector = StatSelector.GetStatSelector(MeterSettings.StatToTrack);
         combatants.Sort((left, right) => selector(right).CompareTo(selector(left)));
 
-        listNode.OptionsList = combatants
+        cachedOptionsList = combatants
             .Take(MeterSettings.MaxCombatants)
             .Select(combatant => new CombatantRowData(combatant, MeterSettings))
             .ToList();
+
+        listNode.OptionsList = cachedOptionsList;
     }
 
     public void OnDispose()
