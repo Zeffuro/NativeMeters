@@ -12,6 +12,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
 {
     private LabeledDropdownNode? statDropdown;
     private LabeledNumericInputNode? maxRowsInput;
+    private LabeledNumericInputNode? scaleInput;
     private CheckboxNode? backgroundCheckbox;
     private ColorInputRow? backgroundColorInput;
     private CheckboxNode? headerToggle;
@@ -34,6 +35,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
         statDropdown!.SelectedOption = Settings.StatToTrack;
         maxRowsInput!.Value = Settings.MaxCombatants;
+        scaleInput!.Value = Settings.Scale;
         rowHeightInput!.Value = (int)Settings.RowHeight;
         rowSpacingInput!.Value = (int)Settings.RowSpacing;
         backgroundCheckbox!.IsChecked = Settings.ShowWindowBackground;
@@ -67,6 +69,15 @@ public sealed class MeterDisplaySection : MeterConfigSection
             LabelText = "Max Rows: ",
             Min = 1, Max = 40,
             OnValueUpdate = val => Settings.MaxCombatants = val,
+        };
+
+        scaleInput = new LabeledNumericInputNode
+        {
+            Size = new Vector2(Width, 28),
+            LabelText = "Scale %:",
+            Min = 10, Max = 300,
+            Step = 10,
+            OnValueUpdate = val => Settings.Scale = val,
         };
 
         rowHeightInput = new LabeledNumericInputNode
@@ -156,6 +167,6 @@ public sealed class MeterDisplaySection : MeterConfigSection
             OnClick = val => Settings.PinSelfToTop = val
         };
 
-        AddNode([statDropdown, maxRowsInput, rowHeightInput, rowSpacingInput, backgroundCheckbox, backgroundColorInput, headerToggle, headerHeightInput, footerToggle, footerHeightInput, showLimitBreakToggle, showNonPlayerToggle, showPinSelfToggle]);
+        AddNode([statDropdown, maxRowsInput, scaleInput, rowHeightInput, rowSpacingInput, backgroundCheckbox, backgroundColorInput, headerToggle, headerHeightInput, footerToggle, footerHeightInput, showLimitBreakToggle, showNonPlayerToggle, showPinSelfToggle]);
     }
 }

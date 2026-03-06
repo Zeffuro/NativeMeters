@@ -23,7 +23,8 @@ public sealed class MeterListLayoutNode : OverlayNode
     private bool isPreWarmed;
     private bool isAttached;
 
-    private record StructuralState(bool Clickthrough, float RowHeight, int MaxRows, int StructureHash);    private StructuralState? lastState;
+    private record StructuralState(bool Clickthrough, float RowHeight, int MaxRows, int StructureHash);
+    private StructuralState? lastState;
 
     private MeterBackgroundNode? backgroundNode;
     private StaticComponentContainerNode? headerContainer;
@@ -48,6 +49,7 @@ public sealed class MeterListLayoutNode : OverlayNode
         OnResizeComplete = node => MeterSettings!.Size = node.Size;
 
         SubscribeToCombatDataUpdates();
+        Scale = new Vector2(2);
     }
 
     public void SubscribeToCombatDataUpdates()
@@ -157,6 +159,9 @@ public sealed class MeterListLayoutNode : OverlayNode
         IsVisible = MeterSettings.IsEnabled && (hasActiveData || isEditing || MeterSettings.IsCollapsed);
         EnableMoving = !MeterSettings.IsLocked;
         EnableResizing = !MeterSettings.IsLocked && !MeterSettings.IsCollapsed;
+
+        var scaleFactor = MeterSettings.Scale / 100f;
+        Scale = new Vector2(scaleFactor);
 
         float headerH = MeterSettings.HeaderEnabled ? MeterSettings.HeaderHeight : 0;
         float footerH = (MeterSettings.FooterEnabled && !MeterSettings.IsCollapsed) ? MeterSettings.FooterHeight : 0;
