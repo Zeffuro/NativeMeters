@@ -193,7 +193,9 @@ public sealed class MeterListLayoutNode : OverlayNode
         {
             listNode.IsVisible = !MeterSettings.IsCollapsed;
             listNode.Position = new Vector2(0, headerH);
-            listNode.Size = new Vector2(Width, Math.Max(0, Height - headerH - footerH));
+            
+            var desiredListSize = new Vector2(Width, Math.Max(0, Height - headerH - footerH));
+            if (listNode.Size != desiredListSize) listNode.Size = desiredListSize;
 
             if (Math.Abs(listNode.ItemSpacing - MeterSettings.RowSpacing) > 0.1f)
                 listNode.ItemSpacing = MeterSettings.RowSpacing;

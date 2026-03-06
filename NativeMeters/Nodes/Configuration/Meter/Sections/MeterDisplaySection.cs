@@ -75,7 +75,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         {
             Size = new Vector2(Width, 28),
             LabelText = "Scale %:",
-            Min = 10, Max = 300,
+            Min = 10, Max = 400,
             Step = 10,
             OnValueUpdate = val => Settings.Scale = val,
         };

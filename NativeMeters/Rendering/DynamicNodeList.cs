@@ -5,6 +5,7 @@ using KamiToolKit;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Extensions;
+using NativeMeters.Services;
 
 namespace NativeMeters.Rendering;
 
@@ -33,6 +34,7 @@ public class DynamicNodeList(NodeBase parentNode) : IDisposable
 
     private void RebuildStructure(List<ComponentSettings> settings, Func<ComponentSettings, NodeBase> factory)
     {
+        Service.Logger.Info("Rebuilding node structure for component list");
         _componentMap.DisposeValues();
 
         foreach (var setting in settings)
