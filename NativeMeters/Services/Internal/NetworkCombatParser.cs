@@ -6,9 +6,11 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Game.Group;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Network;
 using Lumina.Excel;
+using NativeMeters.Configuration;
 using NativeMeters.Models.Internal;
 using BattleNpcSubKind = Dalamud.Game.ClientState.Objects.Enums.BattleNpcSubKind;
 using LuminaAction = Lumina.Excel.Sheets.Action;
@@ -76,6 +78,43 @@ public unsafe class NetworkCombatParser : IDisposable
 
     public void ResetTracking() => statusTracker.Clear();
 
+    private unsafe bool IsEntityInFilter(ulong entityId)
+    {
+        var filter = System.Config.InternalParser.ParseFilter;
+        if (filter == ParseFilter.None) return true;
+
+        var localPlayer = Service.ObjectTable.LocalPlayer;
+        if (localPlayer == null) return false;
+
+        if (entityId == localPlayer.GameObjectId) return true;
+
+        var entityObj = Service.ObjectTable.SearchById(entityId);
+        uint ownerId = 0;
+        if (entityObj != null && entityObj.OwnerId != InvalidGameObjectId && entityObj.OwnerId != 0)
+        {
+            ownerId = (uint)entityObj.OwnerId;
+            if (ownerId == localPlayer.GameObjectId) return true;
+        }
+
+        if (filter == ParseFilter.Self) return false;
+
+        var groupManager = GroupManager.Instance();
+        if (groupManager == null) return false;
+
+        uint objectId = (uint)entityId;
+
+        if (filter == ParseFilter.Party && groupManager->MainGroup.IsEntityIdInParty(objectId)) return true;
+        if (filter == ParseFilter.Alliance && groupManager->MainGroup.IsEntityIdInAlliance(objectId)) return true;
+
+        if (ownerId != 0)
+        {
+            if (filter == ParseFilter.Party && groupManager->MainGroup.IsEntityIdInParty(ownerId)) return true;
+            if (filter == ParseFilter.Alliance && groupManager->MainGroup.IsEntityIdInAlliance(ownerId)) return true;
+        }
+
+        return false;
+    }
+
     private void ActionEffectDetour(
         uint casterEntityId, Character* casterPtr, Vector3* targetPos,
         ActionEffectHandler.Header* header, ActionEffectHandler.TargetEffects* effects,
@@ -90,6 +129,8 @@ public unsafe class NetworkCombatParser : IDisposable
             ulong resolvedSourceId = casterEntityId;
             string resolvedSourceName = casterPtr->NameString;
             uint resolvedSourceJobId = 0;
+
+            bool sourceInFilter = IsEntityInFilter(casterEntityId);
 
             if (casterPtr->GameObject.OwnerId != InvalidGameObjectId)
             {
@@ -135,6 +176,10 @@ public unsafe class NetworkCombatParser : IDisposable
                 var targetId = (uint)(targetEntityIds[i] & uint.MaxValue);
                 var targetObj = Service.ObjectTable.SearchById(targetId);
                 if (targetObj == null) continue;
+
+                bool targetInFilter = IsEntityInFilter(targetId);
+
+                if (!sourceInFilter && !targetInFilter) continue;
 
                 uint currentHp = 0;
                 uint maxHp = 0;
@@ -269,11 +314,15 @@ public unsafe class NetworkCombatParser : IDisposable
         var localPlayer = Service.ObjectTable.LocalPlayer;
         if (localPlayer == null) return;
 
+        bool targetInFilter = IsEntityInFilter(entityId);
+
         if (statusId != 0)
         {
             var sourceId = statusTracker.GetSource(entityId, statusId);
             if (sourceId != null)
             {
+                if (!IsEntityInFilter(sourceId.Value) && !targetInFilter) return;
+
                 var sourceObj = Service.ObjectTable.SearchById((uint)sourceId);
                 if (sourceObj is IPlayerCharacter pc)
                 {
@@ -307,7 +356,10 @@ public unsafe class NetworkCombatParser : IDisposable
 
         if (sources.Count == 1)
         {
-            var sourceObj = Service.ObjectTable.SearchById((uint)sources[0]);
+            var sourceId = sources[0];
+            if (!IsEntityInFilter(sourceId) && !targetInFilter) return;
+
+            var sourceObj = Service.ObjectTable.SearchById((uint)sourceId);
             if (sourceObj is IPlayerCharacter pc)
             {
                 InvokeDoT(sources[0], pc.Name.TextValue, pc.ClassJob.RowId,
@@ -325,6 +377,8 @@ public unsafe class NetworkCombatParser : IDisposable
         var splitAmount = (uint)(amount / sources.Count);
         foreach (var sourceId in sources)
         {
+            if (!IsEntityInFilter(sourceId) && !targetInFilter) continue;
+
             var sourceObj = Service.ObjectTable.SearchById((uint)sourceId);
             if (sourceObj is IPlayerCharacter pc)
             {
@@ -389,21 +443,26 @@ public unsafe class NetworkCombatParser : IDisposable
             if (sourceId != null)
             {
                 var sourceObj = Service.ObjectTable.SearchById(sourceId.Value);
+                resolvedSourceId = sourceId.Value;
+
                 if (sourceObj is IPlayerCharacter sourcePc)
                 {
-                    resolvedSourceId = sourcePc.GameObjectId;
                     resolvedSourceName = sourcePc.Name.TextValue;
                     resolvedSourceJobId = sourcePc.ClassJob.RowId;
                 }
                 else if (System.Config.InternalParser.ShowCompanions &&
                          sourceObj is IBattleNpc sourceNpc && IsCompanionNpc(sourceNpc))
                 {
-                    resolvedSourceId = sourceNpc.GameObjectId;
                     resolvedSourceName = sourceNpc.Name.TextValue;
                     resolvedSourceJobId = sourceNpc.ClassJob.RowId;
                 }
             }
         }
+
+        bool targetInFilter = IsEntityInFilter(entityId);
+        bool sourceInFilter = IsEntityInFilter(resolvedSourceId);
+
+        if (!sourceInFilter && !targetInFilter) return;
 
         OnActionResult?.Invoke(new ActionResultEvent
         {

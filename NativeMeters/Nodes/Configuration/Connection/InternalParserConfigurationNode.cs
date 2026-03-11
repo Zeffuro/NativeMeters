@@ -1,6 +1,11 @@
+using System;
+using System.Linq;
 using System.Numerics;
 using KamiToolKit.Nodes;
+using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
+using NativeMeters.Data.Stats;
+using NativeMeters.Nodes.Input;
 
 namespace NativeMeters.Nodes.Configuration.Connection;
 
@@ -18,6 +23,19 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
         });
 
         AddTab(1);
+
+        AddNode(new LabeledEnumDropdownNode<ParseFilter>
+        {
+            Size = new Vector2(400, 28),
+            LabelText = "Parse Filter",
+            Options = Enum.GetValues<ParseFilter>().ToList(),
+            SelectedOption = config.ParseFilter,
+            OnOptionSelected = option =>
+            {
+                config.ParseFilter = option;
+                ConfigRepository.Save(System.Config);
+            }
+        });
 
         AddNode(new CheckboxNode
         {
