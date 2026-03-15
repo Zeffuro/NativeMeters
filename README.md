@@ -1,5 +1,6 @@
 # NativeMeters
-![Downloads](https://img.shields.io/github/downloads/Zeffuro/NativeMeters/total?label=Downloads&style=flat-square)
+![Total Downloads](https://img.shields.io/github/downloads/Zeffuro/NativeMeters/total?label=Total%20Downloads&style=flat-square)
+![Latest Downloads](https://img.shields.io/github/downloads/Zeffuro/NativeMeters/latest/total?label=Latest%20Downloads&style=flat-square)
 
 Meters that feel like part of the game. Who needs ImGui when you have AtkNodes?
 
