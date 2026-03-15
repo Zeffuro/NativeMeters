@@ -109,7 +109,7 @@ jobs:
               Write-Host "Added new entry for ${{ env.PLUGIN_NAME }}"
           }
         
-          $repoJson | ConvertTo-Json -Depth 100 | Set-Content $repoJsonPath
+          $repoJson | ConvertTo-Json -Depth 100 -AsArray | Set-Content $repoJsonPath
 
       - name: Commit and push to MyDalamudPlugins
         run: |
