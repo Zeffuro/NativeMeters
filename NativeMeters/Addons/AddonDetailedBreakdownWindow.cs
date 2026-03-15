@@ -111,12 +111,24 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         };
         scrollingContent.AttachNode(this);
 
-        hookedService = System.InternalMeterService;
-        hookedService.CombatDataUpdated += OnCombatDataUpdated;
+        ReSubscribeToEvents();
 
         RefreshData();
 
         base.OnSetup(addon);
+    }
+
+    public void ReSubscribeToEvents()
+    {
+        if (hookedService != null)
+        {
+            hookedService.CombatDataUpdated -= OnCombatDataUpdated;
+        }
+
+        hookedService = System.InternalMeterService;
+        hookedService.CombatDataUpdated += OnCombatDataUpdated;
+
+        RefreshData();
     }
 
     private void NavigateEncounter(int direction)

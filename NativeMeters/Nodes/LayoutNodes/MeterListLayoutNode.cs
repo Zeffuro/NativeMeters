@@ -120,8 +120,8 @@ public sealed class MeterListLayoutNode : OverlayNode
 
         MeterRowListItemNode.HeightHint = MeterSettings.RowHeight;
 
-        // Prebuild settings
-        MeterRowListItemNode.PrebuildSettings = MeterSettings;
+        // Prebuild settings, don't think this is needed anymore since the slowdown was from the websocket initialization.
+        //MeterRowListItemNode.PrebuildSettings = MeterSettings;
 
         listNode = new ListNode<CombatantRowData, MeterRowListItemNode> {
             ItemSpacing = MeterSettings.RowSpacing,

@@ -93,11 +93,9 @@ public class Combatant : IEquatable<Combatant>
     [JsonConverter(typeof(StringValueConverter<double>))]
     public double TOHIT { get; set; }
     [JsonPropertyName("maxhit")]
-    [JsonConverter(typeof(StringValueConverter<double>))]
-    public double Maxhit { get; set; }
+    public string Maxhit { get; set; }
     [JsonPropertyName("MAXHIT")]
-    [JsonConverter(typeof(StringValueConverter<double>))]
-    public double MAXHIT { get; set; }
+    public string MAXHIT { get; set; }
     [JsonPropertyName("maxhit-*")]
     public string MaxhitStar { get; set; } = null!;
     [JsonPropertyName("MAXHIT-*")]
@@ -127,17 +125,13 @@ public class Combatant : IEquatable<Combatant>
     [JsonConverter(typeof(StringValueConverter<double>))]
     public double CrithealPercent { get; set; }
     [JsonPropertyName("maxheal")]
-    [JsonConverter(typeof(StringValueConverter<double>))]
-    public double Maxheal { get; set; }
+    public string Maxheal { get; set; } = null!;
     [JsonPropertyName("MAXHEAL")]
-    [JsonConverter(typeof(StringValueConverter<double>))]
-    public double MAXHEAL { get; set; }
+    public string MAXHEAL { get; set; } = null!;
     [JsonPropertyName("maxhealward")]
-    [JsonConverter(typeof(StringValueConverter<double>))]
-    public double Maxhealward { get; set; }
+    public string Maxhealward { get; set; } = null!;
     [JsonPropertyName("MAXHEALWARD")]
-    [JsonConverter(typeof(StringValueConverter<double>))]
-    public double MAXHEALWARD { get; set; }
+    public string MAXHEALWARD { get; set; } = null!;
     [JsonPropertyName("maxheal-*")]
     [JsonConverter(typeof(StringValueConverter<double>))]
     public double MaxhealStar { get; set; }

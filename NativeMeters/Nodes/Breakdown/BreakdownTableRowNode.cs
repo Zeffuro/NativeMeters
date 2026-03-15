@@ -121,7 +121,7 @@ public sealed class BreakdownTableRowNode : SimpleComponentNode
         {
             contributionBar.IsVisible = true;
             float barWidth = (float)(Math.Min(1.0, contributionPct / 100.0) * Width);
-            contributionBar.Size = new Vector2(Math.Max(4, barWidth), RowHeight);
+            contributionBar.Size = new Vector2(Math.Max(30, barWidth), RowHeight);
         }
         else
         {

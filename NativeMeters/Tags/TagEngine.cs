@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using NativeMeters.Models;
 using NativeMeters.Tags.Formatting;
 using NativeMeters.Tags.Reflection;
 
@@ -90,12 +91,12 @@ public static class TagEngine
         if (rawValue == null)
             return tag.OriginalText;
 
-        rawValue = PreProcessSubKey(rawValue, tag.SubKey);
+        rawValue = PreProcessSubKey(rawValue, tag.SubKey, data);
 
         return FormatterChain.Format(rawValue, tag.SubKey, tag.Format, tag.Precision);
     }
 
-    private static object PreProcessSubKey(object value, string subKey)
+    private static object PreProcessSubKey(object value, string subKey, object data)
     {
         if (string.IsNullOrEmpty(subKey))
             return value;
@@ -105,16 +106,31 @@ public static class TagEngine
             return value;
 
         var str = value.ToString() ?? "";
-        var parts = str.Split('-');
 
-        if (parts.Length >= 3)
+        // ACT Format examples:
+        // Combatant: "Skill Name-12345"
+        // Encounter: "Player Name-Skill Name-12345"
+
+        int lastDash = str.LastIndexOf('-');
+        if (lastDash == -1) return value;
+
+        if (subKey.Equals("val", StringComparison.OrdinalIgnoreCase))
         {
-            if (subKey.Equals("skill", StringComparison.OrdinalIgnoreCase)) return parts[1];
-            if (subKey.Equals("val", StringComparison.OrdinalIgnoreCase)) return parts[2];
+            return str.Substring(lastDash + 1);
         }
-        else if (parts.Length == 2 && subKey.Equals("val", StringComparison.OrdinalIgnoreCase))
+
+        if (subKey.Equals("skill", StringComparison.OrdinalIgnoreCase))
         {
-            return parts[1];
+            var prefix = str.Substring(0, lastDash);
+
+            if (data is Encounter)
+            {
+                int firstDash = prefix.IndexOf('-');
+                if (firstDash != -1)
+                    return prefix.Substring(firstDash + 1);
+            }
+
+            return prefix;
         }
 
         return value;

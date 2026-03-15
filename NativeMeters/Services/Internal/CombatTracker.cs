@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Game.ClientState.Conditions;
 using Lumina.Excel.Sheets;
+using NativeMeters.Data.Stats;
 using NativeMeters.Models;
 using NativeMeters.Models.Breakdown;
 using NativeMeters.Models.Internal;
@@ -210,6 +211,11 @@ public class CombatTracker
             CrithealPercent = totalHeals > 0
                 ? totalCritheals * 100.0 / totalHeals
                 : 0,
+
+            Maxhit = Aggregator.MaxString(list, c => !string.IsNullOrEmpty(c.Maxhit) ? $"{c.Name}-{c.Maxhit}" : ""),
+            MAXHIT = Aggregator.MaxString(list, c => !string.IsNullOrEmpty(c.MAXHIT) ? $"{c.Name}-{c.MAXHIT}" : ""),
+            Maxheal = Aggregator.MaxString(list, c => !string.IsNullOrEmpty(c.Maxheal) ? $"{c.Name}-{c.Maxheal}" : ""),
+            MAXHEAL = Aggregator.MaxString(list, c => !string.IsNullOrEmpty(c.MAXHEAL) ? $"{c.Name}-{c.MAXHEAL}" : ""),
 
             Damagetaken = totalDamagetaken,
             DamagetakenStar = totalDamagetakenStar,

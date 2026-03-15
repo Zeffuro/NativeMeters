@@ -50,8 +50,8 @@ public static class FakeEncounterFactory
             TOHIT = Aggregator.Avg(list, c => c.TOHIT),
             CrithealPercent = Aggregator.Avg(list, c => c.CrithealPercent),
 
-            Maxhit = Aggregator.Max(list, c => c.Maxhit),
-            MAXHIT = Aggregator.Max(list, c => c.MAXHIT),
+            Maxhit = Aggregator.MaxString(list, c => !string.IsNullOrEmpty(c.Maxhit) ? $"{c.Name}-{c.Maxhit}" : ""),
+            MAXHIT = Aggregator.MaxString(list, c => !string.IsNullOrEmpty(c.MAXHIT) ? $"{c.Name}-{c.MAXHIT}" : ""),
             MaxhitStar = Aggregator.MaxString(list, c => c.MaxhitStar),
             MAXHITStar = Aggregator.MaxString(list, c => c.MAXHITStar),
 
@@ -62,10 +62,10 @@ public static class FakeEncounterFactory
             ENCHPSM = Aggregator.Sum(list, c => c.ENCHPSM),
             ENCHPSStar = Aggregator.Sum(list, c => c.ENCHPSStar),
 
-            Maxheal = Aggregator.Max(list, c => c.Maxheal),
-            MAXHEAL = Aggregator.Max(list, c => c.MAXHEAL),
-            Maxhealward = Aggregator.Max(list, c => c.Maxhealward),
-            MAXHEALWARD = Aggregator.Max(list, c => c.MAXHEALWARD),
+            Maxheal = Aggregator.MaxString(list, c => !string.IsNullOrEmpty(c.Maxheal) ? $"{c.Name}-{c.Maxheal}" : ""),
+            MAXHEAL = Aggregator.MaxString(list, c => !string.IsNullOrEmpty(c.MAXHEAL) ? $"{c.Name}-{c.MAXHEAL}" : ""),
+            Maxhealward = Aggregator.MaxString(list, c => !string.IsNullOrEmpty(c.Maxhealward) ? $"{c.Name}-{c.Maxhealward}" : ""),
+            MAXHEALWARD = Aggregator.MaxString(list, c => !string.IsNullOrEmpty(c.MAXHEALWARD) ? $"{c.Name}-{c.MAXHEALWARD}" : ""),
             MaxhealStar = Aggregator.Max(list, c => c.MaxhealStar),
             MAXHEALStar = Aggregator.Max(list, c => c.MAXHEALStar),
             MaxhealwardStar = Aggregator.Max(list, c => c.MaxhealwardStar),

@@ -15,11 +15,10 @@ namespace NativeMeters.Nodes.Configuration.Meter.Panels;
 public sealed class ComponentBasicsPanel : VerticalListNode
 {
     private ComponentSettings? settings;
-    private IconSearchAddon? iconPicker;
 
     private readonly LabeledTextInputNode nameInput;
+    private readonly HorizontalListNode sourceRow;
     private readonly LabeledTextInputNode sourceInput;
-    private readonly LabeledDropdownNode tagEnumDropdown;
     private readonly LabeledDropdownNode barStatDropdown;
     private readonly LabeledEnumDropdownNode<JobIconType> jobIconTypeEnumDropdown;
 
@@ -32,12 +31,16 @@ public sealed class ComponentBasicsPanel : VerticalListNode
     private readonly LabeledNumericInputNode heightInput;
     private readonly LabeledNumericInputNode zIndexInput;
 
-
     public Action? OnSettingsChanged { get; set; }
     public Action<string>? OnNameChanged { get; set; }
     public Action? OnLayoutChanged { get; set; }
 
     private bool isLoading;
+    private bool isDisposed;
+
+    private Action<string>? currentTagInsertAction;
+    private Action<TagInfo>? currentTagSelectionAction;
+    private Action<uint>? currentIconSelectionAction;
 
     public ComponentBasicsPanel()
     {
@@ -50,7 +53,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
                                  "• .N = Decimals or Text length\n" +
                                  "• _first/_last = Name parts\n" +
                                  "• _skill/_val = MaxHit parts\n\n" +
-                                 "Example: [name_first.1].: [dps:k.1] -> J.: 12.3k";
+                                 "Example: [name_first.1].:[dps:k.1] -> J.: 12.3k";
 
         nameInput = new LabeledTextInputNode
         {
@@ -65,10 +68,12 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
+        sourceRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 2.0f };
+
         sourceInput = new LabeledTextInputNode
         {
             LabelText = "Format String: ",
-            Size = new Vector2(Width, 28),
+            Size = new Vector2(Width - 10, 28),
             Placeholder = "[name] [dps]",
             TextTooltip = tagTooltip,
             OnInputComplete = val =>
@@ -79,24 +84,14 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
-        tagEnumDropdown = new LabeledDropdownNode
+        var browseTagButton = new CircleButtonNode()
         {
-            LabelText = "Insert Tag: ",
-            Size = new Vector2(Width, 28),
-            Options = TagDefinitions.GetLabels(),
-            MaxListOptions = 10,
-            SelectedOption = TagDefinitions.DefaultDropdownLabel,
-            TextTooltip = tagTooltip,
-            OnOptionSelected = selected =>
-            {
-                if (TagDefinitions.Templates.TryGetValue(selected, out var tag) && !string.IsNullOrEmpty(tag))
-                {
-                    sourceInput.Text += tag;
-                    sourceInput.InnerInput.OnInputComplete?.Invoke(sourceInput.Text);
-                    tagEnumDropdown?.SelectedOption = TagDefinitions.DefaultDropdownLabel;
-                }
-            }
+            Icon = ButtonIcon.MagnifyingGlass,
+            Size = new Vector2(28, 28),
+            OnClick = OpenTagPicker
         };
+
+        sourceRow.AddNode([sourceInput, browseTagButton]);
 
         barStatDropdown = new LabeledDropdownNode
         {
@@ -213,27 +208,44 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
-        AddNode([nameInput, sourceInput, tagEnumDropdown, barStatDropdown, jobIconTypeEnumDropdown, iconRow, posRow, sizeRow, zIndexInput]);
+        AddNode([nameInput, sourceRow, barStatDropdown, jobIconTypeEnumDropdown, iconRow, posRow, sizeRow, zIndexInput]);
     }
 
     private void OpenIconPicker()
     {
         IconRegistry.Initialize(Service.DataManager);
-        iconPicker ??= new IconSearchAddon
-        {
-            Title = "Select Icon",
-            InternalName = "NativeMeters_IconPicker",
-        };
 
-        iconPicker.SelectionResult = iconId =>
+        currentIconSelectionAction = iconId =>
         {
-            if (settings == null) return;
+            if (isDisposed || settings == null) return;
             settings.IconId = iconId;
             iconIdInput.Value = (int)iconId;
             OnSettingsChanged?.Invoke();
         };
 
-        iconPicker.Open();
+        System.IconSearchAddon.SelectionResult = currentIconSelectionAction;
+        System.IconSearchAddon.Open();
+    }
+
+    private void OpenTagPicker()
+    {
+        currentTagInsertAction = tagString =>
+        {
+            if (isDisposed || settings == null) return;
+            sourceInput.Text += tagString;
+            sourceInput.InnerInput.OnInputComplete?.Invoke(sourceInput.Text);
+        };
+
+        currentTagSelectionAction = tagInfo =>
+        {
+            if (isDisposed || settings == null) return;
+            sourceInput.Text += tagInfo.Tag;
+            sourceInput.InnerInput.OnInputComplete?.Invoke(sourceInput.Text);
+        };
+
+        System.TagSearchAddon.OnInsertClicked = currentTagInsertAction;
+        System.TagSearchAddon.SelectionResult = currentTagSelectionAction;
+        System.TagSearchAddon.Open();
     }
 
     public void LoadSettings(ComponentSettings componentSettings)
@@ -255,8 +267,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         var isJobIcon = settings.Type == MeterComponentType.JobIcon;
         var isIcon = settings.Type == MeterComponentType.Icon;
 
-        sourceInput.IsVisible = isText;
-        tagEnumDropdown.IsVisible = isText;
+        sourceRow.IsVisible = isText;
         barStatDropdown.IsVisible = isBar;
         jobIconTypeEnumDropdown.IsVisible = isJobIcon;
         iconRow.IsVisible = isIcon;
@@ -273,10 +284,36 @@ public sealed class ComponentBasicsPanel : VerticalListNode
     {
         base.OnSizeChanged();
         nameInput.Width = Width;
+        sourceRow.Width = Width;
         sourceInput.Width = Width;
-        tagEnumDropdown.Width = Width;
         barStatDropdown.Width = Width;
         jobIconTypeEnumDropdown.Width = Width;
         zIndexInput.Width = Width;
+    }
+
+    protected override void Dispose(bool disposing, bool isNativeDestructor)
+    {
+        isDisposed = true;
+
+        if (System.TagSearchAddon != null)
+        {
+            if (System.TagSearchAddon.OnInsertClicked == currentTagInsertAction)
+            {
+                System.TagSearchAddon.OnInsertClicked = null;
+                System.TagSearchAddon.SelectionResult = null;
+                System.TagSearchAddon.Close();
+            }
+        }
+
+        if (System.IconSearchAddon != null)
+        {
+            if (System.IconSearchAddon.SelectionResult == currentIconSelectionAction)
+            {
+                System.IconSearchAddon.SelectionResult = null;
+                System.IconSearchAddon.Close();
+            }
+        }
+
+        base.Dispose(disposing, isNativeDestructor);
     }
 }

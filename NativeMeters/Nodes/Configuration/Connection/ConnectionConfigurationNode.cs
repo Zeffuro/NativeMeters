@@ -197,16 +197,13 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             System.InternalMeterService.Dispose();
             System.InternalMeterService = new Services.Internal.InternalMeterService();
         }
-        else
-        {
-            System.MeterService.Reconnect();
-        }
 
-        if (selected == ConnectionType.Internal)
+        if (selected == ConnectionType.Internal || System.Config.General.EnableInternalParserForBreakdown)
         {
             System.InternalMeterService.Enable();
         }
-        else
+
+        if (selected != ConnectionType.Internal)
         {
             System.MeterService.Reconnect();
         }
@@ -222,6 +219,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         {
             System.InternalMeterService.Dispose();
             System.InternalMeterService = new Services.Internal.InternalMeterService();
+            System.AddonDetailedBreakdownWindow.ReSubscribeToEvents();
             System.InternalMeterService.Enable();
             System.OverlayManager.UpdateActiveService();
         }

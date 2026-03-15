@@ -103,13 +103,19 @@ public unsafe class NetworkCombatParser : IDisposable
 
         uint objectId = (uint)entityId;
 
-        if (filter == ParseFilter.Party && groupManager->MainGroup.IsEntityIdInParty(objectId)) return true;
-        if (filter == ParseFilter.Alliance && groupManager->MainGroup.IsEntityIdInAlliance(objectId)) return true;
+        bool inParty = groupManager->MainGroup.IsEntityIdInParty(objectId);
+        bool inAlliance = groupManager->MainGroup.IsEntityIdInAlliance(objectId);
+
+        if (filter == ParseFilter.Party && inParty) return true;
+        if (filter == ParseFilter.Alliance && (inParty || inAlliance)) return true;
 
         if (ownerId != 0)
         {
-            if (filter == ParseFilter.Party && groupManager->MainGroup.IsEntityIdInParty(ownerId)) return true;
-            if (filter == ParseFilter.Alliance && groupManager->MainGroup.IsEntityIdInAlliance(ownerId)) return true;
+            bool ownerInParty = groupManager->MainGroup.IsEntityIdInParty(ownerId);
+            bool ownerInAlliance = groupManager->MainGroup.IsEntityIdInAlliance(ownerId);
+
+            if (filter == ParseFilter.Party && ownerInParty) return true;
+            if (filter == ParseFilter.Alliance && (ownerInParty || ownerInAlliance)) return true;
         }
 
         return false;

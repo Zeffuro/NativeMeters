@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using NativeMeters.Extensions;
 using NativeMeters.Models;
 
@@ -48,8 +49,8 @@ public static class FakeCombatantFactory
             CrithitPercent = RandDouble(0, 100),
             Tohit = RandDouble(80, 100),
             TOHIT = RandDouble(80, 100),
-            Maxhit = RandDouble(10000, 500000),
-            MAXHIT = RandDouble(10000, 500000),
+            Maxhit = $"Midare Setsugekka-{RandDouble(10000, 500000)}",
+            MAXHIT = RandDouble(10000, 500000).ToString(CultureInfo.InvariantCulture),
             MaxhitStar = $"{RandDouble(10000, 500000)} Crit",
             MAXHITStar = $"{RandDouble(10000, 500000)} Crit",
             HealedPercent = RandDouble(0, 100),
@@ -60,10 +61,10 @@ public static class FakeCombatantFactory
             ENCHPSM = RandDouble(0, 1),
             ENCHPSStar = RandDouble(0, 10000),
             CrithealPercent = RandDouble(0, 100),
-            Maxheal = RandDouble(1000, 100000),
-            MAXHEAL = RandDouble(1000, 100000),
-            Maxhealward = RandDouble(1000, 100000),
-            MAXHEALWARD = RandDouble(1000, 100000),
+            Maxheal = $"Cure III-{RandDouble(1000, 100000)}",
+            MAXHEAL = RandDouble(1000, 100000).ToString(CultureInfo.InvariantCulture),
+            Maxhealward = $"Asylum-{RandDouble(1000, 100000)}",
+            MAXHEALWARD = RandDouble(1000, 100000).ToString(CultureInfo.InvariantCulture),
             MaxhealStar = RandDouble(1000, 100000),
             MAXHEALStar = RandDouble(1000, 100000),
             MaxhealwardStar = RandDouble(1000, 100000),

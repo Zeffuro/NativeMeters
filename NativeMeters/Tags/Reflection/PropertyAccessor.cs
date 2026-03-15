@@ -44,6 +44,9 @@ public static class PropertyAccessor
 
     public static object? GetValue(string key, object data)
     {
+        if (CustomTagRegistry.TryResolve(key, data, out var customValue))
+            return customValue;
+        
         var isEncounter = data is Encounter;
         var mappedKey = TagAliasResolver.Resolve(key, isEncounter);
 

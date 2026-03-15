@@ -10,6 +10,8 @@ using NativeMeters.Commands;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Color;
+using NativeMeters.Nodes.Configuration.Meter.Search;
+using NativeMeters.Nodes.Configuration.Meter.Tags;
 using NativeMeters.Services;
 using NativeMeters.Services.Internal;
 
@@ -34,6 +36,9 @@ public class Plugin : IDalamudPlugin
             : System.MeterService;
 
         System.DtrService = new DtrService();
+
+        System.TagSearchAddon = new TagSearchAddon { Title = "Search Tags", InternalName = "NativeMeters_TagPicker", Size = new Vector2(480, 600) };
+        System.IconSearchAddon = new IconSearchAddon { Title = "Select Icon", InternalName = "NativeMeters_IconPicker" };
 
         System.AddonConfigurationWindow = new AddonConfigurationWindow
         {

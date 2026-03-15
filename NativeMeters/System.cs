@@ -2,6 +2,8 @@ using KamiToolKit.Overlay;
 using NativeMeters.Addons;
 using NativeMeters.Commands;
 using NativeMeters.Configuration;
+using NativeMeters.Nodes.Configuration.Meter.Search;
+using NativeMeters.Nodes.Configuration.Meter.Tags;
 using NativeMeters.Services;
 using NativeMeters.Services.Internal;
 
@@ -20,4 +22,7 @@ public static class System
     public static OverlayController OverlayController { get; set; } = null!;
     public static OverlayManager OverlayManager { get; set; } = null!;
     public static TestMeterService TestMeterService { get; set; } = null!;
+
+    public static TagSearchAddon TagSearchAddon { get; set; } = null!;
+    public static IconSearchAddon IconSearchAddon { get; set; } = null!;
 }

@@ -31,8 +31,12 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
     public long DamageTaken { get; set; }
     public long HealsTaken { get; set; }
     public long OverHeal { get; set; }
+
     public long MaxHitValue { get; set; }
+    public string MaxHitSkill { get; set; } = "";
+
     public long MaxHealValue { get; set; }
+    public string MaxHealSkill { get; set; } = "";
 
     public DateTime? FirstActionTime { get; set; }
     public DateTime? LastActionTime { get; set; }
@@ -62,7 +66,12 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
                 if (evt.IsCrit) CritHits++;
                 if (evt.IsDirectHit) DirectHits++;
                 if (evt.IsCrit && evt.IsDirectHit) CritDirectHits++;
-                if (evt.Damage > MaxHitValue) MaxHitValue = evt.Damage;
+                if (evt.Damage > MaxHitValue)
+                {
+                    MaxHitValue = evt.Damage;
+                    var actionRow = ActionSheet.GetRowOrDefault(evt.ActionId);
+                    MaxHitSkill = actionRow?.Name.ToString() ?? "Unknown";
+                }
                 UpdateBreakdown(evt, true, now);
                 break;
 
@@ -80,7 +89,12 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
                 OverHeal += overHealAmount;
                 HealCount++;
                 if (evt.IsCrit) CritHeals++;
-                if (evt.Healing > MaxHealValue) MaxHealValue = evt.Healing;
+                if (evt.Healing > MaxHealValue)
+                {
+                    MaxHealValue = evt.Healing;
+                    var actionRow = ActionSheet.GetRowOrDefault(evt.ActionId);
+                    MaxHealSkill = actionRow?.Name.ToString() ?? "Unknown";
+                }
                 UpdateBreakdown(evt, false, now);
                 break;
         }
@@ -205,8 +219,8 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
             Tohit = Swings > 0 ? (Hits * 100.0 / Swings) : 0,
             TOHIT = Swings > 0 ? (Hits * 100.0 / Swings) : 0,
 
-            Maxhit = MaxHitValue,
-            MAXHIT = MaxHitValue,
+            Maxhit = MaxHitValue > 0 ? $"{MaxHitSkill}-{MaxHitValue}" : "",
+            MAXHIT = MaxHitValue > 0 ? MaxHitValue.ToString() : "",
             MaxhitStar = MaxHitValue > 0 ? MaxHitValue.ToString() : "",
             MAXHITStar = MaxHitValue > 0 ? MaxHitValue.ToString() : "",
 
@@ -214,8 +228,9 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
             Heals = HealCount,
             Critheals = CritHeals,
             CrithealPercent = HealCount > 0 ? (CritHeals * 100.0 / HealCount) : 0,
-            Maxheal = MaxHealValue,
-            MAXHEAL = MaxHealValue,
+
+            Maxheal = MaxHealValue > 0 ? $"{MaxHealSkill}-{MaxHealValue}" : "",
+            MAXHEAL = MaxHealValue > 0 ? MaxHealValue.ToString() : "",
 
             Deaths = Deaths,
             Kills = Kills,
