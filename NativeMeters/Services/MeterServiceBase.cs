@@ -105,7 +105,16 @@ public abstract class MeterServiceBase : IMeterService
     }
 
     public virtual Combatant? GetCombatant(string name)
-        => GetViewedCombatData()?.Combatant?.GetValueOrDefault(name);
+    {
+        var combatants = GetViewedCombatData()?.Combatant;
+        if (combatants == null) return null;
+
+        if (combatants.TryGetValue(name, out var combatant))
+            return combatant;
+
+        return combatants.Values.FirstOrDefault(c =>
+            string.Equals(c.Name, name, StringComparison.Ordinal));
+    }
 
     public virtual Encounter? GetEncounter()
         => GetViewedCombatData()?.Encounter;

@@ -274,6 +274,9 @@ public class Combatant : IEquatable<Combatant>
     public int? PrivacyIndex { get; set; }
 
     [JsonIgnore]
+    public ulong ActorId { get; set; }
+
+    [JsonIgnore]
     public List<ActionStatView>? ActionBreakdownList { get; set; }
 
     [JsonIgnore]
