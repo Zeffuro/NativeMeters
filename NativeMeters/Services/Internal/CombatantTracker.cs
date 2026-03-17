@@ -180,7 +180,6 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
             T = "\t",
             Name = Name,
             Job = job,
-            ActorId = ActorId,
             Duration = duration,
             DURATION = seconds,
 

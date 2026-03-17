@@ -105,26 +105,10 @@ public class CombatTracker
             .ToList();
         var totalPartyDamage = playerTrackers.Sum(tracker => tracker.TotalDamage);
 
-        var combatants = new Dictionary<string, Combatant>(StringComparer.Ordinal);
-
-        foreach (var group in playerTrackers.GroupBy(t => t.Name))
-        {
-            if (group.Count() == 1)
-            {
-                var tracker = group.First();
-                combatants[group.Key] = tracker.ToCombatant(duration, totalPartyDamage);
-                continue;
-            }
-
-            foreach (var tracker in group)
-            {
-                var key = $"{tracker.Name}#{tracker.ActorId:X}";
-
-                combatants[key] = tracker.ToCombatant(duration, totalPartyDamage);
-            }
-        }
-
-        return combatants;
+        return playerTrackers.ToDictionary(
+            tracker => tracker.Name,
+            tracker => tracker.ToCombatant(duration, totalPartyDamage)
+        );
     }
 
     public Encounter BuildEncounter(IEnumerable<Combatant> combatants)
