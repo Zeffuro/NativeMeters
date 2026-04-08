@@ -13,6 +13,7 @@ public class SystemConfiguration
 
     public List<MeterSettings> Meters { get; set; } = new();
     public DtrSettings DtrSettings { get; set; } = new();
+    public VisibilitySettings Visibility { get; set; } = new();
 
     public void EnsureInitialized()
     {
@@ -22,5 +23,7 @@ public class SystemConfiguration
             MeterPresets.ApplyDefaultStylish(defaultMeter);
             Meters.Add(defaultMeter);
         }
+
+        ConfigMigrator.MigrateIfNeeded(this);
     }
 }

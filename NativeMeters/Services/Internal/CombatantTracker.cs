@@ -166,6 +166,7 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
         if (evt.Healing > 0) HealsTaken += evt.Healing;
     }
 
+
     public Combatant ToCombatant(TimeSpan duration, long totalPartyDamage)
     {
         var job = JobSheet.GetRowOrDefault(JobId) ?? default;

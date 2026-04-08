@@ -1,4 +1,4 @@
-using KamiToolKit.Premade.Nodes;
+using KamiToolKit.Premade.Node;
 using NativeMeters.Addons;
 
 namespace NativeMeters.Nodes.Configuration.Meter;

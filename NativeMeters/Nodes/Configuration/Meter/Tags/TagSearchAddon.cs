@@ -1,6 +1,6 @@
 using System;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Premade.SearchAddons;
+using KamiToolKit.Premade.Addon.Search;
 using NativeMeters.Tags;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Tags;

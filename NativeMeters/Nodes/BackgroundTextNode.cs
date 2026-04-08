@@ -4,6 +4,7 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Extensions;
 using KamiToolKit.Nodes;
+using KamiToolKit.Premade.Node.Simple;
 using Lumina.Text.ReadOnly;
 
 namespace NativeMeters.Nodes;

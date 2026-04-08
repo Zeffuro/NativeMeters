@@ -1,4 +1,4 @@
-using KamiToolKit.Overlay;
+using KamiToolKit.Overlay.UiOverlay;
 using NativeMeters.Addons;
 using NativeMeters.Commands;
 using NativeMeters.Configuration;

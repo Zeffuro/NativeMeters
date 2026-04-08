@@ -1,8 +1,7 @@
-using System;
 using System.Numerics;
-using KamiToolKit.Classes;
 using KamiToolKit.ContextMenu;
 using KamiToolKit.Nodes;
+using KamiToolKit.Premade.Node.Simple;
 using NativeMeters.Addons;
 using NativeMeters.Configuration;
 

@@ -4,6 +4,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
+using KamiToolKit.Premade.Node;
 using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.Color;

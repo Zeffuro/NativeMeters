@@ -1,6 +1,5 @@
 using System.Numerics;
 using KamiToolKit.Nodes;
-using NativeMeters.Addons;
 using NativeMeters.Configuration;
 using NativeMeters.Nodes.Configuration.Dtr;
 
@@ -16,20 +15,19 @@ public sealed class GeneralScrollingAreaNode : ScrollingListNode
 
         ItemSpacing = 10;
 
-        AddNode(new GeneralConfigurationNode());
-
-        AddNode(new DtrConfigurationNode());
-
-        AddNode(new CheckboxNode
-        {
-            Size = new Vector2(300, 20),
-            IsVisible = true,
-            String = "Debug Mode",
-            IsChecked = config.DebugEnabled,
-            OnClick = isChecked =>
-            {
-                config.DebugEnabled = isChecked;
+        AddNode(
+        [new GeneralConfigurationNode(),
+            new DtrConfigurationNode(),
+            new CheckboxNode {
+                Size = new Vector2(300, 20),
+                IsVisible = true,
+                String = "Debug Mode",
+                IsChecked = config.DebugEnabled,
+                OnClick = isChecked =>
+                {
+                    config.DebugEnabled = isChecked;
+                }
             }
-        });
+        ]);
     }
 }

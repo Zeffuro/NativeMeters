@@ -1,9 +1,8 @@
-using System;
 using System.Numerics;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using KamiToolKit;
-using KamiToolKit.Overlay;
+using KamiToolKit.Overlay.UiOverlay;
 using NativeMeters.Addons;
 using NativeMeters.Clients;
 using NativeMeters.Commands;
@@ -23,6 +22,7 @@ public class Plugin : IDalamudPlugin
     {
         pluginInterface.Create<Service>();
         System.Config = ConfigRepository.LoadOrDefault();
+        ConfigRepository.Save(System.Config);
         ConfigBackup.DoConfigBackup(pluginInterface);
 
         KamiToolKitLibrary.Initialize(pluginInterface);

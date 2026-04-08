@@ -1,6 +1,6 @@
 using System.Numerics;
 using KamiToolKit.Nodes;
-using NativeMeters.Configuration;
+using KamiToolKit.Premade.Node;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Input;
 using NativeMeters.Tags;
@@ -79,34 +79,34 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
         AddNode(1, tagDropdown);
         AddNode(new ResNode { Height = 10 });
 
-        var showDisconnectedCheckbox = new CheckboxNode
-        {
-            Size = Size with { Y = 20 },
-            String = "Show when disconnected",
-            IsChecked = settings.ShowWhenDisconnected,
-            OnClick = isChecked =>
+        AddNode(1, [
+            new CheckboxNode
             {
-                settings.ShowWhenDisconnected = isChecked;
-                ConfigRepository.Save(System.Config);
-            }
-        };
-        AddNode(1, showDisconnectedCheckbox);
+                Size = Size with { Y = 20 },
+                String = "Show when disconnected",
+                IsChecked = settings.ShowWhenDisconnected,
+                OnClick = isChecked =>
+                {
+                    settings.ShowWhenDisconnected = isChecked;
+                    ConfigRepository.Save(System.Config);
+                }
+            },
+            new LabeledTextInputNode
+            {
+                LabelText = "Disconnect Text:",
+                Size = new Vector2(400, 28),
+                Text = settings.DisconnectedText,
+                OnInputComplete = text =>
+                {
+                    settings.DisconnectedText = text.ToString();
+                    ConfigRepository.Save(System.Config);
+                }
+            },
+        ]);
 
-        var disconnectTextInput = new LabeledTextInputNode
-        {
-            LabelText = "Disconnect Text:",
-            Size = new Vector2(400, 28),
-            Text = settings.DisconnectedText,
-            OnInputComplete = text =>
-            {
-                settings.DisconnectedText = text.ToString();
-                ConfigRepository.Save(System.Config);
-            }
-        };
-        AddNode(1, disconnectTextInput);
         AddNode(new ResNode { Height = 10 });
 
-        var clickToOpenCheckbox = new CheckboxNode
+        AddNode(1, new CheckboxNode
         {
             Size = Size with { Y = 20 },
             String = "Click to open config window",
@@ -116,8 +116,7 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
                 settings.ClickToOpenConfig = isChecked;
                 ConfigRepository.Save(System.Config);
             }
-        };
-        AddNode(1, clickToOpenCheckbox);
+        });
 
         SubtractTab(1);
     }

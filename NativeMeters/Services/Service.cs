@@ -1,7 +1,7 @@
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using KamiToolKit;
 
 namespace NativeMeters.Services;
 
@@ -19,6 +19,7 @@ public class Service
     [PluginService] public static IKeyState KeyState { get; private set; } = null!;
     [PluginService] public static INotificationManager NotificationManager { get; private set; } = null!;
     [PluginService] public static IObjectTable ObjectTable { get; private set; } = null!;
+    [PluginService] public static IPartyList PartyList { get; private set; } = null!;
     [PluginService] public static IPluginLog Logger { get; private set; } = null!;
     [PluginService] public static ITargetManager TargetManager { get; private set; } = null!;
 }

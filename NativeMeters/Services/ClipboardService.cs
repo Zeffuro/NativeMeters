@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Text;
 using Dalamud.Bindings.ImGui;
-using Lumina.Text.ReadOnly;
 using NativeMeters.Data.Stats;
 using NativeMeters.Extensions;
 

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Extensions;
 using KamiToolKit.Nodes;
+using KamiToolKit.Premade.Node;
+using KamiToolKit.Premade.Node.Simple;
 using Lumina.Text.ReadOnly;
 using NativeMeters.Extensions;
 

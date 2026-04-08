@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiToolKit.ContextMenu;
@@ -6,7 +5,6 @@ using KamiToolKit.Enums;
 using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
 using NativeMeters.Extensions;
-using NativeMeters.Nodes.LayoutNodes;
 using NativeMeters.Services;
 using NativeMeters.Utilities;
 using ContextMenu = KamiToolKit.ContextMenu.ContextMenu;

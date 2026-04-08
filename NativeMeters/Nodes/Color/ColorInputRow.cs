@@ -3,8 +3,8 @@ using System.Numerics;
 using AetherBags.Nodes.Color;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Addons;
-using KamiToolKit.Premade.Color;
+using KamiToolKit.Premade.Addon;
+using KamiToolKit.Premade.Node;
 
 namespace NativeMeters.Nodes.Color;
 

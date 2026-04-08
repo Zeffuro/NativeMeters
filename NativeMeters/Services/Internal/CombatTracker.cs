@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Game.ClientState.Conditions;
-using Lumina.Excel.Sheets;
 using NativeMeters.Data.Stats;
 using NativeMeters.Models;
-using NativeMeters.Models.Breakdown;
 using NativeMeters.Models.Internal;
 
 namespace NativeMeters.Services.Internal;
@@ -13,6 +11,8 @@ namespace NativeMeters.Services.Internal;
 public class CombatTracker
 {
     private readonly Dictionary<ulong, CombatantTracker> trackers = new();
+    private readonly Dictionary<string, ulong> nameToActorId = new();
+    private readonly Dictionary<ulong, ulong> actorIdAliases = new();
     private EncounterState encounterState = new();
     private readonly Dictionary<string, long> enemyDamageTaken = new();
 
@@ -91,6 +91,9 @@ public class CombatTracker
 
     public void HandleDeath(ulong actorId, string actorName)
     {
+        if (actorIdAliases.TryGetValue(actorId, out var canonical))
+            actorId = canonical;
+
         if (trackers.TryGetValue(actorId, out var tracker))
         {
             tracker.Deaths++;
@@ -105,10 +108,16 @@ public class CombatTracker
             .ToList();
         var totalPartyDamage = playerTrackers.Sum(tracker => tracker.TotalDamage);
 
-        return playerTrackers.ToDictionary(
-            tracker => tracker.Name,
-            tracker => tracker.ToCombatant(duration, totalPartyDamage)
-        );
+        var result = new Dictionary<string, Combatant>();
+        foreach (var tracker in playerTrackers)
+        {
+            if (result.TryGetValue(tracker.Name, out var existing) && existing.Damage >= tracker.TotalDamage)
+                continue;
+
+            result[tracker.Name] = tracker.ToCombatant(duration, totalPartyDamage);
+        }
+
+        return result;
     }
 
     public Encounter BuildEncounter(IEnumerable<Combatant> combatants)
@@ -233,25 +242,41 @@ public class CombatTracker
     public void Reset()
     {
         trackers.Clear();
+        nameToActorId.Clear();
+        actorIdAliases.Clear();
         enemyDamageTaken.Clear();
         encounterState = new EncounterState();
     }
 
     private CombatantTracker GetOrCreateTracker(ulong actorId, string name, uint jobId)
     {
-        if (!trackers.TryGetValue(actorId, out var tracker))
-        {
-            tracker = new CombatantTracker(actorId, name, jobId);
-            trackers[actorId] = tracker;
-        }
-        else
+        if (actorIdAliases.TryGetValue(actorId, out var canonical))
+            actorId = canonical;
+
+        if (trackers.TryGetValue(actorId, out var tracker))
         {
             if (jobId != 0 && tracker.JobId != jobId)
                 tracker.JobId = jobId;
 
             if (tracker.Name != name)
                 tracker.Name = name;
+
+            return tracker;
         }
+
+        if (nameToActorId.TryGetValue(name, out var existingId) && trackers.TryGetValue(existingId, out tracker))
+        {
+            actorIdAliases[actorId] = existingId;
+
+            if (jobId != 0 && tracker.JobId != jobId)
+                tracker.JobId = jobId;
+
+            return tracker;
+        }
+
+        tracker = new CombatantTracker(actorId, name, jobId);
+        trackers[actorId] = tracker;
+        nameToActorId[name] = actorId;
 
         return tracker;
     }

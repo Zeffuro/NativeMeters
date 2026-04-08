@@ -1,6 +1,8 @@
 using System;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
+using KamiToolKit.Premade.Node;
+using KamiToolKit.Premade.Node.Simple;
 using Lumina.Text.ReadOnly;
 
 namespace NativeMeters.Nodes.Input;

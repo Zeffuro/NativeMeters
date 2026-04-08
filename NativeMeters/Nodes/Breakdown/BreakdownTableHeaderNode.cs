@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
+using KamiToolKit.Premade.Node.Simple;
 using NativeMeters.Models.Breakdown;
 
 namespace NativeMeters.Nodes.Breakdown;

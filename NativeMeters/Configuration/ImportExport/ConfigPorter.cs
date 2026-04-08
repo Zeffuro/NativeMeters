@@ -1,5 +1,4 @@
 using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.ImGuiNotification;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Extensions;
 using NativeMeters.Services;

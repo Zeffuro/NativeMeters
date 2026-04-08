@@ -4,7 +4,6 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Dalamud.Game.Text;
-using Dalamud.Interface.ImGuiNotification;
 using NativeMeters.Clients;
 using NativeMeters.Configuration;
 using NativeMeters.Extensions;

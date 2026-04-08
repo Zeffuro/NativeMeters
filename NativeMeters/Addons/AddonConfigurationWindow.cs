@@ -6,6 +6,7 @@ using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Configuration.Connection;
 using NativeMeters.Nodes.Configuration.General;
 using NativeMeters.Nodes.Configuration.Meter;
+using NativeMeters.Nodes.Configuration.Visibility;
 
 namespace NativeMeters.Addons;
 
@@ -17,6 +18,7 @@ public class AddonConfigurationWindow : NativeAddon
     private ConnectionScrollingAreaNode connectionScrollingAreaNode = null!;
     private MeterManagementNode meterManagementNode = null!;
     private ColorConfigurationNode colorConfigurationNode = null!;
+    private VisibilityScrollingAreaNode visibilityScrollingAreaNode = null!;
 
     private readonly List<NodeBase> tabContent = new();
 
@@ -67,15 +69,25 @@ public class AddonConfigurationWindow : NativeAddon
         };
         colorConfigurationNode.AttachNode(this);
 
+        visibilityScrollingAreaNode = new VisibilityScrollingAreaNode
+        {
+            Position = ContentStartPosition with { Y = tabContentY },
+            Size = ContentSize with { Y = tabContentHeight },
+            IsVisible = false,
+        };
+        visibilityScrollingAreaNode.AttachNode(this);
+
         tabContent.Add(generalScrollingAreaNode);
         tabContent.Add(connectionScrollingAreaNode);
         tabContent.Add(meterManagementNode);
         tabContent.Add(colorConfigurationNode);
+        tabContent.Add(visibilityScrollingAreaNode);
 
         tabBarNode.AddTab("General", () => SwitchTab(0));
         tabBarNode.AddTab("Connection", () => SwitchTab(1));
         tabBarNode.AddTab("Meters", () => SwitchTab(2));
         tabBarNode.AddTab("Colors", () => SwitchTab(3));
+        tabBarNode.AddTab("Visibility", () => SwitchTab(4));
 
         base.OnSetup(addon);
     }

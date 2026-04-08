@@ -3,6 +3,7 @@ using System.Linq;
 using System.Numerics;
 using KamiToolKit;
 using KamiToolKit.Nodes;
+using KamiToolKit.Premade.Node.Simple;
 using NativeMeters.Configuration;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Components;

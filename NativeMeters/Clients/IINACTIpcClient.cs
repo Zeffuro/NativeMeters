@@ -1,7 +1,6 @@
 using System;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Dalamud.Interface.ImGuiNotification;
 using NativeMeters.Models;
 using NativeMeters.Services;
 using Newtonsoft.Json.Linq;

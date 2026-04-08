@@ -1,9 +1,9 @@
-using KamiToolKit.Premade.GenericListItemNodes;
+using KamiToolKit.Premade.Node.ListItem;
 using NativeMeters.Addons;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
-public class MeterListItemNode : GenericListItemNode<MeterWrapper>
+public class MeterListItemNode : IconListItemNode<MeterWrapper>
 {
     protected override uint GetIconId(MeterWrapper data) => data.GetIconId() ?? 0;
 

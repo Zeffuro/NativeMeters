@@ -4,7 +4,7 @@ using System.Linq;
 using System.Numerics;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using KamiToolKit.Overlay;
+using KamiToolKit.Overlay.UiOverlay;
 using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
 using NativeMeters.Models;
@@ -17,7 +17,7 @@ public record CombatantRowData(Combatant Combatant, MeterSettings Settings);
 public sealed class MeterListLayoutNode : OverlayNode
 {
     public override OverlayLayer OverlayLayer => OverlayLayer.BehindUserInterface;
-    public override bool HideWithNativeUi => System.Config.General.HideWithNativeUi;
+    public override bool HideWithNativeUi => System.Config.Visibility.HideWithNativeUi;
 
     private IMeterService? hookedService;
     private bool isDisposing;
@@ -169,7 +169,8 @@ public sealed class MeterListLayoutNode : OverlayNode
 
         bool hasActiveData = System.ActiveMeterService.HasCombatData();
         bool isEditing = !MeterSettings.IsLocked || System.Config.General.PreviewEnabled;
-        IsVisible = MeterSettings.IsEnabled && (hasActiveData || isEditing || MeterSettings.IsCollapsed);
+        bool hiddenByVisibility = !isEditing && VisibilityEvaluator.ShouldHide();
+        IsVisible = MeterSettings.IsEnabled && !hiddenByVisibility && (hasActiveData || isEditing || MeterSettings.IsCollapsed);
         EnableMoving = !MeterSettings.IsLocked;
         EnableResizing = !MeterSettings.IsLocked && !MeterSettings.IsCollapsed;
 
