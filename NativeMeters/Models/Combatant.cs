@@ -93,9 +93,9 @@ public class Combatant : IEquatable<Combatant>
     [JsonConverter(typeof(StringValueConverter<double>))]
     public double TOHIT { get; set; }
     [JsonPropertyName("maxhit")]
-    public string Maxhit { get; set; }
+    public string Maxhit { get; set; } = null!;
     [JsonPropertyName("MAXHIT")]
-    public string MAXHIT { get; set; }
+    public string MAXHIT { get; set; } = null!;
     [JsonPropertyName("maxhit-*")]
     public string MaxhitStar { get; set; } = null!;
     [JsonPropertyName("MAXHIT-*")]

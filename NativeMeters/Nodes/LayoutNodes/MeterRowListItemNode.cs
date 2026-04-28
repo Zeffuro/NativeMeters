@@ -10,7 +10,7 @@ using NativeMeters.Rendering;
 
 namespace NativeMeters.Nodes.LayoutNodes;
 
-public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
+public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IListItemNode
 {
     private readonly DynamicNodeList dynamicNodeList;
 
@@ -22,7 +22,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>
     private MeterSettings? MeterSettings => ItemData?.Settings ?? cachedSettings;
     private Combatant? Combatant => ItemData?.Combatant;
 
-    public override float ItemHeight => MeterSettings?.RowHeight ?? HeightHint;
+    public static float ItemHeight => HeightHint;
 
     public static float HeightHint = 36.0f;
 

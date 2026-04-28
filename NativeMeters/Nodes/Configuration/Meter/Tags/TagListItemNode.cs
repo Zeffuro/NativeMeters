@@ -6,9 +6,9 @@ using NativeMeters.Tags;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Tags;
 
-public class TagListItemNode : ListItemNode<TagInfo>
+public class TagListItemNode : ListItemNode<TagInfo>, IListItemNode
 {
-    public override float ItemHeight => 46.0f;
+    public static float ItemHeight => 46.0f;
 
     private readonly TextNode tagTextNode;
     private readonly TextNode exampleTextNode;

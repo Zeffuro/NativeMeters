@@ -5,9 +5,9 @@ using KamiToolKit.Nodes;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Search;
 
-public class IconListItemNode : ListItemNode<uint>
+public class IconListItemNode : ListItemNode<uint>, IListItemNode
 {
-    public override float ItemHeight => 40.0f;
+    public static float ItemHeight => 40.0f;
 
     private readonly IconImageNode iconNode;
     private readonly TextNode idTextNode;

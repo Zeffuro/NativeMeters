@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Node;
 using KamiToolKit.Premade.Node.Simple;
@@ -32,8 +33,8 @@ public class MeterManagementNode : SimpleComponentNode
             SelectionChanged = OnOptionChanged,
             AddNewEntry = OnAddNewMeter,
             RemoveEntry = OnRemoveMeter,
-            SortOptions = [ "Alphabetical" ],
-            ItemComparer = (left, right, mode) => left.Compare(right, mode),
+            SortOptions = [ DefaultSortOptions.Alphabetical ],
+            ItemComparer = (left, right, mode) => left.Compare(right),
             IsSearchMatch = (data, search) => data.GetLabel().Contains(search, StringComparison.OrdinalIgnoreCase),
         };
         selectionListNode.AttachNode(this);

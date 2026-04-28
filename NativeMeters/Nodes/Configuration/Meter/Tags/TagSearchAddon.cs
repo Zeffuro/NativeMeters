@@ -5,27 +5,33 @@ using NativeMeters.Tags;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Tags;
 
+public enum TagSortOption
+{
+    Category,
+    Name,
+}
+
 public class TagSearchAddon : BaseSearchAddon<TagInfo, TagListItemNode>
 {
     public Action<string>? OnInsertClicked;
 
     public TagSearchAddon()
     {
-        SortingOptions = ["Category", "Name"];
+        SortingOptions = [TagSortOption.Category, TagSortOption.Name];
         ItemSpacing = 2.0f;
     }
 
-    protected override unsafe void OnSetup(AtkUnitBase* addon)
+    protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
-        base.OnSetup(addon);
+        base.OnSetup(addon, atkValueSpan);
         SearchOptions = TagRegistry.GetAllTags();
     }
 
-    protected override int Comparer(TagInfo left, TagInfo right, string sortingString, bool reversed)
+    protected override int Comparer(TagInfo left, TagInfo right, Enum sortingMode, bool reversed)
     {
-        int result = sortingString switch
+        int result = sortingMode switch
         {
-            "Category" => string.Compare(left.Category, right.Category, StringComparison.OrdinalIgnoreCase),
+            TagSortOption.Category => string.Compare(left.Category, right.Category, StringComparison.OrdinalIgnoreCase),
             _ => string.Compare(left.Name, right.Name, StringComparison.OrdinalIgnoreCase)
         };
 

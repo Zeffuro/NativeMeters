@@ -116,13 +116,13 @@ public class Encounter
     [JsonConverter(typeof(StringValueConverter<double>))]
     public double CrithealPercent { get; set; }
     [JsonPropertyName("maxheal")]
-    public string Maxheal { get; set; }
+    public string Maxheal { get; set; } = null!;
     [JsonPropertyName("MAXHEAL")]
-    public string MAXHEAL { get; set; }
+    public string MAXHEAL { get; set; } = null!;
     [JsonPropertyName("maxhealward")]
-    public string Maxhealward { get; set; }
+    public string Maxhealward { get; set; } = null!;
     [JsonPropertyName("MAXHEALWARD")]
-    public string MAXHEALWARD { get; set; }
+    public string MAXHEALWARD { get; set; } = null!;
     [JsonPropertyName("maxheal-*")]
     [JsonConverter(typeof(StringValueConverter<double>))]
     public double MaxhealStar { get; set; }

@@ -19,7 +19,7 @@ public class MeterWrapper(MeterSettings meterSettings)
 
     public uint? GetIconId() => 0;
 
-    public int Compare(MeterWrapper other, string sortingMode)
+    public int Compare(MeterWrapper other)
     {
         return string.Compare(MeterSettings.Name, other.MeterSettings.Name, StringComparison.OrdinalIgnoreCase);
     }

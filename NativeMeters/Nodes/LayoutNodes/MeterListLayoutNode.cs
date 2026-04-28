@@ -34,7 +34,7 @@ public sealed class MeterListLayoutNode : OverlayNode
     private MeterBackgroundNode? backgroundNode;
     private StaticComponentContainerNode? headerContainer;
     private StaticComponentContainerNode? footerContainer;
-    private ListNode<CombatantRowData, MeterRowListItemNode> listNode;
+    private ListNode<CombatantRowData, MeterRowListItemNode> listNode = null!;
 
     public void UpdateSettings() => InitializeFromSettings();
 

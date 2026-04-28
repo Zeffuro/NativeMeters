@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit;
@@ -22,7 +23,7 @@ public class AddonConfigurationWindow : NativeAddon
 
     private readonly List<NodeBase> tabContent = new();
 
-    protected override unsafe void OnSetup(AtkUnitBase* addon)
+    protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
         var tabContentY = ContentStartPosition.Y + 40;
         var tabContentHeight = ContentSize.Y - 40;
@@ -89,7 +90,7 @@ public class AddonConfigurationWindow : NativeAddon
         tabBarNode.AddTab("Colors", () => SwitchTab(3));
         tabBarNode.AddTab("Visibility", () => SwitchTab(4));
 
-        base.OnSetup(addon);
+        base.OnSetup(addon, atkValueSpan);
     }
 
     private void SwitchTab(int index)

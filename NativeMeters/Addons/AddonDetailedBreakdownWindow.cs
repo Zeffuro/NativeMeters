@@ -31,7 +31,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
     private readonly BreakdownTableLayout tableLayout = new();
 
-    protected override unsafe void OnSetup(AtkUnitBase* addon)
+    protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
         var contentY = ContentStartPosition.Y;
         var contentW = ContentSize.X;
@@ -115,7 +115,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         RefreshData();
 
-        base.OnSetup(addon);
+        base.OnSetup(addon, atkValueSpan);
     }
 
     public void ReSubscribeToEvents()
