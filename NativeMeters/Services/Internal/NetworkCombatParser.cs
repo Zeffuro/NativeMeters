@@ -495,7 +495,7 @@ public unsafe class NetworkCombatParser : IDisposable
 
     private static bool IsCompanionNpc(IGameObject obj)
     {
-        return obj is IBattleNpc { BattleNpcKind: BattleNpcSubKind.NpcPartyMember or BattleNpcSubKind.Chocobo };
+        return obj is IBattleNpc { BattleNpcKind: BattleNpcSubKind.NpcPartyMember or BattleNpcSubKind.Buddy };
     }
 
     public void Dispose()

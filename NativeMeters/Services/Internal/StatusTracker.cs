@@ -21,7 +21,7 @@ public unsafe class StatusTracker
             if (status.StatusId == 0 || status.SourceObject == 0) continue;
 
             var sourceObj = Service.ObjectTable.SearchById(status.SourceObject);
-            if (sourceObj != null && sourceObj.ObjectKind == ObjectKind.Player)
+            if (sourceObj != null && sourceObj.ObjectKind == ObjectKind.Pc)
             {
                 if (!sources.Contains(status.SourceObject))
                     sources.Add(status.SourceObject);
