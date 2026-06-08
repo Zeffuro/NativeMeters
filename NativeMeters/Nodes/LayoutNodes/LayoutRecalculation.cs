@@ -16,7 +16,6 @@ internal static class LayoutRecalculation
 
         if (node is ILayoutListNode layoutNode)
         {
-            // First pass lets KTK assign width-dependent child bounds.
             layoutNode.RecalculateLayout();
 
             foreach (var childNode in layoutNode.Nodes)
@@ -24,7 +23,6 @@ internal static class LayoutRecalculation
                 RecalculateBottomUp(childNode);
             }
 
-            // Second pass consumes final child heights after nested content expanded.
             layoutNode.RecalculateLayout();
         }
     }
