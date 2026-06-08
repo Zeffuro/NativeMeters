@@ -1,6 +1,7 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Search;

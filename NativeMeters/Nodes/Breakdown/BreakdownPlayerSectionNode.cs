@@ -30,7 +30,7 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
         HeaderHeight = 46f;
         FontSize = 14;
         NestingIndent = 0.0f;
-        CollapsibleContent.ItemVerticalSpacing = 1.0f;
+        CollapsibleContent.ItemSpacing = 1.0f;
 
         LabelNode.X = 52.0f;
         LabelNode.Height = 24f;

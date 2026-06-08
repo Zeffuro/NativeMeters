@@ -35,7 +35,7 @@ public sealed class ComponentSettingsNode : CategoryNode
             typographyPanel.LoadSettings(settings);
             visualsPanel.LoadSettings(settings);
 
-            ContentNode.RecalculateLayout();
+            LayoutRecalculation.RecalculateBottomUp(ContentNode);
             RecalculateLayout();
         }
     }
@@ -52,21 +52,21 @@ public sealed class ComponentSettingsNode : CategoryNode
             Width = Width,
             OnSettingsChanged = NotifyChanged,
             OnNameChanged = name => { if (settings != null) String = $"{settings.Type} - {name}"; },
-            OnLayoutChanged = RefreshLayout
+            OnLayoutChanged = RefreshComponentLayout
         };
 
         typographyPanel = new ComponentTypographyPanel
         {
             Width = Width,
             OnSettingsChanged = NotifyChanged,
-            OnLayoutChanged = RefreshLayout
+            OnLayoutChanged = RefreshComponentLayout
         };
 
         visualsPanel = new ComponentVisualsPanel
         {
             Width = Width,
             OnSettingsChanged = NotifyChanged,
-            OnLayoutChanged = RefreshLayout
+            OnLayoutChanged = RefreshComponentLayout
         };
 
         buttonRow = new HorizontalListNode {
@@ -104,9 +104,9 @@ public sealed class ComponentSettingsNode : CategoryNode
         OnChanged?.Invoke();
     }
 
-    private void RefreshLayout()
+    private void RefreshComponentLayout()
     {
-        ContentNode.RecalculateLayout();
+        LayoutRecalculation.RecalculateBottomUp(ContentNode);
         RecalculateLayout();
         OnToggle?.Invoke();
     }

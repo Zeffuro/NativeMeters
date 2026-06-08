@@ -1,6 +1,5 @@
 using System.Numerics;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Models;
@@ -14,7 +13,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
     {
         GeneralSettings config = System.Config.General;
 
-        ItemVerticalSpacing = 2;
+        ItemSpacing = 2;
 
         AddNode(new CategoryTextNode
         {
@@ -189,5 +188,6 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
         ]);
 
         SubtractTab(1);
+        RecalculateLayout();
     }
 }

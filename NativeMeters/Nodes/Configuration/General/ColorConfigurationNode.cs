@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Linq;
 using KamiToolKit.Nodes;
 using NativeMeters.Nodes.Color;
+using NativeMeters.Nodes.Configuration;
 using NativeMeters.Nodes.LayoutNodes;
 using NativeMeters.Services;
 using Lumina.Excel.Sheets;
@@ -11,22 +12,27 @@ using NativeMeters.Models;
 
 namespace NativeMeters.Nodes.Configuration.General;
 
-public sealed class ColorConfigurationNode : ScrollingListNode
+public sealed class ColorConfigurationNode : ScrollingNode<VerticalListNode>
 {
+    private const int FirstContentNavIndex = 6;
+
     private readonly CategoryNode roleCategory;
     private readonly CategoryNode jobCategory;
+
+    public int TabBarNavIndex { get; set; } = 4;
 
     public ColorConfigurationNode()
     {
         var config = System.Config.General;
-        ItemSpacing = 10;
+        ContentNode.ItemSpacing = 10;
+        ContentNode.FitContents = true;
 
         roleCategory = new CategoryNode
         {
             String = "Role Colors",
             IsCollapsed = false,
             HeaderHeight = 28,
-            OnToggle = RecalculateLayout
+            OnToggle = RecalculateSizes
         };
         roleCategory.AddTab();
 
@@ -68,7 +74,7 @@ public sealed class ColorConfigurationNode : ScrollingListNode
             String = "Job Colors",
             IsCollapsed = false,
             HeaderHeight = 28,
-            OnToggle = RecalculateLayout
+            OnToggle = RecalculateSizes
         };
         jobCategory.AddTab();
 
@@ -106,9 +112,9 @@ public sealed class ColorConfigurationNode : ScrollingListNode
             jobCategory.AddNode(jobRow);
         }
 
-        AddNode([roleCategory, jobCategory]);
+        ContentNode.AddNode([roleCategory, jobCategory]);
 
-        RecalculateLayout();
+        RecalculateConfigurationLayout();
     }
 
     private static int GetJobPriority(ClassJob job) {
@@ -127,8 +133,18 @@ public sealed class ColorConfigurationNode : ScrollingListNode
         base.OnSizeChanged();
 
         float listWidth = Math.Max(0, Width - 16.0f);
+        ContentNode.Width = listWidth;
 
         if (roleCategory != null) roleCategory.Width = listWidth;
         if (jobCategory != null) jobCategory.Width = listWidth;
+
+        RecalculateConfigurationLayout();
+    }
+
+    private void RecalculateConfigurationLayout()
+    {
+        LayoutRecalculation.RecalculateBottomUp(ContentNode);
+        LayoutRecalculation.UpdateScrollParams(this);
+        ConfigurationNavigation.Apply(ContentNode, FirstContentNavIndex, TabBarNavIndex, TabBarNavIndex);
     }
 }

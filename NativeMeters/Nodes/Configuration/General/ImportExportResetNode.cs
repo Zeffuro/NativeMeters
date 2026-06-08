@@ -63,6 +63,7 @@ public sealed class ImportExportResetNode : HorizontalListNode
 
         ConfigPorter.TryImportConfigFromClipboard();
         System.AddonConfigurationWindow.Close();
+        System.OverlayManager.Setup();
     }
 
     private static void ExportConfig() => ConfigPorter.TryExportConfigToClipboard(System.Config);

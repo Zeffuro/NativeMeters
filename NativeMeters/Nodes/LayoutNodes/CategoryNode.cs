@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using Lumina.Text.ReadOnly;
 
 namespace NativeMeters.Nodes.LayoutNodes;
@@ -15,12 +15,14 @@ public class CategoryNode : VerticalListNode
     protected readonly NineGridNode BackgroundNode;
     protected readonly ImageNode ArrowNode;
     protected readonly TextNode LabelNode;
-    protected new readonly CollisionNode CollisionNode;
+    protected readonly CollisionNode CollisionNode;
     protected readonly TabbedVerticalListNode ContentNode;
     protected readonly SimpleComponentNode HeaderNode;
 
     private bool isCollapsed = true;
     private float headerHeight = 28.0f;
+    private float nestingIndent;
+    private float contentIndent = 18.0f;
 
     public Action? OnToggle;
 
@@ -69,13 +71,16 @@ public class CategoryNode : VerticalListNode
 
     public float NestingIndent
     {
-        get;
+        get => nestingIndent;
         set
         {
-            field = value;
+            nestingIndent = value;
+            contentIndent = value + 10.0f;
+
             ArrowNode.X = value + 4.0f;
             LabelNode.X = value + 23.0f;
-            ContentNode.X = value + 10.0f;
+            ApplyContentBounds();
+            RecalculateLayout();
         }
     }
 
@@ -123,14 +128,13 @@ public class CategoryNode : VerticalListNode
         };
         CollisionNode.AddEvent(AtkEventType.MouseClick, () => {
             IsCollapsed = !IsCollapsed;
-            OnToggle?.Invoke();
         });
         CollisionNode.AttachNode(HeaderNode);
 
         ContentNode = new TabbedVerticalListNode {
             IsVisible = false,
             X = 18.0f,
-            ItemVerticalSpacing = 4.0f,
+            ItemSpacing = 4.0f,
             TabSize = 18.0f,
             FitWidth = true,
         };
@@ -146,7 +150,7 @@ public class CategoryNode : VerticalListNode
 
         if (!isCollapsed)
         {
-            ContentNode.Width = Math.Max(0, Width - ContentNode.X);
+            ApplyContentBounds();
             ContentNode.RecalculateLayout();
         }
 
@@ -154,21 +158,75 @@ public class CategoryNode : VerticalListNode
         OnToggle?.Invoke();
     }
 
-    public void AddTab(int tabAmount = 1) => ContentNode.AddTab(tabAmount);
+    public void RefreshLayout()
+    {
+        ApplyContentBounds();
+        ContentNode.RecalculateLayout();
+        RecalculateLayout();
+        OnToggle?.Invoke();
+    }
 
-    public void SubtractTab(int tabAmount = 1) => ContentNode.SubtractTab(tabAmount);
+    public void AddTab(int tabAmount = 1)
+    {
+        ContentNode.AddTab(tabAmount);
+        RecalculateLayout();
+    }
 
-    public new void AddNode(NodeBase node) => ContentNode.AddNode(node);
+    public void SubtractTab(int tabAmount = 1)
+    {
+        ContentNode.SubtractTab(tabAmount);
+        RecalculateLayout();
+    }
 
-    public new void AddNode(IEnumerable<NodeBase> nodes) => ContentNode.AddNode(nodes);
+    public new void AddNode(NodeBase node)
+    {
+        ContentNode.AddNode(node);
+        RecalculateLayout();
+    }
 
-    public void AddNode(int tabIndex, NodeBase node) => ContentNode.AddNode(tabIndex, node);
+    public new void AddNode(IEnumerable<NodeBase> nodes)
+    {
+        ContentNode.AddNode(nodes);
+        RecalculateLayout();
+    }
 
-    public void AddNode(int tabIndex, IEnumerable<NodeBase> nodes) => ContentNode.AddNode(tabIndex, nodes);
+    public void AddNode(int tabIndex, NodeBase node)
+    {
+        ContentNode.AddNode(tabIndex, node);
+        RecalculateLayout();
+    }
 
-    public new void RemoveNode(NodeBase node) => ContentNode.RemoveNode(node);
+    public void AddNode(int tabIndex, IEnumerable<NodeBase> nodes)
+    {
+        ContentNode.AddNode(tabIndex, nodes);
+        RecalculateLayout();
+    }
 
-    public new void Clear() => ContentNode.Clear();
+    public new void RemoveNode(NodeBase node)
+    {
+        ContentNode.RemoveNode(node);
+        RecalculateLayout();
+    }
+
+    public new void Clear()
+    {
+        ContentNode.Clear();
+        RecalculateLayout();
+    }
+
+    protected override void OnRecalculateLayout()
+    {
+        ApplyContentBounds();
+        base.OnRecalculateLayout();
+    }
+
+    protected override void AdjustNode(NodeBase node)
+    {
+        if (node == ContentNode)
+        {
+            ApplyContentBounds();
+        }
+    }
 
     protected override void OnSizeChanged()
     {
@@ -179,7 +237,13 @@ public class CategoryNode : VerticalListNode
         BackgroundNode.Width = Width;
         LabelNode.Width = Math.Max(0, Width - LabelNode.X);
         CollisionNode.Width = Width;
-        ContentNode.Width = Math.Max(0, Width - ContentNode.X);
+        ApplyContentBounds();
+    }
+
+    private void ApplyContentBounds()
+    {
+        ContentNode.X = contentIndent;
+        ContentNode.Width = Math.Max(0.0f, Width - contentIndent);
     }
 
     public ReadOnlySeString String { get => LabelNode.String; set => LabelNode.String = value; }

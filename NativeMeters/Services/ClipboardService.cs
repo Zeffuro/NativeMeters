@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
 using System.Text;
-using Dalamud.Bindings.ImGui;
+using FFXIVClientStructs.FFXIV.Client.System.String;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using NativeMeters.Data.Stats;
 using NativeMeters.Extensions;
 
@@ -9,7 +10,7 @@ namespace NativeMeters.Services;
 
 public static class ClipboardService
 {
-    public static void CopyEncounterSummary()
+    public static unsafe void CopyEncounterSummary()
     {
         try
         {
@@ -42,24 +43,25 @@ public static class ClipboardService
             sb.AppendLine();
             sb.AppendLine($"Deaths: {encounter.Deaths} | Raid DPS: {encounter.ENCDPS:N0}");
 
-            var text = sb.ToString();
-
-            Service.Framework.RunOnFrameworkThread(() =>
-            {
-                try
-                {
-                    ImGui.SetClipboardText(text);
-                    Service.NotificationManager.Success("Encounter copied to clipboard!");
-                }
-                catch (Exception)
-                {
-                    Service.NotificationManager.Error("Failed to copy to clipboard.");
-                }
-            });
+            SetClipboardText(sb.ToString());
+            Service.NotificationManager.Success("Encounter copied to clipboard!");
         }
         catch (Exception)
         {
             Service.NotificationManager.Error("Failed to copy encounter summary");
         }
+    }
+
+    public static unsafe string GetClipboardText()
+    {
+        return AtkStage.Instance()->AtkInputManager->TextInput->ClipboardData.GetSystemClipboardText()->ToString();
+    }
+
+    public static unsafe void SetClipboardText(string text)
+    {
+        using var clipboardString = new Utf8String(text);
+        using var clipboardOutput = new Utf8String();
+
+        AtkStage.Instance()->AtkInputManager->TextInput->ClipboardData.WriteToSystemClipboard(&clipboardString, &clipboardOutput);
     }
 }

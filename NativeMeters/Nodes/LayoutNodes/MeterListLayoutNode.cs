@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using KamiToolKit.Overlay.UiOverlay;
+using KamiToolKit.UiOverlay;
 using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
 using NativeMeters.Models;
@@ -120,20 +121,17 @@ public sealed class MeterListLayoutNode : OverlayNode
 
         MeterRowListItemNode.HeightHint = MeterSettings.RowHeight;
 
-        // Prebuild settings, don't think this is needed anymore since the slowdown was from the websocket initialization.
-        //MeterRowListItemNode.PrebuildSettings = MeterSettings;
-
         listNode = new ListNode<CombatantRowData, MeterRowListItemNode> {
             ItemSpacing = MeterSettings.RowSpacing,
-            OptionsList = []
+            OptionsList = [],
         };
 
         MeterRowListItemNode.PrebuildSettings = null;
 
         if (MeterSettings.IsClickthrough)
         {
-            DisableCollisionNode = true;
-            listNode.DisableCollisionNode = true;
+            listNode.RemoveEvent(AtkEventType.MouseWheel);
+            listNode.RemoveNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision);
         }
 
         listNode.ScrollBarNode.IsVisible = false;

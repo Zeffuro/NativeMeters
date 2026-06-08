@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
+using System.Threading.Tasks;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Configuration.Connection;
@@ -13,6 +15,14 @@ namespace NativeMeters.Addons;
 
 public class AddonConfigurationWindow : NativeAddon
 {
+    private readonly AddMeterDialogAddon addMeterDialog = new()
+    {
+        InternalName = "NativeMetersAddMeter",
+        Title = "Add Meter",
+        Size = new Vector2(440.0f, 208.0f),
+        RememberClosePosition = false,
+    };
+
     private TabBarNode tabBarNode = null!;
 
     private GeneralScrollingAreaNode generalScrollingAreaNode = null!;
@@ -34,7 +44,9 @@ public class AddonConfigurationWindow : NativeAddon
         {
             Position = ContentStartPosition,
             Size = ContentSize with { Y = 24 },
-            IsVisible = true
+            IsVisible = true,
+            NavIndex = 1,
+            NavDown = 6,
         };
         tabBarNode.AttachNode(this);
 
@@ -54,7 +66,7 @@ public class AddonConfigurationWindow : NativeAddon
         };
         connectionScrollingAreaNode.AttachNode(this);
 
-        meterManagementNode = new MeterManagementNode
+        meterManagementNode = new MeterManagementNode(addMeterDialog)
         {
             Position = ContentStartPosition with { Y = tabContentY },
             Size = ContentSize with { Y = tabContentHeight },
@@ -102,8 +114,24 @@ public class AddonConfigurationWindow : NativeAddon
     protected override unsafe void OnFinalize(AtkUnitBase* addon)
     {
         System.Config.General.PreviewEnabled = false;
+        addMeterDialog.Close();
+        addMeterDialog.OnMeterCreated = null;
 
         ConfigRepository.Save(System.Config);
         base.OnFinalize(addon);
+    }
+
+    public override void Dispose()
+    {
+        addMeterDialog.OnMeterCreated = null;
+        addMeterDialog.Dispose();
+        base.Dispose();
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        addMeterDialog.OnMeterCreated = null;
+        await addMeterDialog.DisposeAsync();
+        await base.DisposeAsync();
     }
 }

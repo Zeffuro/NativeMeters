@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Premade.Addon.Search;
+using KamiToolKit.Components.Search;
+using Lumina.Text.ReadOnly;
 using NativeMeters.Tags;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Tags;
@@ -11,37 +14,46 @@ public enum TagSortOption
     Name,
 }
 
-public class TagSearchAddon : BaseSearchAddon<TagInfo, TagListItemNode>
+public class TagSearchAddon : AbstractSearchAddon<TagInfo, TagListItemNode>
 {
     public Action<string>? OnInsertClicked;
-
-    public TagSearchAddon()
-    {
-        SortingOptions = [TagSortOption.Category, TagSortOption.Name];
-        ItemSpacing = 2.0f;
-    }
+    public Action<TagInfo>? SelectionResult { get; set; }
 
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
         base.OnSetup(addon, atkValueSpan);
-        SearchOptions = TagRegistry.GetAllTags();
+        OptionsList = SortTags(TagRegistry.GetAllTags());
     }
 
-    protected override int Comparer(TagInfo left, TagInfo right, Enum sortingMode, bool reversed)
+    protected override void OnSearchInputReceived(ReadOnlySeString searchString)
     {
-        int result = sortingMode switch
-        {
-            TagSortOption.Category => string.Compare(left.Category, right.Category, StringComparison.OrdinalIgnoreCase),
-            _ => string.Compare(left.Name, right.Name, StringComparison.OrdinalIgnoreCase)
-        };
+        ResultsListNode?.OptionsList = OptionsList
+            .Where(tagInfo => IsMatch(tagInfo, searchString.ToString()))
+            .ToList();
 
-        if (result == 0)
-            result = string.Compare(left.Name, right.Name, StringComparison.OrdinalIgnoreCase);
-
-        return reversed ? -result : result;
+        base.OnSearchInputReceived(searchString);
     }
 
-    protected override bool IsMatch(TagInfo item, string searchString)
+    protected override void OnConfirmClicked()
+    {
+        var selectedTag = ResultsListNode?.SelectedItems.FirstOrDefault();
+        if (selectedTag is not null)
+        {
+            SelectionResult?.Invoke(selectedTag);
+        }
+
+        base.OnConfirmClicked();
+    }
+
+    private static List<TagInfo> SortTags(IEnumerable<TagInfo> tags)
+    {
+        return tags
+            .OrderBy(tagInfo => tagInfo.Category, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(tagInfo => tagInfo.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    private static bool IsMatch(TagInfo item, string searchString)
     {
         if (string.IsNullOrEmpty(searchString)) return true;
         return item.Tag.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||

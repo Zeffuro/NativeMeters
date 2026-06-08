@@ -3,10 +3,10 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Enums;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Models;
@@ -20,6 +20,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
     private readonly LabeledNumericInputNode reconnectIntervalSlider;
     private readonly LabeledTextButtonNode statusNode;
     private readonly CircleButtonNode warningButton;
+    private readonly HorizontalListNode urlContainer;
     private readonly LabeledTextInputNode urlInputNode;
     private readonly CircleButtonNode urlResetButton;
 
@@ -37,7 +38,8 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
     {
         ConnectionSettings config = System.Config.ConnectionSettings;
 
-        ItemVerticalSpacing = 2;
+        ItemSpacing = 2;
+
 
         AddNode(new CategoryTextNode
         {
@@ -53,12 +55,14 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             OnClick = OnReconnectClicked,
             LabelText = "Status: Disconnected",
             ButtonText = "Reconnect",
+            NavUp = 2,
         };
         AddNode(statusNode);
 
-        var typeContainer = new SimpleComponentNode
+        var typeContainer = new HorizontalListNode
         {
             Size = new Vector2(400, 28),
+            ItemSpacing = 4.0f,
         };
 
         var typeDropDown = new LabeledEnumDropdownNode<ConnectionType>
@@ -70,23 +74,23 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             SelectedOption = config.SelectedConnectionType,
             OnOptionSelected = OnConnectionTypeSelected
         };
-        typeDropDown.AttachNode(typeContainer);
+        typeContainer.AddNode(typeDropDown);
 
         warningButton = new CircleButtonNode
         {
-            Icon = ButtonIcon.Exclamation,
+            Icon = CircleButtonIcon.Exclamation,
             Size = new Vector2(24f),
-            Position = new Vector2(374, 2),
             IsVisible = config.SelectedConnectionType == ConnectionType.Internal,
             TextTooltip = InternalWarningTooltip,
         };
-        warningButton.AttachNode(typeContainer);
+        typeContainer.AddNode(warningButton);
 
         AddNode(typeContainer);
 
-        var urlContainer = new SimpleComponentNode
+        urlContainer = new HorizontalListNode
         {
             Size = new Vector2(400, 28),
+            ItemSpacing = 4.0f,
             IsVisible = config.SelectedConnectionType == ConnectionType.WebSocket,
         };
 
@@ -102,13 +106,12 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
                 ConfigRepository.Save(System.Config);
             }
         };
-        urlInputNode.AttachNode(urlContainer);
+        urlContainer.AddNode(urlInputNode);
 
         urlResetButton = new CircleButtonNode
         {
-            Icon = ButtonIcon.Undo,
+            Icon = CircleButtonIcon.Undo,
             Size = new Vector2(24f),
-            Position = new Vector2(374, 2),
             TextTooltip = "Reset to default URL",
             OnClick = () =>
             {
@@ -119,7 +122,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
                 ConfigRepository.Save(System.Config);
             }
         };
-        urlResetButton.AttachNode(urlContainer);
+        urlContainer.AddNode(urlResetButton);
 
         AddNode(urlContainer);
 
@@ -191,6 +194,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         ConfigRepository.Save(System.Config);
 
         warningButton.IsVisible = selected == ConnectionType.Internal;
+        urlContainer.IsVisible = selected == ConnectionType.WebSocket;
         urlInputNode.IsVisible = selected == ConnectionType.WebSocket;
         urlResetButton.IsVisible = selected == ConnectionType.WebSocket;
 

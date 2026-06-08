@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using Lumina.Text.ReadOnly;
 using NativeMeters.Extensions;
+using NativeMeters.Nodes.Configuration;
 
 namespace NativeMeters.Nodes.Input;
 
-public class LabeledEnumDropdownNode<T> : SimpleComponentNode where T : Enum {
+public class LabeledEnumDropdownNode<T> : SimpleComponentNode, IConfigurationNavigationNode where T : Enum {
     private readonly GridNode _gridNode;
     private readonly TextNode _labelNode;
     private readonly EnumDropDownNode<T> _dropDownNode;
@@ -29,6 +30,8 @@ public class LabeledEnumDropdownNode<T> : SimpleComponentNode where T : Enum {
             Options = new List<T>(),
         };
         _dropDownNode.AttachNode(_gridNode[1, 0]);
+
+        FocusNode = _dropDownNode.CollisionNode;
     }
 
     protected override void OnSizeChanged() {
@@ -81,5 +84,10 @@ public class LabeledEnumDropdownNode<T> : SimpleComponentNode where T : Enum {
     {
         get => _labelNode.TextFlags;
         set => _labelNode.TextFlags = value;
+    }
+
+    public IEnumerable<ConfigurationNavigationTarget> GetNavigationTargets()
+    {
+        yield return ConfigurationNavigationTarget.From(_dropDownNode);
     }
 }

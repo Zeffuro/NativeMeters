@@ -1,21 +1,28 @@
 using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
+using NativeMeters.Nodes.Configuration;
 using NativeMeters.Nodes.Configuration.Dtr;
+using NativeMeters.Nodes.LayoutNodes;
 
 namespace NativeMeters.Nodes.Configuration.General;
 
-public sealed class GeneralScrollingAreaNode : ScrollingListNode
+public sealed class GeneralScrollingAreaNode : ScrollingNode<VerticalListNode>
 {
+    private const int FirstContentNavIndex = 6;
+
+    public int TabBarNavIndex { get; set; } = 1;
+
     public GeneralScrollingAreaNode()
     {
         GeneralSettings config = System.Config.General;
 
         new ImportExportResetNode().AttachNode(this);
 
-        ItemSpacing = 10;
+        ContentNode.ItemSpacing = 10;
+        ContentNode.FitContents = true;
 
-        AddNode(
+        ContentNode.AddNode(
         [new GeneralConfigurationNode(),
             new DtrConfigurationNode(),
             new CheckboxNode {
@@ -29,5 +36,20 @@ public sealed class GeneralScrollingAreaNode : ScrollingListNode
                 }
             }
         ]);
+
+        RecalculateConfigurationLayout();
+    }
+
+    protected override void OnSizeChanged()
+    {
+        base.OnSizeChanged();
+        RecalculateConfigurationLayout();
+    }
+
+    private void RecalculateConfigurationLayout()
+    {
+        LayoutRecalculation.RecalculateBottomUp(ContentNode);
+        LayoutRecalculation.UpdateScrollParams(this);
+        ConfigurationNavigation.Apply(ContentNode, FirstContentNavIndex, TabBarNavIndex, TabBarNavIndex);
     }
 }

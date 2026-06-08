@@ -1,13 +1,15 @@
 using System;
+using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using Lumina.Text.ReadOnly;
+using NativeMeters.Nodes.Configuration;
 
 namespace NativeMeters.Nodes.Input;
 
-public class LabeledTextInputNode : SimpleComponentNode {
+public class LabeledTextInputNode : SimpleComponentNode, IConfigurationNavigationNode {
     private readonly GridNode _gridNode;
     private readonly TextNode _labelNode;
     private readonly TextInputNode _textInputNode;
@@ -25,6 +27,8 @@ public class LabeledTextInputNode : SimpleComponentNode {
 
         _textInputNode = new TextInputNode();
         _textInputNode.AttachNode(_gridNode[1, 0]);
+
+        FocusNode = _textInputNode.CollisionNode;
     }
 
     protected override void OnSizeChanged() {
@@ -66,4 +70,9 @@ public class LabeledTextInputNode : SimpleComponentNode {
     }
 
     public TextInputNode InnerInput => _textInputNode;
+
+    public IEnumerable<ConfigurationNavigationTarget> GetNavigationTargets()
+    {
+        yield return ConfigurationNavigationTarget.From(_textInputNode);
+    }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
@@ -86,7 +87,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         var browseTagButton = new CircleButtonNode()
         {
-            Icon = ButtonIcon.MagnifyingGlass,
+            Icon = CircleButtonIcon.MagnifyingGlass,
             Size = new Vector2(28, 28),
             OnClick = OpenTagPicker
         };
@@ -132,7 +133,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         var browseIconButton = new CircleButtonNode()
         {
-            Icon = ButtonIcon.MagnifyingGlass,
+            Icon = CircleButtonIcon.MagnifyingGlass,
             Size = new Vector2(28, 28),
             OnClick = OpenIconPicker
         };
@@ -294,6 +295,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
     protected override void Dispose(bool disposing, bool isNativeDestructor)
     {
         isDisposed = true;
+        var canCloseSearchAddons = disposing && !isNativeDestructor;
 
         if (System.TagSearchAddon != null)
         {
@@ -301,7 +303,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             {
                 System.TagSearchAddon.OnInsertClicked = null;
                 System.TagSearchAddon.SelectionResult = null;
-                System.TagSearchAddon.Close();
+                if (canCloseSearchAddons) System.TagSearchAddon.Close();
             }
         }
 
@@ -310,7 +312,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             if (System.IconSearchAddon.SelectionResult == currentIconSelectionAction)
             {
                 System.IconSearchAddon.SelectionResult = null;
-                System.IconSearchAddon.Close();
+                if (canCloseSearchAddons) System.IconSearchAddon.Close();
             }
         }
 

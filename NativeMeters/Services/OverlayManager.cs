@@ -25,12 +25,18 @@ public class OverlayManager : IDisposable {
         });
     }
 
-    private void DetachAndDisposeAll() {
-        foreach (var node in activeMeters.Values) {
-            node.OnDispose();
-            System.OverlayController.RemoveNode(node);
-        }
-        activeMeters.Clear();
+    private void DetachAndDisposeAll()
+    {
+        Service.Framework.RunOnFrameworkThread(() =>
+        {
+            foreach (var node in activeMeters.Values)
+            {
+                node.OnDispose();
+                System.OverlayController.RemoveNode(node);
+            }
+
+            activeMeters.Clear();
+        });
     }
 
     private void CreateAndAttachOverlays()

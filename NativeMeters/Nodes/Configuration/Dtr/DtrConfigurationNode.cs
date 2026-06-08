@@ -1,6 +1,5 @@
 using System.Numerics;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Input;
 using NativeMeters.Tags;
@@ -14,7 +13,7 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
     public DtrConfigurationNode()
     {
         var settings = System.Config.DtrSettings;
-        ItemVerticalSpacing = 2;
+        ItemSpacing = 2;
 
         AddNode(new CategoryTextNode
         {
@@ -119,5 +118,6 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
         });
 
         SubtractTab(1);
+        RecalculateLayout();
     }
 }

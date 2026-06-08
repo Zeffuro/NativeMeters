@@ -1,14 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using Lumina.Text.ReadOnly;
+using NativeMeters.Nodes.Configuration;
 
 namespace NativeMeters.Nodes.Input;
 
-public unsafe class LabeledTextButtonNode : SimpleComponentNode {
+public class LabeledTextButtonNode : ResNode, IConfigurationNavigationNode {
     private readonly GridNode _gridNode;
     private readonly TextNode _labelNode;
     private readonly TextButtonNode _textButtonNode;
@@ -60,5 +62,40 @@ public unsafe class LabeledTextButtonNode : SimpleComponentNode {
     public Action? OnClick {
         get => _textButtonNode.OnClick;
         set => _textButtonNode.OnClick = value;
+    }
+
+    public int NavUp
+    {
+        get => _textButtonNode.NavUp;
+        set => _textButtonNode.NavUp = value;
+    }
+
+    public int NavDown
+    {
+        get => _textButtonNode.NavDown;
+        set => _textButtonNode.NavDown = value;
+    }
+
+    public int NavLeft
+    {
+        get => _textButtonNode.NavLeft;
+        set => _textButtonNode.NavLeft = value;
+    }
+
+    public int NavRight
+    {
+        get => _textButtonNode.NavRight;
+        set => _textButtonNode.NavRight = value;
+    }
+
+    public int NavIndex
+    {
+        get => _textButtonNode.NavIndex;
+        set => _textButtonNode.NavIndex = value;
+    }
+
+    public IEnumerable<ConfigurationNavigationTarget> GetNavigationTargets()
+    {
+        yield return ConfigurationNavigationTarget.From(_textButtonNode);
     }
 }

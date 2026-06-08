@@ -1,13 +1,15 @@
 using System;
+using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using Lumina.Text.ReadOnly;
+using NativeMeters.Nodes.Configuration;
 
 namespace NativeMeters.Nodes.Input;
 
-public unsafe class LabeledNumericInputNode : SimpleComponentNode {
+public unsafe class LabeledNumericInputNode : SimpleComponentNode, IConfigurationNavigationNode {
     private readonly GridNode _gridNode;
     private readonly TextNode _labelNode;
     private readonly NumericInputNode _numericInputNode;
@@ -25,6 +27,8 @@ public unsafe class LabeledNumericInputNode : SimpleComponentNode {
 
         _numericInputNode = new NumericInputNode();
         _numericInputNode.AttachNode(_gridNode[1, 0]);
+
+        FocusNode = _numericInputNode.CollisionNode;
     }
 
     protected override void OnSizeChanged() {
@@ -71,4 +75,9 @@ public unsafe class LabeledNumericInputNode : SimpleComponentNode {
     }
 
     public NumericInputNode InnerInput => _numericInputNode;
+
+    public IEnumerable<ConfigurationNavigationTarget> GetNavigationTargets()
+    {
+        yield return ConfigurationNavigationTarget.From(_numericInputNode);
+    }
 }

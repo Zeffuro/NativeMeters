@@ -1,10 +1,10 @@
 using System;
 using System.Numerics;
+using System.Threading.Tasks;
 using AetherBags.Nodes.Color;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Addons;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Addon;
-using KamiToolKit.Premade.Node;
 
 namespace NativeMeters.Nodes.Color;
 
@@ -73,14 +73,18 @@ public class ColorInputRow : HorizontalListNode
         };
     }
 
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        base.Dispose();
+    protected override void Dispose(bool disposing, bool isNativeDestructor)
+    {
+        base.Dispose(disposing, isNativeDestructor);
     }
 
-    public static void DisposeSharedColorPicker()
+    public static async ValueTask DisposeSharedColorPicker()
     {
-        _sharedColorPickerAddon?.Dispose();
-        _sharedColorPickerAddon = null;
+        if (_sharedColorPickerAddon != null)
+        {
+            await _sharedColorPickerAddon.DisposeAsync();
+            _sharedColorPickerAddon = null;
+        }
     }
 
     public required string Label

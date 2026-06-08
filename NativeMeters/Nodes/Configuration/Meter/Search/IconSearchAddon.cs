@@ -1,47 +1,60 @@
 using System;
+using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Enums;
-using KamiToolKit.Premade.Addon.Search;
+using KamiToolKit.Components.Search;
+using Lumina.Text.ReadOnly;
 using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Search;
 
-public class IconSearchAddon : BaseSearchAddon<uint, IconListItemNode>
+public class IconSearchAddon : AbstractSearchAddon<uint, IconListItemNode>
 {
     private bool initialized = false;
 
-    public IconSearchAddon()
-    {
-        SortingOptions = [DefaultSortOptions.Id];
-        ItemSpacing = 2.0f;
-    }
+    public Action<uint>? SelectionResult { get; set; }
 
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
         base.OnSetup(addon, atkValueSpan);
 
         IconRegistry.Initialize(Service.DataManager);
+        TryPopulateIcons();
     }
 
     protected override unsafe void OnUpdate(AtkUnitBase* addon)
     {
         base.OnUpdate(addon);
-
-        if (!initialized && IconRegistry.IsLoaded)
-        {
-            SearchOptions = IconRegistry.ValidIconIds;
-            initialized = true;
-
-            SearchOptions = IconRegistry.ValidIconIds;
-        }
+        TryPopulateIcons();
     }
 
-    protected override int Comparer(uint left, uint right, Enum sortingMode, bool reversed)
+    protected override void OnSearchInputReceived(ReadOnlySeString searchString)
     {
-        return reversed ? right.CompareTo(left) : left.CompareTo(right);
+        ResultsListNode?.OptionsList = OptionsList
+            .Where(iconId => IsMatch(iconId, searchString.ToString()))
+            .ToList();
+
+        base.OnSearchInputReceived(searchString);
     }
 
-    protected override bool IsMatch(uint item, string searchString)
+    protected override void OnConfirmClicked()
+    {
+        if (ResultsListNode?.SelectedItems is { Count: > 0 } selectedItems)
+        {
+            SelectionResult?.Invoke(selectedItems[0]);
+        }
+
+        base.OnConfirmClicked();
+    }
+
+    private void TryPopulateIcons()
+    {
+        if (initialized || !IconRegistry.IsLoaded) return;
+
+        OptionsList = IconRegistry.ValidIconIds.OrderBy(iconId => iconId).ToList();
+        initialized = true;
+    }
+
+    private static bool IsMatch(uint item, string searchString)
     {
         if (string.IsNullOrEmpty(searchString)) return true;
         return item.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase);

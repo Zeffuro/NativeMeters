@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Numerics;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Input;
@@ -14,7 +13,7 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
     public InternalParserConfigurationNode()
     {
         var config = System.Config.InternalParser;
-        ItemVerticalSpacing = 2;
+        ItemSpacing = 2;
 
         AddNode(new CategoryTextNode
         {
@@ -77,5 +76,6 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
         ]);
 
         SubtractTab(1);
+        RecalculateLayout();
     }
 }

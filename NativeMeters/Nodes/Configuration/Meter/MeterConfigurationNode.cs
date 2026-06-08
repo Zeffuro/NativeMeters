@@ -1,34 +1,29 @@
-using KamiToolKit.Premade.Node;
-using NativeMeters.Addons;
+using KamiToolKit.Components.ConfigurationNodes;
+using NativeMeters.Configuration;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
-public class MeterConfigurationNode : ConfigNode<MeterWrapper>
+public class MeterConfigurationNode : EntryConfigurationNode<MeterSettings>
 {
-    private MeterDefinitionConfigurationNode? activeNode;
+    private readonly MeterDefinitionConfigurationNode activeNode;
 
-    protected override void OptionChanged(MeterWrapper? option)
+    public MeterConfigurationNode()
     {
-        if (option == null)
-        {
-            if (activeNode != null) activeNode.IsVisible = false;
-            return;
-        }
+        SelectAnItemTextNode.String = "Select a meter or create a new one.";
 
-        if (activeNode == null)
-        {
-            activeNode = new MeterDefinitionConfigurationNode();
-            activeNode.AttachNode(this);
-        }
+        activeNode = new MeterDefinitionConfigurationNode();
+        activeNode.AttachNode(ConfigurationContentNode);
+    }
 
-        activeNode.IsVisible = true;
+    protected override void PopulateEntryData(MeterSettings entry)
+    {
         activeNode.Size = Size;
-        activeNode.SetMeter(option.MeterSettings);
+        activeNode.SetMeter(entry);
     }
 
     protected override void OnSizeChanged()
     {
         base.OnSizeChanged();
-        if (activeNode != null) activeNode.Size = Size;
+        activeNode.Size = Size;
     }
 }

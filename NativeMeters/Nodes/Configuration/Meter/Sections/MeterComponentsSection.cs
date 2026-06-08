@@ -5,6 +5,7 @@ using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
+using NativeMeters.Nodes.LayoutNodes;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Sections;
 
@@ -80,10 +81,10 @@ public sealed class MeterComponentsSection : MeterConfigSection
         System.OverlayManager.Setup();
     }
 
-    private void RefreshLayout()
+    private void RefreshSectionLayout()
     {
-        listContainer.RecalculateLayout();
-        ContentNode.RecalculateLayout();
+        LayoutRecalculation.RecalculateBottomUp(listContainer);
+        LayoutRecalculation.RecalculateBottomUp(ContentNode);
         RecalculateLayout();
         onLayoutChanged();
     }
@@ -130,13 +131,13 @@ public sealed class MeterComponentsSection : MeterConfigSection
                     Refresh();
                     System.OverlayManager.Setup();
                 },
-                OnToggle = RefreshLayout
+                OnToggle = RefreshSectionLayout
             };
 
             listContainer.AddNode(node);
         }
 
-        RefreshLayout();
+        RefreshSectionLayout();
     }
 
     protected override void OnSizeChanged()

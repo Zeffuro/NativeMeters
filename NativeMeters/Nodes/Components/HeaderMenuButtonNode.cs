@@ -1,7 +1,8 @@
 using System.Numerics;
+using KamiToolKit.Enums;
 using KamiToolKit.ContextMenu;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using NativeMeters.Addons;
 using NativeMeters.Configuration;
 
@@ -20,7 +21,7 @@ public class HeaderMenuButtonNode : SimpleComponentNode
 
         _menuButton = new CircleButtonNode
         {
-            Icon = ButtonIcon.GearCog,
+            Icon = CircleButtonIcon.GearCog,
             Size = new Vector2(24f),
             OnClick = OpenContextMenu
         };
@@ -42,8 +43,13 @@ public class HeaderMenuButtonNode : SimpleComponentNode
         _menuButton.Position = Vector2.Zero;
     }
 
-    public new void Dispose()
+    protected override void Dispose(bool disposing, bool isNativeDestructor)
     {
-        _contextMenu?.Dispose();
+        if (disposing && !isNativeDestructor)
+        {
+            _contextMenu.Dispose();
+        }
+
+        base.Dispose(disposing, isNativeDestructor);
     }
 }

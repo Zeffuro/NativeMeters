@@ -6,13 +6,14 @@ using Dalamud.Game.ClientState.Keys;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.ImportExport;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Configuration.Presets;
+using NativeMeters.Nodes.Configuration;
 using NativeMeters.Nodes.Configuration.Meter.Sections;
+using NativeMeters.Nodes.LayoutNodes;
 using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
@@ -20,6 +21,8 @@ namespace NativeMeters.Nodes.Configuration.Meter;
 public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 {
     public Action? OnLayoutChanged { get; init; }
+    public int NavigationStartIndex { get; set; } = 150;
+    public int NavigationReturnIndex { get; set; } = 7;
 
     private MeterSettings settings = new();
 
@@ -29,7 +32,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     private readonly VerticalListNode containerLayout;
     private readonly SimpleComponentNode headerContainer;
     private readonly HorizontalListNode buttonsList;
-    private readonly ScrollingAreaNode<VerticalListNode> scrollingArea;
+    private readonly ManualScrollingNode<VerticalListNode> scrollingArea;
     private readonly VerticalListNode mainLayout;
 
     private readonly List<MeterConfigSection> sections = [];
@@ -91,13 +94,10 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
             OnClick = () => ConfigPorter.TryExportMeterToClipboard(settings)
         });
 
-        scrollingArea = new ScrollingAreaNode<VerticalListNode> {
-            AutoHideScrollBar = true,
-            ContentHeight = 10f,
-        };
+        scrollingArea = new ManualScrollingNode<VerticalListNode>();
         containerLayout.AddNode(scrollingArea);
 
-        mainLayout = scrollingArea.ContentAreaNode;
+        mainLayout = scrollingArea.ContentNode;
         mainLayout.FitContents = true;
         mainLayout.ItemSpacing = 6.0f;
 
@@ -151,9 +151,6 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         buttonsList.Position = new Vector2(Width - buttonsWidth - 10, 2);
         buttonsList.RecalculateLayout();
 
-        var scrollHeight = Math.Max(0, Height - headerContainer.Height - containerLayout.ItemSpacing);
-        scrollingArea.Size = Size with { Y = scrollHeight };
-
         var listWidth = Math.Max(0, Width - 16.0f);
         mainLayout.Width = listWidth;
 
@@ -161,6 +158,11 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         {
             section.Width = listWidth;
         }
+
+        LayoutRecalculation.RecalculateBottomUp(mainLayout);
+
+        var scrollHeight = Math.Max(0, Height - headerContainer.Height - containerLayout.ItemSpacing);
+        scrollingArea.Size = new Vector2(Width, scrollHeight);
 
         HandleLayoutChange();
     }
@@ -202,9 +204,9 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 
     private void HandleLayoutChange()
     {
-        mainLayout.RecalculateLayout();
-
-        scrollingArea.ContentHeight = mainLayout.Height;
+        LayoutRecalculation.RecalculateBottomUp(mainLayout);
+        ConfigurationNavigation.Apply(mainLayout, NavigationStartIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex);
+        scrollingArea.UpdateScrollParams();
 
         containerLayout.RecalculateLayout();
 

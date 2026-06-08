@@ -1,10 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using KamiToolKit;
+using System.Threading.Tasks;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.BaseTypes;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using NativeMeters.Configuration;
+using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Rendering;
 
@@ -59,6 +63,9 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
             lastComponentHash = hash;
         }
 
+        // There probably is a better way to do this, but I'm not sure how/where.
+        if(MeterSettings.IsClickthrough) RemoveNodeFlags(NodeFlags.HasCollision);
+
         dynamicNodeList.Update(cachedSortedComponents, CreateComponent);
 
         foreach (var settings in cachedSortedComponents)
@@ -92,7 +99,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
 
         if (node is SimpleComponentNode simpleNode)
         {
-            simpleNode.DisableCollisionNode = true;
+            simpleNode.DisableCollisionNode();
         }
 
         return node;

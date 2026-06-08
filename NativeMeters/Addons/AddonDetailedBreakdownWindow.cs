@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using FFXIVClientStructs.FFXIV.Client.System.Input;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
 using NativeMeters.Models;
 using NativeMeters.Models.Breakdown;
 using NativeMeters.Nodes.Breakdown;
+using NativeMeters.Nodes.LayoutNodes;
 using NativeMeters.Services;
 
 namespace NativeMeters.Addons;
@@ -16,7 +19,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 {
     private TabBarNode tabBarNode = null!;
     private EncounterSummaryBarNode summaryBar = null!;
-    private ScrollingListNode scrollingContent = null!;
+    private ScrollingNode<VerticalListNode> scrollingContent = null!;
     private BreakdownTableHeaderNode tableHeader = null!;
 
     private TextButtonNode prevButton = null!;
@@ -101,14 +104,15 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         var scrollY = contentY + 106;
         var scrollH = Math.Max(0, contentH - 106);
 
-        scrollingContent = new ScrollingListNode
+        scrollingContent = new ScrollingNode<VerticalListNode>
         {
             Position = ContentStartPosition with { Y = scrollY },
-            Size = new Vector2(contentW, scrollH),
-            ItemSpacing = 2f,
-            FitContents = true,
+            AutoHideScrollBar = true,
             IsVisible = true,
         };
+        scrollingContent.ContentNode.ItemSpacing = 2f;
+        scrollingContent.ContentNode.FitContents = true;
+        scrollingContent.Size = new Vector2(contentW, scrollH);
         scrollingContent.AttachNode(this);
 
         ReSubscribeToEvents();
@@ -184,8 +188,12 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         }
     }
 
-    private void SwitchTab(BreakdownTab tab)
+    private void SwitchTab(BreakdownTab tab, bool fromController = false)
     {
+        if (fromController)
+        {
+
+        }
         if (currentTab == tab) return;
         currentTab = tab;
         RefreshData();
@@ -210,7 +218,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
             summaryBar.Update(null, currentTab);
             for (int i = 0; i < sectionPool.Count; i++)
                 sectionPool[i].IsVisible = false;
-            scrollingContent.RecalculateLayout();
+            RecalculateScrollingContent();
             return;
         }
 
@@ -218,7 +226,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         SortCombatants(combatants);
 
         bool isDamageMode = currentTab == BreakdownTab.Damage;
-        float listWidth = Math.Max(0, scrollingContent.ContentWidth);
+        float listWidth = GetScrollingContentWidth();
         tableHeader.Width = Math.Max(0, listWidth - 18);
         tableHeader.UpdateLabels(isDamageMode ? "Damage" : "Healing", isDamageMode ? "DPS" : "HPS");
 
@@ -232,9 +240,9 @@ public class AddonDetailedBreakdownWindow : NativeAddon
                 IsVisible = false,
             };
             section.InitializeLayout(tableLayout);
-            section.OnToggle = () => scrollingContent.RecalculateLayout();
+            section.OnToggle = RecalculateScrollingContent;
             sectionPool.Add(section);
-            scrollingContent.AddNode(section);
+            scrollingContent.ContentNode.AddNode(section);
         }
 
         for (int i = 0; i < combatants.Count; i++)
@@ -248,8 +256,18 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         for (int i = combatants.Count; i < sectionPool.Count; i++)
             sectionPool[i].IsVisible = false;
 
-        scrollingContent.RecalculateLayout();
+        RecalculateScrollingContent();
         UpdateNavigationButtons();
+    }
+
+    private float GetScrollingContentWidth()
+        => Math.Max(0, scrollingContent.Width - 16.0f);
+
+    private void RecalculateScrollingContent()
+    {
+        scrollingContent.ContentNode.Width = GetScrollingContentWidth();
+        LayoutRecalculation.RecalculateBottomUp(scrollingContent.ContentNode);
+        LayoutRecalculation.UpdateScrollParams(scrollingContent);
     }
 
     private (Encounter? encounter, List<Combatant>? combatants) GetCurrentData()
@@ -279,6 +297,20 @@ public class AddonDetailedBreakdownWindow : NativeAddon
             BreakdownTab.Healing => b.ENCHPS.CompareTo(a.ENCHPS),
             _ => b.ENCDPS.CompareTo(a.ENCDPS),
         });
+    }
+
+    protected override unsafe void OnUpdate(AtkUnitBase* addon)
+    {
+        base.OnUpdate(addon);
+
+        if (UIInputData.Instance()->IsInputIdDown(inputId: InputId.TAB_PREV))
+        {
+            SwitchTab(currentTab == BreakdownTab.Damage ? BreakdownTab.Healing : BreakdownTab.Damage);
+        }
+        if (UIInputData.Instance()->IsInputIdDown(inputId: InputId.TAB_NEXT))
+        {
+            SwitchTab(currentTab == BreakdownTab.Damage ? BreakdownTab.Healing : BreakdownTab.Damage);
+        }
     }
 
     protected override unsafe void OnFinalize(AtkUnitBase* addon)

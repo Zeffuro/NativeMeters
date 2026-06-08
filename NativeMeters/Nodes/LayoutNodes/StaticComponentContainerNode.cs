@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using KamiToolKit;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using NativeMeters.Configuration;
+using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Components;
 using NativeMeters.Rendering;
@@ -30,7 +31,7 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
     {
         settingsList = settings;
         graphManager = new DynamicNodeList(this);
-        DisableCollisionNode = true;
+        this.DisableCollisionNode();
     }
 
     public void Update()
@@ -78,7 +79,7 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
 
         if (node is SimpleComponentNode simpleNode)
         {
-            simpleNode.DisableCollisionNode = true;
+            simpleNode.DisableCollisionNode();
         }
 
         return node;

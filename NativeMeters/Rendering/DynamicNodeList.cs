@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using KamiToolKit;
+using KamiToolKit.BaseTypes;
 using NativeMeters.Configuration;
 using NativeMeters.Extensions;
 using NativeMeters.Services;
