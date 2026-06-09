@@ -26,7 +26,7 @@ public sealed class MeterGeneralSection : MeterConfigSection
         lockedCheckbox!.IsChecked = Settings.IsLocked;
         clickthroughCheckbox!.IsChecked = Settings.IsClickthrough;
 
-        RecalculateLayout();
+        RecalculateContentLayout();
     }
 
     private void Initialize()

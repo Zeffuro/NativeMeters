@@ -98,19 +98,17 @@ public sealed class ComponentTypographyPanel : VerticalListNode
 
         IsVisible = isText;
 
-        if (!isText)
+        if (isText)
         {
-            if (wasVisible != IsVisible) OnLayoutChanged?.Invoke();
-            return;
+            fontTypeEnumDropdown.SelectedOption = settings.FontType;
+            textFlagsEnumDropdown.SelectedOption = settings.TextFlags;
+            alignmentEnumDropdown.SelectedOption = settings.AlignmentType;
+            fontSizeInput.Value = (int)settings.FontSize;
+
+            RecalculateLayout();
         }
 
-        fontTypeEnumDropdown.SelectedOption = settings.FontType;
-        textFlagsEnumDropdown.SelectedOption = settings.TextFlags;
-        alignmentEnumDropdown.SelectedOption = settings.AlignmentType;
-        fontSizeInput.Value = (int)settings.FontSize;
-
         isLoading = false;
-        RecalculateLayout();
         if (wasVisible != IsVisible) OnLayoutChanged?.Invoke();
     }
 

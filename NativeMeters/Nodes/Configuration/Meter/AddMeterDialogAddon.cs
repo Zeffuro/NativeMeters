@@ -5,6 +5,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
+using Lumina.Data.Parsing.Uld;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.ImportExport;
 using NativeMeters.Configuration.Presets;
@@ -83,7 +84,8 @@ public sealed class AddMeterDialogAddon : NativeAddon
                 new TextButtonNode
                 {
                     Height = 28.0f,
-                    String = "Cancel",
+                    TextId = 2, // Cancel
+                    SheetType = NodeData.SheetType.Addon,
                     OnClick = Close,
                     NavIndex = 4,
                     NavUp = 2,
@@ -92,6 +94,7 @@ public sealed class AddMeterDialogAddon : NativeAddon
             ],
         };
         layoutNode.AttachNode(this);
+        addon->UldManager.SetupTextRecursive();
     }
 
     protected override unsafe void OnFinalize(AtkUnitBase* addon)

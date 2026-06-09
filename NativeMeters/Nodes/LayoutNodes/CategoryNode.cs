@@ -22,7 +22,6 @@ public class CategoryNode : VerticalListNode
     private bool isCollapsed = true;
     private float headerHeight = 28.0f;
     private float nestingIndent;
-    private float contentIndent = 18.0f;
 
     public Action? OnToggle;
 
@@ -75,11 +74,11 @@ public class CategoryNode : VerticalListNode
         set
         {
             nestingIndent = value;
-            contentIndent = value + 10.0f;
 
             ArrowNode.X = value + 4.0f;
             LabelNode.X = value + 23.0f;
-            ApplyContentBounds();
+            ContentNode.X = value + 10.0f;
+            ContentNode.Width = Math.Max(0.0f, Width - ContentNode.X);
             RecalculateLayout();
         }
     }
@@ -137,6 +136,7 @@ public class CategoryNode : VerticalListNode
             ItemSpacing = 4.0f,
             TabSize = 18.0f,
             FitWidth = true,
+            FitContents = true,
         };
 
         base.AddNode([HeaderNode, ContentNode]);
@@ -150,82 +150,74 @@ public class CategoryNode : VerticalListNode
 
         if (!isCollapsed)
         {
-            ApplyContentBounds();
-            ContentNode.RecalculateLayout();
+            RecalculateContentLayout();
         }
-
-        RecalculateLayout();
+        else
+        {
+            RecalculateLayout();
+        }
         OnToggle?.Invoke();
     }
 
     public void RefreshLayout()
     {
-        ApplyContentBounds();
-        ContentNode.RecalculateLayout();
-        RecalculateLayout();
+        RecalculateContentLayout();
         OnToggle?.Invoke();
+    }
+
+    public void RecalculateContentLayout()
+    {
+        ContentNode.Width = Math.Max(0.0f, Width - ContentNode.X);
+        LayoutRecalculation.RecalculateBottomUp(ContentNode);
+        RecalculateLayout();
     }
 
     public void AddTab(int tabAmount = 1)
     {
         ContentNode.AddTab(tabAmount);
-        RecalculateLayout();
+        RecalculateContentLayout();
     }
 
     public void SubtractTab(int tabAmount = 1)
     {
         ContentNode.SubtractTab(tabAmount);
-        RecalculateLayout();
+        RecalculateContentLayout();
     }
 
     public new void AddNode(NodeBase node)
     {
         ContentNode.AddNode(node);
-        RecalculateLayout();
+        RecalculateContentLayout();
     }
 
     public new void AddNode(IEnumerable<NodeBase> nodes)
     {
         ContentNode.AddNode(nodes);
-        RecalculateLayout();
+        RecalculateContentLayout();
     }
 
     public void AddNode(int tabIndex, NodeBase node)
     {
         ContentNode.AddNode(tabIndex, node);
-        RecalculateLayout();
+        RecalculateContentLayout();
     }
 
     public void AddNode(int tabIndex, IEnumerable<NodeBase> nodes)
     {
         ContentNode.AddNode(tabIndex, nodes);
-        RecalculateLayout();
+        RecalculateContentLayout();
     }
 
     public new void RemoveNode(NodeBase node)
     {
         ContentNode.RemoveNode(node);
-        RecalculateLayout();
+        RecalculateContentLayout();
     }
 
     public new void Clear()
     {
         ContentNode.Clear();
-        RecalculateLayout();
-    }
-
-    protected override void OnRecalculateLayout()
-    {
-        ApplyContentBounds();
-        base.OnRecalculateLayout();
-    }
-
-    protected override void AdjustNode(NodeBase node)
-    {
-        if (node == ContentNode)
-        {
-            ApplyContentBounds();
-        }
+        RecalculateContentLayout();
     }
 
     protected override void OnSizeChanged()
@@ -237,13 +229,7 @@ public class CategoryNode : VerticalListNode
         BackgroundNode.Width = Width;
         LabelNode.Width = Math.Max(0, Width - LabelNode.X);
         CollisionNode.Width = Width;
-        ApplyContentBounds();
-    }
-
-    private void ApplyContentBounds()
-    {
-        ContentNode.X = contentIndent;
-        ContentNode.Width = Math.Max(0.0f, Width - contentIndent);
+        ContentNode.Width = Math.Max(0.0f, Width - ContentNode.X);
     }
 
     public ReadOnlySeString String { get => LabelNode.String; set => LabelNode.String = value; }

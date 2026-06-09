@@ -35,8 +35,7 @@ public sealed class ComponentSettingsNode : CategoryNode
             typographyPanel.LoadSettings(settings);
             visualsPanel.LoadSettings(settings);
 
-            LayoutRecalculation.RecalculateBottomUp(ContentNode);
-            RecalculateLayout();
+            RecalculateContentLayout();
         }
     }
 
@@ -106,8 +105,7 @@ public sealed class ComponentSettingsNode : CategoryNode
 
     private void RefreshComponentLayout()
     {
-        LayoutRecalculation.RecalculateBottomUp(ContentNode);
-        RecalculateLayout();
+        RecalculateContentLayout();
         OnToggle?.Invoke();
     }
 
@@ -121,5 +119,6 @@ public sealed class ComponentSettingsNode : CategoryNode
         basicsPanel.Width = innerWidth;
         typographyPanel.Width = innerWidth;
         visualsPanel.Width = innerWidth;
+        buttonRow.Width = innerWidth;
     }
 }

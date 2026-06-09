@@ -6,6 +6,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Simplified;
+using Lumina.Data.Parsing.Uld;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.LayoutNodes;
@@ -68,7 +69,8 @@ public class MeterManagementNode : SimpleComponentNode
         searchInputNode = new TextInputNode
         {
             Height = SearchHeight,
-            PlaceholderString = "Search",
+            PlaceholderStringId = 325,
+            SheetType = NodeData.SheetType.Addon,
             OnInputReceived = OnSearchInputReceived,
             NavIndex = 6,
             NavDown = 7,
@@ -98,7 +100,8 @@ public class MeterManagementNode : SimpleComponentNode
             [
                 addButtonNode = new TextButtonNode
                 {
-                    String = "Add",
+                    TextId = 302, // Add
+                    SheetType = NodeData.SheetType.Addon,
                     OnClick = () => addMeterDialog.Open(),
                     NavIndex = 100,
                     NavUp = 7,
@@ -107,7 +110,8 @@ public class MeterManagementNode : SimpleComponentNode
                 },
                 removeButtonNode = new TextButtonNode
                 {
-                    String = "Remove",
+                    TextId = 85, // Remove
+                    SheetType = NodeData.SheetType.Addon,
                     OnClick = OnRemoveSelectedMeter,
                     IsEnabled = false,
                     NavIndex = 101,
@@ -149,6 +153,12 @@ public class MeterManagementNode : SimpleComponentNode
         layoutContainer.AttachNode(this);
 
         ApplyNavigation();
+    }
+
+    public void ApplyResolvedText()
+    {
+        var searchPlaceholder = searchInputNode.PlaceholderTextNode.String.ToString();
+        searchInputNode.PlaceholderString = string.IsNullOrEmpty(searchPlaceholder) ? "Search" : searchPlaceholder;
     }
 
     protected override void OnSizeChanged()

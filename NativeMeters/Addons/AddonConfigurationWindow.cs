@@ -4,7 +4,9 @@ using System.Numerics;
 using System.Threading.Tasks;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
+using Lumina.Data.Parsing.Uld;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Configuration.Connection;
 using NativeMeters.Nodes.Configuration.General;
@@ -96,13 +98,21 @@ public class AddonConfigurationWindow : NativeAddon
         tabContent.Add(colorConfigurationNode);
         tabContent.Add(visibilityScrollingAreaNode);
 
-        tabBarNode.AddTab("General", () => SwitchTab(0));
+        tabBarNode.AddTab(new TabBarEntry
+        {
+            TextId = 662, // General
+            SheetType = NodeData.SheetType.Addon,
+            OnClick = () => SwitchTab(0)
+        });
         tabBarNode.AddTab("Connection", () => SwitchTab(1));
         tabBarNode.AddTab("Meters", () => SwitchTab(2));
         tabBarNode.AddTab("Colors", () => SwitchTab(3));
         tabBarNode.AddTab("Visibility", () => SwitchTab(4));
 
         base.OnSetup(addon, atkValueSpan);
+
+        addon->UldManager.SetupTextRecursive();
+        meterManagementNode.ApplyResolvedText();
     }
 
     private void SwitchTab(int index)
@@ -123,6 +133,7 @@ public class AddonConfigurationWindow : NativeAddon
 
     public override void Dispose()
     {
+        addMeterDialog.Close();
         addMeterDialog.OnMeterCreated = null;
         addMeterDialog.Dispose();
         base.Dispose();
@@ -130,6 +141,7 @@ public class AddonConfigurationWindow : NativeAddon
 
     public override async ValueTask DisposeAsync()
     {
+        addMeterDialog.Close();
         addMeterDialog.OnMeterCreated = null;
         await addMeterDialog.DisposeAsync();
         await base.DisposeAsync();

@@ -136,11 +136,19 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         var isBar = settings.Type == MeterComponentType.ProgressBar;
         var isBg = settings.Type == MeterComponentType.Background;
         var wasVisible = IsVisible;
+        var wasColorModeVisible = colorModeDropdown.IsVisible;
+        var wasTextColorVisible = textColorInput.IsVisible;
+        var wasOutlineColorVisible = outlineColorInput.IsVisible;
+        var wasBackgroundCheckboxVisible = backgroundCheckbox.IsVisible;
+        var wasBackgroundTextColorVisible = backgroundTextColorInput.IsVisible;
+        var wasBarColorVisible = barColorInput.IsVisible;
+        var wasBarBgColorVisible = barBgColorInput.IsVisible;
 
         IsVisible = isText || isBar || isBg;
 
         if (!IsVisible)
         {
+            isLoading = false;
             if (wasVisible != IsVisible) OnLayoutChanged?.Invoke();
             return;
         }
@@ -166,7 +174,18 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         isLoading = false;
         RecalculateLayout();
-        if (wasVisible != IsVisible) OnLayoutChanged?.Invoke();
+
+        if (wasVisible != IsVisible
+            || wasColorModeVisible != colorModeDropdown.IsVisible
+            || wasTextColorVisible != textColorInput.IsVisible
+            || wasOutlineColorVisible != outlineColorInput.IsVisible
+            || wasBackgroundCheckboxVisible != backgroundCheckbox.IsVisible
+            || wasBackgroundTextColorVisible != backgroundTextColorInput.IsVisible
+            || wasBarColorVisible != barColorInput.IsVisible
+            || wasBarBgColorVisible != barBgColorInput.IsVisible)
+        {
+            OnLayoutChanged?.Invoke();
+        }
     }
 
     private Action<Vector4> CreateColorCallback(Action<Vector4> setter)

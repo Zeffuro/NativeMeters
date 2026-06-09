@@ -5,7 +5,6 @@ using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
-using NativeMeters.Nodes.LayoutNodes;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Sections;
 
@@ -28,6 +27,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
         listContainer = new VerticalListNode {
             ItemSpacing = 4.0f,
             FitContents = true,
+            FitWidth = true,
         };
         AddNode(listContainer);
 
@@ -83,9 +83,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
 
     private void RefreshSectionLayout()
     {
-        LayoutRecalculation.RecalculateBottomUp(listContainer);
-        LayoutRecalculation.RecalculateBottomUp(ContentNode);
-        RecalculateLayout();
+        RecalculateContentLayout();
         onLayoutChanged();
     }
 

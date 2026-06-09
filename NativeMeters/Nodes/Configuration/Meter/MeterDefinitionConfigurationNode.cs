@@ -32,7 +32,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     private readonly VerticalListNode containerLayout;
     private readonly SimpleComponentNode headerContainer;
     private readonly HorizontalListNode buttonsList;
-    private readonly ManualScrollingNode<VerticalListNode> scrollingArea;
+    private readonly ScrollingNode<VerticalListNode> scrollingArea;
     private readonly VerticalListNode mainLayout;
 
     private readonly List<MeterConfigSection> sections = [];
@@ -94,7 +94,11 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
             OnClick = () => ConfigPorter.TryExportMeterToClipboard(settings)
         });
 
-        scrollingArea = new ManualScrollingNode<VerticalListNode>();
+        scrollingArea = new ScrollingNode<VerticalListNode>
+        {
+            AutoHideScrollBar = true,
+            ScrollSpeed = 36,
+        };
         containerLayout.AddNode(scrollingArea);
 
         mainLayout = scrollingArea.ContentNode;
@@ -151,16 +155,6 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         buttonsList.Position = new Vector2(Width - buttonsWidth - 10, 2);
         buttonsList.RecalculateLayout();
 
-        var listWidth = Math.Max(0, Width - 16.0f);
-        mainLayout.Width = listWidth;
-
-        foreach (var section in sections)
-        {
-            section.Width = listWidth;
-        }
-
-        LayoutRecalculation.RecalculateBottomUp(mainLayout);
-
         var scrollHeight = Math.Max(0, Height - headerContainer.Height - containerLayout.ItemSpacing);
         scrollingArea.Size = new Vector2(Width, scrollHeight);
 
@@ -204,9 +198,17 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 
     private void HandleLayoutChange()
     {
+        var listWidth = Math.Max(0, scrollingArea.Width - 16.0f);
+        mainLayout.Width = listWidth;
+
+        foreach (var section in sections)
+        {
+            section.Width = listWidth;
+        }
+
         LayoutRecalculation.RecalculateBottomUp(mainLayout);
         ConfigurationNavigation.Apply(mainLayout, NavigationStartIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex);
-        scrollingArea.UpdateScrollParams();
+        LayoutRecalculation.UpdateScrollParams(scrollingArea);
 
         containerLayout.RecalculateLayout();
 

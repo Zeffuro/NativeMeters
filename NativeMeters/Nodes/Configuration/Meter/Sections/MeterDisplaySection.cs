@@ -49,7 +49,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         showNonPlayerToggle!.IsChecked = Settings.ShowNonPlayerCombatants;
         showPinSelfToggle!.IsChecked = Settings.PinSelfToTop;
 
-        RecalculateLayout();
+        RecalculateContentLayout();
     }
 
     private void Initialize()

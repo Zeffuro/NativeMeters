@@ -14,6 +14,12 @@ internal static class LayoutRecalculation
     {
         if (!node.IsVisible) return;
 
+        if (node is CategoryNode categoryNode)
+        {
+            categoryNode.RecalculateContentLayout();
+            return;
+        }
+
         if (node is ILayoutListNode layoutNode)
         {
             layoutNode.RecalculateLayout();
