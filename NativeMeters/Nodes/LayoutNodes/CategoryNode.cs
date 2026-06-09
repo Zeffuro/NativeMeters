@@ -22,6 +22,8 @@ public class CategoryNode : VerticalListNode
     private bool isCollapsed = true;
     private float headerHeight = 28.0f;
     private float nestingIndent;
+    private float contentIndent = 18.0f;
+    private bool isRecalculatingContent;
 
     public Action? OnToggle;
 
@@ -74,11 +76,11 @@ public class CategoryNode : VerticalListNode
         set
         {
             nestingIndent = value;
+            contentIndent = value + 10.0f;
 
             ArrowNode.X = value + 4.0f;
             LabelNode.X = value + 23.0f;
-            ContentNode.X = value + 10.0f;
-            ContentNode.Width = Math.Max(0.0f, Width - ContentNode.X);
+            ApplyContentBounds();
             RecalculateLayout();
         }
     }
@@ -148,27 +150,18 @@ public class CategoryNode : VerticalListNode
         ContentNode.IsVisible = !isCollapsed;
         ArrowNode.PartId = isCollapsed ? 0u : 1u;
 
-        if (!isCollapsed)
-        {
-            RecalculateContentLayout();
-        }
-        else
-        {
-            RecalculateLayout();
-        }
+        RecalculateLayout();
         OnToggle?.Invoke();
     }
 
     public void RefreshLayout()
     {
-        RecalculateContentLayout();
+        RecalculateLayout();
         OnToggle?.Invoke();
     }
 
     public void RecalculateContentLayout()
     {
-        ContentNode.Width = Math.Max(0.0f, Width - ContentNode.X);
-        LayoutRecalculation.RecalculateBottomUp(ContentNode);
         RecalculateLayout();
     }
 
@@ -229,7 +222,45 @@ public class CategoryNode : VerticalListNode
         BackgroundNode.Width = Width;
         LabelNode.Width = Math.Max(0, Width - LabelNode.X);
         CollisionNode.Width = Width;
+        ApplyContentBounds();
+    }
+
+    protected override void OnRecalculateLayout()
+    {
+        ApplyContentBounds();
+        RecalculateVisibleContent();
+        base.OnRecalculateLayout();
+    }
+
+    protected override void AdjustNode(NodeBase node)
+    {
+        if (ReferenceEquals(node, ContentNode))
+        {
+            ApplyContentBounds();
+        }
+    }
+
+    private void ApplyContentBounds()
+    {
+        if (ContentNode == null) return;
+
+        ContentNode.X = contentIndent;
         ContentNode.Width = Math.Max(0.0f, Width - ContentNode.X);
+    }
+
+    private void RecalculateVisibleContent()
+    {
+        if (isCollapsed || !ContentNode.IsVisible || isRecalculatingContent) return;
+
+        isRecalculatingContent = true;
+        try
+        {
+            LayoutRecalculation.RecalculateBottomUp(ContentNode);
+        }
+        finally
+        {
+            isRecalculatingContent = false;
+        }
     }
 
     public ReadOnlySeString String { get => LabelNode.String; set => LabelNode.String = value; }
