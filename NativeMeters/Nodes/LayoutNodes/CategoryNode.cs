@@ -229,15 +229,7 @@ public class CategoryNode : VerticalListNode
     {
         ApplyContentBounds();
         RecalculateVisibleContent();
-        base.OnRecalculateLayout();
-    }
-
-    protected override void AdjustNode(NodeBase node)
-    {
-        if (ReferenceEquals(node, ContentNode))
-        {
-            ApplyContentBounds();
-        }
+        ApplyOwnLayout();
     }
 
     private void ApplyContentBounds()
@@ -261,6 +253,18 @@ public class CategoryNode : VerticalListNode
         {
             isRecalculatingContent = false;
         }
+    }
+
+    private void ApplyOwnLayout()
+    {
+        HeaderNode.X = 0.0f;
+        HeaderNode.Y = FirstItemSpacing;
+
+        ContentNode.Y = HeaderNode.Y + HeaderNode.Height + ItemSpacing;
+
+        Height = ContentNode.IsVisible
+            ? ContentNode.Y + ContentNode.Height
+            : HeaderNode.Y + HeaderNode.Height;
     }
 
     public ReadOnlySeString String { get => LabelNode.String; set => LabelNode.String = value; }
