@@ -32,7 +32,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     private readonly VerticalListNode containerLayout;
     private readonly SimpleComponentNode headerContainer;
     private readonly HorizontalListNode buttonsList;
-    private readonly ScrollingNode<VerticalListNode> scrollingArea;
+    private readonly NativeScrollingAreaNode<VerticalListNode> scrollingArea;
     private readonly VerticalListNode mainLayout;
 
     private readonly List<MeterConfigSection> sections = [];
@@ -94,7 +94,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
             OnClick = () => ConfigPorter.TryExportMeterToClipboard(settings)
         });
 
-        scrollingArea = new ScrollingNode<VerticalListNode>
+        scrollingArea = new NativeScrollingAreaNode<VerticalListNode>
         {
             AutoHideScrollBar = true,
             ScrollSpeed = 36,
@@ -208,7 +208,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 
         LayoutRecalculation.RecalculateBottomUp(mainLayout);
         ConfigurationNavigation.Apply(mainLayout, NavigationStartIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex);
-        LayoutRecalculation.UpdateScrollParams(scrollingArea);
+        scrollingArea.ContentHeight = mainLayout.Height;
 
         containerLayout.RecalculateLayout();
 

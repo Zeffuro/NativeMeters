@@ -11,6 +11,9 @@ namespace NativeMeters.Nodes.LayoutNodes;
 internal static class LayoutRecalculation
 {
     public static void RecalculateBottomUp(NodeBase node)
+        => RecalculateForMeasurement(node);
+
+    internal static void RecalculateForMeasurement(NodeBase node)
     {
         if (!node.IsVisible) return;
 
@@ -20,13 +23,19 @@ internal static class LayoutRecalculation
             return;
         }
 
+        if (node is NativeTabbedVerticalListNode nativeTabbedListNode)
+        {
+            nativeTabbedListNode.RecalculateLayout();
+            return;
+        }
+
         if (node is ILayoutListNode layoutNode)
         {
             layoutNode.RecalculateLayout();
 
             foreach (var childNode in layoutNode.Nodes)
             {
-                RecalculateBottomUp(childNode);
+                RecalculateForMeasurement(childNode);
             }
 
             layoutNode.RecalculateLayout();

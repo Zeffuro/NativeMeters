@@ -16,7 +16,7 @@ public class CategoryNode : VerticalListNode
     protected readonly ImageNode ArrowNode;
     protected readonly TextNode LabelNode;
     protected readonly CollisionNode CollisionNode;
-    protected readonly TabbedVerticalListNode ContentNode;
+    protected readonly NativeTabbedVerticalListNode ContentNode;
     protected readonly SimpleComponentNode HeaderNode;
 
     private bool isCollapsed = true;
@@ -27,7 +27,7 @@ public class CategoryNode : VerticalListNode
 
     public Action? OnToggle;
 
-    public TabbedVerticalListNode CollapsibleContent => ContentNode;
+    public NativeTabbedVerticalListNode CollapsibleContent => ContentNode;
 
     public bool IsCollapsed
     {
@@ -132,7 +132,7 @@ public class CategoryNode : VerticalListNode
         });
         CollisionNode.AttachNode(HeaderNode);
 
-        ContentNode = new TabbedVerticalListNode {
+        ContentNode = new NativeTabbedVerticalListNode {
             IsVisible = false,
             X = 18.0f,
             ItemSpacing = 4.0f,
@@ -247,7 +247,7 @@ public class CategoryNode : VerticalListNode
         isRecalculatingContent = true;
         try
         {
-            LayoutRecalculation.RecalculateBottomUp(ContentNode);
+            ContentNode.RecalculateLayout();
         }
         finally
         {

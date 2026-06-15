@@ -14,21 +14,15 @@
         "resolved": "1.2.39",
         "contentHash": "fcFN01tDTIQqDuTwr1jUQK/geofiwjG5DycJQOnC72i1SsLAk1ELe+apBOuZ11UMQG8YKFZG1FgvjZPbqHyatg=="
       },
-      "SixLabors.ImageSharp": {
+      "KamiToolKit": {
         "type": "Transitive",
-        "resolved": "3.1.12",
-        "contentHash": "iAg6zifihXEFS/t7fiHhZBGAdCp3FavsF4i2ZIDp0JfeYeDVzvmlbY1CNhhIKimaIzrzSi5M/NBFcWvZT2rB/A=="
-      },
-      "kamitoolkit": {
-        "type": "Project",
-        "dependencies": {
-          "SixLabors.ImageSharp": "[3.1.12, )"
-        }
+        "resolved": "2.0.8",
+        "contentHash": "nXXi88c9etes4r3cL9DTv58C8/WU5sg29HLbzQ+NW3vrcy6I3gsWJJeyjFIQSmbF/9+5MTSCD3QL7hh6mBfC5A=="
       },
       "kamitoolkit.components": {
         "type": "Project",
         "dependencies": {
-          "KamiToolKit": "[1.0.0, )"
+          "KamiToolKit": "[*, )"
         }
       }
     }
