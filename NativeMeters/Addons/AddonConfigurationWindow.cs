@@ -124,11 +124,16 @@ public class AddonConfigurationWindow : NativeAddon
     protected override unsafe void OnFinalize(AtkUnitBase* addon)
     {
         System.Config.General.PreviewEnabled = false;
-        addMeterDialog.Close();
         addMeterDialog.OnMeterCreated = null;
 
         ConfigRepository.Save(System.Config);
         base.OnFinalize(addon);
+    }
+
+    protected override unsafe void OnHide(AtkUnitBase* addon)
+    {
+        addMeterDialog.Close();
+        base.OnHide(addon);
     }
 
     public override void Dispose()
@@ -141,7 +146,7 @@ public class AddonConfigurationWindow : NativeAddon
 
     public override async ValueTask DisposeAsync()
     {
-        addMeterDialog.Close();
+        await addMeterDialog.CloseAsync();
         addMeterDialog.OnMeterCreated = null;
         await addMeterDialog.DisposeAsync();
         await base.DisposeAsync();
