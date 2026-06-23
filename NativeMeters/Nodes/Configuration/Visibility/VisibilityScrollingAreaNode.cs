@@ -26,8 +26,6 @@ public sealed class VisibilityScrollingAreaNode : ScrollingNode<VerticalListNode
 
     private void RecalculateConfigurationLayout()
     {
-        LayoutRecalculation.RecalculateBottomUp(ContentNode);
-        LayoutRecalculation.UpdateScrollParams(this);
         ConfigurationNavigation.Apply(ContentNode, FirstContentNavIndex, TabBarNavIndex, TabBarNavIndex);
     }
 }

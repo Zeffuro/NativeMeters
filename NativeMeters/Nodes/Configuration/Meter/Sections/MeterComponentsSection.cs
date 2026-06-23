@@ -83,7 +83,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
 
     private void RefreshSectionLayout()
     {
-        RecalculateContentLayout();
+        RecalculateSectionLayout();
         onLayoutChanged();
     }
 
@@ -105,7 +105,6 @@ public sealed class MeterComponentsSection : MeterConfigSection
         foreach (var component in TargetList) {
             var node = new ComponentSettingsNode {
                 Width = Width - 20.0f,
-                HeaderHeight = 24.0f,
                 RowComponent = component,
                 OnChanged = () =>
                 {
@@ -129,7 +128,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
                     Refresh();
                     System.OverlayManager.Setup();
                 },
-                OnToggle = RefreshSectionLayout
+                OnToggle = _ => RefreshSectionLayout()
             };
 
             listContainer.AddNode(node);
@@ -142,6 +141,6 @@ public sealed class MeterComponentsSection : MeterConfigSection
     {
         base.OnSizeChanged();
 
-        addRow?.Width = Math.Max(0, Width - ContentNode.X);
+        addRow?.Width = Math.Max(0, Width - ChildIndent);
     }
 }

@@ -32,7 +32,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     private readonly VerticalListNode containerLayout;
     private readonly SimpleComponentNode headerContainer;
     private readonly HorizontalListNode buttonsList;
-    private readonly NativeScrollingAreaNode<VerticalListNode> scrollingArea;
+    private readonly ScrollingNode<VerticalListNode> scrollingArea;
     private readonly VerticalListNode mainLayout;
 
     private readonly List<MeterConfigSection> sections = [];
@@ -94,7 +94,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
             OnClick = () => ConfigPorter.TryExportMeterToClipboard(settings)
         });
 
-        scrollingArea = new NativeScrollingAreaNode<VerticalListNode>
+        scrollingArea = new ScrollingNode<VerticalListNode>
         {
             AutoHideScrollBar = true,
             ScrollSpeed = 36,
@@ -128,7 +128,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 
         foreach (var section in sections)
         {
-            section.OnToggle = () =>
+            section.OnToggle = (_) =>
             {
                 if (!section.IsCollapsed && !section.IsInitialized)
                 {
@@ -206,11 +206,11 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
             section.Width = listWidth;
         }
 
-        LayoutRecalculation.RecalculateBottomUp(mainLayout);
         ConfigurationNavigation.Apply(mainLayout, NavigationStartIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex);
-        scrollingArea.ContentHeight = mainLayout.Height;
+        //scrollingArea.ContentHeight = mainLayout.Height;
+        scrollingArea.RecalculateSizes();
 
-        containerLayout.RecalculateLayout();
+        //containerLayout.RecalculateLayout();
 
         OnLayoutChanged?.Invoke();
     }

@@ -1,15 +1,18 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Configuration.Meter.Panels;
-using NativeMeters.Nodes.LayoutNodes;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
-public sealed class ComponentSettingsNode : CategoryNode
+public sealed class ComponentSettingsNode : CollapsingHeaderNode
 {
+    private const float ChildIndent = 18.0f;
+
     private ComponentSettings? settings;
 
     private readonly ComponentBasicsPanel basicsPanel;
@@ -35,16 +38,14 @@ public sealed class ComponentSettingsNode : CategoryNode
             typographyPanel.LoadSettings(settings);
             visualsPanel.LoadSettings(settings);
 
-            RecalculateContentLayout();
+            RecalculateLayout();
         }
     }
 
     public ComponentSettingsNode()
     {
-        AddTab();
         ItemSpacing = 0.0f;
         FirstItemSpacing = 6.0f;
-        HeaderHeight = 24.0f;
 
         basicsPanel = new ComponentBasicsPanel
         {
@@ -105,20 +106,7 @@ public sealed class ComponentSettingsNode : CategoryNode
 
     private void RefreshComponentLayout()
     {
-        RecalculateContentLayout();
-        OnToggle?.Invoke();
-    }
-
-    protected override void OnSizeChanged()
-    {
-        base.OnSizeChanged();
-
-        if (basicsPanel == null || typographyPanel == null || visualsPanel == null || buttonRow == null) return;
-
-        var innerWidth = Math.Max(0, Width - 30.0f);
-        basicsPanel.Width = innerWidth;
-        typographyPanel.Width = innerWidth;
-        visualsPanel.Width = innerWidth;
-        buttonRow.Width = innerWidth;
+        RecalculateLayout();
+        OnToggle?.Invoke(true);
     }
 }

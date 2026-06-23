@@ -13,8 +13,9 @@ using NativeMeters.Tags.Formatting;
 
 namespace NativeMeters.Nodes.Breakdown;
 
-public sealed class BreakdownPlayerSectionNode : CategoryNode
+public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
 {
+    private const float RowIndent = 10.0f;
     private static readonly NumericFormatter Formatter = new();
 
     private readonly IconImageNode jobIconNode;
@@ -27,14 +28,8 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
     public BreakdownPlayerSectionNode()
     {
         IsCollapsed = true;
-        HeaderHeight = 46f;
-        FontSize = 14;
-        NestingIndent = 0.0f;
-        CollapsibleContent.ItemSpacing = 1.0f;
-
-        LabelNode.X = 52.0f;
-        LabelNode.Height = 24f;
-        LabelNode.Y = 4f;
+        FitWidth = false;
+        ItemSpacing = 1.0f;
 
         jobIconNode = new IconImageNode
         {
@@ -43,7 +38,7 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
             FitTexture = true,
             IsVisible = true,
         };
-        jobIconNode.AttachNode(HeaderNode);
+        jobIconNode.AttachNode(this);
 
         primaryStatText = new TextNode
         {
@@ -56,7 +51,7 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
             TextColor = new Vector4(0.8f, 0.8f, 0.8f, 1f),
             IsVisible = true,
         };
-        primaryStatText.AttachNode(HeaderNode);
+        primaryStatText.AttachNode(this);
     }
 
     public void InitializeLayout(BreakdownTableLayout layout)
@@ -68,7 +63,6 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
     public void SetData(Combatant combatant, BreakdownTab tab, double encounterDuration)
     {
         String = GetDisplayName(combatant);
-        LabelNode.TextColor = combatant.GetColor();
 
         var iconId = combatant.GetIconId();
         jobIconNode.IsVisible = iconId > 0;
@@ -138,7 +132,7 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
         if (tableLayout == null
             || combatant.ActionBreakdownList == null || combatant.ActionBreakdownList.Count == 0)
         {
-            CollapsibleContent.RecalculateLayout();
+            RecalculateLayout();
             return;
         }
 
@@ -157,6 +151,7 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
         {
             var row = new BreakdownTableRowNode
             {
+                X = RowIndent,
                 Size = new Vector2(rowWidth, BreakdownTableRowNode.RowHeight),
                 IsVisible = false,
             };
@@ -169,6 +164,7 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
         {
             var row = rowPool[i];
             row.IsVisible = true;
+            row.X = RowIndent;
             row.Width = rowWidth;
 
             long val = isDamageMode ? actions[i].TotalDamage : actions[i].TotalHealing;
@@ -178,7 +174,7 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
 
         visibleRowCount = actions.Count;
 
-        CollapsibleContent.RecalculateLayout();
+        RecalculateLayout();
     }
 
     protected override void OnSizeChanged()
@@ -190,6 +186,9 @@ public sealed class BreakdownPlayerSectionNode : CategoryNode
 
         float rowWidth = Math.Max(0, Width - 18);
         for (int i = 0; i < visibleRowCount && i < rowPool.Count; i++)
+        {
+            rowPool[i].X = RowIndent;
             rowPool[i].Width = rowWidth;
+        }
     }
 }

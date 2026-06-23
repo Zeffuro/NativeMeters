@@ -240,7 +240,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
                 IsVisible = false,
             };
             section.InitializeLayout(tableLayout);
-            section.OnToggle = RecalculateScrollingContent;
+            section.OnToggle = _ => RecalculateScrollingContent();
             sectionPool.Add(section);
             scrollingContent.ContentNode.AddNode(section);
         }
@@ -266,8 +266,6 @@ public class AddonDetailedBreakdownWindow : NativeAddon
     private void RecalculateScrollingContent()
     {
         scrollingContent.ContentNode.Width = GetScrollingContentWidth();
-        LayoutRecalculation.RecalculateBottomUp(scrollingContent.ContentNode);
-        LayoutRecalculation.UpdateScrollParams(scrollingContent);
     }
 
     private (Encounter? encounter, List<Combatant>? combatants) GetCurrentData()

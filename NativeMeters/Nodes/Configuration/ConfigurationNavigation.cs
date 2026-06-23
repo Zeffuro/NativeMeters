@@ -117,21 +117,6 @@ internal static class ConfigurationNavigation
             yield break;
         }
 
-        if (node is CategoryNode categoryNode)
-        {
-            if (categoryNode.IsCollapsed) yield break;
-
-            foreach (var childNode in categoryNode.CollapsibleContent.Nodes)
-            {
-                foreach (var target in EnumerateNavigationTargets(childNode))
-                {
-                    yield return target;
-                }
-            }
-
-            yield break;
-        }
-
         if (node is ILayoutListNode layoutNode)
         {
             foreach (var childNode in layoutNode.Nodes)

@@ -186,7 +186,6 @@ public class MeterManagementNode : SimpleComponentNode
         buttonRow.RecalculateLayout();
         layoutContainer.RecalculateLayout();
         ApplyNavigation();
-        LayoutRecalculation.UpdateListScrollParams(selectionListNode);
     }
 
     private void OnSearchInputReceived(ReadOnlySeString searchString)
@@ -266,7 +265,6 @@ public class MeterManagementNode : SimpleComponentNode
 
         selectionListNode.OptionsList = filteredMeters;
         selectionListNode.ResetScroll();
-        LayoutRecalculation.UpdateListScrollParams(selectionListNode);
 
         if (clearSelection || selectedMeter is null || !filteredMeters.Contains(selectedMeter))
         {

@@ -49,12 +49,11 @@ public sealed class MeterDisplaySection : MeterConfigSection
         showNonPlayerToggle!.IsChecked = Settings.ShowNonPlayerCombatants;
         showPinSelfToggle!.IsChecked = Settings.PinSelfToTop;
 
-        RecalculateContentLayout();
+        RecalculateSectionLayout();
     }
 
     private void Initialize()
     {
-        AddTab();
         statDropdown = new LabeledDropdownNode
         {
             Size = new Vector2(Width, 28),

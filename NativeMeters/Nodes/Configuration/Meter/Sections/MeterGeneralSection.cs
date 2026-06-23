@@ -26,13 +26,11 @@ public sealed class MeterGeneralSection : MeterConfigSection
         lockedCheckbox!.IsChecked = Settings.IsLocked;
         clickthroughCheckbox!.IsChecked = Settings.IsClickthrough;
 
-        RecalculateContentLayout();
+        RecalculateSectionLayout();
     }
 
     private void Initialize()
     {
-        AddTab();
-
         nameInput = new LabeledTextInputNode
         {
             Size = new Vector2(Width, 28),
