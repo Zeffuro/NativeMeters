@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Numerics;
-using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
@@ -11,8 +9,6 @@ namespace NativeMeters.Nodes.Configuration.Meter;
 
 public sealed class ComponentSettingsNode : CollapsingHeaderNode
 {
-    private const float ChildIndent = 18.0f;
-
     private ComponentSettings? settings;
 
     private readonly ComponentBasicsPanel basicsPanel;
@@ -46,6 +42,7 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
     {
         ItemSpacing = 0.0f;
         FirstItemSpacing = 6.0f;
+        FitWidth = true;
 
         basicsPanel = new ComponentBasicsPanel
         {

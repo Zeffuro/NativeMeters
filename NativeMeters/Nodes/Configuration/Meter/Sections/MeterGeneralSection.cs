@@ -37,7 +37,7 @@ public sealed class MeterGeneralSection : MeterConfigSection
             LabelText = "Meter Name: ",
             OnInputComplete = val => Settings.Name = val.ToString(),
         };
-        AddNode(nameInput);
+        BodyNode.AddNode(nameInput);
 
         enabledCheckbox = new CheckboxNode
         {
@@ -49,7 +49,7 @@ public sealed class MeterGeneralSection : MeterConfigSection
                 System.OverlayManager.Setup();
             },
         };
-        AddNode(enabledCheckbox);
+        BodyNode.AddNode(enabledCheckbox);
 
         lockedCheckbox = new CheckboxNode
         {
@@ -57,7 +57,7 @@ public sealed class MeterGeneralSection : MeterConfigSection
             String = "Lock Position/Size",
             OnClick = val => Settings.IsLocked = val,
         };
-        AddNode(lockedCheckbox);
+        BodyNode.AddNode(lockedCheckbox);
 
         clickthroughCheckbox = new CheckboxNode
         {
@@ -69,6 +69,6 @@ public sealed class MeterGeneralSection : MeterConfigSection
                 System.OverlayManager.Setup();
             },
         };
-        AddNode(clickthroughCheckbox);
+        BodyNode.AddNode(clickthroughCheckbox);
     }
 }

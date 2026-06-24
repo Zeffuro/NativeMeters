@@ -36,6 +36,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     private readonly VerticalListNode mainLayout;
 
     private readonly List<MeterConfigSection> sections = [];
+    private float ListWidth => Math.Max(0, scrollingArea.Width - 16.0f);
 
     public MeterDefinitionConfigurationNode()
     {
@@ -198,12 +199,13 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 
     private void HandleLayoutChange()
     {
-        var listWidth = Math.Max(0, scrollingArea.Width - 16.0f);
+        var listWidth = ListWidth;
         mainLayout.Width = listWidth;
 
         foreach (var section in sections)
         {
             section.Width = listWidth;
+            section.BodyNode.Width = section.BodyWidth;
         }
 
         ConfigurationNavigation.Apply(mainLayout, NavigationStartIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex);

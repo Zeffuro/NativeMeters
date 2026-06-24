@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 
@@ -13,6 +11,8 @@ public abstract class MeterConfigSection : CollapsingHeaderNode
     protected readonly Func<MeterSettings> GetMeterSettings;
     protected MeterSettings Settings => GetMeterSettings();
     public bool IsInitialized { get; set; }
+    public VerticalListNode BodyNode { get; }
+    public float BodyWidth => Math.Max(0.0f, Width - BodyNode.X);
 
     protected MeterConfigSection(Func<MeterSettings> getSettings)
     {
@@ -20,49 +20,22 @@ public abstract class MeterConfigSection : CollapsingHeaderNode
 
         IsCollapsed = true;
         IsInitialized = false;
+        FitWidth = false;
+
+        BodyNode = new VerticalListNode
+        {
+            X = ChildIndent,
+            FitContents = true,
+            FitWidth = true,
+        };
+        base.AddNode(BodyNode);
     }
 
     public abstract void Refresh();
 
-    public override void AddNode(NodeBase? node)
-    {
-        if (node is null) return;
-
-        ApplyChildLayout(node);
-        base.AddNode(node);
-    }
-
-    public override void AddNode(IEnumerable<NodeBase> nodes)
-    {
-        foreach (var node in nodes)
-        {
-            AddNode(node);
-        }
-    }
-
     protected void RecalculateSectionLayout()
     {
-        ApplyChildLayout();
+        BodyNode.RecalculateLayout();
         RecalculateLayout();
-    }
-
-    protected override void OnSizeChanged()
-    {
-        base.OnSizeChanged();
-        ApplyChildLayout();
-    }
-
-    protected void ApplyChildLayout()
-    {
-        foreach (var node in Nodes)
-        {
-            ApplyChildLayout(node);
-        }
-    }
-
-    protected void ApplyChildLayout(NodeBase node)
-    {
-        node.X = ChildIndent;
-        node.Width = Math.Max(0.0f, Width - ChildIndent);
     }
 }

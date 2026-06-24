@@ -166,6 +166,6 @@ public sealed class MeterDisplaySection : MeterConfigSection
             OnClick = val => Settings.PinSelfToTop = val
         };
 
-        AddNode([statDropdown, maxRowsInput, scaleInput, rowHeightInput, rowSpacingInput, backgroundCheckbox, backgroundColorInput, headerToggle, headerHeightInput, footerToggle, footerHeightInput, showLimitBreakToggle, showNonPlayerToggle, showPinSelfToggle]);
+        BodyNode.AddNode([statDropdown, maxRowsInput, scaleInput, rowHeightInput, rowSpacingInput, backgroundCheckbox, backgroundColorInput, headerToggle, headerHeightInput, footerToggle, footerHeightInput, showLimitBreakToggle, showNonPlayerToggle, showPinSelfToggle]);
     }
 }

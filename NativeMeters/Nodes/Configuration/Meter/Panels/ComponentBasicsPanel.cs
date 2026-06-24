@@ -20,14 +20,18 @@ public sealed class ComponentBasicsPanel : VerticalListNode
     private readonly LabeledTextInputNode nameInput;
     private readonly HorizontalListNode sourceRow;
     private readonly LabeledTextInputNode sourceInput;
+    private readonly CircleButtonNode browseTagButton;
     private readonly LabeledDropdownNode barStatDropdown;
     private readonly LabeledEnumDropdownNode<JobIconType> jobIconTypeEnumDropdown;
 
     private readonly HorizontalListNode iconRow;
     private readonly LabeledNumericInputNode iconIdInput;
+    private readonly CircleButtonNode browseIconButton;
 
+    private readonly HorizontalListNode posRow;
     private readonly LabeledNumericInputNode posXInput;
     private readonly LabeledNumericInputNode posYInput;
+    private readonly HorizontalListNode sizeRow;
     private readonly LabeledNumericInputNode widthInput;
     private readonly LabeledNumericInputNode heightInput;
     private readonly LabeledNumericInputNode zIndexInput;
@@ -74,7 +78,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         sourceInput = new LabeledTextInputNode
         {
             LabelText = "Format String: ",
-            Size = new Vector2(Width - 10, 28),
+            Size = new Vector2(0, 28),
             Placeholder = "[name] [dps]",
             TextTooltip = tagTooltip,
             OnInputComplete = val =>
@@ -85,7 +89,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
-        var browseTagButton = new CircleButtonNode()
+        browseTagButton = new CircleButtonNode()
         {
             Icon = CircleButtonIcon.MagnifyingGlass,
             Size = new Vector2(28, 28),
@@ -131,7 +135,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
-        var browseIconButton = new CircleButtonNode()
+        browseIconButton = new CircleButtonNode()
         {
             Icon = CircleButtonIcon.MagnifyingGlass,
             Size = new Vector2(28, 28),
@@ -141,7 +145,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         iconRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 8.0f };
         iconRow.AddNode([iconIdInput, browseIconButton]);
 
-        var posRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 8.0f };
+        posRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 8.0f };
         posXInput = new LabeledNumericInputNode
         {
             LabelText = "Pos X:",
@@ -172,7 +176,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         };
         posRow.AddNode([posXInput, posYInput]);
 
-        var sizeRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 8.0f };
+        sizeRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 8.0f };
         widthInput = new LabeledNumericInputNode
         {
             LabelText = "Width:",
@@ -285,10 +289,22 @@ public sealed class ComponentBasicsPanel : VerticalListNode
     {
         base.OnSizeChanged();
         nameInput.Width = Width;
+        sourceInput.Width = Math.Max(0.0f, Width - browseTagButton.Width - sourceRow.ItemSpacing);
         sourceRow.Width = Width;
-        sourceInput.Width = Width;
         barStatDropdown.Width = Width;
         jobIconTypeEnumDropdown.Width = Width;
+        iconIdInput.Width = Math.Max(0.0f, Width - browseIconButton.Width - iconRow.ItemSpacing);
+        iconRow.Width = Width;
+
+        var pairedInputWidth = Math.Max(0.0f, (Width - posRow.ItemSpacing) / 2.0f);
+        posXInput.Width = pairedInputWidth;
+        posYInput.Width = pairedInputWidth;
+        posRow.Width = Width;
+
+        widthInput.Width = pairedInputWidth;
+        heightInput.Width = pairedInputWidth;
+        sizeRow.Width = Width;
+
         zIndexInput.Width = Width;
     }
 

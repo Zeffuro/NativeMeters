@@ -29,7 +29,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
             FitContents = true,
             FitWidth = true,
         };
-        AddNode(listContainer);
+        BodyNode.AddNode(listContainer);
 
         addRow = new HorizontalListNode
         {
@@ -49,7 +49,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
             OnClick = () => AddNewComponent(typeDropdown.SelectedOption)
         });
 
-        AddNode(addRow);
+        BodyNode.AddNode(addRow);
     }
 
     private List<ComponentSettings> TargetList => target switch
@@ -104,7 +104,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
 
         foreach (var component in TargetList) {
             var node = new ComponentSettingsNode {
-                Width = Width - 20.0f,
+                Width = BodyNode.Width,
                 RowComponent = component,
                 OnChanged = () =>
                 {
@@ -135,12 +135,5 @@ public sealed class MeterComponentsSection : MeterConfigSection
         }
 
         RefreshSectionLayout();
-    }
-
-    protected override void OnSizeChanged()
-    {
-        base.OnSizeChanged();
-
-        addRow?.Width = Math.Max(0, Width - ChildIndent);
     }
 }
