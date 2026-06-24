@@ -18,7 +18,7 @@ using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
-public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
+public sealed class MeterDefinitionConfigurationNode : ResNode
 {
     public Action? OnLayoutChanged { get; init; }
     public int NavigationStartIndex { get; set; } = 150;
@@ -30,13 +30,11 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     public static bool IsRefreshing { get; private set; } = false;
 
     private readonly VerticalListNode containerLayout;
-    private readonly SimpleComponentNode headerContainer;
+    private readonly ResNode headerContainer;
     private readonly HorizontalListNode buttonsList;
     private readonly ScrollingNode<VerticalListNode> scrollingArea;
-    private readonly VerticalListNode mainLayout;
 
     private readonly List<MeterConfigSection> sections = [];
-    private float ListWidth => Math.Max(0, scrollingArea.Width - 16.0f);
 
     public MeterDefinitionConfigurationNode()
     {
@@ -47,7 +45,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         };
         containerLayout.AttachNode(this);
 
-        headerContainer = new SimpleComponentNode
+        headerContainer = new ResNode
         {
             Height = 32,
         };
@@ -97,22 +95,28 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 
         scrollingArea = new ScrollingNode<VerticalListNode>
         {
+            ContentNode =
+            {
+                FitContents = true,
+                FitWidth = true,
+                ItemSpacing = 6.0f,
+            },
             AutoHideScrollBar = true,
             ScrollSpeed = 36,
+            Size = Size
         };
         containerLayout.AddNode(scrollingArea);
 
-        mainLayout = scrollingArea.ContentNode;
-        mainLayout.FitContents = true;
-        mainLayout.ItemSpacing = 6.0f;
-
         sections.Add(new MeterGeneralSection(() => settings)
         {
-            String = "General Settings", IsCollapsed = false,
+            Width = 200,
+            String = "General Settings",
+            IsCollapsed = false,
         });
         sections.Add(new MeterDisplaySection(() => settings)
         {
-            String = "Display Settings", IsCollapsed = false,
+            String = "Display Settings",
+            IsCollapsed = false,
         });
         sections.Add(new MeterComponentsSection(() => settings, HandleLayoutChange, ComponentTarget.Header)
         {
@@ -129,9 +133,9 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 
         foreach (var section in sections)
         {
-            section.OnToggle = (_) =>
+            section.OnToggle = _ =>
             {
-                if (!section.IsCollapsed && !section.IsInitialized)
+                if (section is { IsCollapsed: false, IsInitialized: false })
                 {
                     section.Refresh();
                 }
@@ -139,7 +143,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
                 HandleLayoutChange();
             };
 
-            mainLayout.AddNode(section);
+            scrollingArea.ContentNode.AddNode(section);
         }
     }
 
@@ -199,21 +203,9 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 
     private void HandleLayoutChange()
     {
-        var listWidth = ListWidth;
-        mainLayout.Width = listWidth;
+        ConfigurationNavigation.Apply(scrollingArea.ContentNode, NavigationStartIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex);
 
-        foreach (var section in sections)
-        {
-            section.Width = listWidth;
-            section.BodyNode.Width = section.BodyWidth;
-        }
-
-        ConfigurationNavigation.Apply(mainLayout, NavigationStartIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex);
-        //scrollingArea.ContentHeight = mainLayout.Height;
         scrollingArea.RecalculateSizes();
-
-        //containerLayout.RecalculateLayout();
-
         OnLayoutChanged?.Invoke();
     }
 

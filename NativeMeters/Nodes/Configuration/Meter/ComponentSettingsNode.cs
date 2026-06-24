@@ -18,6 +18,7 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
 
     public Action? OnChanged { get; set; }
     public Action? OnDeleted { get; set; }
+    public Action? OnLayoutChanged { get; set; }
     public Action<ComponentSettings>? OnDuplicate { get; set; }
 
     public ComponentSettings? RowComponent
@@ -33,8 +34,7 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
             basicsPanel.LoadSettings(settings);
             typographyPanel.LoadSettings(settings);
             visualsPanel.LoadSettings(settings);
-
-            RecalculateLayout();
+            RefreshComponentLayout();
         }
     }
 
@@ -104,6 +104,6 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
     private void RefreshComponentLayout()
     {
         RecalculateLayout();
-        OnToggle?.Invoke(true);
+        OnLayoutChanged?.Invoke();
     }
 }

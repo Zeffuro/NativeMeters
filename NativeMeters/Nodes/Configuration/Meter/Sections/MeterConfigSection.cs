@@ -11,8 +11,6 @@ public abstract class MeterConfigSection : CollapsingHeaderNode
     protected readonly Func<MeterSettings> GetMeterSettings;
     protected MeterSettings Settings => GetMeterSettings();
     public bool IsInitialized { get; set; }
-    public VerticalListNode BodyNode { get; }
-    public float BodyWidth => Math.Max(0.0f, Width - BodyNode.X);
 
     protected MeterConfigSection(Func<MeterSettings> getSettings)
     {
@@ -22,20 +20,13 @@ public abstract class MeterConfigSection : CollapsingHeaderNode
         IsInitialized = false;
         FitWidth = false;
 
-        BodyNode = new VerticalListNode
-        {
-            X = ChildIndent,
-            FitContents = true,
-            FitWidth = true,
-        };
-        base.AddNode(BodyNode);
+        //base.AddNode(BodyNode);
     }
 
     public abstract void Refresh();
 
     protected void RecalculateSectionLayout()
     {
-        BodyNode.RecalculateLayout();
         RecalculateLayout();
     }
 }

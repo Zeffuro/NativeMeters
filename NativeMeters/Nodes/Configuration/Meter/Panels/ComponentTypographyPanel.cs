@@ -6,7 +6,7 @@ using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Nodes.Input;
 
-namespace NativeMeters.Nodes.Configuration.Meter;
+namespace NativeMeters.Nodes.Configuration.Meter.Panels;
 
 public sealed class ComponentTypographyPanel : VerticalListNode
 {

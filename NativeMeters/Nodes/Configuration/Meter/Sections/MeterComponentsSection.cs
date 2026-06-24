@@ -12,8 +12,6 @@ public enum ComponentTarget { Header, Row, Footer }
 
 public sealed class MeterComponentsSection : MeterConfigSection
 {
-    private readonly VerticalListNode listContainer;
-    private readonly HorizontalListNode addRow;
     private readonly Action onLayoutChanged;
     private readonly ComponentTarget target;
 
@@ -24,14 +22,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
         this.onLayoutChanged = onLayoutChanged;
         this.target = target;
 
-        listContainer = new VerticalListNode {
-            ItemSpacing = 4.0f,
-            FitContents = true,
-            FitWidth = true,
-        };
-        BodyNode.AddNode(listContainer);
-
-        addRow = new HorizontalListNode
+        var addRow = new HorizontalListNode
         {
             Size = new Vector2(300, 32),
             ItemSpacing = 8.0f,
@@ -49,7 +40,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
             OnClick = () => AddNewComponent(typeDropdown.SelectedOption)
         });
 
-        BodyNode.AddNode(addRow);
+        AddNode(addRow);
     }
 
     private List<ComponentSettings> TargetList => target switch
@@ -92,7 +83,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
         if (IsCollapsed)
         {
             IsInitialized = false;
-            listContainer.Clear();
+            RemoveNode(Nodes.OfType<ComponentSettingsNode>().ToList());
             return;
         }
 
@@ -100,12 +91,13 @@ public sealed class MeterComponentsSection : MeterConfigSection
         var currentIds = TargetList.Select(c => c.Id).ToList();
         lastComponentIds = currentIds;
 
-        listContainer.Clear();
+        RemoveNode(Nodes.OfType<ComponentSettingsNode>().ToList());
 
         foreach (var component in TargetList) {
             var node = new ComponentSettingsNode {
-                Width = BodyNode.Width,
+                Width = Width,
                 RowComponent = component,
+                OnLayoutChanged = RefreshSectionLayout,
                 OnChanged = () =>
                 {
                     ConfigRepository.Save(System.Config);
@@ -131,7 +123,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
                 OnToggle = _ => RefreshSectionLayout()
             };
 
-            listContainer.AddNode(node);
+            AddNode(node);
         }
 
         RefreshSectionLayout();

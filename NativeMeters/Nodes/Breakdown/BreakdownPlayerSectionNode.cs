@@ -20,6 +20,7 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
 
     private readonly IconImageNode jobIconNode;
     private readonly TextNode primaryStatText;
+    private readonly VerticalListNode bodyNode;
 
     private readonly List<BreakdownTableRowNode> rowPool = new();
     private int visibleRowCount;
@@ -29,7 +30,7 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
     {
         IsCollapsed = true;
         FitWidth = false;
-        ItemSpacing = 1.0f;
+        ItemSpacing = 0.0f;
 
         jobIconNode = new IconImageNode
         {
@@ -52,6 +53,13 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
             IsVisible = true,
         };
         primaryStatText.AttachNode(this);
+
+        bodyNode = new VerticalListNode
+        {
+            FitContents = true,
+            ItemSpacing = 1.0f,
+        };
+        AddNode(bodyNode);
     }
 
     public void InitializeLayout(BreakdownTableLayout layout)
@@ -98,7 +106,7 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
             IsCollapsed = false;
         }
 
-        RecalculateLayout();
+        RecalculateBreakdownLayout();
     }
 
     private static string GetDisplayName(Combatant combatant)
@@ -132,7 +140,7 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
         if (tableLayout == null
             || combatant.ActionBreakdownList == null || combatant.ActionBreakdownList.Count == 0)
         {
-            RecalculateLayout();
+            RecalculateBreakdownLayout();
             return;
         }
 
@@ -157,7 +165,7 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
             };
             row.SetLayout(tableLayout);
             rowPool.Add(row);
-            AddNode(row);
+            bodyNode.AddNode(row);
         }
 
         for (int i = 0; i < actions.Count; i++)
@@ -174,7 +182,7 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
 
         visibleRowCount = actions.Count;
 
-        RecalculateLayout();
+        RecalculateBreakdownLayout();
     }
 
     protected override void OnSizeChanged()
@@ -183,6 +191,7 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
         if (primaryStatText == null) return;
 
         primaryStatText.Size = new Vector2(Math.Max(0, Width - 60), 20);
+        bodyNode.Width = Width;
 
         float rowWidth = Math.Max(0, Width - 18);
         for (int i = 0; i < visibleRowCount && i < rowPool.Count; i++)
@@ -190,5 +199,11 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
             rowPool[i].X = RowIndent;
             rowPool[i].Width = rowWidth;
         }
+    }
+
+    private void RecalculateBreakdownLayout()
+    {
+        bodyNode.RecalculateLayout();
+        RecalculateLayout();
     }
 }
