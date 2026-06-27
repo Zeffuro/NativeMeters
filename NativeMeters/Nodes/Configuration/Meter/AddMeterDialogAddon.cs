@@ -17,7 +17,7 @@ public sealed class AddMeterDialogAddon : NativeAddon
     public Action<MeterSettings>? OnMeterCreated { get; set; }
 
     private VerticalListNode? layoutNode;
-    private TextDropDownNode? presetDropdown;
+    private StringDropDownNode? presetDropdown;
 
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
@@ -59,7 +59,7 @@ public sealed class AddMeterDialogAddon : NativeAddon
                     ItemSpacing = 8.0f,
                     InitialNodes =
                     [
-                        presetDropdown = new TextDropDownNode
+                        presetDropdown = new StringDropDownNode
                         {
                             Width = presetDropdownWidth,
                             Options = presetNames,

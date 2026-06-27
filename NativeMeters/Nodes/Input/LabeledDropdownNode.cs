@@ -12,7 +12,7 @@ namespace NativeMeters.Nodes.Input;
 public class LabeledDropdownNode : SimpleComponentNode, IConfigurationNavigationNode {
     private readonly GridNode _gridNode;
     private readonly TextNode _labelNode;
-    private readonly TextDropDownNode _dropDownNode;
+    private readonly StringDropDownNode _dropDownNode;
 
     public LabeledDropdownNode() {
         _gridNode = new GridNode { GridSize = new GridSize(2, 1) };
@@ -21,7 +21,7 @@ public class LabeledDropdownNode : SimpleComponentNode, IConfigurationNavigation
         _labelNode = new LabelTextNode { String = string.Empty };
         _labelNode.AttachNode(_gridNode[0, 0]);
 
-        _dropDownNode = new TextDropDownNode { Options = new List<string>() };
+        _dropDownNode = new StringDropDownNode { Options = new List<string>() };
         _dropDownNode.AttachNode(_gridNode[1, 0]);
 
         FocusNode = _dropDownNode.CollisionNode;

@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
@@ -9,6 +10,8 @@ namespace NativeMeters.Nodes.Configuration.Meter;
 
 public sealed class ComponentSettingsNode : CollapsingHeaderNode
 {
+    private const float ChildIndent = 8.0f;
+
     private ComponentSettings? settings;
 
     private readonly ComponentBasicsPanel basicsPanel;
@@ -42,7 +45,7 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
     {
         ItemSpacing = 0.0f;
         FirstItemSpacing = 6.0f;
-        FitWidth = true;
+        FitWidth = false;
 
         basicsPanel = new ComponentBasicsPanel
         {
@@ -93,6 +96,22 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
         AddNode([basicsPanel, typographyPanel, visualsPanel, buttonRow]);
     }
 
+    public override void AddNode(NodeBase? node)
+    {
+        if (node != null) ApplyChildLayout(node);
+        base.AddNode(node);
+    }
+
+    protected override void OnSizeChanged()
+    {
+        base.OnSizeChanged();
+
+        foreach (var node in Nodes)
+        {
+            ApplyChildLayout(node);
+        }
+    }
+
     private void NotifyChanged()
     {
         if (MeterDefinitionConfigurationNode.IsRefreshing) return;
@@ -105,5 +124,11 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
     {
         RecalculateLayout();
         OnLayoutChanged?.Invoke();
+    }
+
+    private void ApplyChildLayout(NodeBase node)
+    {
+        node.X = ChildIndent;
+        node.Width = Math.Max(0.0f, Width - ChildIndent);
     }
 }

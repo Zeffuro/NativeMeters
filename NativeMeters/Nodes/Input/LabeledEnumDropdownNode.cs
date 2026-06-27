@@ -1,19 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Simplified;
 using Lumina.Text.ReadOnly;
-using NativeMeters.Extensions;
 using NativeMeters.Nodes.Configuration;
 
 namespace NativeMeters.Nodes.Input;
 
-public class LabeledEnumDropdownNode<T> : SimpleComponentNode, IConfigurationNavigationNode where T : Enum {
+public class LabeledEnumDropdownNode<T> : SimpleComponentNode, IConfigurationNavigationNode where T : struct, Enum {
     private readonly GridNode _gridNode;
     private readonly TextNode _labelNode;
-    private readonly EnumDropDownNode<T> _dropDownNode;
+    private readonly EnumDropDownNode _dropDownNode;
+    private Action<T>? _onOptionSelected;
+    private List<T> _options = [];
 
     public LabeledEnumDropdownNode() {
         _gridNode = new GridNode {
@@ -26,8 +28,8 @@ public class LabeledEnumDropdownNode<T> : SimpleComponentNode, IConfigurationNav
         };
         _labelNode.AttachNode(_gridNode[0, 0]);
 
-        _dropDownNode = new EnumDropDownNode<T> {
-            Options = new List<T>(),
+        _dropDownNode = new EnumDropDownNode {
+            Options = [],
         };
         _dropDownNode.AttachNode(_gridNode[1, 0]);
 
@@ -51,20 +53,28 @@ public class LabeledEnumDropdownNode<T> : SimpleComponentNode, IConfigurationNav
 
     public Action<T>? OnOptionSelected
     {
-        get => _dropDownNode.OnOptionSelected;
-        set => _dropDownNode.OnOptionSelected = value;
+        get => _onOptionSelected;
+        set
+        {
+            _onOptionSelected = value;
+            _dropDownNode.OnOptionSelected = value is null
+                ? null
+                : selected =>
+                {
+                    if (selected is T typedSelected)
+                    {
+                        value(typedSelected);
+                    }
+                };
+        }
     }
 
     public T? SelectedOption
     {
-        get => _dropDownNode.OptionListNode.SelectedOption;
+        get => _dropDownNode.SelectedOption is T selected ? selected : null;
         set
         {
-            _dropDownNode.OptionListNode.SelectedOption = value;
-            if (value != null)
-            {
-                _dropDownNode.LabelNode.String = value.Description;
-            }
+            _dropDownNode.SelectedOption = value.HasValue ? value.Value : null;
         }
     }
 
@@ -76,8 +86,12 @@ public class LabeledEnumDropdownNode<T> : SimpleComponentNode, IConfigurationNav
 
     public required List<T> Options
     {
-        get => _dropDownNode.Options!;
-        set => _dropDownNode.Options = value;
+        get => _options;
+        set
+        {
+            _options = value;
+            _dropDownNode.Options = value.Cast<Enum>().ToList();
+        }
     }
 
     public TextFlags LabelTextFlags

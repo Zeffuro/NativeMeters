@@ -16,7 +16,7 @@ namespace NativeMeters.Nodes.Configuration.General;
 public sealed class ColorConfigurationNode : ScrollingNode<VerticalListNode>
 {
     private const int FirstContentNavIndex = 6;
-    private const float ChildIndent = 18.0f;
+    private const float ChildIndent = 8.0f;
 
     private readonly CollapsingHeaderNode roleCategory;
     private readonly CollapsingHeaderNode jobCategory;

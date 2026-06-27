@@ -15,7 +15,7 @@ namespace NativeMeters.Nodes.Breakdown;
 
 public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
 {
-    private const float RowIndent = 10.0f;
+    private const float RowIndent = 8.0f;
     private static readonly NumericFormatter Formatter = new();
 
     private readonly IconImageNode jobIconNode;
@@ -145,7 +145,7 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
         }
 
         bool isDamageMode = tab == BreakdownTab.Damage;
-        float rowWidth = Math.Max(0, Width - 18);
+        float rowWidth = Math.Max(0, Width - RowIndent);
 
         var actions = isDamageMode
             ? combatant.ActionBreakdownList.Where(a => a.TotalDamage > 0).OrderByDescending(a => a.TotalDamage).ToList()
@@ -193,7 +193,7 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
         primaryStatText.Size = new Vector2(Math.Max(0, Width - 60), 20);
         bodyNode.Width = Width;
 
-        float rowWidth = Math.Max(0, Width - 18);
+        float rowWidth = Math.Max(0, Width - RowIndent);
         for (int i = 0; i < visibleRowCount && i < rowPool.Count; i++)
         {
             rowPool[i].X = RowIndent;

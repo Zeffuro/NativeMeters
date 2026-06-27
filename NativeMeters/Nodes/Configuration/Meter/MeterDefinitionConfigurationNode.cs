@@ -69,7 +69,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
         };
         buttonsList.AttachNode(headerContainer);
 
-        var presetsDropdown = new TextDropDownNode
+        var presetsDropdown = new StringDropDownNode
         {
             Size = new Vector2(120, 28),
             Options = MeterPresets.GetPresetNames(),
