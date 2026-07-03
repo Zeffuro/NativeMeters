@@ -13,7 +13,7 @@ public sealed class ImportExportResetNode : HorizontalListNode
     public ImportExportResetNode()
     {
         Height = 0;
-        Width = 600;
+        Width = 760;
         Alignment = HorizontalListAnchor.Right;
         FirstItemSpacing = 3;
         ItemSpacing = 2;

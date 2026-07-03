@@ -108,6 +108,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         {
             Position = ContentStartPosition with { Y = scrollY },
             AutoHideScrollBar = true,
+            ReverseContentLayoutUpdate = true,
             IsVisible = true,
         };
         scrollingContent.ContentNode.ItemSpacing = 2f;

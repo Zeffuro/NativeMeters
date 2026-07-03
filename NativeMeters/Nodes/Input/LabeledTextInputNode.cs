@@ -31,6 +31,16 @@ public class LabeledTextInputNode : SimpleComponentNode, IConfigurationNavigatio
         FocusNode = _textInputNode.CollisionNode;
     }
 
+    public override bool IsVisible {
+        get => base.IsVisible;
+        set {
+            base.IsVisible = value;
+            _gridNode.IsVisible = value;
+            _labelNode.IsVisible = value;
+            _textInputNode.IsVisible = value;
+        }
+    }
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

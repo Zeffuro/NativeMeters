@@ -118,7 +118,37 @@ public class AddonConfigurationWindow : NativeAddon
     private void SwitchTab(int index)
     {
         for (var i = 0; i < tabContent.Count; i++)
-            tabContent[i].IsVisible = i == index;
+        {
+            var isSelected = i == index;
+            tabContent[i].IsVisible = isSelected;
+
+            if (isSelected)
+            {
+                RecalculateTabContent(i);
+            }
+        }
+    }
+
+    private void RecalculateTabContent(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                generalScrollingAreaNode.RecalculateSizes();
+                break;
+            case 1:
+                connectionScrollingAreaNode.RecalculateSizes();
+                break;
+            case 2:
+                meterManagementNode.RecalculateLayout();
+                break;
+            case 3:
+                colorConfigurationNode.RecalculateSizes();
+                break;
+            case 4:
+                visibilityScrollingAreaNode.RecalculateSizes();
+                break;
+        }
     }
 
     protected override unsafe void OnFinalize(AtkUnitBase* addon)

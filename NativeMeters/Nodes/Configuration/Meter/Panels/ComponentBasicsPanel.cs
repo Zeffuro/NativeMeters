@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
@@ -15,6 +16,9 @@ namespace NativeMeters.Nodes.Configuration.Meter.Panels;
 
 public sealed class ComponentBasicsPanel : VerticalListNode
 {
+    private const float InputHeight = 28.0f;
+    private const float RowHeight = 30.0f;
+
     private ComponentSettings? settings;
 
     private readonly LabeledTextInputNode nameInput;
@@ -49,6 +53,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
     public ComponentBasicsPanel()
     {
+        ReverseLayoutUpdate = true;
         FitContents = true;
         ItemSpacing = 4.0f;
 
@@ -63,7 +68,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         nameInput = new LabeledTextInputNode
         {
             LabelText = "Display Name: ",
-            Size = new Vector2(Width, 28),
+            Size = new Vector2(Width, InputHeight),
             OnInputComplete = val =>
             {
                 if (settings == null) return;
@@ -73,12 +78,12 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
-        sourceRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 2.0f };
+        sourceRow = new HorizontalListNode { Size = new Vector2(Width, RowHeight), ItemSpacing = 2.0f };
 
         sourceInput = new LabeledTextInputNode
         {
             LabelText = "Format String: ",
-            Size = new Vector2(0, 28),
+            Size = new Vector2(0, InputHeight),
             Placeholder = "[name] [dps]",
             TextTooltip = tagTooltip,
             OnInputComplete = val =>
@@ -92,7 +97,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         browseTagButton = new CircleButtonNode()
         {
             Icon = CircleButtonIcon.MagnifyingGlass,
-            Size = new Vector2(28, 28),
+            Size = new Vector2(InputHeight, InputHeight),
             OnClick = OpenTagPicker
         };
 
@@ -101,7 +106,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         barStatDropdown = new LabeledDropdownNode
         {
             LabelText = "Fill Stat: ",
-            Size = new Vector2(Width, 28),
+            Size = new Vector2(Width, InputHeight),
             Options = StatSelector.GetAvailableStatSelectors(),
             OnOptionSelected = val =>
             {
@@ -114,7 +119,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         jobIconTypeEnumDropdown = new LabeledEnumDropdownNode<JobIconType>
         {
             LabelText = "Icon Style: ",
-            Size = new Vector2(Width, 28),
+            Size = new Vector2(Width, InputHeight),
             Options = Enum.GetValues<JobIconType>().ToList(),
             OnOptionSelected = val =>
             {
@@ -126,7 +131,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         iconIdInput = new LabeledNumericInputNode
         {
             LabelText = "Icon ID:",
-            Size = new Vector2(200, 28),
+            Size = new Vector2(200, InputHeight),
             OnValueUpdate = val =>
             {
                 if (settings == null || isLoading) return;
@@ -138,18 +143,18 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         browseIconButton = new CircleButtonNode()
         {
             Icon = CircleButtonIcon.MagnifyingGlass,
-            Size = new Vector2(28, 28),
+            Size = new Vector2(InputHeight, InputHeight),
             OnClick = OpenIconPicker
         };
 
-        iconRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 8.0f };
+        iconRow = new HorizontalListNode { Size = new Vector2(Width, RowHeight), ItemSpacing = 8.0f };
         iconRow.AddNode([iconIdInput, browseIconButton]);
 
-        posRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 8.0f };
+        posRow = new HorizontalListNode { Size = new Vector2(Width, RowHeight), ItemSpacing = 8.0f };
         posXInput = new LabeledNumericInputNode
         {
             LabelText = "Pos X:",
-            Size = new Vector2(166, 28),
+            Size = new Vector2(166, InputHeight),
             Step = 10,
             Min = -100,
             Max = 1000,
@@ -163,7 +168,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         posYInput = new LabeledNumericInputNode
         {
             LabelText = "Pos Y:",
-            Size = new Vector2(166, 28),
+            Size = new Vector2(166, InputHeight),
             Step = 10,
             Min = -100,
             Max = 1000,
@@ -176,11 +181,11 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         };
         posRow.AddNode([posXInput, posYInput]);
 
-        sizeRow = new HorizontalListNode { Size = new Vector2(Width, 30), ItemSpacing = 8.0f };
+        sizeRow = new HorizontalListNode { Size = new Vector2(Width, RowHeight), ItemSpacing = 8.0f };
         widthInput = new LabeledNumericInputNode
         {
             LabelText = "Width:",
-            Size = new Vector2(166, 28),
+            Size = new Vector2(166, InputHeight),
             OnValueUpdate = val =>
             {
                 if (settings == null || isLoading) return;
@@ -191,7 +196,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         heightInput = new LabeledNumericInputNode
         {
             LabelText = "Height:",
-            Size = new Vector2(166, 28),
+            Size = new Vector2(166, InputHeight),
             OnValueUpdate = val =>
             {
                 if (settings == null || isLoading) return;
@@ -204,7 +209,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         zIndexInput = new LabeledNumericInputNode
         {
             LabelText = "Z-Order:",
-            Size = new Vector2(Width, 28),
+            Size = new Vector2(Width, InputHeight),
             OnValueUpdate = val =>
             {
                 if (settings == null || isLoading) return;
@@ -214,6 +219,24 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         };
 
         AddNode([nameInput, sourceRow, barStatDropdown, jobIconTypeEnumDropdown, iconRow, posRow, sizeRow, zIndexInput]);
+    }
+
+    public override bool IsVisible
+    {
+        get => base.IsVisible;
+        set
+        {
+            base.IsVisible = value;
+
+            if (value)
+            {
+                ApplyVisibility();
+            }
+            else
+            {
+                SetAllChildVisibility(false);
+            }
+        }
     }
 
     private void OpenIconPicker()
@@ -267,45 +290,149 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         heightInput.Value = (int)settings.Size.Y;
         zIndexInput.Value = settings.ZIndex;
 
-        var isText = settings.Type == MeterComponentType.Text;
-        var isBar = settings.Type == MeterComponentType.ProgressBar;
-        var isJobIcon = settings.Type == MeterComponentType.JobIcon;
-        var isIcon = settings.Type == MeterComponentType.Icon;
+        ApplyVisibility();
 
-        sourceRow.IsVisible = isText;
-        barStatDropdown.IsVisible = isBar;
-        jobIconTypeEnumDropdown.IsVisible = isJobIcon;
-        iconRow.IsVisible = isIcon;
-
-        if (isBar) barStatDropdown.SelectedOption = settings.DataSource;
-        if (isJobIcon) jobIconTypeEnumDropdown.SelectedOption = settings.JobIconType;
+        if (settings.Type == MeterComponentType.ProgressBar) barStatDropdown.SelectedOption = settings.DataSource;
+        if (settings.Type == MeterComponentType.JobIcon) jobIconTypeEnumDropdown.SelectedOption = settings.JobIconType;
 
         isLoading = false;
         RecalculateLayout();
         OnLayoutChanged?.Invoke();
     }
 
+    private void ApplyVisibility()
+    {
+        var isText = settings?.Type == MeterComponentType.Text;
+        var isBar = settings?.Type == MeterComponentType.ProgressBar;
+        var isJobIcon = settings?.Type == MeterComponentType.JobIcon;
+        var isIcon = settings?.Type == MeterComponentType.Icon;
+
+        nameInput.IsVisible = true;
+        SetSourceRowVisible(isText);
+        barStatDropdown.IsVisible = isBar;
+        jobIconTypeEnumDropdown.IsVisible = isJobIcon;
+        SetIconRowVisible(isIcon);
+        posRow.IsVisible = true;
+        posXInput.IsVisible = true;
+        posYInput.IsVisible = true;
+        sizeRow.IsVisible = true;
+        widthInput.IsVisible = true;
+        heightInput.IsVisible = true;
+        zIndexInput.IsVisible = true;
+    }
+
+    private void SetAllChildVisibility(bool isVisible)
+    {
+        nameInput.IsVisible = isVisible;
+        SetSourceRowVisible(isVisible);
+        barStatDropdown.IsVisible = isVisible;
+        jobIconTypeEnumDropdown.IsVisible = isVisible;
+        SetIconRowVisible(isVisible);
+        posRow.IsVisible = isVisible;
+        posXInput.IsVisible = isVisible;
+        posYInput.IsVisible = isVisible;
+        sizeRow.IsVisible = isVisible;
+        widthInput.IsVisible = isVisible;
+        heightInput.IsVisible = isVisible;
+        zIndexInput.IsVisible = isVisible;
+    }
+
+    private void SetSourceRowVisible(bool isVisible)
+    {
+        sourceRow.IsVisible = isVisible;
+        sourceInput.IsVisible = isVisible;
+        browseTagButton.IsVisible = isVisible;
+        browseTagButton.ImageNode.IsVisible = isVisible;
+    }
+
+    private void SetIconRowVisible(bool isVisible)
+    {
+        iconRow.IsVisible = isVisible;
+        iconIdInput.IsVisible = isVisible;
+        browseIconButton.IsVisible = isVisible;
+        browseIconButton.ImageNode.IsVisible = isVisible;
+    }
+
     protected override void OnSizeChanged()
     {
         base.OnSizeChanged();
-        nameInput.Width = Width;
-        sourceInput.Width = Math.Max(0.0f, Width - browseTagButton.Width - sourceRow.ItemSpacing);
-        sourceRow.Width = Width;
-        barStatDropdown.Width = Width;
-        jobIconTypeEnumDropdown.Width = Width;
-        iconIdInput.Width = Math.Max(0.0f, Width - browseIconButton.Width - iconRow.ItemSpacing);
-        iconRow.Width = Width;
+        UpdateChildWidths();
+    }
+
+    protected override void OnRecalculateLayout()
+    {
+        if (!IsVisible)
+        {
+            SetAllChildVisibility(false);
+            Height = 0.0f;
+            return;
+        }
+
+        ApplyVisibility();
+        UpdateChildWidths();
+
+        var yPosition = 0.0f;
+        LayoutRow(nameInput, ref yPosition);
+        LayoutRow(sourceRow, ref yPosition);
+        LayoutRow(barStatDropdown, ref yPosition);
+        LayoutRow(jobIconTypeEnumDropdown, ref yPosition);
+        LayoutRow(iconRow, ref yPosition);
+        LayoutRow(posRow, ref yPosition);
+        LayoutRow(sizeRow, ref yPosition);
+        LayoutRow(zIndexInput, ref yPosition);
+
+        Height = Math.Max(0.0f, yPosition - ItemSpacing);
+    }
+
+    private void UpdateChildWidths()
+    {
+        nameInput.Size = new Vector2(Width, InputHeight);
+
+        sourceRow.Size = new Vector2(Width, RowHeight);
+        browseTagButton.Size = new Vector2(InputHeight, InputHeight);
+        sourceInput.Size = new Vector2(Math.Max(0.0f, Width - browseTagButton.Width - sourceRow.ItemSpacing), InputHeight);
+
+        barStatDropdown.Size = new Vector2(Width, InputHeight);
+        jobIconTypeEnumDropdown.Size = new Vector2(Width, InputHeight);
+
+        iconRow.Size = new Vector2(Width, RowHeight);
+        browseIconButton.Size = new Vector2(InputHeight, InputHeight);
+        iconIdInput.Size = new Vector2(Math.Max(0.0f, Width - browseIconButton.Width - iconRow.ItemSpacing), InputHeight);
 
         var pairedInputWidth = Math.Max(0.0f, (Width - posRow.ItemSpacing) / 2.0f);
-        posXInput.Width = pairedInputWidth;
-        posYInput.Width = pairedInputWidth;
-        posRow.Width = Width;
+        posRow.Size = new Vector2(Width, RowHeight);
+        posXInput.Size = new Vector2(pairedInputWidth, InputHeight);
+        posYInput.Size = new Vector2(pairedInputWidth, InputHeight);
 
-        widthInput.Width = pairedInputWidth;
-        heightInput.Width = pairedInputWidth;
-        sizeRow.Width = Width;
+        sizeRow.Size = new Vector2(Width, RowHeight);
+        widthInput.Size = new Vector2(pairedInputWidth, InputHeight);
+        heightInput.Size = new Vector2(pairedInputWidth, InputHeight);
 
-        zIndexInput.Width = Width;
+        zIndexInput.Size = new Vector2(Width, InputHeight);
+    }
+
+    private void LayoutRow(NodeBase node, ref float yPosition)
+    {
+        if (!node.IsVisible) return;
+
+        node.Position = new Vector2(0.0f, yPosition);
+
+        if (node is HorizontalListNode row)
+        {
+            ResetRowChildVerticalOffsets(row);
+            row.RecalculateLayout();
+            ResetRowChildVerticalOffsets(row);
+        }
+
+        yPosition += node.Height + ItemSpacing;
+    }
+
+    private static void ResetRowChildVerticalOffsets(HorizontalListNode row)
+    {
+        foreach (var child in row.Nodes)
+        {
+            child.Y = 0.0f;
+        }
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor)

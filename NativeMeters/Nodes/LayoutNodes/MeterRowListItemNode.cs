@@ -94,13 +94,8 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
                 TopOffset = 10, BottomOffset = 10, LeftOffset = 15, RightOffset = 15,
             },
             MeterComponentType.Separator => new HorizontalLineNode(),
-            _ => new SimpleComponentNode()
+            _ => new ResNode()
         };
-
-        if (node is SimpleComponentNode simpleNode)
-        {
-            simpleNode.DisableCollisionNode();
-        }
 
         return node;
     }

@@ -26,6 +26,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
 
         componentsList = new VerticalListNode
         {
+            ReverseLayoutUpdate = true,
             FitContents = true,
             FitWidth = true,
             ItemSpacing = 4.0f,
@@ -82,7 +83,6 @@ public sealed class MeterComponentsSection : MeterConfigSection
 
     private void RefreshSectionLayout()
     {
-        componentsList.RecalculateLayout();
         RecalculateSectionLayout();
         onLayoutChanged();
     }

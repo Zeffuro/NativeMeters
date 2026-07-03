@@ -95,6 +95,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
 
         scrollingArea = new ScrollingNode<VerticalListNode>
         {
+            ReverseContentLayoutUpdate = true,
             ContentNode =
             {
                 FitContents = true,

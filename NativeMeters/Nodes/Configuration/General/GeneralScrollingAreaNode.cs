@@ -1,9 +1,7 @@
 using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
-using NativeMeters.Nodes.Configuration;
 using NativeMeters.Nodes.Configuration.Dtr;
-using NativeMeters.Nodes.LayoutNodes;
 
 namespace NativeMeters.Nodes.Configuration.General;
 
@@ -15,6 +13,8 @@ public sealed class GeneralScrollingAreaNode : ScrollingNode<VerticalListNode>
 
     public GeneralScrollingAreaNode()
     {
+        ReverseContentLayoutUpdate = true;
+
         GeneralSettings config = System.Config.General;
 
         new ImportExportResetNode().AttachNode(this);

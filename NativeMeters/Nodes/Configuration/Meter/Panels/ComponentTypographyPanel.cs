@@ -25,6 +25,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
 
     public ComponentTypographyPanel()
     {
+        ReverseLayoutUpdate = true;
         FitContents = true;
         ItemSpacing = 4.0f;
 
@@ -88,6 +89,16 @@ public sealed class ComponentTypographyPanel : VerticalListNode
         AddNode([headerLabel, fontTypeEnumDropdown, alignmentEnumDropdown, fontSizeInput, textFlagsEnumDropdown]);
     }
 
+    public override bool IsVisible
+    {
+        get => base.IsVisible;
+        set
+        {
+            base.IsVisible = value;
+            SetAllChildVisibility(value);
+        }
+    }
+
     public void LoadSettings(ComponentSettings componentSettings)
     {
         isLoading = true;
@@ -120,5 +131,14 @@ public sealed class ComponentTypographyPanel : VerticalListNode
         textFlagsEnumDropdown.Width = Width;
         alignmentEnumDropdown.Width = Width;
         fontSizeInput.Width = Width;
+    }
+
+    private void SetAllChildVisibility(bool isVisible)
+    {
+        headerLabel.IsVisible = isVisible;
+        fontTypeEnumDropdown.IsVisible = isVisible;
+        textFlagsEnumDropdown.IsVisible = isVisible;
+        alignmentEnumDropdown.IsVisible = isVisible;
+        fontSizeInput.IsVisible = isVisible;
     }
 }

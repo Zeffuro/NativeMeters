@@ -64,6 +64,17 @@ public class ColorInputRow : HorizontalListNode
         labelTextNode.AttachNode(this);
     }
 
+    public override bool IsVisible
+    {
+        get => base.IsVisible;
+        set
+        {
+            base.IsVisible = value;
+            colorPreview.IsVisible = value;
+            labelTextNode.IsVisible = value;
+        }
+    }
+
     private void InitializeColorPicker() {
         if (_sharedColorPickerAddon is not null) return;
 
@@ -73,13 +84,9 @@ public class ColorInputRow : HorizontalListNode
         };
     }
 
-    protected override void Dispose(bool disposing, bool isNativeDestructor)
-    {
-        base.Dispose(disposing, isNativeDestructor);
-    }
-
     public static async ValueTask DisposeSharedColorPicker()
     {
+        //await Task.WhenAll( _sharedColorPickerAddon?.DisposeAsync().AsTask() ?? Task.CompletedTask);
         if (_sharedColorPickerAddon != null)
         {
             await _sharedColorPickerAddon.DisposeAsync();

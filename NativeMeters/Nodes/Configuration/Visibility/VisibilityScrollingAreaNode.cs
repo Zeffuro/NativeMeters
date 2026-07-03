@@ -12,6 +12,8 @@ public sealed class VisibilityScrollingAreaNode : ScrollingNode<VerticalListNode
 
     public VisibilityScrollingAreaNode()
     {
+        ReverseContentLayoutUpdate = true;
+
         ContentNode.ItemSpacing = 10;
         ContentNode.FitContents = true;
         ContentNode.AddNode(new VisibilityConfigurationNode());

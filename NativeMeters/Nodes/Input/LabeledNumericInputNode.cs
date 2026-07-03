@@ -31,6 +31,16 @@ public unsafe class LabeledNumericInputNode : SimpleComponentNode, IConfiguratio
         FocusNode = _numericInputNode.CollisionNode;
     }
 
+    public override bool IsVisible {
+        get => base.IsVisible;
+        set {
+            base.IsVisible = value;
+            _gridNode.IsVisible = value;
+            _labelNode.IsVisible = value;
+            _numericInputNode.IsVisible = value;
+        }
+    }
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

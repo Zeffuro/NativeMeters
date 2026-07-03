@@ -36,6 +36,16 @@ public class LabeledEnumDropdownNode<T> : SimpleComponentNode, IConfigurationNav
         FocusNode = _dropDownNode.CollisionNode;
     }
 
+    public override bool IsVisible {
+        get => base.IsVisible;
+        set {
+            base.IsVisible = value;
+            _gridNode.IsVisible = value;
+            _labelNode.IsVisible = value;
+            _dropDownNode.IsVisible = value;
+        }
+    }
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

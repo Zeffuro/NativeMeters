@@ -51,6 +51,18 @@ public class ColorPreviewNode : ResNode
         set => colorForeground.Color = value;
     }
 
+    public override bool IsVisible
+    {
+        get => base.IsVisible;
+        set
+        {
+            base.IsVisible = value;
+            colorBackground.IsVisible = value;
+            alphaLayer.IsVisible = value;
+            colorForeground.IsVisible = value;
+        }
+    }
+
     public override Vector2 Size
     {
         get => base.Size;

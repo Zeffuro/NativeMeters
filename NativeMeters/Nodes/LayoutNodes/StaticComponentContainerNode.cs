@@ -12,7 +12,7 @@ using NativeMeters.Rendering;
 
 namespace NativeMeters.Nodes.LayoutNodes;
 
-public sealed class StaticComponentContainerNode : SimpleComponentNode
+public sealed class StaticComponentContainerNode : ResNode
 {
     private readonly DynamicNodeList graphManager;
     private readonly List<ComponentSettings> settingsList;
@@ -31,7 +31,6 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
     {
         settingsList = settings;
         graphManager = new DynamicNodeList(this);
-        this.DisableCollisionNode();
     }
 
     public void Update()
@@ -45,9 +44,9 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
 
         graphManager.Update(cachedSortedSettings, CreateComponent);
 
-        if (settingsList.Count == 0 && CreatedNodes.Count == 0)
+        if (settingsList.Count == 0)
         {
-            var guard = new SimpleComponentNode { Height = 0 };
+            var guard = new ResNode { Height = 0 };
             guard.AttachNode(this);
         }
 
@@ -74,13 +73,8 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
             },
             MeterComponentType.MenuButton => new HeaderMenuButtonNode{ MeterSettings = MeterSettings},
             MeterComponentType.Separator => new HorizontalLineNode(),
-            _ => new SimpleComponentNode()
+            _ => new ResNode()
         };
-
-        if (node is SimpleComponentNode simpleNode)
-        {
-            simpleNode.DisableCollisionNode();
-        }
 
         return node;
     }

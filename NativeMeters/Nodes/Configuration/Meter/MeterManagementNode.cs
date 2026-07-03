@@ -141,6 +141,7 @@ public class MeterManagementNode : SimpleComponentNode
 
         layoutContainer = new HorizontalListNode
         {
+            ReverseLayoutUpdate = true,
             FitHeight = true,
             ItemSpacing = LayoutSpacing,
             InitialNodes =
@@ -160,6 +161,9 @@ public class MeterManagementNode : SimpleComponentNode
         var searchPlaceholder = searchInputNode.PlaceholderTextNode.String.ToString();
         searchInputNode.PlaceholderString = string.IsNullOrEmpty(searchPlaceholder) ? "Search" : searchPlaceholder;
     }
+
+    public void RecalculateLayout()
+        => OnSizeChanged();
 
     protected override void OnSizeChanged()
     {
@@ -182,8 +186,6 @@ public class MeterManagementNode : SimpleComponentNode
         var configX = listWidth + SeparatorWidth + LayoutSpacing * 2.0f;
         configNode.Size = new Vector2(Math.Max(0.0f, Width - configX), Height);
 
-        selectionColumn.RecalculateLayout();
-        buttonRow.RecalculateLayout();
         layoutContainer.RecalculateLayout();
         ApplyNavigation();
     }

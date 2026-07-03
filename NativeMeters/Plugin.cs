@@ -52,7 +52,7 @@ public class Plugin : IAsyncDalamudPlugin
         {
             InternalName = "NativeMeters_Config",
             Title = "NativeMeters Config",
-            Size = new Vector2(640, 512),
+            Size = new Vector2(800, 600),
         };
 
         System.AddonDetailedBreakdownWindow = new AddonDetailedBreakdownWindow
@@ -118,6 +118,7 @@ public class Plugin : IAsyncDalamudPlugin
         System.OverlayManager.Dispose();
         System.CommandHandler.Dispose();
 
+        // TODO: Don't need this if according to Kami
         if (!Service.Framework.IsFrameworkUnloading)
         {
             await ColorInputRow.DisposeSharedColorPicker();

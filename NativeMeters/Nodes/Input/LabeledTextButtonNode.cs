@@ -30,6 +30,16 @@ public class LabeledTextButtonNode : ResNode, IConfigurationNavigationNode {
         _textButtonNode.AttachNode(_gridNode[1, 0]);
     }
 
+    public override bool IsVisible {
+        get => base.IsVisible;
+        set {
+            base.IsVisible = value;
+            _gridNode.IsVisible = value;
+            _labelNode.IsVisible = value;
+            _textButtonNode.IsVisible = value;
+        }
+    }
+
     protected override void OnSizeChanged() {
         base.OnSizeChanged();
 

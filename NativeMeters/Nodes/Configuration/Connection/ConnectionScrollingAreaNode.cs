@@ -13,6 +13,8 @@ public sealed class ConnectionScrollingAreaNode : ScrollingNode<VerticalListNode
 
     public ConnectionScrollingAreaNode()
     {
+        ReverseContentLayoutUpdate = true;
+
         ContentNode.ItemSpacing = 10;
         ContentNode.FitContents = true;
 
@@ -26,7 +28,7 @@ public sealed class ConnectionScrollingAreaNode : ScrollingNode<VerticalListNode
             OnConnectionTypeChanged = type =>
             {
                 internalParserNode.IsVisible = type == ConnectionType.Internal;
-                RecalculateConfigurationLayout();
+                RecalculateSizes();
             }
         };
 
