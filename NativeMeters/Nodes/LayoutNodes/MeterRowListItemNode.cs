@@ -63,8 +63,10 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
             lastComponentHash = hash;
         }
 
-        // There probably is a better way to do this, but I'm not sure how/where.
-        if(MeterSettings.IsClickthrough) RemoveNodeFlags(NodeFlags.HasCollision);
+        if (MeterSettings.IsClickthrough)
+        {
+            RemoveNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision);
+        }
 
         dynamicNodeList.Update(cachedSortedComponents, CreateComponent);
 
@@ -105,6 +107,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
         if (Combatant == null || MeterSettings == null) return;
 
         ComponentRenderer.Update(node, settings, Width, Combatant);
+        MeterComponentInteractions.ApplyClickthrough(node, MeterSettings.IsClickthrough);
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor)

@@ -94,8 +94,8 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         tableHeader = new BreakdownTableHeaderNode
         {
-            Position = ContentStartPosition with { X = ContentStartPosition.X + 10, Y = contentY + 84 },
-            Size = new Vector2(contentW - 28, 20),
+            Position = ContentStartPosition with { X = ContentStartPosition.X + BreakdownPlayerSectionNode.RowIndent, Y = contentY + 84 },
+            Size = new Vector2(contentW - BreakdownPlayerSectionNode.RowIndent, 20),
             IsVisible = true,
         };
         tableHeader.SetLayout(tableLayout);
@@ -227,7 +227,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         bool isDamageMode = currentTab == BreakdownTab.Damage;
         float listWidth = GetScrollingContentWidth();
-        tableHeader.Width = Math.Max(0, listWidth - 18);
+        tableHeader.Width = Math.Max(0, listWidth - BreakdownPlayerSectionNode.RowIndent);
         tableHeader.UpdateLabels(isDamageMode ? "Damage" : "Healing", isDamageMode ? "DPS" : "HPS");
 
         double duration = encounter.DURATION > 0 ? encounter.DURATION : 1.0;

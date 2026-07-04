@@ -3,22 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
+using KamiToolKit.Nodes.Simplified;
+using NativeMeters.Configuration;
 using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Models.Breakdown;
-using NativeMeters.Nodes.LayoutNodes;
 using NativeMeters.Services;
 using NativeMeters.Tags.Formatting;
 
 namespace NativeMeters.Nodes.Breakdown;
 
-public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
+public sealed class BreakdownPlayerSectionNode : LayoutListNode
 {
-    private const float RowIndent = 8.0f;
+    public const float RowIndent = 8.0f;
+    private const float HeaderHeight = 50.0f;
     private static readonly NumericFormatter Formatter = new();
 
+    public bool IsCollapsed { get; private set; } = true;
+    public bool FitWidth { get; set; }
+    public Action<bool>? OnToggle { get; set; }
+
+    private readonly SimpleNineGridNode headerBackgroundNode;
+    private readonly ImageNode toggleArrowNode;
     private readonly IconImageNode jobIconNode;
+    private readonly TextNode headerNameText;
     private readonly TextNode primaryStatText;
     private readonly VerticalListNode bodyNode;
 
@@ -26,15 +36,51 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
     private int visibleRowCount;
     private BreakdownTableLayout? tableLayout;
 
-    public BreakdownPlayerSectionNode()
+    public unsafe BreakdownPlayerSectionNode()
     {
-        IsCollapsed = true;
-        FitWidth = false;
         ItemSpacing = 0.0f;
+
+        headerBackgroundNode = new SimpleNineGridNode
+        {
+            TexturePath = "ui/uld/ListItemB.tex",
+            TextureSize = new Vector2(48.0f, 28.0f),
+            TextureCoordinates = new Vector2(0.0f, 24.0f),
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.HasCollision | NodeFlags.RespondToMouse,
+            TopOffset = 10,
+            BottomOffset = 10,
+            LeftOffset = 15,
+            RightOffset = 15,
+        };
+        headerBackgroundNode.AttachNode(this);
+        headerBackgroundNode.AddEvent(AtkEventType.MouseUp, OnClickEvent);
+
+        toggleArrowNode = new ImageNode
+        {
+            Position = new Vector2(3, 10),
+            PartId = (uint)(IsCollapsed ? 1 : 0)
+        };
+        toggleArrowNode.AddPart([
+            new Part { TexturePath = "ui/uld/ListItemB.tex", TextureCoordinates = new Vector2(24.0f, 0.0f), Size = new Vector2(24.0f, 24.0f) },
+            new Part { TexturePath = "ui/uld/ListItemB.tex", TextureCoordinates = new Vector2(0.0f, 0.0f), Size = new Vector2(24.0f, 24.0f) },
+        ]);
+        toggleArrowNode.AttachNode(this);
+
+        headerNameText = new TextNode
+        {
+            Position = new Vector2(52, 5),
+            Size = new Vector2(240, 20),
+            FontSize = 14,
+            FontType = FontType.Axis,
+            TextFlags = TextFlags.Edge,
+            AlignmentType = AlignmentType.Left,
+            TextColor = new Vector4(1f, 1f, 1f, 1f),
+            IsVisible = true,
+        };
+        headerNameText.AttachNode(this);
 
         jobIconNode = new IconImageNode
         {
-            Position = new Vector2(24, 11),
+            Position = new Vector2(24, 10),
             Size = new Vector2(24, 24),
             FitTexture = true,
             IsVisible = true,
@@ -43,7 +89,7 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
 
         primaryStatText = new TextNode
         {
-            Position = new Vector2(52, 22),
+            Position = new Vector2(52, 25),
             Size = new Vector2(240, 20),
             FontSize = 12,
             FontType = FontType.Axis,
@@ -58,8 +104,23 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
         {
             FitContents = true,
             ItemSpacing = 1.0f,
+            IsVisible = false,
         };
         AddNode(bodyNode);
+    }
+
+    private unsafe void OnClickEvent(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData)
+    {
+        ToggleCollapse();
+    }
+
+    private void ToggleCollapse()
+    {
+        IsCollapsed = !IsCollapsed;
+        toggleArrowNode.PartId = (uint)(IsCollapsed ? 1 : 0);
+        bodyNode.IsVisible = !IsCollapsed;
+        RecalculateLayout();
+        OnToggle?.Invoke(!IsCollapsed);
     }
 
     public void InitializeLayout(BreakdownTableLayout layout)
@@ -70,7 +131,8 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
 
     public void SetData(Combatant combatant, BreakdownTab tab, double encounterDuration)
     {
-        String = GetDisplayName(combatant);
+        headerNameText.String = GetDisplayName(combatant);
+        headerNameText.TextColor = combatant.GetColor(ColorMode.Job);
 
         var iconId = combatant.GetIconId();
         jobIconNode.IsVisible = iconId > 0;
@@ -104,6 +166,7 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
         if (wasExpanded)
         {
             IsCollapsed = false;
+            bodyNode.IsVisible = true;
         }
 
         RecalculateBreakdownLayout();
@@ -188,8 +251,15 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
     protected override void OnSizeChanged()
     {
         base.OnSizeChanged();
+
+        if (headerBackgroundNode != null)
+        {
+            headerBackgroundNode.Size = new Vector2(Width, HeaderHeight);
+        }
+
         if (primaryStatText == null) return;
 
+        headerNameText.Size = new Vector2(Math.Max(0, Width - 60), 20);
         primaryStatText.Size = new Vector2(Math.Max(0, Width - 60), 20);
         bodyNode.Width = Width;
 
@@ -199,6 +269,29 @@ public sealed class BreakdownPlayerSectionNode : CollapsingHeaderNode
             rowPool[i].X = RowIndent;
             rowPool[i].Width = rowWidth;
         }
+    }
+
+    protected override void OnRecalculateLayout()
+    {
+        if (IsCollapsed)
+        {
+            bodyNode.IsVisible = false;
+            Height = HeaderHeight;
+        }
+        else
+        {
+            bodyNode.IsVisible = true;
+            bodyNode.Y = HeaderHeight + ItemSpacing;
+            if (FitWidth)
+            {
+                bodyNode.Width = Width;
+            }
+            Height = HeaderHeight + ItemSpacing + bodyNode.Height;
+        }
+    }
+
+    protected override void OnRecalculateNavigation()
+    {
     }
 
     private void RecalculateBreakdownLayout()

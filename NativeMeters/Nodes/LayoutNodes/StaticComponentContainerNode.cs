@@ -83,6 +83,7 @@ public sealed class StaticComponentContainerNode : ResNode
     {
         var encounter = System.ActiveMeterService.GetEncounter() ?? EmptyEncounter;
         ComponentRenderer.Update(node, settings, Width, encounter);
+        MeterComponentInteractions.ApplyClickthrough(node, MeterSettings?.IsClickthrough == true);
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor)

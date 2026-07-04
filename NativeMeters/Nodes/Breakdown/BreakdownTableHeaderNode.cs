@@ -100,8 +100,6 @@ public sealed class BreakdownTableHeaderNode : SimpleComponentNode
         {
             var (col, x, w) = resolved[i];
 
-            x -= 10;
-
             if (col.Key == "Action")
             {
                 headerTexts[i].Position = new Vector2(x + BreakdownTableRowNode.ActionTextOffset, 0);
