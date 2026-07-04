@@ -31,8 +31,10 @@ public class AddonDetailedBreakdownWindow : NativeAddon
     private int selectedEncounterIndex = -1;
 
     private readonly List<BreakdownPlayerSectionNode> sectionPool = new();
+    private readonly HashSet<string> expandedCombatantKeys = new();
 
     private readonly BreakdownTableLayout tableLayout = new();
+    private bool needsCollisionRefresh;
 
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
@@ -240,7 +242,22 @@ public class AddonDetailedBreakdownWindow : NativeAddon
                 IsVisible = false,
             };
             section.InitializeLayout(tableLayout);
-            section.OnToggle = _ => RecalculateScrollingContent();
+            section.OnToggle = isExpanded =>
+            {
+                if (!string.IsNullOrEmpty(section.CombatantKey))
+                {
+                    if (isExpanded)
+                    {
+                        expandedCombatantKeys.Add(section.CombatantKey);
+                    }
+                    else
+                    {
+                        expandedCombatantKeys.Remove(section.CombatantKey);
+                    }
+                }
+
+                RecalculateScrollingContent();
+            };
             sectionPool.Add(section);
             scrollingContent.ContentNode.AddNode(section);
         }
@@ -248,8 +265,10 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         for (int i = 0; i < combatants.Count; i++)
         {
             var section = sectionPool[i];
+            var combatantKey = BreakdownPlayerSectionNode.GetCombatantKey(combatants[i]);
             section.IsVisible = true;
             section.Width = listWidth;
+            section.SetCollapsed(!expandedCombatantKeys.Contains(combatantKey), false);
             section.SetData(combatants[i], currentTab, duration);
         }
 
@@ -266,7 +285,8 @@ public class AddonDetailedBreakdownWindow : NativeAddon
     private void RecalculateScrollingContent()
     {
         scrollingContent.ContentNode.Width = GetScrollingContentWidth();
-        scrollingContent.RecalculateSizes();
+        scrollingContent.RecalculateSizes(true);
+        needsCollisionRefresh = true;
     }
 
     private (Encounter? encounter, List<Combatant>? combatants) GetCurrentData()
@@ -301,6 +321,12 @@ public class AddonDetailedBreakdownWindow : NativeAddon
     protected override unsafe void OnUpdate(AtkUnitBase* addon)
     {
         base.OnUpdate(addon);
+
+        if (needsCollisionRefresh)
+        {
+            addon->UpdateCollisionNodeList(false);
+            needsCollisionRefresh = false;
+        }
 
         if (UIInputData.Instance()->IsInputIdDown(inputId: InputId.TAB_PREV))
         {

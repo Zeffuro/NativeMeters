@@ -24,8 +24,10 @@ public sealed class BreakdownPlayerSectionNode : LayoutListNode
     public bool IsCollapsed { get; private set; } = true;
     public bool FitWidth { get; set; }
     public Action<bool>? OnToggle { get; set; }
+    public string CombatantKey { get; private set; } = string.Empty;
 
     private readonly SimpleNineGridNode headerBackgroundNode;
+    private readonly CollisionNode headerCollisionNode;
     private readonly ImageNode toggleArrowNode;
     private readonly IconImageNode jobIconNode;
     private readonly TextNode headerNameText;
@@ -45,14 +47,20 @@ public sealed class BreakdownPlayerSectionNode : LayoutListNode
             TexturePath = "ui/uld/ListItemB.tex",
             TextureSize = new Vector2(48.0f, 28.0f),
             TextureCoordinates = new Vector2(0.0f, 24.0f),
-            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.Fill | NodeFlags.HasCollision | NodeFlags.RespondToMouse,
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled,
             TopOffset = 10,
             BottomOffset = 10,
             LeftOffset = 15,
             RightOffset = 15,
         };
         headerBackgroundNode.AttachNode(this);
-        headerBackgroundNode.AddEvent(AtkEventType.MouseUp, OnClickEvent);
+
+        headerCollisionNode = new CollisionNode
+        {
+            NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.HasCollision | NodeFlags.RespondToMouse,
+        };
+        headerCollisionNode.AttachNode(this);
+        headerCollisionNode.AddEvent(AtkEventType.MouseUp, OnClickEvent);
 
         toggleArrowNode = new ImageNode
         {
@@ -111,16 +119,26 @@ public sealed class BreakdownPlayerSectionNode : LayoutListNode
 
     private unsafe void OnClickEvent(AtkEventListener* thisPtr, AtkEventType eventType, int eventParam, AtkEvent* atkEvent, AtkEventData* atkEventData)
     {
+        atkEvent->SetEventIsHandled();
         ToggleCollapse();
     }
 
     private void ToggleCollapse()
     {
-        IsCollapsed = !IsCollapsed;
+        SetCollapsed(!IsCollapsed);
+        OnToggle?.Invoke(!IsCollapsed);
+    }
+
+    public void SetCollapsed(bool isCollapsed, bool recalculate = true)
+    {
+        IsCollapsed = isCollapsed;
         toggleArrowNode.PartId = (uint)(IsCollapsed ? 1 : 0);
         bodyNode.IsVisible = !IsCollapsed;
-        RecalculateLayout();
-        OnToggle?.Invoke(!IsCollapsed);
+
+        if (recalculate)
+        {
+            RecalculateBreakdownLayout();
+        }
     }
 
     public void InitializeLayout(BreakdownTableLayout layout)
@@ -131,6 +149,7 @@ public sealed class BreakdownPlayerSectionNode : LayoutListNode
 
     public void SetData(Combatant combatant, BreakdownTab tab, double encounterDuration)
     {
+        CombatantKey = GetCombatantKey(combatant);
         headerNameText.String = GetDisplayName(combatant);
         headerNameText.TextColor = combatant.GetColor(ColorMode.Job);
 
@@ -160,17 +179,13 @@ public sealed class BreakdownPlayerSectionNode : LayoutListNode
                 break;
         }
 
-        bool wasExpanded = !IsCollapsed;
         PopulateActions(combatant, tab);
-
-        if (wasExpanded)
-        {
-            IsCollapsed = false;
-            bodyNode.IsVisible = true;
-        }
-
+        bodyNode.IsVisible = !IsCollapsed;
         RecalculateBreakdownLayout();
     }
+
+    public static string GetCombatantKey(Combatant combatant)
+        => $"{combatant.Name}|{combatant.Job.RowId}";
 
     private static string GetDisplayName(Combatant combatant)
     {
@@ -203,7 +218,6 @@ public sealed class BreakdownPlayerSectionNode : LayoutListNode
         if (tableLayout == null
             || combatant.ActionBreakdownList == null || combatant.ActionBreakdownList.Count == 0)
         {
-            RecalculateBreakdownLayout();
             return;
         }
 
@@ -244,8 +258,6 @@ public sealed class BreakdownPlayerSectionNode : LayoutListNode
         }
 
         visibleRowCount = actions.Count;
-
-        RecalculateBreakdownLayout();
     }
 
     protected override void OnSizeChanged()
@@ -255,6 +267,12 @@ public sealed class BreakdownPlayerSectionNode : LayoutListNode
         if (headerBackgroundNode != null)
         {
             headerBackgroundNode.Size = new Vector2(Width, HeaderHeight);
+        }
+
+        if (headerCollisionNode != null)
+        {
+            headerCollisionNode.Size = new Vector2(Width, HeaderHeight);
+            headerCollisionNode.Position = Vector2.Zero;
         }
 
         if (primaryStatText == null) return;
