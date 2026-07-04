@@ -4,7 +4,6 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
-using NativeMeters.Nodes.Input;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Panels;
 
@@ -13,10 +12,10 @@ public sealed class ComponentTypographyPanel : VerticalListNode
     private ComponentSettings? settings;
 
     private readonly LabelTextNode headerLabel;
-    private readonly LabeledEnumDropdownNode<FontType> fontTypeEnumDropdown;
-    private readonly LabeledEnumDropdownNode<TextFlags> textFlagsEnumDropdown;
-    private readonly LabeledEnumDropdownNode<AlignmentType> alignmentEnumDropdown;
-    private readonly LabeledNumericInputNode fontSizeInput;
+    private readonly ComponentEnumDropdownRowNode<FontType> fontTypeEnumDropdown;
+    private readonly ComponentEnumDropdownRowNode<TextFlags> textFlagsEnumDropdown;
+    private readonly ComponentEnumDropdownRowNode<AlignmentType> alignmentEnumDropdown;
+    private readonly ComponentNumericInputRowNode fontSizeInput;
 
     public Action? OnSettingsChanged { get; set; }
     public Action? OnLayoutChanged { get; set; }
@@ -36,7 +35,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             TextColor = new Vector4(0.7f, 0.7f, 1f, 1f)
         };
 
-        fontTypeEnumDropdown = new LabeledEnumDropdownNode<FontType>
+        fontTypeEnumDropdown = new ComponentEnumDropdownRowNode<FontType>
         {
             LabelText = "Font:",
             Size = new Vector2(Width, 28),
@@ -48,7 +47,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             }
         };
 
-        textFlagsEnumDropdown = new LabeledEnumDropdownNode<TextFlags>
+        textFlagsEnumDropdown = new ComponentEnumDropdownRowNode<TextFlags>
         {
             LabelText = "Style:",
             Size = new Vector2(Width, 28),
@@ -60,7 +59,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             }
         };
 
-        alignmentEnumDropdown = new LabeledEnumDropdownNode<AlignmentType>
+        alignmentEnumDropdown = new ComponentEnumDropdownRowNode<AlignmentType>
         {
             LabelText = "Alignment:",
             Size = new Vector2(Width, 28),
@@ -72,7 +71,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             }
         };
 
-        fontSizeInput = new LabeledNumericInputNode
+        fontSizeInput = new ComponentNumericInputRowNode
         {
             LabelText = "Size:",
             Size = new Vector2(Width, 28),

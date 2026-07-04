@@ -10,6 +10,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
         var config = System.Config.Visibility;
 
         ItemSpacing = 2;
+        FitWidth = true;
 
         AddNode(new CategoryTextNode
         {

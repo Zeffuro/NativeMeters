@@ -39,6 +39,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         ConnectionSettings config = System.Config.ConnectionSettings;
 
         ItemSpacing = 2;
+        FitWidth = true;
 
 
         AddNode(new CategoryTextNode

@@ -8,7 +8,6 @@ using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Configuration.Meter.Search;
-using NativeMeters.Nodes.Input;
 using NativeMeters.Services;
 using NativeMeters.Tags;
 
@@ -21,24 +20,24 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
     private ComponentSettings? settings;
 
-    private readonly LabeledTextInputNode nameInput;
+    private readonly ComponentTextInputRowNode nameInput;
     private readonly HorizontalListNode sourceRow;
-    private readonly LabeledTextInputNode sourceInput;
+    private readonly ComponentTextInputRowNode sourceInput;
     private readonly CircleButtonNode browseTagButton;
-    private readonly LabeledDropdownNode barStatDropdown;
-    private readonly LabeledEnumDropdownNode<JobIconType> jobIconTypeEnumDropdown;
+    private readonly ComponentStringDropdownRowNode barStatDropdown;
+    private readonly ComponentEnumDropdownRowNode<JobIconType> jobIconTypeEnumDropdown;
 
     private readonly HorizontalListNode iconRow;
-    private readonly LabeledNumericInputNode iconIdInput;
+    private readonly ComponentNumericInputRowNode iconIdInput;
     private readonly CircleButtonNode browseIconButton;
 
     private readonly HorizontalListNode posRow;
-    private readonly LabeledNumericInputNode posXInput;
-    private readonly LabeledNumericInputNode posYInput;
+    private readonly ComponentNumericInputRowNode posXInput;
+    private readonly ComponentNumericInputRowNode posYInput;
     private readonly HorizontalListNode sizeRow;
-    private readonly LabeledNumericInputNode widthInput;
-    private readonly LabeledNumericInputNode heightInput;
-    private readonly LabeledNumericInputNode zIndexInput;
+    private readonly ComponentNumericInputRowNode widthInput;
+    private readonly ComponentNumericInputRowNode heightInput;
+    private readonly ComponentNumericInputRowNode zIndexInput;
 
     public Action? OnSettingsChanged { get; set; }
     public Action<string>? OnNameChanged { get; set; }
@@ -65,7 +64,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
                                  "• _skill/_val = MaxHit parts\n\n" +
                                  "Example: [name_first.1].:[dps:k.1] -> J.: 12.3k";
 
-        nameInput = new LabeledTextInputNode
+        nameInput = new ComponentTextInputRowNode
         {
             LabelText = "Display Name: ",
             Size = new Vector2(Width, InputHeight),
@@ -80,7 +79,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         sourceRow = new HorizontalListNode { Size = new Vector2(Width, RowHeight), ItemSpacing = 2.0f };
 
-        sourceInput = new LabeledTextInputNode
+        sourceInput = new ComponentTextInputRowNode
         {
             LabelText = "Format String: ",
             Size = new Vector2(0, InputHeight),
@@ -103,7 +102,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         sourceRow.AddNode([sourceInput, browseTagButton]);
 
-        barStatDropdown = new LabeledDropdownNode
+        barStatDropdown = new ComponentStringDropdownRowNode
         {
             LabelText = "Fill Stat: ",
             Size = new Vector2(Width, InputHeight),
@@ -116,7 +115,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
-        jobIconTypeEnumDropdown = new LabeledEnumDropdownNode<JobIconType>
+        jobIconTypeEnumDropdown = new ComponentEnumDropdownRowNode<JobIconType>
         {
             LabelText = "Icon Style: ",
             Size = new Vector2(Width, InputHeight),
@@ -128,7 +127,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
-        iconIdInput = new LabeledNumericInputNode
+        iconIdInput = new ComponentNumericInputRowNode
         {
             LabelText = "Icon ID:",
             Size = new Vector2(200, InputHeight),
@@ -151,7 +150,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         iconRow.AddNode([iconIdInput, browseIconButton]);
 
         posRow = new HorizontalListNode { Size = new Vector2(Width, RowHeight), ItemSpacing = 8.0f };
-        posXInput = new LabeledNumericInputNode
+        posXInput = new ComponentNumericInputRowNode
         {
             LabelText = "Pos X:",
             Size = new Vector2(166, InputHeight),
@@ -165,7 +164,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
                 OnSettingsChanged?.Invoke();
             }
         };
-        posYInput = new LabeledNumericInputNode
+        posYInput = new ComponentNumericInputRowNode
         {
             LabelText = "Pos Y:",
             Size = new Vector2(166, InputHeight),
@@ -182,7 +181,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         posRow.AddNode([posXInput, posYInput]);
 
         sizeRow = new HorizontalListNode { Size = new Vector2(Width, RowHeight), ItemSpacing = 8.0f };
-        widthInput = new LabeledNumericInputNode
+        widthInput = new ComponentNumericInputRowNode
         {
             LabelText = "Width:",
             Size = new Vector2(166, InputHeight),
@@ -193,7 +192,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
                 OnSettingsChanged?.Invoke();
             },
         };
-        heightInput = new LabeledNumericInputNode
+        heightInput = new ComponentNumericInputRowNode
         {
             LabelText = "Height:",
             Size = new Vector2(166, InputHeight),
@@ -206,7 +205,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         };
         sizeRow.AddNode([widthInput, heightInput]);
 
-        zIndexInput = new LabeledNumericInputNode
+        zIndexInput = new ComponentNumericInputRowNode
         {
             LabelText = "Z-Order:",
             Size = new Vector2(Width, InputHeight),

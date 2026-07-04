@@ -14,6 +14,7 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
     {
         var settings = System.Config.DtrSettings;
         ItemSpacing = 2;
+        FitWidth = true;
 
         AddNode(new CategoryTextNode
         {

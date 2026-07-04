@@ -13,14 +13,13 @@ public sealed class GeneralScrollingAreaNode : ScrollingNode<VerticalListNode>
 
     public GeneralScrollingAreaNode()
     {
-        ReverseContentLayoutUpdate = true;
-
         GeneralSettings config = System.Config.General;
 
         new ImportExportResetNode().AttachNode(this);
 
         ContentNode.ItemSpacing = 10;
         ContentNode.FitContents = true;
+        ContentNode.FitWidth = true;
 
         ContentNode.AddNode(
         [new GeneralConfigurationNode(),

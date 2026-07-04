@@ -14,6 +14,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
         GeneralSettings config = System.Config.General;
 
         ItemSpacing = 2;
+        FitWidth = true;
 
         AddNode(new CategoryTextNode
         {

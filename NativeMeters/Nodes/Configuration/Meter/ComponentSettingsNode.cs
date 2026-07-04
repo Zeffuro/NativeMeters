@@ -169,17 +169,7 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
     {
         if (node is not ILayoutListNode layoutNode) return;
 
-        var originalReverseLayoutUpdate = layoutNode.ReverseLayoutUpdate;
-        layoutNode.ReverseLayoutUpdate = true;
-
-        try
-        {
-            layoutNode.RecalculateLayout();
-        }
-        finally
-        {
-            layoutNode.ReverseLayoutUpdate = originalReverseLayoutUpdate;
-        }
+        layoutNode.RecalculateLayout(true);
     }
 
     private void RefreshComponentLayout()

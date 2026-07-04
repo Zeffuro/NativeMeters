@@ -25,8 +25,6 @@ public sealed class ColorConfigurationNode : ScrollingNode<VerticalListNode>
 
     public ColorConfigurationNode()
     {
-        ReverseContentLayoutUpdate = true;
-
         var config = System.Config.General;
         ContentNode.ItemSpacing = 10;
         ContentNode.FitContents = true;

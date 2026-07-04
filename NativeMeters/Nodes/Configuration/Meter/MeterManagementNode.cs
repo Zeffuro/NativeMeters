@@ -61,7 +61,7 @@ public class MeterManagementNode : SimpleComponentNode
         {
             InternalName = "NativeMetersAddMeter",
             Title = "Add Meter",
-            Size = new Vector2(440.0f, 208.0f),
+            Size = new Vector2(480.0f, 300.0f),
             RememberClosePosition = false,
         };
         addMeterDialog.OnMeterCreated = AddMeter;

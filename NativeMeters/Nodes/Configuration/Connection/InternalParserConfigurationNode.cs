@@ -14,6 +14,7 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
     {
         var config = System.Config.InternalParser;
         ItemSpacing = 2;
+        FitWidth = true;
 
         AddNode(new CategoryTextNode
         {

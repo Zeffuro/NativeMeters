@@ -95,7 +95,6 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
 
         scrollingArea = new ScrollingNode<VerticalListNode>
         {
-            ReverseContentLayoutUpdate = true,
             ContentNode =
             {
                 FitContents = true,
@@ -206,7 +205,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
     {
         ConfigurationNavigation.Apply(scrollingArea.ContentNode, NavigationStartIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex);
 
-        scrollingArea.RecalculateSizes();
+        scrollingArea.RecalculateSizes(true);
         OnLayoutChanged?.Invoke();
     }
 

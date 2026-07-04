@@ -13,10 +13,9 @@ public sealed class ConnectionScrollingAreaNode : ScrollingNode<VerticalListNode
 
     public ConnectionScrollingAreaNode()
     {
-        ReverseContentLayoutUpdate = true;
-
         ContentNode.ItemSpacing = 10;
         ContentNode.FitContents = true;
+        ContentNode.FitWidth = true;
 
         var internalParserNode = new InternalParserConfigurationNode
         {
