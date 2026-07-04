@@ -26,7 +26,6 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
     public ComponentVisualsPanel()
     {
-        ReverseLayoutUpdate = true;
         FitContents = true;
         ItemSpacing = 4.0f;
 
@@ -184,7 +183,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         barBgColorInput.CurrentColor = settings.BarBackgroundColor;
 
         isLoading = false;
-        RecalculateLayout();
+        RecalculateLayout(true);
 
         if (wasVisible != IsVisible
             || wasColorModeVisible != colorModeDropdown.IsVisible

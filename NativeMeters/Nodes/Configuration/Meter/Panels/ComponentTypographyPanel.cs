@@ -24,7 +24,6 @@ public sealed class ComponentTypographyPanel : VerticalListNode
 
     public ComponentTypographyPanel()
     {
-        ReverseLayoutUpdate = true;
         FitContents = true;
         ItemSpacing = 4.0f;
 
@@ -115,7 +114,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             alignmentEnumDropdown.SelectedOption = settings.AlignmentType;
             fontSizeInput.Value = (int)settings.FontSize;
 
-            RecalculateLayout();
+            RecalculateLayout(true);
         }
 
         isLoading = false;

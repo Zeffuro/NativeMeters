@@ -60,7 +60,6 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
         ItemSpacing = 0.0f;
         FirstItemSpacing = 6.0f;
         FitWidth = false;
-        ReverseLayoutUpdate = true;
 
         basicsPanel = new ComponentBasicsPanel
         {
@@ -176,7 +175,7 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
     {
         if (isLoadingComponent) return;
 
-        RecalculateLayout();
+        RecalculateLayout(true);
         OnLayoutChanged?.Invoke();
     }
 

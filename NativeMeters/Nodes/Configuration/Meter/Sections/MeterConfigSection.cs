@@ -20,7 +20,6 @@ public abstract class MeterConfigSection : CollapsingHeaderNode
         IsCollapsed = true;
         IsInitialized = false;
         FitWidth = false;
-        ReverseLayoutUpdate = true;
 
     }
 
@@ -44,7 +43,7 @@ public abstract class MeterConfigSection : CollapsingHeaderNode
 
     protected void RecalculateSectionLayout()
     {
-        RecalculateLayout();
+        RecalculateLayout(true);
     }
 
     protected void ApplyChildLayout(NodeBase node)

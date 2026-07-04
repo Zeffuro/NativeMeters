@@ -21,7 +21,7 @@ public class AddonConfigurationWindow : NativeAddon
     {
         InternalName = "NativeMetersAddMeter",
         Title = "Add Meter",
-        Size = new Vector2(440.0f, 208.0f),
+        Size = new Vector2(440.0f, 190.0f),
         RememberClosePosition = false,
     };
 

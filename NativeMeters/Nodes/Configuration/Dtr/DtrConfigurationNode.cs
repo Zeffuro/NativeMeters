@@ -1,4 +1,6 @@
+using System;
 using System.Numerics;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Input;
@@ -8,7 +10,13 @@ namespace NativeMeters.Nodes.Configuration.Dtr;
 
 public sealed class DtrConfigurationNode : TabbedVerticalListNode
 {
+    private const float RowHeight = 28.0f;
+    private const float HelpButtonSize = 24.0f;
+
     private readonly LabeledDropdownNode tagDropdown;
+    private readonly HorizontalListNode formatRow;
+    private readonly LabeledTextInputNode formatInput;
+    private readonly CircleButtonNode formatHelpButton;
 
     public DtrConfigurationNode()
     {
@@ -37,24 +45,35 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
         AddNode(1, enableCheckbox);
         AddNode(new ResNode { Height = 10 });
 
-        var formatInput = new LabeledTextInputNode
+        formatRow = new HorizontalListNode
+        {
+            Size = new Vector2(400, RowHeight),
+            ItemSpacing = 4.0f,
+        };
+
+        formatInput = new LabeledTextInputNode
         {
             LabelText = "Format String:",
-            Size = new Vector2(400, 28),
+            Size = new Vector2(400, RowHeight),
             Text = settings.FormatString,
             Placeholder = "[dps:k.1] DPS",
-            TextTooltip = "Format syntax: [tag_part: modifier.precision]\n" +
-                          "• : r = Raw (no commas)\n" +
-                          "• :k/: m = Kilo/Mega units\n" +
-                          "• .N = Decimals\n" +
-                          "Example: [dps:k.1] -> 12.3k",
             OnInputComplete = text =>
             {
                 settings.FormatString = text.ToString();
                 ConfigRepository.Save(System.Config);
             }
         };
-        AddNode(1, formatInput);
+
+        formatHelpButton = new CircleButtonNode
+        {
+            Icon = CircleButtonIcon.QuestionMark,
+            Size = new Vector2(HelpButtonSize),
+            Y = (RowHeight - HelpButtonSize) / 2.0f,
+            TextTooltip = TagFormatHelp.BasicTooltip,
+        };
+
+        formatRow.AddNode([formatInput, formatHelpButton]);
+        AddNode(1, formatRow);
 
         tagDropdown = new LabeledDropdownNode
         {
@@ -120,5 +139,30 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
 
         SubtractTab(1);
         RecalculateLayout();
+    }
+
+    protected override void OnSizeChanged()
+    {
+        base.OnSizeChanged();
+        UpdateFormatRowLayout();
+    }
+
+    private void UpdateFormatRowLayout()
+    {
+        if (formatRow is null || formatInput is null || formatHelpButton is null)
+        {
+            return;
+        }
+
+        var rowWidth = Math.Max(0.0f, Width - TabSize - ItemSpacing);
+
+        var maxInputWidth = Math.Max(0.0f, rowWidth - HelpButtonSize - formatRow.ItemSpacing);
+        var preferredInputWidth = formatInput.LabelWidth + formatInput.ControlSpacing + formatInput.MaximumControlWidth;
+
+        formatRow.Size = new Vector2(rowWidth, RowHeight);
+        formatHelpButton.Size = new Vector2(HelpButtonSize);
+        formatHelpButton.Y = (RowHeight - HelpButtonSize) / 2.0f;
+        formatInput.Size = new Vector2(Math.Min(maxInputWidth, preferredInputWidth), RowHeight);
+        formatRow.RecalculateLayout();
     }
 }

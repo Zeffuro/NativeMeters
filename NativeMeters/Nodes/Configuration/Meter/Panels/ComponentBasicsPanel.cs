@@ -17,12 +17,14 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 {
     private const float InputHeight = 28.0f;
     private const float RowHeight = 30.0f;
+    private const float ButtonSize = 24.0f;
 
     private ComponentSettings? settings;
 
     private readonly ComponentTextInputRowNode nameInput;
     private readonly HorizontalListNode sourceRow;
     private readonly ComponentTextInputRowNode sourceInput;
+    private readonly CircleButtonNode formatHelpButton;
     private readonly CircleButtonNode browseTagButton;
     private readonly ComponentStringDropdownRowNode barStatDropdown;
     private readonly ComponentEnumDropdownRowNode<JobIconType> jobIconTypeEnumDropdown;
@@ -52,7 +54,6 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
     public ComponentBasicsPanel()
     {
-        ReverseLayoutUpdate = true;
         FitContents = true;
         ItemSpacing = 4.0f;
 
@@ -84,7 +85,6 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             LabelText = "Format String: ",
             Size = new Vector2(0, InputHeight),
             Placeholder = "[name] [dps]",
-            TextTooltip = tagTooltip,
             OnInputComplete = val =>
             {
                 if (settings == null) return;
@@ -93,14 +93,23 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
+        formatHelpButton = new CircleButtonNode
+        {
+            Icon = CircleButtonIcon.QuestionMark,
+            Size = new Vector2(ButtonSize),
+            Y = (RowHeight - ButtonSize) / 2.0f,
+            TextTooltip = tagTooltip,
+        };
+
         browseTagButton = new CircleButtonNode()
         {
             Icon = CircleButtonIcon.MagnifyingGlass,
-            Size = new Vector2(InputHeight, InputHeight),
+            Size = new Vector2(ButtonSize),
+            Y = (RowHeight - ButtonSize) / 2.0f,
             OnClick = OpenTagPicker
         };
 
-        sourceRow.AddNode([sourceInput, browseTagButton]);
+        sourceRow.AddNode([sourceInput, formatHelpButton, browseTagButton]);
 
         barStatDropdown = new ComponentStringDropdownRowNode
         {
@@ -340,6 +349,8 @@ public sealed class ComponentBasicsPanel : VerticalListNode
     {
         sourceRow.IsVisible = isVisible;
         sourceInput.IsVisible = isVisible;
+        formatHelpButton.IsVisible = isVisible;
+        formatHelpButton.ImageNode.IsVisible = isVisible;
         browseTagButton.IsVisible = isVisible;
         browseTagButton.ImageNode.IsVisible = isVisible;
     }
@@ -388,8 +399,10 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         nameInput.Size = new Vector2(Width, InputHeight);
 
         sourceRow.Size = new Vector2(Width, RowHeight);
-        browseTagButton.Size = new Vector2(InputHeight, InputHeight);
-        sourceInput.Size = new Vector2(Math.Max(0.0f, Width - browseTagButton.Width - sourceRow.ItemSpacing), InputHeight);
+        formatHelpButton.Size = new Vector2(ButtonSize);
+        browseTagButton.Size = new Vector2(ButtonSize);
+        var sourceButtonWidth = formatHelpButton.Width + browseTagButton.Width + sourceRow.ItemSpacing * 2.0f;
+        sourceInput.Size = new Vector2(Math.Max(0.0f, Width - sourceButtonWidth), InputHeight);
 
         barStatDropdown.Size = new Vector2(Width, InputHeight);
         jobIconTypeEnumDropdown.Size = new Vector2(Width, InputHeight);
@@ -418,19 +431,19 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         if (node is HorizontalListNode row)
         {
-            ResetRowChildVerticalOffsets(row);
+            CenterRowChildVerticalOffsets(row);
             row.RecalculateLayout();
-            ResetRowChildVerticalOffsets(row);
+            CenterRowChildVerticalOffsets(row);
         }
 
         yPosition += node.Height + ItemSpacing;
     }
 
-    private static void ResetRowChildVerticalOffsets(HorizontalListNode row)
+    private static void CenterRowChildVerticalOffsets(HorizontalListNode row)
     {
         foreach (var child in row.Nodes)
         {
-            child.Y = 0.0f;
+            child.Y = Math.Max(0.0f, (row.Height - child.Height) / 2.0f);
         }
     }
 

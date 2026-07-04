@@ -32,13 +32,13 @@ public sealed class AddMeterDialogAddon : NativeAddon
             Position = ContentStartPosition,
             Size = ContentSize,
             FitWidth = true,
-            ItemSpacing = 10.0f,
+            ItemSpacing = 4.0f,
             InitialNodes =
             [
                 new TextNode
                 {
-                    Height = 48.0f,
-                    String = "Create a meter from a preset or import meter data from the clipboard.",
+                    Height = 28.0f,
+                    String = "Create a meter from a preset or import from clipboard.",
                     TextColor = ColorHelper.GetColor(8),
                     TextOutlineColor = ColorHelper.GetColor(7),
                     TextFlags = TextFlags.Edge | TextFlags.MultiLine,

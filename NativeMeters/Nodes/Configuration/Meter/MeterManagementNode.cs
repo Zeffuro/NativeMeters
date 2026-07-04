@@ -61,7 +61,7 @@ public class MeterManagementNode : SimpleComponentNode
         {
             InternalName = "NativeMetersAddMeter",
             Title = "Add Meter",
-            Size = new Vector2(480.0f, 300.0f),
+            Size = new Vector2(440.0f, 190.0f),
             RememberClosePosition = false,
         };
         addMeterDialog.OnMeterCreated = AddMeter;
@@ -141,7 +141,6 @@ public class MeterManagementNode : SimpleComponentNode
 
         layoutContainer = new HorizontalListNode
         {
-            ReverseLayoutUpdate = true,
             FitHeight = true,
             ItemSpacing = LayoutSpacing,
             InitialNodes =
@@ -186,7 +185,7 @@ public class MeterManagementNode : SimpleComponentNode
         var configX = listWidth + SeparatorWidth + LayoutSpacing * 2.0f;
         configNode.Size = new Vector2(Math.Max(0.0f, Width - configX), Height);
 
-        layoutContainer.RecalculateLayout();
+        layoutContainer.RecalculateLayout(true);
         ApplyNavigation();
     }
 

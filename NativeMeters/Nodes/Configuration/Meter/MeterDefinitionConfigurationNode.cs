@@ -20,6 +20,8 @@ namespace NativeMeters.Nodes.Configuration.Meter;
 
 public sealed class MeterDefinitionConfigurationNode : ResNode
 {
+    private const float ScrollbarContentGutter = 14.0f;
+
     public Action? OnLayoutChanged { get; init; }
     public int NavigationStartIndex { get; set; } = 150;
     public int NavigationReturnIndex { get; set; } = 7;
@@ -206,7 +208,15 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
         ConfigurationNavigation.Apply(scrollingArea.ContentNode, NavigationStartIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex);
 
         scrollingArea.RecalculateSizes(true);
+        ApplyScrollingContentGutter();
         OnLayoutChanged?.Invoke();
+    }
+
+    private void ApplyScrollingContentGutter()
+    {
+        scrollingArea.ContentNode.Width = Math.Max(0.0f, scrollingArea.Width - ScrollbarContentGutter);
+        scrollingArea.ContentNode.RecalculateLayout(true);
+        scrollingArea.ScrollBarNode.UpdateScrollParams();
     }
 
     private void HandlePresetSelection(string presetName)
