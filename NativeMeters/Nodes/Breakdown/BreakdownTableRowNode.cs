@@ -31,6 +31,8 @@ public sealed class BreakdownTableRowNode : SimpleComponentNode
 
     public BreakdownTableRowNode()
     {
+        RemoveInteractionFlags();
+
         contributionBar = new SimpleNineGridNode
         {
             TexturePath = "ui/uld/ToolTipS.tex",
@@ -57,6 +59,12 @@ public sealed class BreakdownTableRowNode : SimpleComponentNode
         actionIcon.AttachNode(this);
 
         Size = new Vector2(500, RowHeight);
+    }
+
+    private void RemoveInteractionFlags()
+    {
+        RemoveNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision, NodeFlags.Focusable);
+        CollisionNode.RemoveNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision, NodeFlags.Focusable);
     }
 
     public void SetLayout(BreakdownTableLayout tableLayout)

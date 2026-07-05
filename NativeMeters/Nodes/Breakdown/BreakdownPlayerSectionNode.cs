@@ -187,7 +187,7 @@ public sealed class BreakdownPlayerSectionNode : LayoutListNode
     public static string GetCombatantKey(Combatant combatant)
         => $"{combatant.Name}|{combatant.Job.RowId}";
 
-    private static string GetDisplayName(Combatant combatant)
+    public static string GetDisplayName(Combatant combatant)
     {
         if (combatant.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase))
             return combatant.Name;

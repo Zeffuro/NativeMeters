@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using KamiToolKit.Nodes;
 
 namespace NativeMeters.Nodes.Input;
 
-public class LabeledEnumDropdownNode<T> : LabeledControlRowNode<EnumDropDownNode> where T : struct, Enum
+public class LabeledEnumDropdownNode<T> : LabeledControlRowNode<EnumDropDownNode<T>> where T : struct, Enum
 {
     private Action<T>? _onOptionSelected;
     private List<T> _options = [];
 
-    public LabeledEnumDropdownNode() : base(new EnumDropDownNode { Options = [] }) { }
+    public LabeledEnumDropdownNode() : base(new EnumDropDownNode<T> { Options = [] }) { }
 
     public Action<T>? OnOptionSelected
     {
@@ -20,22 +19,19 @@ public class LabeledEnumDropdownNode<T> : LabeledControlRowNode<EnumDropDownNode
             _onOptionSelected = value;
             ControlNode.OnOptionSelected = value is null
                 ? null
-                : selected =>
-                {
-                    if (selected is T typedSelected)
-                    {
-                        value(typedSelected);
-                    }
-                };
+                : selected => value(selected);
         }
     }
 
     public T? SelectedOption
     {
-        get => ControlNode.SelectedOption is T selected ? selected : null;
+        get => ControlNode.SelectedOption;
         set
         {
-            ControlNode.SelectedOption = value.HasValue ? value.Value : null;
+            if (value.HasValue)
+            {
+                ControlNode.SelectedOption = value.Value;
+            }
         }
     }
 
@@ -51,7 +47,7 @@ public class LabeledEnumDropdownNode<T> : LabeledControlRowNode<EnumDropDownNode
         set
         {
             _options = value;
-            ControlNode.Options = value.Cast<Enum>().ToList();
+            ControlNode.Options = value;
         }
     }
 

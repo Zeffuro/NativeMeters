@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using KamiToolKit.Nodes;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Panels;
 
-internal sealed class ComponentEnumDropdownRowNode<T> : ComponentEditorRowNode<EnumDropDownNode> where T : struct, Enum
+internal sealed class ComponentEnumDropdownRowNode<T> : ComponentEditorRowNode<EnumDropDownNode<T>> where T : struct, Enum
 {
     private List<T> options = [];
     private Action<T>? onOptionSelected;
 
-    public ComponentEnumDropdownRowNode() : base(new EnumDropDownNode()) { }
+    public ComponentEnumDropdownRowNode() : base(new EnumDropDownNode<T>()) { }
 
     public List<T> Options
     {
@@ -18,14 +17,20 @@ internal sealed class ComponentEnumDropdownRowNode<T> : ComponentEditorRowNode<E
         set
         {
             options = value;
-            ControlNode.Options = value.Cast<Enum>().ToList();
+            ControlNode.Options = value;
         }
     }
 
     public T? SelectedOption
     {
-        get => ControlNode.SelectedOption is T selected ? selected : null;
-        set => ControlNode.SelectedOption = value.HasValue ? value.Value : null;
+        get => ControlNode.SelectedOption;
+        set
+        {
+            if (value.HasValue)
+            {
+                ControlNode.SelectedOption = value.Value;
+            }
+        }
     }
 
     public int MaxListOptions
@@ -42,13 +47,7 @@ internal sealed class ComponentEnumDropdownRowNode<T> : ComponentEditorRowNode<E
             onOptionSelected = value;
             ControlNode.OnOptionSelected = value is null
                 ? null
-                : selected =>
-                {
-                    if (selected is T typedSelected)
-                    {
-                        value(typedSelected);
-                    }
-                };
+                : selected => value(selected);
         }
     }
 
