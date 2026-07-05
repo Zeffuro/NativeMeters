@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
@@ -349,8 +350,7 @@ public unsafe class NetworkCombatParser : IDisposable
 
         if (sources.Count == 0)
         {
-            if (target is IBattleChara battle &&
-                (battle.NameId == StrikingDummyNameId || battle.TargetObjectId == localPlayer.GameObjectId))
+            if (target is IBattleChara battle && CanUseLocalPlayerAsFallbackDotSource(battle, localPlayer))
             {
                 InvokeDoT(localPlayer.GameObjectId, localPlayer.Name.TextValue,
                            localPlayer.ClassJob.RowId, entityId,
@@ -397,6 +397,16 @@ public unsafe class NetworkCombatParser : IDisposable
                            entityId, target?.Name.TextValue ?? "", splitAmount);
             }
         }
+    }
+
+    private static bool CanUseLocalPlayerAsFallbackDotSource(IBattleChara target, IPlayerCharacter localPlayer)
+    {
+        if (!Service.Condition[ConditionFlag.InCombat]) return false;
+
+        var isTrainingDummy = target.NameId == StrikingDummyNameId;
+        var isTargetingLocalPlayer = target.TargetObjectId == localPlayer.GameObjectId;
+
+        return isTrainingDummy || isTargetingLocalPlayer;
     }
 
     private void InvokeDoT(ulong sourceId, string sourceName, uint sourceJobId, uint targetId, string targetName, uint amount)

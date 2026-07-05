@@ -17,7 +17,6 @@ public class CombatTracker
     private readonly Dictionary<string, long> enemyDamageTaken = new();
 
     private bool wasInCombat;
-    private const double CombatIdleTimeoutSeconds = 3.0;
 
     public bool IsInCombat { get; private set; }
     public bool HasData => trackers.Count > 0 && encounterState.StartTime != DateTime.MinValue;
