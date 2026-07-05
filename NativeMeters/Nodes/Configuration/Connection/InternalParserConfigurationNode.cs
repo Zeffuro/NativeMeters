@@ -10,6 +10,9 @@ namespace NativeMeters.Nodes.Configuration.Connection;
 
 internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
 {
+    private const float RowWidth = 400.0f;
+    private const float LabelWidth = 190.0f;
+
     public InternalParserConfigurationNode()
     {
         var config = System.Config.InternalParser;
@@ -27,7 +30,8 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
         AddNode([
             new LabeledEnumDropdownNode<ParseFilter>
             {
-                Size = new Vector2(400, 28),
+                Size = new Vector2(RowWidth, 28),
+                LabelWidth = LabelWidth,
                 LabelText = "Parse Filter",
                 Options = Enum.GetValues<ParseFilter>().ToList(),
                 SelectedOption = config.ParseFilter,
@@ -39,7 +43,7 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
             },
             new CheckboxNode
             {
-                Size = new Vector2(400, 20),
+                Size = new Vector2(RowWidth, 20),
                 String = "Combine Pets with Owner",
                 IsChecked = config.MergePetDamage,
                 TextTooltip = "When enabled, pet and summon damage is attributed to the owner.\n"
@@ -52,7 +56,7 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
             },
             new CheckboxNode
             {
-                Size = new Vector2(400, 20),
+                Size = new Vector2(RowWidth, 20),
                 String = "Use \"YOU\" instead of your character's name",
                 IsChecked = config.UseYouForLocalPlayer,
                 TextTooltip = "When enabled, your character is named \"YOU\" to match ACT behavior.",
@@ -64,7 +68,7 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
             },
             new CheckboxNode
             {
-                Size = new Vector2(400, 20),
+                Size = new Vector2(RowWidth, 20),
                 String = "Show Companions as Separate Entries",
                 IsChecked = config.ShowCompanions,
                 TextTooltip = "When enabled, damage from companions are shown as separate entries instead of being merged with the player.",

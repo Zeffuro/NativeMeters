@@ -17,6 +17,12 @@ namespace NativeMeters.Nodes.Configuration.Connection;
 
 internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 {
+    private const float RowWidth = 400.0f;
+    private const float LabelWidth = 190.0f;
+    private const float RowHeight = 28.0f;
+    private const float InlineButtonSize = 24.0f;
+    private const float InlineSpacing = 4.0f;
+
     private readonly LabeledNumericInputNode reconnectIntervalSlider;
     private readonly LabeledTextButtonNode statusNode;
     private readonly CircleButtonNode warningButton;
@@ -52,7 +58,8 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         statusNode = new LabeledTextButtonNode
         {
-            Size = new Vector2(368, 28),
+            Size = new Vector2(RowWidth, RowHeight),
+            LabelWidth = LabelWidth,
             OnClick = OnReconnectClicked,
             LabelText = "Status: Disconnected",
             ButtonText = "Reconnect",
@@ -62,15 +69,15 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         var typeContainer = new HorizontalListNode
         {
-            Size = new Vector2(400, 28),
-            ItemSpacing = 4.0f,
+            Size = new Vector2(RowWidth + InlineButtonSize + InlineSpacing, RowHeight),
+            ItemSpacing = InlineSpacing,
         };
 
         var typeDropDown = new LabeledEnumDropdownNode<ConnectionType>
         {
-            Size = new Vector2(370, 28),
+            Size = new Vector2(RowWidth, RowHeight),
+            LabelWidth = LabelWidth,
             LabelText = "Connection Type",
-            LabelTextFlags = TextFlags.AutoAdjustNodeSize,
             Options = Enum.GetValues<ConnectionType>().ToList(),
             SelectedOption = config.SelectedConnectionType,
             OnOptionSelected = OnConnectionTypeSelected
@@ -80,7 +87,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         warningButton = new CircleButtonNode
         {
             Icon = CircleButtonIcon.Exclamation,
-            Size = new Vector2(24f),
+            Size = new Vector2(InlineButtonSize),
             IsVisible = config.SelectedConnectionType == ConnectionType.Internal,
             TextTooltip = InternalWarningTooltip,
         };
@@ -90,14 +97,15 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         urlContainer = new HorizontalListNode
         {
-            Size = new Vector2(400, 28),
-            ItemSpacing = 4.0f,
+            Size = new Vector2(RowWidth + InlineButtonSize + InlineSpacing, RowHeight),
+            ItemSpacing = InlineSpacing,
             IsVisible = config.SelectedConnectionType == ConnectionType.WebSocket,
         };
 
         urlInputNode = new LabeledTextInputNode
         {
-            Size = new Vector2(370, 28),
+            Size = new Vector2(RowWidth, RowHeight),
+            LabelWidth = LabelWidth,
             LabelText = "WebSocket URL",
             Text = config.WebSocketUrl,
             OnInputComplete = text =>
@@ -112,7 +120,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         urlResetButton = new CircleButtonNode
         {
             Icon = CircleButtonIcon.Undo,
-            Size = new Vector2(24f),
+            Size = new Vector2(InlineButtonSize),
             TextTooltip = "Reset to default URL",
             OnClick = () =>
             {
@@ -155,8 +163,9 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         reconnectIntervalSlider = new LabeledNumericInputNode
         {
-            Size = new Vector2(400, 20),
-            LabelText = "Reconnect Interval (s)",
+            Size = new Vector2(RowWidth, RowHeight),
+            LabelWidth = LabelWidth,
+            LabelText = "Reconnect Interval",
             Min = 1,
             Max = 60,
             Value = config.AutoReconnectInterval,

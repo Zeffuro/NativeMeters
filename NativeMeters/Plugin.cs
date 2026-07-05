@@ -59,7 +59,7 @@ public class Plugin : IAsyncDalamudPlugin
         {
             InternalName = "NativeMeters_Breakdown",
             Title = "NativeMeters Breakdown",
-            Size = new Vector2(640, 512),
+            Size = new Vector2(720, 560),
         };
 
         Service.PluginInterface.UiBuilder.OpenMainUi += System.AddonConfigurationWindow.Toggle;

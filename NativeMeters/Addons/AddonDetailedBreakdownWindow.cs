@@ -22,6 +22,10 @@ public class AddonDetailedBreakdownWindow : NativeAddon
     private const float EncounterButtonWidth = 70.0f;
     private const float SortDropdownWidth = 126.0f;
     private const float LockButtonSize = 22.0f;
+    private const float TabRowY = 26.0f;
+    private const float SortRowY = 84.0f;
+    private const float HeaderRowY = 110.0f;
+    private const float ScrollRowY = 132.0f;
 
     private TabBarNode tabBarNode = null!;
     private EncounterSummaryBarNode summaryBar = null!;
@@ -66,14 +70,13 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         prevButton.AttachNode(this);
 
         var nextX = ContentStartPosition.X + contentW - EncounterButtonWidth;
-        var lockX = nextX - TopRowGap - LockButtonSize;
-        var sortX = lockX - TopRowGap - SortDropdownWidth;
-        var labelX = ContentStartPosition.X + EncounterButtonWidth + TopRowGap;
+        var sortX = ContentStartPosition.X + contentW - SortDropdownWidth;
+        var lockX = sortX - TopRowGap - LockButtonSize;
 
         encounterLabelNode = new TextNode
         {
-            Position = ContentStartPosition with { X = labelX },
-            Size = new Vector2(Math.Max(0.0f, sortX - labelX - TopRowGap), TopRowHeight),
+            Position = ContentStartPosition with { X = ContentStartPosition.X + EncounterButtonWidth + TopRowGap },
+            Size = new Vector2(Math.Max(0.0f, contentW - (EncounterButtonWidth + TopRowGap) * 2.0f), TopRowHeight),
             FontSize = 13,
             FontType = FontType.Axis,
             TextFlags = TextFlags.Edge,
@@ -86,7 +89,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         sortDropdown = new EnumDropDownNode<BreakdownSortMode>
         {
-            Position = ContentStartPosition with { X = sortX },
+            Position = ContentStartPosition with { X = sortX, Y = ContentStartPosition.Y + SortRowY },
             Size = new Vector2(SortDropdownWidth, TopRowHeight),
             Options = Enum.GetValues<BreakdownSortMode>().ToList(),
             SelectedOption = sortMode,
@@ -108,7 +111,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         orderLockButton = new PadlockButtonNode
         {
-            Position = ContentStartPosition with { X = lockX },
+            Position = ContentStartPosition with { X = lockX, Y = ContentStartPosition.Y + SortRowY },
             Size = new Vector2(LockButtonSize, TopRowHeight),
             IsLocked = isOrderLocked,
             TextTooltip = "Lock current breakdown order",
@@ -129,7 +132,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         tabBarNode = new TabBarNode
         {
-            Position = ContentStartPosition with { Y = contentY + 26 },
+            Position = ContentStartPosition with { Y = contentY + TabRowY },
             Size = new Vector2(contentW, 24),
             IsVisible = true,
         };
@@ -147,15 +150,15 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         tableHeader = new BreakdownTableHeaderNode
         {
-            Position = ContentStartPosition with { X = ContentStartPosition.X + BreakdownPlayerSectionNode.RowIndent, Y = contentY + 84 },
+            Position = ContentStartPosition with { X = ContentStartPosition.X + BreakdownPlayerSectionNode.RowIndent, Y = contentY + HeaderRowY },
             Size = new Vector2(contentW - BreakdownPlayerSectionNode.RowIndent, 20),
             IsVisible = true,
         };
         tableHeader.SetLayout(tableLayout);
         tableHeader.AttachNode(this);
 
-        var scrollY = contentY + 106;
-        var scrollH = Math.Max(0, contentH - 106);
+        var scrollY = contentY + ScrollRowY;
+        var scrollH = Math.Max(0, contentH - ScrollRowY);
 
         scrollingContent = new ScrollingNode<VerticalListNode>
         {
