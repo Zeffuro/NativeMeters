@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using FFXIVClientStructs.FFXIV.Client.System.Input;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
 using NativeMeters.Models;
 using NativeMeters.Models.Breakdown;
@@ -14,22 +16,42 @@ namespace NativeMeters.Addons;
 
 public class AddonDetailedBreakdownWindow : NativeAddon
 {
+    private const float ScrollbarContentGutter = 16.0f;
+    private const float TopRowHeight = 22.0f;
+    private const float TopRowGap = 4.0f;
+    private const float EncounterButtonWidth = 70.0f;
+    private const float SortDropdownWidth = 126.0f;
+    private const float LockButtonSize = 22.0f;
+    private const float TabRowY = 26.0f;
+    private const float SortRowY = 84.0f;
+    private const float HeaderRowY = 110.0f;
+    private const float ScrollRowY = 132.0f;
+
     private TabBarNode tabBarNode = null!;
     private EncounterSummaryBarNode summaryBar = null!;
-    private ScrollingListNode scrollingContent = null!;
+    private ScrollingNode<VerticalListNode> scrollingContent = null!;
     private BreakdownTableHeaderNode tableHeader = null!;
 
     private TextButtonNode prevButton = null!;
     private TextButtonNode nextButton = null!;
     private TextNode encounterLabelNode = null!;
+    private EnumDropDownNode<BreakdownSortMode> sortDropdown = null!;
+    private PadlockButtonNode orderLockButton = null!;
 
     private BreakdownTab currentTab = BreakdownTab.Damage;
+    private BreakdownSortMode sortMode = BreakdownSortMode.Output;
     private IMeterService? hookedService;
     private int selectedEncounterIndex = -1;
+    private bool isOrderLocked;
 
     private readonly List<BreakdownPlayerSectionNode> sectionPool = new();
+    private readonly HashSet<string> expandedCombatantKeys = new();
+    private readonly List<string> currentCombatantOrder = new();
+    private readonly List<string> lockedCombatantOrder = new();
 
     private readonly BreakdownTableLayout tableLayout = new();
+    private bool needsCollisionRefresh;
+    private float lastScrollPosition = -1.0f;
 
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
@@ -40,17 +62,21 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         prevButton = new TextButtonNode
         {
             Position = ContentStartPosition,
-            Size = new Vector2(70, 22),
+            Size = new Vector2(EncounterButtonWidth, TopRowHeight),
             String = "Previous",
             IsVisible = true,
             OnClick = () => NavigateEncounter(-1),
         };
         prevButton.AttachNode(this);
 
+        var nextX = ContentStartPosition.X + contentW - EncounterButtonWidth;
+        var sortX = ContentStartPosition.X + contentW - SortDropdownWidth;
+        var lockX = sortX - TopRowGap - LockButtonSize;
+
         encounterLabelNode = new TextNode
         {
-            Position = ContentStartPosition with { X = ContentStartPosition.X + 74 },
-            Size = new Vector2(contentW - 148, 22),
+            Position = ContentStartPosition with { X = ContentStartPosition.X + EncounterButtonWidth + TopRowGap },
+            Size = new Vector2(Math.Max(0.0f, contentW - (EncounterButtonWidth + TopRowGap) * 2.0f), TopRowHeight),
             FontSize = 13,
             FontType = FontType.Axis,
             TextFlags = TextFlags.Edge,
@@ -61,10 +87,43 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         };
         encounterLabelNode.AttachNode(this);
 
+        sortDropdown = new EnumDropDownNode<BreakdownSortMode>
+        {
+            Position = ContentStartPosition with { X = sortX, Y = ContentStartPosition.Y + SortRowY },
+            Size = new Vector2(SortDropdownWidth, TopRowHeight),
+            Options = Enum.GetValues<BreakdownSortMode>().ToList(),
+            SelectedOption = sortMode,
+            MaxListOptions = 4,
+            IsVisible = true,
+            OnOptionSelected = selected =>
+            {
+                sortMode = selected;
+
+                if (isOrderLocked)
+                {
+                    lockedCombatantOrder.Clear();
+                }
+
+                RefreshData();
+            },
+        };
+        sortDropdown.AttachNode(this);
+
+        orderLockButton = new PadlockButtonNode
+        {
+            Position = ContentStartPosition with { X = lockX, Y = ContentStartPosition.Y + SortRowY },
+            Size = new Vector2(LockButtonSize, TopRowHeight),
+            IsLocked = isOrderLocked,
+            TextTooltip = "Lock current breakdown order",
+            IsVisible = true,
+            OnClick = OnOrderLockClicked,
+        };
+        orderLockButton.AttachNode(this);
+
         nextButton = new TextButtonNode
         {
-            Position = ContentStartPosition with { X = ContentStartPosition.X + contentW - 70 },
-            Size = new Vector2(70, 22),
+            Position = ContentStartPosition with { X = nextX },
+            Size = new Vector2(EncounterButtonWidth, TopRowHeight),
             String = "Next",
             IsVisible = true,
             OnClick = () => NavigateEncounter(1),
@@ -73,7 +132,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         tabBarNode = new TabBarNode
         {
-            Position = ContentStartPosition with { Y = contentY + 26 },
+            Position = ContentStartPosition with { Y = contentY + TabRowY },
             Size = new Vector2(contentW, 24),
             IsVisible = true,
         };
@@ -91,24 +150,26 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
         tableHeader = new BreakdownTableHeaderNode
         {
-            Position = ContentStartPosition with { X = ContentStartPosition.X + 10, Y = contentY + 84 },
-            Size = new Vector2(contentW - 28, 20),
+            Position = ContentStartPosition with { X = ContentStartPosition.X + BreakdownPlayerSectionNode.RowIndent, Y = contentY + HeaderRowY },
+            Size = new Vector2(contentW - BreakdownPlayerSectionNode.RowIndent, 20),
             IsVisible = true,
         };
         tableHeader.SetLayout(tableLayout);
         tableHeader.AttachNode(this);
 
-        var scrollY = contentY + 106;
-        var scrollH = Math.Max(0, contentH - 106);
+        var scrollY = contentY + ScrollRowY;
+        var scrollH = Math.Max(0, contentH - ScrollRowY);
 
-        scrollingContent = new ScrollingListNode
+        scrollingContent = new ScrollingNode<VerticalListNode>
         {
             Position = ContentStartPosition with { Y = scrollY },
-            Size = new Vector2(contentW, scrollH),
-            ItemSpacing = 2f,
-            FitContents = true,
+            AutoHideScrollBar = true,
             IsVisible = true,
         };
+        scrollingContent.ContentNode.ItemSpacing = 2f;
+        scrollingContent.ContentNode.FitContents = true;
+        scrollingContent.Size = new Vector2(contentW, scrollH);
+        scrollingContent.ScrollBarNode.OnValueChanged = _ => QueueCollisionRefresh();
         scrollingContent.AttachNode(this);
 
         ReSubscribeToEvents();
@@ -149,6 +210,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
             else return;
         }
 
+        SetOrderLock(false);
         RefreshData();
         UpdateNavigationButtons();
     }
@@ -184,8 +246,12 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         }
     }
 
-    private void SwitchTab(BreakdownTab tab)
+    private void SwitchTab(BreakdownTab tab, bool fromController = false)
     {
+        if (fromController)
+        {
+
+        }
         if (currentTab == tab) return;
         currentTab = tab;
         RefreshData();
@@ -208,18 +274,19 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         if (encounter == null || combatants == null)
         {
             summaryBar.Update(null, currentTab);
+            currentCombatantOrder.Clear();
             for (int i = 0; i < sectionPool.Count; i++)
                 sectionPool[i].IsVisible = false;
-            scrollingContent.RecalculateLayout();
+            RecalculateScrollingContent();
             return;
         }
 
         summaryBar.Update(encounter, currentTab);
-        SortCombatants(combatants);
+        OrderCombatants(combatants);
 
         bool isDamageMode = currentTab == BreakdownTab.Damage;
-        float listWidth = Math.Max(0, scrollingContent.ContentWidth);
-        tableHeader.Width = Math.Max(0, listWidth - 18);
+        float listWidth = GetScrollingContentWidth();
+        tableHeader.Width = Math.Max(0, listWidth - BreakdownPlayerSectionNode.RowIndent);
         tableHeader.UpdateLabels(isDamageMode ? "Damage" : "Healing", isDamageMode ? "DPS" : "HPS");
 
         double duration = encounter.DURATION > 0 ? encounter.DURATION : 1.0;
@@ -232,25 +299,57 @@ public class AddonDetailedBreakdownWindow : NativeAddon
                 IsVisible = false,
             };
             section.InitializeLayout(tableLayout);
-            section.OnToggle = () => scrollingContent.RecalculateLayout();
+            section.OnToggle = isExpanded =>
+            {
+                if (!string.IsNullOrEmpty(section.CombatantKey))
+                {
+                    if (isExpanded)
+                    {
+                        expandedCombatantKeys.Add(section.CombatantKey);
+                    }
+                    else
+                    {
+                        expandedCombatantKeys.Remove(section.CombatantKey);
+                    }
+                }
+
+                RecalculateScrollingContent();
+            };
             sectionPool.Add(section);
-            scrollingContent.AddNode(section);
+            scrollingContent.ContentNode.AddNode(section);
         }
 
         for (int i = 0; i < combatants.Count; i++)
         {
             var section = sectionPool[i];
+            var combatantKey = BreakdownPlayerSectionNode.GetCombatantKey(combatants[i]);
             section.IsVisible = true;
             section.Width = listWidth;
+            section.SetCollapsed(!expandedCombatantKeys.Contains(combatantKey), false);
             section.SetData(combatants[i], currentTab, duration);
         }
 
         for (int i = combatants.Count; i < sectionPool.Count; i++)
             sectionPool[i].IsVisible = false;
 
-        scrollingContent.RecalculateLayout();
+        RecalculateScrollingContent();
         UpdateNavigationButtons();
     }
+
+    private float GetScrollingContentWidth()
+        => Math.Max(0, scrollingContent.Width - ScrollbarContentGutter);
+
+    private void RecalculateScrollingContent()
+    {
+        scrollingContent.RecalculateSizes();
+        scrollingContent.ContentNode.Width = GetScrollingContentWidth();
+        scrollingContent.ContentNode.RecalculateLayout();
+        scrollingContent.ScrollBarNode.UpdateScrollParams();
+        QueueCollisionRefresh();
+    }
+
+    private void QueueCollisionRefresh()
+        => needsCollisionRefresh = true;
 
     private (Encounter? encounter, List<Combatant>? combatants) GetCurrentData()
     {
@@ -271,14 +370,164 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         return (snapshot.Encounter, snapshot.Combatant.Values.ToList());
     }
 
+    private void OnOrderLockClicked()
+    {
+        SetOrderLock(orderLockButton.IsLocked);
+        RefreshData();
+    }
+
+    private void SetOrderLock(bool locked)
+    {
+        isOrderLocked = locked;
+        if (orderLockButton != null)
+        {
+            orderLockButton.IsLocked = locked;
+        }
+
+        lockedCombatantOrder.Clear();
+        if (locked)
+        {
+            lockedCombatantOrder.AddRange(currentCombatantOrder);
+        }
+    }
+
+    private void OrderCombatants(List<Combatant> combatants)
+    {
+        SortCombatants(combatants);
+
+        if (isOrderLocked)
+        {
+            ApplyLockedCombatantOrder(combatants);
+        }
+
+        currentCombatantOrder.Clear();
+        currentCombatantOrder.AddRange(combatants.Select(BreakdownPlayerSectionNode.GetCombatantKey));
+    }
+
     private void SortCombatants(List<Combatant> combatants)
     {
-        combatants.Sort((a, b) => currentTab switch
+        combatants.Sort((a, b) => sortMode switch
         {
-            BreakdownTab.Damage => b.ENCDPS.CompareTo(a.ENCDPS),
+            BreakdownSortMode.Name => CompareName(a, b),
+            BreakdownSortMode.Job => CompareJob(a, b),
+            BreakdownSortMode.Role => CompareRole(a, b),
+            _ => CompareOutputThenName(a, b),
+        });
+    }
+
+    private void ApplyLockedCombatantOrder(List<Combatant> combatants)
+    {
+        if (lockedCombatantOrder.Count == 0)
+        {
+            lockedCombatantOrder.AddRange(combatants.Select(BreakdownPlayerSectionNode.GetCombatantKey));
+            return;
+        }
+
+        var lockedIndex = lockedCombatantOrder
+            .Select((key, index) => (key, index))
+            .ToDictionary(entry => entry.key, entry => entry.index);
+
+        var ordered = combatants
+            .Select((combatant, sortedIndex) => new
+            {
+                Combatant = combatant,
+                SortedIndex = sortedIndex,
+                LockedIndex = lockedIndex.TryGetValue(BreakdownPlayerSectionNode.GetCombatantKey(combatant), out var index)
+                    ? index
+                    : int.MaxValue,
+            })
+            .OrderBy(entry => entry.LockedIndex)
+            .ThenBy(entry => entry.SortedIndex)
+            .Select(entry => entry.Combatant)
+            .ToList();
+
+        combatants.Clear();
+        combatants.AddRange(ordered);
+
+        foreach (var key in combatants.Select(BreakdownPlayerSectionNode.GetCombatantKey))
+        {
+            if (!lockedIndex.ContainsKey(key))
+            {
+                lockedCombatantOrder.Add(key);
+            }
+        }
+    }
+
+    private int CompareOutputThenName(Combatant a, Combatant b)
+    {
+        var outputComparison = currentTab switch
+        {
             BreakdownTab.Healing => b.ENCHPS.CompareTo(a.ENCHPS),
             _ => b.ENCDPS.CompareTo(a.ENCDPS),
-        });
+        };
+
+        return outputComparison != 0 ? outputComparison : CompareName(a, b);
+    }
+
+    private int CompareRole(Combatant a, Combatant b)
+    {
+        var roleComparison = GetRoleSortPriority(a).CompareTo(GetRoleSortPriority(b));
+        return roleComparison != 0 ? roleComparison : CompareOutputThenName(a, b);
+    }
+
+    private int CompareJob(Combatant a, Combatant b)
+    {
+        var jobComparison = string.Compare(GetJobSortLabel(a), GetJobSortLabel(b), StringComparison.OrdinalIgnoreCase);
+        return jobComparison != 0 ? jobComparison : CompareOutputThenName(a, b);
+    }
+
+    private static int CompareName(Combatant a, Combatant b)
+        => string.Compare(
+            BreakdownPlayerSectionNode.GetDisplayName(a),
+            BreakdownPlayerSectionNode.GetDisplayName(b),
+            StringComparison.OrdinalIgnoreCase);
+
+    private static string GetJobSortLabel(Combatant combatant)
+    {
+        if (combatant.Job.RowId == 0)
+        {
+            return combatant.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase)
+                ? "ZZY Limit Break"
+                : "ZZZ Other";
+        }
+
+        return combatant.Job.Abbreviation.ToString();
+    }
+
+    private static int GetRoleSortPriority(Combatant combatant)
+        => combatant.Job.Role switch
+        {
+            1 => 0,
+            4 => 1,
+            2 or 3 => 2,
+            _ => 3,
+        };
+
+    protected override unsafe void OnUpdate(AtkUnitBase* addon)
+    {
+        base.OnUpdate(addon);
+
+        var currentScrollPosition = scrollingContent?.ScrollBarNode.ScrollPosition ?? 0.0f;
+        if (Math.Abs(currentScrollPosition - lastScrollPosition) > 0.1f)
+        {
+            lastScrollPosition = currentScrollPosition;
+            QueueCollisionRefresh();
+        }
+
+        if (needsCollisionRefresh)
+        {
+            addon->UpdateCollisionNodeList(false);
+            needsCollisionRefresh = false;
+        }
+
+        if (UIInputData.Instance()->IsInputIdDown(inputId: InputId.TAB_PREV))
+        {
+            SwitchTab(currentTab == BreakdownTab.Damage ? BreakdownTab.Healing : BreakdownTab.Damage);
+        }
+        if (UIInputData.Instance()->IsInputIdDown(inputId: InputId.TAB_NEXT))
+        {
+            SwitchTab(currentTab == BreakdownTab.Damage ? BreakdownTab.Healing : BreakdownTab.Damage);
+        }
     }
 
     protected override unsafe void OnFinalize(AtkUnitBase* addon)

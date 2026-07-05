@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using NativeMeters.Models.Breakdown;
 
 namespace NativeMeters.Nodes.Breakdown;
@@ -22,6 +22,8 @@ public sealed class BreakdownTableHeaderNode : SimpleComponentNode
 
     public BreakdownTableHeaderNode()
     {
+        RemoveInteractionFlags();
+
         separatorLine = new HorizontalLineNode
         {
             Position = new Vector2(0, TextHeight + 2),
@@ -32,6 +34,12 @@ public sealed class BreakdownTableHeaderNode : SimpleComponentNode
         separatorLine.AttachNode(this);
 
         Size = new Vector2(500, TotalHeight);
+    }
+
+    private void RemoveInteractionFlags()
+    {
+        RemoveNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision, NodeFlags.Focusable);
+        CollisionNode.RemoveNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision, NodeFlags.Focusable);
     }
 
     public void SetLayout(BreakdownTableLayout tableLayout)
@@ -99,8 +107,6 @@ public sealed class BreakdownTableHeaderNode : SimpleComponentNode
         for (int i = 0; i < resolved.Count && i < headerTexts.Count; i++)
         {
             var (col, x, w) = resolved[i];
-
-            x -= 10;
 
             if (col.Key == "Action")
             {

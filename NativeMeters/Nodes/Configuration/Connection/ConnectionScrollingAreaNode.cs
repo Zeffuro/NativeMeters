@@ -1,14 +1,21 @@
 using KamiToolKit.Nodes;
 using NativeMeters.Models;
+using NativeMeters.Nodes.Configuration;
+using NativeMeters.Nodes.LayoutNodes;
 
 namespace NativeMeters.Nodes.Configuration.Connection;
 
-public sealed class ConnectionScrollingAreaNode : ScrollingListNode
+public sealed class ConnectionScrollingAreaNode : ScrollingNode<VerticalListNode>
 {
+    private const int FirstContentNavIndex = 6;
+
+    public int TabBarNavIndex { get; set; } = 2;
 
     public ConnectionScrollingAreaNode()
     {
-        ItemSpacing = 10;
+        ContentNode.ItemSpacing = 10;
+        ContentNode.FitContents = true;
+        ContentNode.FitWidth = true;
 
         var internalParserNode = new InternalParserConfigurationNode
         {
@@ -20,10 +27,22 @@ public sealed class ConnectionScrollingAreaNode : ScrollingListNode
             OnConnectionTypeChanged = type =>
             {
                 internalParserNode.IsVisible = type == ConnectionType.Internal;
-                RecalculateLayout();
+                RecalculateSizes();
             }
         };
 
-        AddNode([connectionNode, internalParserNode]);
+        ContentNode.AddNode([connectionNode, internalParserNode]);
+        RecalculateConfigurationLayout();
+    }
+
+    protected override void OnSizeChanged()
+    {
+        base.OnSizeChanged();
+        RecalculateConfigurationLayout();
+    }
+
+    private void RecalculateConfigurationLayout()
+    {
+        ConfigurationNavigation.Apply(ContentNode, FirstContentNavIndex, TabBarNavIndex, TabBarNavIndex);
     }
 }

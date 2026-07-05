@@ -1,8 +1,10 @@
 using System;
 using System.Numerics;
 using System.Linq;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
 using NativeMeters.Nodes.Color;
+using NativeMeters.Nodes.Configuration;
 using NativeMeters.Nodes.LayoutNodes;
 using NativeMeters.Services;
 using Lumina.Excel.Sheets;
@@ -11,24 +13,28 @@ using NativeMeters.Models;
 
 namespace NativeMeters.Nodes.Configuration.General;
 
-public sealed class ColorConfigurationNode : ScrollingListNode
+public sealed class ColorConfigurationNode : ScrollingNode<VerticalListNode>
 {
-    private readonly CategoryNode roleCategory;
-    private readonly CategoryNode jobCategory;
+    private const int FirstContentNavIndex = 6;
+    private const float ChildIndent = 8.0f;
+
+    private readonly CollapsingHeaderNode roleCategory;
+    private readonly CollapsingHeaderNode jobCategory;
+
+    public int TabBarNavIndex { get; set; } = 4;
 
     public ColorConfigurationNode()
     {
         var config = System.Config.General;
-        ItemSpacing = 10;
+        ContentNode.ItemSpacing = 10;
+        ContentNode.FitContents = true;
 
-        roleCategory = new CategoryNode
+        roleCategory = new CollapsingHeaderNode
         {
             String = "Role Colors",
             IsCollapsed = false,
-            HeaderHeight = 28,
-            OnToggle = RecalculateLayout
+            OnToggle = _ => RecalculateSizes()
         };
-        roleCategory.AddTab();
 
         var roleDefinitions = new (RoleType Role, string Label, Vector4 Current, Vector4 Default, Action<Vector4> Setter)[]
         {
@@ -60,17 +66,15 @@ public sealed class ColorConfigurationNode : ScrollingListNode
                 OnColorCanceled = c => def.Setter(c),
             });
 
-            roleCategory.AddNode(roleRow);
+            AddIndentedNode(roleCategory, roleRow);
         }
 
 
-        jobCategory = new CategoryNode {
+        jobCategory = new CollapsingHeaderNode {
             String = "Job Colors",
             IsCollapsed = false,
-            HeaderHeight = 28,
-            OnToggle = RecalculateLayout
+            OnToggle = _ => RecalculateSizes()
         };
-        jobCategory.AddTab();
 
         var jobs = Service.DataManager.GetExcelSheet<ClassJob>()
             .Where(classJob => classJob.JobIndex > 0 && classJob.Role != 0)
@@ -103,12 +107,12 @@ public sealed class ColorConfigurationNode : ScrollingListNode
                 OnColorCanceled = c => config.JobColors[jobId] = c,
             });
 
-            jobCategory.AddNode(jobRow);
+            AddIndentedNode(jobCategory, jobRow);
         }
 
-        AddNode([roleCategory, jobCategory]);
+        ContentNode.AddNode([roleCategory, jobCategory]);
 
-        RecalculateLayout();
+        RecalculateConfigurationLayout();
     }
 
     private static int GetJobPriority(ClassJob job) {
@@ -127,8 +131,35 @@ public sealed class ColorConfigurationNode : ScrollingListNode
         base.OnSizeChanged();
 
         float listWidth = Math.Max(0, Width - 16.0f);
+        ContentNode.Width = listWidth;
 
-        if (roleCategory != null) roleCategory.Width = listWidth;
-        if (jobCategory != null) jobCategory.Width = listWidth;
+        if (roleCategory != null) ApplyCategoryLayout(roleCategory, listWidth);
+        if (jobCategory != null) ApplyCategoryLayout(jobCategory, listWidth);
+
+        RecalculateConfigurationLayout();
+    }
+
+    private static void AddIndentedNode(CollapsingHeaderNode category, NodeBase node)
+    {
+        node.X = ChildIndent;
+        category.AddNode(node);
+    }
+
+    private static void ApplyCategoryLayout(CollapsingHeaderNode category, float width)
+    {
+        category.Width = width;
+
+        foreach (var node in category.Nodes)
+        {
+            node.X = ChildIndent;
+            node.Width = Math.Max(0.0f, width - ChildIndent);
+        }
+
+        category.RecalculateLayout();
+    }
+
+    private void RecalculateConfigurationLayout()
+    {
+        ConfigurationNavigation.Apply(ContentNode, FirstContentNavIndex, TabBarNavIndex, TabBarNavIndex);
     }
 }

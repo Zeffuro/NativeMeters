@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeMeters", "NativeMeter
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KamiToolKit", "KamiToolKit\KamiToolKit.csproj", "{E76FCC8B-FBC5-4953-9912-091BD80626F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KamiToolKit.Components", "KamiToolKit.Components\KamiToolKit.Components.csproj", "{C5A3C2B2-62C2-46C5-9B4A-6BC3E3790E0E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -18,5 +20,9 @@ Global
 		{E76FCC8B-FBC5-4953-9912-091BD80626F9}.Debug|x64.Build.0 = Debug|x64
 		{E76FCC8B-FBC5-4953-9912-091BD80626F9}.Release|x64.ActiveCfg = Release|x64
 		{E76FCC8B-FBC5-4953-9912-091BD80626F9}.Release|x64.Build.0 = Release|x64
+		{C5A3C2B2-62C2-46C5-9B4A-6BC3E3790E0E}.Debug|x64.ActiveCfg = Debug|x64
+		{C5A3C2B2-62C2-46C5-9B4A-6BC3E3790E0E}.Debug|x64.Build.0 = Debug|x64
+		{C5A3C2B2-62C2-46C5-9B4A-6BC3E3790E0E}.Release|x64.ActiveCfg = Release|x64
+		{C5A3C2B2-62C2-46C5-9B4A-6BC3E3790E0E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 EndGlobal

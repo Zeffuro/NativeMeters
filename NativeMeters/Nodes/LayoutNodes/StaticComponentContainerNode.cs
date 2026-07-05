@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using KamiToolKit;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using NativeMeters.Configuration;
+using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Components;
 using NativeMeters.Rendering;
 
 namespace NativeMeters.Nodes.LayoutNodes;
 
-public sealed class StaticComponentContainerNode : SimpleComponentNode
+public sealed class StaticComponentContainerNode : ResNode
 {
     private readonly DynamicNodeList graphManager;
     private readonly List<ComponentSettings> settingsList;
@@ -30,7 +31,6 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
     {
         settingsList = settings;
         graphManager = new DynamicNodeList(this);
-        DisableCollisionNode = true;
     }
 
     public void Update()
@@ -44,9 +44,9 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
 
         graphManager.Update(cachedSortedSettings, CreateComponent);
 
-        if (settingsList.Count == 0 && CreatedNodes.Count == 0)
+        if (settingsList.Count == 0)
         {
-            var guard = new SimpleComponentNode { Height = 0 };
+            var guard = new ResNode { Height = 0 };
             guard.AttachNode(this);
         }
 
@@ -73,13 +73,8 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
             },
             MeterComponentType.MenuButton => new HeaderMenuButtonNode{ MeterSettings = MeterSettings},
             MeterComponentType.Separator => new HorizontalLineNode(),
-            _ => new SimpleComponentNode()
+            _ => new ResNode()
         };
-
-        if (node is SimpleComponentNode simpleNode)
-        {
-            simpleNode.DisableCollisionNode = true;
-        }
 
         return node;
     }
@@ -88,6 +83,7 @@ public sealed class StaticComponentContainerNode : SimpleComponentNode
     {
         var encounter = System.ActiveMeterService.GetEncounter() ?? EmptyEncounter;
         ComponentRenderer.Update(node, settings, Width, encounter);
+        MeterComponentInteractions.ApplyClickthrough(node, MeterSettings?.IsClickthrough == true);
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor)

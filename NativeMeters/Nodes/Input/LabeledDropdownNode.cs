@@ -1,64 +1,37 @@
 using System;
 using System.Collections.Generic;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
-using KamiToolKit.Premade.Node.Simple;
-using Lumina.Text.ReadOnly;
 
 namespace NativeMeters.Nodes.Input;
 
-public class LabeledDropdownNode : SimpleComponentNode {
-    private readonly GridNode _gridNode;
-    private readonly TextNode _labelNode;
-    private readonly TextDropDownNode _dropDownNode;
-
-    public LabeledDropdownNode() {
-        _gridNode = new GridNode { GridSize = new GridSize(2, 1) };
-        _gridNode.AttachNode(this);
-
-        _labelNode = new LabelTextNode { String = string.Empty };
-        _labelNode.AttachNode(_gridNode[0, 0]);
-
-        _dropDownNode = new TextDropDownNode { Options = new List<string>() };
-        _dropDownNode.AttachNode(_gridNode[1, 0]);
-    }
-
-    protected override void OnSizeChanged() {
-        base.OnSizeChanged();
-        _gridNode.Size = Size;
-        _labelNode.Size = _gridNode[0, 0].Size;
-        _dropDownNode.Size = _gridNode[1, 0].Size;
-    }
-
-    public required ReadOnlySeString LabelText {
-        get => _labelNode.String;
-        set => _labelNode.String = value;
-    }
+public class LabeledDropdownNode : LabeledControlRowNode<StringDropDownNode>
+{
+    public LabeledDropdownNode() : base(new StringDropDownNode { Options = new List<string>() }) { }
 
     public Action<string>? OnOptionSelected {
-        get => _dropDownNode.OnOptionSelected;
-        set => _dropDownNode.OnOptionSelected = value;
+        get => ControlNode.OnOptionSelected;
+        set => ControlNode.OnOptionSelected = value;
     }
 
     public string? SelectedOption {
-        get => _dropDownNode.SelectedOption;
-        set => _dropDownNode.SelectedOption = value;
+        get => ControlNode.SelectedOption;
+        set => ControlNode.SelectedOption = value;
     }
 
     public int MaxListOptions
     {
-        get => _dropDownNode.MaxListOptions;
-        set => _dropDownNode.MaxListOptions = value;
+        get => ControlNode.MaxListOptions;
+        set => ControlNode.MaxListOptions = value;
     }
 
-    public required List<string> Options {
-        get => _dropDownNode.Options!;
-        set => _dropDownNode.Options = value;
+    public required List<string> Options
+    {
+        get => ControlNode.Options!;
+        set => ControlNode.Options = value;
     }
 
-    public TextFlags LabelTextFlags {
-        get => _labelNode.TextFlags;
-        set => _labelNode.TextFlags = value;
+    protected override void OnVisibilityChanged(bool isVisible)
+    {
+        if (!isVisible) ControlNode.Collapse(playSoundEffect: false);
     }
 }

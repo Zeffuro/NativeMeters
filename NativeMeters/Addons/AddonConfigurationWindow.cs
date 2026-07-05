@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
+using System.Threading.Tasks;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit;
+using KamiToolKit.BaseTypes;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
+using Lumina.Data.Parsing.Uld;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Configuration.Connection;
 using NativeMeters.Nodes.Configuration.General;
@@ -13,6 +17,14 @@ namespace NativeMeters.Addons;
 
 public class AddonConfigurationWindow : NativeAddon
 {
+    private readonly AddMeterDialogAddon addMeterDialog = new()
+    {
+        InternalName = "NativeMetersAddMeter",
+        Title = "Add Meter",
+        Size = new Vector2(440.0f, 190.0f),
+        RememberClosePosition = false,
+    };
+
     private TabBarNode tabBarNode = null!;
 
     private GeneralScrollingAreaNode generalScrollingAreaNode = null!;
@@ -34,7 +46,9 @@ public class AddonConfigurationWindow : NativeAddon
         {
             Position = ContentStartPosition,
             Size = ContentSize with { Y = 24 },
-            IsVisible = true
+            IsVisible = true,
+            NavIndex = 1,
+            NavDown = 6,
         };
         tabBarNode.AttachNode(this);
 
@@ -54,7 +68,7 @@ public class AddonConfigurationWindow : NativeAddon
         };
         connectionScrollingAreaNode.AttachNode(this);
 
-        meterManagementNode = new MeterManagementNode
+        meterManagementNode = new MeterManagementNode(addMeterDialog)
         {
             Position = ContentStartPosition with { Y = tabContentY },
             Size = ContentSize with { Y = tabContentHeight },
@@ -84,26 +98,87 @@ public class AddonConfigurationWindow : NativeAddon
         tabContent.Add(colorConfigurationNode);
         tabContent.Add(visibilityScrollingAreaNode);
 
-        tabBarNode.AddTab("General", () => SwitchTab(0));
+        tabBarNode.AddTab(new TabBarEntry
+        {
+            TextId = 662, // General
+            SheetType = NodeData.SheetType.Addon,
+            OnClick = () => SwitchTab(0)
+        });
         tabBarNode.AddTab("Connection", () => SwitchTab(1));
         tabBarNode.AddTab("Meters", () => SwitchTab(2));
         tabBarNode.AddTab("Colors", () => SwitchTab(3));
         tabBarNode.AddTab("Visibility", () => SwitchTab(4));
 
         base.OnSetup(addon, atkValueSpan);
+
+        addon->UldManager.SetupTextRecursive();
+        meterManagementNode.ApplyResolvedText();
     }
 
     private void SwitchTab(int index)
     {
         for (var i = 0; i < tabContent.Count; i++)
-            tabContent[i].IsVisible = i == index;
+        {
+            var isSelected = i == index;
+            tabContent[i].IsVisible = isSelected;
+
+            if (isSelected)
+            {
+                RecalculateTabContent(i);
+            }
+        }
+    }
+
+    private void RecalculateTabContent(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                generalScrollingAreaNode.RecalculateSizes();
+                break;
+            case 1:
+                connectionScrollingAreaNode.RecalculateSizes();
+                break;
+            case 2:
+                meterManagementNode.RecalculateLayout();
+                break;
+            case 3:
+                colorConfigurationNode.RecalculateSizes();
+                break;
+            case 4:
+                visibilityScrollingAreaNode.RecalculateSizes();
+                break;
+        }
     }
 
     protected override unsafe void OnFinalize(AtkUnitBase* addon)
     {
         System.Config.General.PreviewEnabled = false;
+        addMeterDialog.OnMeterCreated = null;
 
         ConfigRepository.Save(System.Config);
         base.OnFinalize(addon);
+    }
+
+    protected override unsafe void OnHide(AtkUnitBase* addon)
+    {
+        addMeterDialog.Close();
+        base.OnHide(addon);
+    }
+
+    public override void Dispose()
+    {
+        addMeterDialog.Close();
+        addMeterDialog.OnMeterCreated = null;
+        addMeterDialog.Dispose();
+        base.Dispose();
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        await addMeterDialog.CloseAsync();
+        addMeterDialog.OnMeterCreated = null;
+        await addMeterDialog.DisposeAsync();
+        await base.DisposeAsync();
     }
 }

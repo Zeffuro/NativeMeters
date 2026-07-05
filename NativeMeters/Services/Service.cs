@@ -1,4 +1,3 @@
-using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;

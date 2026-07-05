@@ -6,20 +6,25 @@ using Dalamud.Game.ClientState.Keys;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.ImportExport;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Configuration.Presets;
+using NativeMeters.Nodes.Configuration;
 using NativeMeters.Nodes.Configuration.Meter.Sections;
+using NativeMeters.Nodes.LayoutNodes;
 using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
-public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
+public sealed class MeterDefinitionConfigurationNode : ResNode
 {
+    private const float ScrollbarContentGutter = 14.0f;
+
     public Action? OnLayoutChanged { get; init; }
+    public int NavigationStartIndex { get; set; } = 150;
+    public int NavigationReturnIndex { get; set; } = 7;
 
     private MeterSettings settings = new();
 
@@ -27,10 +32,9 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
     public static bool IsRefreshing { get; private set; } = false;
 
     private readonly VerticalListNode containerLayout;
-    private readonly SimpleComponentNode headerContainer;
+    private readonly ResNode headerContainer;
     private readonly HorizontalListNode buttonsList;
-    private readonly ScrollingAreaNode<VerticalListNode> scrollingArea;
-    private readonly VerticalListNode mainLayout;
+    private readonly ScrollingNode<VerticalListNode> scrollingArea;
 
     private readonly List<MeterConfigSection> sections = [];
 
@@ -43,7 +47,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         };
         containerLayout.AttachNode(this);
 
-        headerContainer = new SimpleComponentNode
+        headerContainer = new ResNode
         {
             Height = 32,
         };
@@ -67,7 +71,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         };
         buttonsList.AttachNode(headerContainer);
 
-        var presetsDropdown = new TextDropDownNode
+        var presetsDropdown = new StringDropDownNode
         {
             Size = new Vector2(120, 28),
             Options = MeterPresets.GetPresetNames(),
@@ -91,23 +95,30 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
             OnClick = () => ConfigPorter.TryExportMeterToClipboard(settings)
         });
 
-        scrollingArea = new ScrollingAreaNode<VerticalListNode> {
+        scrollingArea = new ScrollingNode<VerticalListNode>
+        {
+            ContentNode =
+            {
+                FitContents = true,
+                FitWidth = true,
+                ItemSpacing = 6.0f,
+            },
             AutoHideScrollBar = true,
-            ContentHeight = 10f,
+            ScrollSpeed = 36,
+            Size = Size
         };
         containerLayout.AddNode(scrollingArea);
 
-        mainLayout = scrollingArea.ContentAreaNode;
-        mainLayout.FitContents = true;
-        mainLayout.ItemSpacing = 6.0f;
-
         sections.Add(new MeterGeneralSection(() => settings)
         {
-            String = "General Settings", IsCollapsed = false,
+            Width = 200,
+            String = "General Settings",
+            IsCollapsed = false,
         });
         sections.Add(new MeterDisplaySection(() => settings)
         {
-            String = "Display Settings", IsCollapsed = false,
+            String = "Display Settings",
+            IsCollapsed = false,
         });
         sections.Add(new MeterComponentsSection(() => settings, HandleLayoutChange, ComponentTarget.Header)
         {
@@ -124,9 +135,9 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 
         foreach (var section in sections)
         {
-            section.OnToggle = () =>
+            section.OnToggle = _ =>
             {
-                if (!section.IsCollapsed && !section.IsInitialized)
+                if (section is { IsCollapsed: false, IsInitialized: false })
                 {
                     section.Refresh();
                 }
@@ -134,7 +145,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
                 HandleLayoutChange();
             };
 
-            mainLayout.AddNode(section);
+            scrollingArea.ContentNode.AddNode(section);
         }
     }
 
@@ -152,15 +163,7 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
         buttonsList.RecalculateLayout();
 
         var scrollHeight = Math.Max(0, Height - headerContainer.Height - containerLayout.ItemSpacing);
-        scrollingArea.Size = Size with { Y = scrollHeight };
-
-        var listWidth = Math.Max(0, Width - 16.0f);
-        mainLayout.Width = listWidth;
-
-        foreach (var section in sections)
-        {
-            section.Width = listWidth;
-        }
+        scrollingArea.Size = new Vector2(Width, scrollHeight);
 
         HandleLayoutChange();
     }
@@ -202,13 +205,18 @@ public sealed class MeterDefinitionConfigurationNode : SimpleComponentNode
 
     private void HandleLayoutChange()
     {
-        mainLayout.RecalculateLayout();
+        ConfigurationNavigation.Apply(scrollingArea.ContentNode, NavigationStartIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex);
 
-        scrollingArea.ContentHeight = mainLayout.Height;
-
-        containerLayout.RecalculateLayout();
-
+        scrollingArea.RecalculateSizes();
+        ApplyScrollingContentGutter();
         OnLayoutChanged?.Invoke();
+    }
+
+    private void ApplyScrollingContentGutter()
+    {
+        scrollingArea.ContentNode.Width = Math.Max(0.0f, scrollingArea.Width - ScrollbarContentGutter);
+        scrollingArea.ContentNode.RecalculateLayout();
+        scrollingArea.ScrollBarNode.UpdateScrollParams();
     }
 
     private void HandlePresetSelection(string presetName)

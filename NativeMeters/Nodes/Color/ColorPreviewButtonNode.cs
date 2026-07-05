@@ -21,6 +21,16 @@ public class ColorPreviewButtonNode : ButtonBase {
         InitializeComponentEvents();
     }
 
+    public override bool IsVisible
+    {
+        get => base.IsVisible;
+        set
+        {
+            base.IsVisible = value;
+            _colorPreview.IsVisible = value;
+        }
+    }
+
     public override Vector4 Color
     {
         get => _colorPreview.Color;

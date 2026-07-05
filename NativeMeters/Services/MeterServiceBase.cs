@@ -19,7 +19,7 @@ public abstract class MeterServiceBase : IMeterService
     public abstract void EndEncounter();
     public abstract void Reconnect();
 
-    protected virtual void InvokeCombatDataUpdated()
+    protected void InvokeCombatDataUpdated()
     {
         CombatDataUpdated?.Invoke();
     }

@@ -1,6 +1,5 @@
 using System.Numerics;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Models;
@@ -14,7 +13,8 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
     {
         GeneralSettings config = System.Config.General;
 
-        ItemVerticalSpacing = 2;
+        ItemSpacing = 2;
+        FitWidth = true;
 
         AddNode(new CategoryTextNode
         {
@@ -175,7 +175,12 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
 
         AddNode(new ResNode { Height = 10 });
 
-        AddNode(1, [
+        var encounterButtonRow = new HorizontalListNode
+        {
+            Height = 28,
+            ItemSpacing = 8,
+        };
+        encounterButtonRow.AddNode([
             new TextButtonNode {
                 String = "End Encounter",
                 Size = new Vector2(120, 28),
@@ -187,7 +192,9 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
                 OnClick = () => System.ActiveMeterService.ClearMeter()
             },
         ]);
+        AddNode(1, encounterButtonRow);
 
         SubtractTab(1);
+        RecalculateLayout();
     }
 }

@@ -2,25 +2,22 @@ using System;
 using System.Linq;
 using System.Numerics;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
 using NativeMeters.Configuration;
-using NativeMeters.Nodes.Color;
-using NativeMeters.Nodes.Input;
 
-namespace NativeMeters.Nodes.Configuration.Meter;
+namespace NativeMeters.Nodes.Configuration.Meter.Panels;
 
 public sealed class ComponentVisualsPanel : VerticalListNode
 {
     private ComponentSettings? settings;
 
     private readonly LabelTextNode headerLabel;
-    private readonly LabeledEnumDropdownNode<ColorMode> colorModeDropdown;
-    private readonly ColorInputRow textColorInput;
-    private readonly ColorInputRow outlineColorInput;
-    private readonly CheckboxNode backgroundCheckbox;
-    private readonly ColorInputRow backgroundTextColorInput;
-    private readonly ColorInputRow barColorInput;
-    private readonly ColorInputRow barBgColorInput;
+    private readonly ComponentEnumDropdownRowNode<ColorMode> colorModeDropdown;
+    private readonly ComponentColorInputRowNode textColorInput;
+    private readonly ComponentColorInputRowNode outlineColorInput;
+    private readonly ComponentCheckboxRowNode backgroundCheckbox;
+    private readonly ComponentColorInputRowNode backgroundTextColorInput;
+    private readonly ComponentColorInputRowNode barColorInput;
+    private readonly ComponentColorInputRowNode barBgColorInput;
 
     private bool isLoading = false;
 
@@ -45,7 +42,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             TextColor = new Vector4(0.7f, 0.7f, 1f, 1f)
         };
 
-        colorModeDropdown = new LabeledEnumDropdownNode<ColorMode>
+        colorModeDropdown = new ComponentEnumDropdownRowNode<ColorMode>
         {
             LabelText = "Coloring Mode:",
             Size = new Vector2(Width, 28),
@@ -58,7 +55,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             }
         };
 
-        textColorInput = new ColorInputRow
+        textColorInput = new ComponentColorInputRowNode
         {
             Label = "Static Color",
             Size = new Vector2(Width, 28),
@@ -69,7 +66,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             OnColorCanceled = textColorCallback
         };
 
-        outlineColorInput = new ColorInputRow
+        outlineColorInput = new ComponentColorInputRowNode
         {
             Label = "Outline Color",
             Size = new Vector2(Width, 28),
@@ -80,7 +77,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             OnColorCanceled = outlineColorCallback
         };
 
-        backgroundTextColorInput = new ColorInputRow
+        backgroundTextColorInput = new ComponentColorInputRowNode
         {
             Label = "Background Color: ",
             Size = new Vector2(Width, 28),
@@ -91,7 +88,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             OnColorCanceled = textBgColorCallback
         };
 
-        barColorInput = new ColorInputRow
+        barColorInput = new ComponentColorInputRowNode
         {
             Label = "Bar Color: ",
             Size = new Vector2(Width, 28),
@@ -102,7 +99,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             OnColorCanceled = barColorCallback
         };
 
-        barBgColorInput = new ColorInputRow
+        barBgColorInput = new ComponentColorInputRowNode
         {
             Label = "Bar Background Color: ",
             Size = new Vector2(Width, 28),
@@ -113,10 +110,10 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             OnColorCanceled = barBgColorCallback
         };
 
-        backgroundCheckbox = new CheckboxNode
+        backgroundCheckbox = new ComponentCheckboxRowNode
         {
             String = "Show BG",
-            Size = new Vector2(Width, 22),
+            Size = new Vector2(Width, 28),
             OnClick = val =>
             {
                 if (settings == null || isLoading) return;
@@ -128,6 +125,24 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         AddNode([headerLabel, colorModeDropdown, textColorInput, outlineColorInput, barColorInput, barBgColorInput, backgroundCheckbox, backgroundTextColorInput]);
     }
 
+    public override bool IsVisible
+    {
+        get => base.IsVisible;
+        set
+        {
+            base.IsVisible = value;
+
+            if (value)
+            {
+                ApplyVisibility();
+            }
+            else
+            {
+                SetAllChildVisibility(false);
+            }
+        }
+    }
+
     public void LoadSettings(ComponentSettings componentSettings)
     {
         isLoading = true;
@@ -137,22 +152,24 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         var isBar = settings.Type == MeterComponentType.ProgressBar;
         var isBg = settings.Type == MeterComponentType.Background;
         var wasVisible = IsVisible;
+        var wasColorModeVisible = colorModeDropdown.IsVisible;
+        var wasTextColorVisible = textColorInput.IsVisible;
+        var wasOutlineColorVisible = outlineColorInput.IsVisible;
+        var wasBackgroundCheckboxVisible = backgroundCheckbox.IsVisible;
+        var wasBackgroundTextColorVisible = backgroundTextColorInput.IsVisible;
+        var wasBarColorVisible = barColorInput.IsVisible;
+        var wasBarBgColorVisible = barBgColorInput.IsVisible;
 
         IsVisible = isText || isBar || isBg;
 
         if (!IsVisible)
         {
+            isLoading = false;
             if (wasVisible != IsVisible) OnLayoutChanged?.Invoke();
             return;
         }
 
-        colorModeDropdown.IsVisible = isText || isBar;
-        textColorInput.IsVisible = isText || isBg;
-        outlineColorInput.IsVisible = isText;
-        backgroundCheckbox.IsVisible = isText;
-        backgroundTextColorInput.IsVisible = isText;
-        barColorInput.IsVisible = isBar;
-        barBgColorInput.IsVisible = isBar;
+        ApplyVisibility();
 
         backgroundTextColorInput.Label = isBar ? "Bar BG Color: " : "Background Color: ";
         textColorInput.Label = isBg ? "Plate Color: " : "Static Color: ";
@@ -167,7 +184,18 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         isLoading = false;
         RecalculateLayout();
-        if (wasVisible != IsVisible) OnLayoutChanged?.Invoke();
+
+        if (wasVisible != IsVisible
+            || wasColorModeVisible != colorModeDropdown.IsVisible
+            || wasTextColorVisible != textColorInput.IsVisible
+            || wasOutlineColorVisible != outlineColorInput.IsVisible
+            || wasBackgroundCheckboxVisible != backgroundCheckbox.IsVisible
+            || wasBackgroundTextColorVisible != backgroundTextColorInput.IsVisible
+            || wasBarColorVisible != barColorInput.IsVisible
+            || wasBarBgColorVisible != barBgColorInput.IsVisible)
+        {
+            OnLayoutChanged?.Invoke();
+        }
     }
 
     private Action<Vector4> CreateColorCallback(Action<Vector4> setter)
@@ -178,6 +206,39 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             setter(color);
             OnSettingsChanged?.Invoke();
         };
+    }
+
+    private void ApplyVisibility()
+    {
+        var isText = settings?.Type == MeterComponentType.Text;
+        var isBar = settings?.Type == MeterComponentType.ProgressBar;
+        var isBg = settings?.Type == MeterComponentType.Background;
+
+        headerLabel.IsVisible = true;
+        colorModeDropdown.IsVisible = isText || isBar;
+        textColorInput.IsVisible = isText || isBg;
+        outlineColorInput.IsVisible = isText;
+        SetBackgroundCheckboxVisible(isText);
+        backgroundTextColorInput.IsVisible = isText;
+        barColorInput.IsVisible = isBar;
+        barBgColorInput.IsVisible = isBar;
+    }
+
+    private void SetAllChildVisibility(bool isVisible)
+    {
+        headerLabel.IsVisible = isVisible;
+        colorModeDropdown.IsVisible = isVisible;
+        textColorInput.IsVisible = isVisible;
+        outlineColorInput.IsVisible = isVisible;
+        SetBackgroundCheckboxVisible(isVisible);
+        backgroundTextColorInput.IsVisible = isVisible;
+        barColorInput.IsVisible = isVisible;
+        barBgColorInput.IsVisible = isVisible;
+    }
+
+    private void SetBackgroundCheckboxVisible(bool isVisible)
+    {
+        backgroundCheckbox.IsVisible = isVisible;
     }
 
     protected override void OnSizeChanged()

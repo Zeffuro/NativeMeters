@@ -3,10 +3,10 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Enums;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Models;
@@ -17,9 +17,16 @@ namespace NativeMeters.Nodes.Configuration.Connection;
 
 internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 {
+    private const float RowWidth = 400.0f;
+    private const float LabelWidth = 190.0f;
+    private const float RowHeight = 28.0f;
+    private const float InlineButtonSize = 24.0f;
+    private const float InlineSpacing = 4.0f;
+
     private readonly LabeledNumericInputNode reconnectIntervalSlider;
     private readonly LabeledTextButtonNode statusNode;
     private readonly CircleButtonNode warningButton;
+    private readonly HorizontalListNode urlContainer;
     private readonly LabeledTextInputNode urlInputNode;
     private readonly CircleButtonNode urlResetButton;
 
@@ -37,7 +44,9 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
     {
         ConnectionSettings config = System.Config.ConnectionSettings;
 
-        ItemVerticalSpacing = 2;
+        ItemSpacing = 2;
+        FitWidth = true;
+
 
         AddNode(new CategoryTextNode
         {
@@ -49,50 +58,54 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         statusNode = new LabeledTextButtonNode
         {
-            Size = new Vector2(368, 28),
+            Size = new Vector2(RowWidth, RowHeight),
+            LabelWidth = LabelWidth,
             OnClick = OnReconnectClicked,
             LabelText = "Status: Disconnected",
             ButtonText = "Reconnect",
+            NavUp = 2,
         };
         AddNode(statusNode);
 
-        var typeContainer = new SimpleComponentNode
+        var typeContainer = new HorizontalListNode
         {
-            Size = new Vector2(400, 28),
+            Size = new Vector2(RowWidth + InlineButtonSize + InlineSpacing, RowHeight),
+            ItemSpacing = InlineSpacing,
         };
 
         var typeDropDown = new LabeledEnumDropdownNode<ConnectionType>
         {
-            Size = new Vector2(370, 28),
+            Size = new Vector2(RowWidth, RowHeight),
+            LabelWidth = LabelWidth,
             LabelText = "Connection Type",
-            LabelTextFlags = TextFlags.AutoAdjustNodeSize,
             Options = Enum.GetValues<ConnectionType>().ToList(),
             SelectedOption = config.SelectedConnectionType,
             OnOptionSelected = OnConnectionTypeSelected
         };
-        typeDropDown.AttachNode(typeContainer);
+        typeContainer.AddNode(typeDropDown);
 
         warningButton = new CircleButtonNode
         {
-            Icon = ButtonIcon.Exclamation,
-            Size = new Vector2(24f),
-            Position = new Vector2(374, 2),
+            Icon = CircleButtonIcon.Exclamation,
+            Size = new Vector2(InlineButtonSize),
             IsVisible = config.SelectedConnectionType == ConnectionType.Internal,
             TextTooltip = InternalWarningTooltip,
         };
-        warningButton.AttachNode(typeContainer);
+        typeContainer.AddNode(warningButton);
 
         AddNode(typeContainer);
 
-        var urlContainer = new SimpleComponentNode
+        urlContainer = new HorizontalListNode
         {
-            Size = new Vector2(400, 28),
+            Size = new Vector2(RowWidth + InlineButtonSize + InlineSpacing, RowHeight),
+            ItemSpacing = InlineSpacing,
             IsVisible = config.SelectedConnectionType == ConnectionType.WebSocket,
         };
 
         urlInputNode = new LabeledTextInputNode
         {
-            Size = new Vector2(370, 28),
+            Size = new Vector2(RowWidth, RowHeight),
+            LabelWidth = LabelWidth,
             LabelText = "WebSocket URL",
             Text = config.WebSocketUrl,
             OnInputComplete = text =>
@@ -102,13 +115,12 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
                 ConfigRepository.Save(System.Config);
             }
         };
-        urlInputNode.AttachNode(urlContainer);
+        urlContainer.AddNode(urlInputNode);
 
         urlResetButton = new CircleButtonNode
         {
-            Icon = ButtonIcon.Undo,
-            Size = new Vector2(24f),
-            Position = new Vector2(374, 2),
+            Icon = CircleButtonIcon.Undo,
+            Size = new Vector2(InlineButtonSize),
             TextTooltip = "Reset to default URL",
             OnClick = () =>
             {
@@ -119,7 +131,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
                 ConfigRepository.Save(System.Config);
             }
         };
-        urlResetButton.AttachNode(urlContainer);
+        urlContainer.AddNode(urlResetButton);
 
         AddNode(urlContainer);
 
@@ -151,8 +163,9 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         reconnectIntervalSlider = new LabeledNumericInputNode
         {
-            Size = new Vector2(400, 20),
-            LabelText = "Reconnect Interval (s)",
+            Size = new Vector2(RowWidth, RowHeight),
+            LabelWidth = LabelWidth,
+            LabelText = "Reconnect Interval",
             Min = 1,
             Max = 60,
             Value = config.AutoReconnectInterval,
@@ -191,6 +204,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         ConfigRepository.Save(System.Config);
 
         warningButton.IsVisible = selected == ConnectionType.Internal;
+        urlContainer.IsVisible = selected == ConnectionType.WebSocket;
         urlInputNode.IsVisible = selected == ConnectionType.WebSocket;
         urlResetButton.IsVisible = selected == ConnectionType.WebSocket;
 

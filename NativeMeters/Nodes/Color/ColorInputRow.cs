@@ -1,10 +1,10 @@
 using System;
 using System.Numerics;
+using System.Threading.Tasks;
 using AetherBags.Nodes.Color;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Addons;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Addon;
-using KamiToolKit.Premade.Node;
 
 namespace NativeMeters.Nodes.Color;
 
@@ -30,41 +30,73 @@ public class ColorInputRow : HorizontalListNode
 
         node.OnClick = () =>
         {
-            var snapshot = CurrentColor;
-
-            if (_sharedColorPickerAddon is not null)
-            {
-                _sharedColorPickerAddon.InitialColor = snapshot;
-                _sharedColorPickerAddon.DefaultColor = DefaultColor;
-                _sharedColorPickerAddon.Toggle();
-
-                _sharedColorPickerAddon.OnColorConfirmed = color =>
+            OpenSharedColorPicker(
+                CurrentColor,
+                DefaultColor,
+                color =>
                 {
                     CurrentColor = color;
                     node.Color = color;
-                    OnColorConfirmed?.Invoke(color);
-                };
-
-                _sharedColorPickerAddon.OnColorPreviewed = color =>
-                {
-                    node.Color = color;
-                    OnColorPreviewed?.Invoke(color);
-                };
-
-                _sharedColorPickerAddon.OnColorCancelled = () =>
-                {
-                    CurrentColor = snapshot;
-                    node.Color = snapshot;
-                    OnColorCanceled?.Invoke(snapshot);
-                };
-            }
+                },
+                OnColorConfirmed,
+                OnColorPreviewed,
+                OnColorCanceled);
         };
 
         colorPreview.AttachNode(this);
         labelTextNode.AttachNode(this);
     }
 
-    private void InitializeColorPicker() {
+    public override bool IsVisible
+    {
+        get => base.IsVisible;
+        set
+        {
+            base.IsVisible = value;
+            colorPreview.IsVisible = value;
+            labelTextNode.IsVisible = value;
+        }
+    }
+
+    public static void OpenSharedColorPicker(
+        Vector4 currentColor,
+        Vector4 defaultColor,
+        Action<Vector4> applyColor,
+        Action<Vector4>? onColorConfirmed,
+        Action<Vector4>? onColorPreviewed,
+        Action<Vector4>? onColorCanceled)
+    {
+        InitializeColorPicker();
+
+        var snapshot = currentColor;
+
+        if (_sharedColorPickerAddon is not null)
+        {
+            _sharedColorPickerAddon.InitialColor = snapshot;
+            _sharedColorPickerAddon.DefaultColor = defaultColor;
+            _sharedColorPickerAddon.Toggle();
+
+            _sharedColorPickerAddon.OnColorConfirmed = color =>
+            {
+                applyColor(color);
+                onColorConfirmed?.Invoke(color);
+            };
+
+            _sharedColorPickerAddon.OnColorPreviewed = color =>
+            {
+                applyColor(color);
+                onColorPreviewed?.Invoke(color);
+            };
+
+            _sharedColorPickerAddon.OnColorCancelled = () =>
+            {
+                applyColor(snapshot);
+                onColorCanceled?.Invoke(snapshot);
+            };
+        }
+    }
+
+    private static void InitializeColorPicker() {
         if (_sharedColorPickerAddon is not null) return;
 
         _sharedColorPickerAddon = new ColorPickerAddon {
@@ -73,14 +105,14 @@ public class ColorInputRow : HorizontalListNode
         };
     }
 
-    protected override void Dispose(bool disposing, bool isNativeDestructor) {
-        base.Dispose();
-    }
-
-    public static void DisposeSharedColorPicker()
+    public static async ValueTask DisposeSharedColorPicker()
     {
-        _sharedColorPickerAddon?.Dispose();
-        _sharedColorPickerAddon = null;
+        //await Task.WhenAll( _sharedColorPickerAddon?.DisposeAsync().AsTask() ?? Task.CompletedTask);
+        if (_sharedColorPickerAddon != null)
+        {
+            await _sharedColorPickerAddon.DisposeAsync();
+            _sharedColorPickerAddon = null;
+        }
     }
 
     public required string Label

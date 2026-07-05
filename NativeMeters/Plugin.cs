@@ -1,8 +1,11 @@
 using System.Numerics;
+using System.Threading;
+using System.Threading.Tasks;
+using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using KamiToolKit;
-using KamiToolKit.Overlay.UiOverlay;
+using KamiToolKit.UiOverlay;
 using NativeMeters.Addons;
 using NativeMeters.Clients;
 using NativeMeters.Commands;
@@ -16,17 +19,22 @@ using NativeMeters.Services.Internal;
 
 namespace NativeMeters;
 
-public class Plugin : IDalamudPlugin
+public class Plugin : IAsyncDalamudPlugin
 {
-    public Plugin(IDalamudPluginInterface pluginInterface)
+    [PluginService] private static IDalamudPluginInterface PluginInterface { get; set; } = null!;
+
+    public async Task LoadAsync(CancellationToken cancellationToken)
     {
-        pluginInterface.Create<Service>();
+        PluginInterface.Create<Service>();
         System.Config = ConfigRepository.LoadOrDefault();
         ConfigRepository.Save(System.Config);
-        ConfigBackup.DoConfigBackup(pluginInterface);
+        ConfigBackup.DoConfigBackup(Service.PluginInterface);
 
-        KamiToolKitLibrary.Initialize(pluginInterface);
-        System.OverlayController = new OverlayController();
+        KamiToolKitLibrary.Initialize(Service.PluginInterface);
+        await Service.Framework.Run(() =>
+        {
+            System.OverlayController = new OverlayController();
+        }, cancellationToken);
 
         System.MeterService = new MeterService(new WebSocketClient(), new IINACTIpcClient());
         System.InternalMeterService = new InternalMeterService();
@@ -44,14 +52,14 @@ public class Plugin : IDalamudPlugin
         {
             InternalName = "NativeMeters_Config",
             Title = "NativeMeters Config",
-            Size = new Vector2(640, 512),
+            Size = new Vector2(800, 600),
         };
 
         System.AddonDetailedBreakdownWindow = new AddonDetailedBreakdownWindow
         {
             InternalName = "NativeMeters_Breakdown",
             Title = "NativeMeters Breakdown",
-            Size = new Vector2(640, 512),
+            Size = new Vector2(720, 560),
         };
 
         Service.PluginInterface.UiBuilder.OpenMainUi += System.AddonConfigurationWindow.Toggle;
@@ -66,9 +74,10 @@ public class Plugin : IDalamudPlugin
         Service.ClientState.Login += OnLogin;
 
         if (Service.ClientState.IsLoggedIn) {
-            Service.Framework.RunOnFrameworkThread(OnLogin);
+            await Service.Framework.Run(OnLogin, cancellationToken);
         }
     }
+
 
     private void OnFrameworkUpdate(IFramework framework) {
         System.MeterService.ProcessPendingMessages();
@@ -93,24 +102,33 @@ public class Plugin : IDalamudPlugin
         System.AddonConfigurationWindow.DebugOpen();
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         Service.Framework.Update -= OnFrameworkUpdate;
         Service.ClientState.Login -= OnLogin;
+        Service.PluginInterface.UiBuilder.OpenMainUi -= System.AddonConfigurationWindow.Toggle;
+        Service.PluginInterface.UiBuilder.OpenConfigUi -= System.AddonConfigurationWindow.Toggle;
 
-        ColorInputRow.DisposeSharedColorPicker();
+        await Service.Framework.Run(() => System.OverlayController.Dispose());
 
-        System.OverlayController.Dispose();
         System.DtrService.Dispose();
         System.TestMeterService.Dispose();
         System.InternalMeterService.Dispose();
         System.MeterService.Dispose();
         System.OverlayManager.Dispose();
         System.CommandHandler.Dispose();
-        System.AddonConfigurationWindow.Dispose();
-        System.AddonDetailedBreakdownWindow.Dispose();
+
+        // TODO: Don't need this if according to Kami
+        if (!Service.Framework.IsFrameworkUnloading)
+        {
+            await ColorInputRow.DisposeSharedColorPicker();
+            await System.TagSearchAddon.DisposeAsync();
+            await System.IconSearchAddon.DisposeAsync();
+            await System.AddonConfigurationWindow.DisposeAsync();
+            await System.AddonDetailedBreakdownWindow.DisposeAsync();
+        }
 
         ConfigRepository.Save(System.Config);
-        KamiToolKitLibrary.Dispose();
+        await Service.Framework.Run(KamiToolKitLibrary.Dispose);
     }
 }

@@ -12,31 +12,32 @@ public enum ComponentTarget { Header, Row, Footer }
 
 public sealed class MeterComponentsSection : MeterConfigSection
 {
-    private readonly VerticalListNode listContainer;
-    private readonly HorizontalListNode addRow;
     private readonly Action onLayoutChanged;
     private readonly ComponentTarget target;
-
-    private List<string> lastComponentIds = new();
+    private readonly VerticalListNode componentsList;
+    private readonly HorizontalListNode addRow;
+    private readonly StringDropDownNode typeDropdown;
 
     public MeterComponentsSection(Func<MeterSettings> getSettings, Action onLayoutChanged, ComponentTarget target) : base(getSettings)
     {
         this.onLayoutChanged = onLayoutChanged;
         this.target = target;
+        ItemSpacing = 4.0f;
 
-        listContainer = new VerticalListNode {
-            ItemSpacing = 4.0f,
+        componentsList = new VerticalListNode
+        {
             FitContents = true,
+            FitWidth = true,
+            ItemSpacing = 4.0f,
         };
-        AddNode(listContainer);
 
         addRow = new HorizontalListNode
         {
-            Size = new Vector2(300, 32),
+            Size = new Vector2(Width, 32),
             ItemSpacing = 8.0f,
         };
 
-        var typeDropdown = new TextDropDownNode {
+        typeDropdown = new StringDropDownNode {
             Size = new Vector2(150, 28),
             Options = Enum.GetNames<MeterComponentType>().ToList(),
         };
@@ -48,7 +49,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
             OnClick = () => AddNewComponent(typeDropdown.SelectedOption)
         });
 
-        AddNode(addRow);
+        AddNode([componentsList, addRow]);
     }
 
     private List<ComponentSettings> TargetList => target switch
@@ -75,16 +76,13 @@ public sealed class MeterComponentsSection : MeterConfigSection
         if (component.Type is MeterComponentType.Icon or MeterComponentType.JobIcon or MeterComponentType.MenuButton) component.Size = new Vector2(24);
 
         TargetList.Add(component);
-        lastComponentIds.Clear();
         Refresh();
         System.OverlayManager.Setup();
     }
 
-    private void RefreshLayout()
+    private void RefreshSectionLayout()
     {
-        listContainer.RecalculateLayout();
-        ContentNode.RecalculateLayout();
-        RecalculateLayout();
+        RecalculateSectionLayout();
         onLayoutChanged();
     }
 
@@ -93,21 +91,16 @@ public sealed class MeterComponentsSection : MeterConfigSection
         if (IsCollapsed)
         {
             IsInitialized = false;
-            listContainer.Clear();
+            componentsList.Clear();
             return;
         }
 
         IsInitialized = true;
-        var currentIds = TargetList.Select(c => c.Id).ToList();
-        lastComponentIds = currentIds;
-
-        listContainer.Clear();
+        componentsList.Clear();
 
         foreach (var component in TargetList) {
             var node = new ComponentSettingsNode {
-                Width = Width - 20.0f,
-                HeaderHeight = 24.0f,
-                RowComponent = component,
+                OnLayoutChanged = RefreshSectionLayout,
                 OnChanged = () =>
                 {
                     ConfigRepository.Save(System.Config);
@@ -130,19 +123,13 @@ public sealed class MeterComponentsSection : MeterConfigSection
                     Refresh();
                     System.OverlayManager.Setup();
                 },
-                OnToggle = RefreshLayout
+                OnToggle = _ => RefreshSectionLayout()
             };
 
-            listContainer.AddNode(node);
+            componentsList.AddNode(node);
+            node.RowComponent = component;
         }
 
-        RefreshLayout();
-    }
-
-    protected override void OnSizeChanged()
-    {
-        base.OnSizeChanged();
-
-        addRow?.Width = Math.Max(0, Width - ContentNode.X);
+        RefreshSectionLayout();
     }
 }

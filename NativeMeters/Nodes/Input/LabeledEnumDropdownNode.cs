@@ -1,85 +1,58 @@
 using System;
 using System.Collections.Generic;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
-using KamiToolKit.Premade.Node.Simple;
-using Lumina.Text.ReadOnly;
-using NativeMeters.Extensions;
 
 namespace NativeMeters.Nodes.Input;
 
-public class LabeledEnumDropdownNode<T> : SimpleComponentNode where T : Enum {
-    private readonly GridNode _gridNode;
-    private readonly TextNode _labelNode;
-    private readonly EnumDropDownNode<T> _dropDownNode;
+public class LabeledEnumDropdownNode<T> : LabeledControlRowNode<EnumDropDownNode<T>> where T : struct, Enum
+{
+    private Action<T>? _onOptionSelected;
+    private List<T> _options = [];
 
-    public LabeledEnumDropdownNode() {
-        _gridNode = new GridNode {
-            GridSize = new GridSize(2, 1),
-        };
-        _gridNode.AttachNode(this);
-
-        _labelNode = new LabelTextNode {
-            String = string.Empty,
-        };
-        _labelNode.AttachNode(_gridNode[0, 0]);
-
-        _dropDownNode = new EnumDropDownNode<T> {
-            Options = new List<T>(),
-        };
-        _dropDownNode.AttachNode(_gridNode[1, 0]);
-    }
-
-    protected override void OnSizeChanged() {
-        base.OnSizeChanged();
-
-        _gridNode.Size = Size;
-
-        _labelNode.Size = _gridNode[0, 0].Size;
-        _dropDownNode.Size = _gridNode[1, 0].Size;
-    }
-
-    public required ReadOnlySeString LabelText
-    {
-        get => _labelNode.String;
-        set => _labelNode.String = value;
-    }
+    public LabeledEnumDropdownNode() : base(new EnumDropDownNode<T> { Options = [] }) { }
 
     public Action<T>? OnOptionSelected
     {
-        get => _dropDownNode.OnOptionSelected;
-        set => _dropDownNode.OnOptionSelected = value;
+        get => _onOptionSelected;
+        set
+        {
+            _onOptionSelected = value;
+            ControlNode.OnOptionSelected = value is null
+                ? null
+                : selected => value(selected);
+        }
     }
 
     public T? SelectedOption
     {
-        get => _dropDownNode.OptionListNode.SelectedOption;
+        get => ControlNode.SelectedOption;
         set
         {
-            _dropDownNode.OptionListNode.SelectedOption = value;
-            if (value != null)
+            if (value.HasValue)
             {
-                _dropDownNode.LabelNode.String = value.Description;
+                ControlNode.SelectedOption = value.Value;
             }
         }
     }
 
     public int MaxListOptions
     {
-        get => _dropDownNode.MaxListOptions;
-        set => _dropDownNode.MaxListOptions = value;
+        get => ControlNode.MaxListOptions;
+        set => ControlNode.MaxListOptions = value;
     }
 
     public required List<T> Options
     {
-        get => _dropDownNode.Options!;
-        set => _dropDownNode.Options = value;
+        get => _options;
+        set
+        {
+            _options = value;
+            ControlNode.Options = value;
+        }
     }
 
-    public TextFlags LabelTextFlags
+    protected override void OnVisibilityChanged(bool isVisible)
     {
-        get => _labelNode.TextFlags;
-        set => _labelNode.TextFlags = value;
+        if (!isVisible) ControlNode.Collapse(playSoundEffect: false);
     }
 }

@@ -1,5 +1,4 @@
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
 using NativeMeters.Configuration.Persistence;
 
 namespace NativeMeters.Nodes.Configuration.Visibility;
@@ -10,7 +9,8 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
     {
         var config = System.Config.Visibility;
 
-        ItemVerticalSpacing = 2;
+        ItemSpacing = 2;
+        FitWidth = true;
 
         AddNode(new CategoryTextNode
         {
@@ -246,5 +246,6 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
         ]);
 
         SubtractTab(1);
+        RecalculateLayout();
     }
 }

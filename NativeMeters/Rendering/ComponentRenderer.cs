@@ -1,5 +1,5 @@
 using System.Numerics;
-using KamiToolKit;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;

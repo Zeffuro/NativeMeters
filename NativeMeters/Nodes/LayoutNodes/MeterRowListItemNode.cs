@@ -1,10 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using KamiToolKit;
+using System.Threading.Tasks;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.BaseTypes;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using NativeMeters.Configuration;
+using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Rendering;
 
@@ -59,6 +63,11 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
             lastComponentHash = hash;
         }
 
+        if (MeterSettings.IsClickthrough)
+        {
+            RemoveNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision);
+        }
+
         dynamicNodeList.Update(cachedSortedComponents, CreateComponent);
 
         foreach (var settings in cachedSortedComponents)
@@ -87,13 +96,8 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
                 TopOffset = 10, BottomOffset = 10, LeftOffset = 15, RightOffset = 15,
             },
             MeterComponentType.Separator => new HorizontalLineNode(),
-            _ => new SimpleComponentNode()
+            _ => new ResNode()
         };
-
-        if (node is SimpleComponentNode simpleNode)
-        {
-            simpleNode.DisableCollisionNode = true;
-        }
 
         return node;
     }
@@ -103,6 +107,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
         if (Combatant == null || MeterSettings == null) return;
 
         ComponentRenderer.Update(node, settings, Width, Combatant);
+        MeterComponentInteractions.ApplyClickthrough(node, MeterSettings.IsClickthrough);
     }
 
     protected override void Dispose(bool disposing, bool isNativeDestructor)

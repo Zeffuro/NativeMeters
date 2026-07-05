@@ -3,21 +3,19 @@ using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
 using NativeMeters.Configuration;
-using NativeMeters.Nodes.Input;
 
-namespace NativeMeters.Nodes.Configuration.Meter;
+namespace NativeMeters.Nodes.Configuration.Meter.Panels;
 
 public sealed class ComponentTypographyPanel : VerticalListNode
 {
     private ComponentSettings? settings;
 
     private readonly LabelTextNode headerLabel;
-    private readonly LabeledEnumDropdownNode<FontType> fontTypeEnumDropdown;
-    private readonly LabeledEnumDropdownNode<TextFlags> textFlagsEnumDropdown;
-    private readonly LabeledEnumDropdownNode<AlignmentType> alignmentEnumDropdown;
-    private readonly LabeledNumericInputNode fontSizeInput;
+    private readonly ComponentEnumDropdownRowNode<FontType> fontTypeEnumDropdown;
+    private readonly ComponentEnumDropdownRowNode<TextFlags> textFlagsEnumDropdown;
+    private readonly ComponentEnumDropdownRowNode<AlignmentType> alignmentEnumDropdown;
+    private readonly ComponentNumericInputRowNode fontSizeInput;
 
     public Action? OnSettingsChanged { get; set; }
     public Action? OnLayoutChanged { get; set; }
@@ -36,7 +34,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             TextColor = new Vector4(0.7f, 0.7f, 1f, 1f)
         };
 
-        fontTypeEnumDropdown = new LabeledEnumDropdownNode<FontType>
+        fontTypeEnumDropdown = new ComponentEnumDropdownRowNode<FontType>
         {
             LabelText = "Font:",
             Size = new Vector2(Width, 28),
@@ -48,7 +46,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             }
         };
 
-        textFlagsEnumDropdown = new LabeledEnumDropdownNode<TextFlags>
+        textFlagsEnumDropdown = new ComponentEnumDropdownRowNode<TextFlags>
         {
             LabelText = "Style:",
             Size = new Vector2(Width, 28),
@@ -60,7 +58,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             }
         };
 
-        alignmentEnumDropdown = new LabeledEnumDropdownNode<AlignmentType>
+        alignmentEnumDropdown = new ComponentEnumDropdownRowNode<AlignmentType>
         {
             LabelText = "Alignment:",
             Size = new Vector2(Width, 28),
@@ -72,7 +70,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             }
         };
 
-        fontSizeInput = new LabeledNumericInputNode
+        fontSizeInput = new ComponentNumericInputRowNode
         {
             LabelText = "Size:",
             Size = new Vector2(Width, 28),
@@ -89,6 +87,16 @@ public sealed class ComponentTypographyPanel : VerticalListNode
         AddNode([headerLabel, fontTypeEnumDropdown, alignmentEnumDropdown, fontSizeInput, textFlagsEnumDropdown]);
     }
 
+    public override bool IsVisible
+    {
+        get => base.IsVisible;
+        set
+        {
+            base.IsVisible = value;
+            SetAllChildVisibility(value);
+        }
+    }
+
     public void LoadSettings(ComponentSettings componentSettings)
     {
         isLoading = true;
@@ -99,19 +107,17 @@ public sealed class ComponentTypographyPanel : VerticalListNode
 
         IsVisible = isText;
 
-        if (!isText)
+        if (isText)
         {
-            if (wasVisible != IsVisible) OnLayoutChanged?.Invoke();
-            return;
+            fontTypeEnumDropdown.SelectedOption = settings.FontType;
+            textFlagsEnumDropdown.SelectedOption = settings.TextFlags;
+            alignmentEnumDropdown.SelectedOption = settings.AlignmentType;
+            fontSizeInput.Value = (int)settings.FontSize;
+
+            RecalculateLayout();
         }
 
-        fontTypeEnumDropdown.SelectedOption = settings.FontType;
-        textFlagsEnumDropdown.SelectedOption = settings.TextFlags;
-        alignmentEnumDropdown.SelectedOption = settings.AlignmentType;
-        fontSizeInput.Value = (int)settings.FontSize;
-
         isLoading = false;
-        RecalculateLayout();
         if (wasVisible != IsVisible) OnLayoutChanged?.Invoke();
     }
 
@@ -123,5 +129,14 @@ public sealed class ComponentTypographyPanel : VerticalListNode
         textFlagsEnumDropdown.Width = Width;
         alignmentEnumDropdown.Width = Width;
         fontSizeInput.Width = Width;
+    }
+
+    private void SetAllChildVisibility(bool isVisible)
+    {
+        headerLabel.IsVisible = isVisible;
+        fontTypeEnumDropdown.IsVisible = isVisible;
+        textFlagsEnumDropdown.IsVisible = isVisible;
+        alignmentEnumDropdown.IsVisible = isVisible;
+        fontSizeInput.IsVisible = isVisible;
     }
 }

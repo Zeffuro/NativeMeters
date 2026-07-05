@@ -8,7 +8,7 @@ namespace NativeMeters.Configuration.ImportExport;
 public abstract class ConfigPorter {
     public static void TryImportConfigFromClipboard()
     {
-        var clipboard = ImGui.GetClipboardText();
+        var clipboard = ClipboardService.GetClipboardText();
 
         if (!string.IsNullOrWhiteSpace(clipboard))
         {
@@ -34,7 +34,7 @@ public abstract class ConfigPorter {
         SystemConfiguration config)
     {
         var exportString = ConfigSerializer.SerializeConfig(config);
-        ImGui.SetClipboardText(exportString);
+        ClipboardService.SetClipboardText(exportString);
         Service.NotificationManager.Success("Configuration exported to clipboard.");
     }
 
@@ -49,13 +49,13 @@ public abstract class ConfigPorter {
     {
         var exportString = ConfigSerializer.SerializeCompressed(meter);
 
-        ImGui.SetClipboardText(exportString);
+        ClipboardService.SetClipboardText(exportString);
         Service.NotificationManager.Success($"Meter '{meter.Name}' exported to clipboard.");
     }
 
     public static MeterSettings? TryImportMeterFromClipboard()
     {
-        var clipboard = ImGui.GetClipboardText();
+        var clipboard = ClipboardService.GetClipboardText();
 
         if (string.IsNullOrWhiteSpace(clipboard))
         {

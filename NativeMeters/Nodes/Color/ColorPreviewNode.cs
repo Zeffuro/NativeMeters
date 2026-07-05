@@ -4,24 +4,21 @@ using System.Numerics;
 using Dalamud.Interface;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using KamiToolKit.Premade.Node;
 using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.Color;
 
 public class ColorPreviewNode : ResNode
 {
-    private readonly BackgroundImageNode colorBackground;
+    private readonly ColorImageNode colorBackground;
     private readonly ImGuiImageNode alphaLayer;
-    private readonly BackgroundImageNode colorForeground;
-
-    private bool isDisposed;
+    private readonly ColorImageNode colorForeground;
 
     public ColorPreviewNode()
     {
         base.Size = new Vector2(64, 64);
 
-        colorBackground = new BackgroundImageNode
+        colorBackground = new ColorImageNode
         {
             IsVisible = true,
             Color = KnownColor.Black.Vector(),
@@ -37,7 +34,7 @@ public class ColorPreviewNode : ResNode
         };
         alphaLayer.AttachNode(this);
 
-        colorForeground = new BackgroundImageNode
+        colorForeground = new ColorImageNode
         {
             IsVisible = true,
             Color = KnownColor.White.Vector(),
@@ -54,6 +51,18 @@ public class ColorPreviewNode : ResNode
         set => colorForeground.Color = value;
     }
 
+    public override bool IsVisible
+    {
+        get => base.IsVisible;
+        set
+        {
+            base.IsVisible = value;
+            colorBackground.IsVisible = value;
+            alphaLayer.IsVisible = value;
+            colorForeground.IsVisible = value;
+        }
+    }
+
     public override Vector2 Size
     {
         get => base.Size;
@@ -64,8 +73,8 @@ public class ColorPreviewNode : ResNode
         }
     }
 
-    public BackgroundImageNode BackgroundNode => colorBackground;
-    public BackgroundImageNode ForegroundNode => colorForeground;
+    public ColorImageNode BackgroundNode => colorBackground;
+    public ColorImageNode ForegroundNode => colorForeground;
 
     private void UpdateLayout()
     {
@@ -95,20 +104,6 @@ public class ColorPreviewNode : ResNode
 
     protected override void Dispose(bool disposing, bool isNativeDestructor)
     {
-        if (isDisposed)
-        {
-            base.Dispose(disposing, isNativeDestructor);
-            return;
-        }
-
-        isDisposed = true;
-        if (disposing)
-        {
-            colorBackground.Dispose();
-            alphaLayer.Dispose();
-            colorForeground.Dispose();
-        }
-
         base.Dispose(disposing, isNativeDestructor);
     }
 }
