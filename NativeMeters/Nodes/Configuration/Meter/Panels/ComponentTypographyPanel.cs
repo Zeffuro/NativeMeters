@@ -114,7 +114,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
             alignmentEnumDropdown.SelectedOption = settings.AlignmentType;
             fontSizeInput.Value = (int)settings.FontSize;
 
-            RecalculateLayout(true);
+            RecalculateLayout();
         }
 
         isLoading = false;

@@ -185,7 +185,7 @@ public class MeterManagementNode : SimpleComponentNode
         var configX = listWidth + SeparatorWidth + LayoutSpacing * 2.0f;
         configNode.Size = new Vector2(Math.Max(0.0f, Width - configX), Height);
 
-        layoutContainer.RecalculateLayout(true);
+        layoutContainer.RecalculateLayout();
         ApplyNavigation();
     }
 

@@ -207,7 +207,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
     {
         ConfigurationNavigation.Apply(scrollingArea.ContentNode, NavigationStartIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex);
 
-        scrollingArea.RecalculateSizes(true);
+        scrollingArea.RecalculateSizes();
         ApplyScrollingContentGutter();
         OnLayoutChanged?.Invoke();
     }
@@ -215,7 +215,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
     private void ApplyScrollingContentGutter()
     {
         scrollingArea.ContentNode.Width = Math.Max(0.0f, scrollingArea.Width - ScrollbarContentGutter);
-        scrollingArea.ContentNode.RecalculateLayout(true);
+        scrollingArea.ContentNode.RecalculateLayout();
         scrollingArea.ScrollBarNode.UpdateScrollParams();
     }
 

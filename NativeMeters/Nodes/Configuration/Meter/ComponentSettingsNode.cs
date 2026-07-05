@@ -168,14 +168,14 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
     {
         if (node is not ILayoutListNode layoutNode) return;
 
-        layoutNode.RecalculateLayout(true);
+        layoutNode.RecalculateLayout();
     }
 
     private void RefreshComponentLayout()
     {
         if (isLoadingComponent) return;
 
-        RecalculateLayout(true);
+        RecalculateLayout();
         OnLayoutChanged?.Invoke();
     }
 

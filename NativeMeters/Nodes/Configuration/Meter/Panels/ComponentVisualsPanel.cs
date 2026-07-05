@@ -183,7 +183,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         barBgColorInput.CurrentColor = settings.BarBackgroundColor;
 
         isLoading = false;
-        RecalculateLayout(true);
+        RecalculateLayout();
 
         if (wasVisible != IsVisible
             || wasColorModeVisible != colorModeDropdown.IsVisible

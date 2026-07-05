@@ -285,7 +285,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
     private void RecalculateScrollingContent()
     {
         scrollingContent.ContentNode.Width = GetScrollingContentWidth();
-        scrollingContent.RecalculateSizes(true);
+        scrollingContent.RecalculateSizes();
         needsCollisionRefresh = true;
     }
 

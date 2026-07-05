@@ -43,7 +43,7 @@ public abstract class MeterConfigSection : CollapsingHeaderNode
 
     protected void RecalculateSectionLayout()
     {
-        RecalculateLayout(true);
+        RecalculateLayout();
     }
 
     protected void ApplyChildLayout(NodeBase node)
