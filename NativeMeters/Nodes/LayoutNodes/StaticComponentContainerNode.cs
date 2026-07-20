@@ -86,9 +86,9 @@ public sealed class StaticComponentContainerNode : ResNode
         MeterComponentInteractions.ApplyClickthrough(node, MeterSettings?.IsClickthrough == true);
     }
 
-    protected override void Dispose(bool disposing, bool isNativeDestructor)
+    protected override void Dispose(bool isNativeDestructor)
     {
         graphManager.Dispose();
-        base.Dispose(disposing, isNativeDestructor);
+        base.Dispose(isNativeDestructor);
     }
 }

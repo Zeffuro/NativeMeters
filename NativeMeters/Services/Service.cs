@@ -21,4 +21,23 @@ public class Service
     [PluginService] public static IPartyList PartyList { get; private set; } = null!;
     [PluginService] public static IPluginLog Logger { get; private set; } = null!;
     [PluginService] public static ITargetManager TargetManager { get; private set; } = null!;
+
+    public static void Clear()
+    {
+        ChatGui = null!;
+        ClientState = null!;
+        CommandManager = null!;
+        Condition = null!;
+        PluginInterface = null!;
+        DataManager = null!;
+        DtrBar = null!;
+        Framework = null!;
+        GameInteropProvider = null!;
+        KeyState = null!;
+        NotificationManager = null!;
+        ObjectTable = null!;
+        PartyList = null!;
+        Logger = null!;
+        TargetManager = null!;
+    }
 }

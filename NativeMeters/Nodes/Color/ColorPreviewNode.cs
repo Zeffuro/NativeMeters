@@ -101,9 +101,4 @@ public class ColorPreviewNode : ResNode
         var baseDir = Service.PluginInterface.AssemblyLocation.Directory!.FullName;
         return Path.Combine(baseDir, "Assets", "alpha_background.png");
     }
-
-    protected override void Dispose(bool disposing, bool isNativeDestructor)
-    {
-        base.Dispose(disposing, isNativeDestructor);
-    }
 }

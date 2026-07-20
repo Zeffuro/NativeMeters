@@ -43,13 +43,13 @@ public class HeaderMenuButtonNode : SimpleComponentNode
         _menuButton.Position = Vector2.Zero;
     }
 
-    protected override void Dispose(bool disposing, bool isNativeDestructor)
+    protected override void Dispose(bool isNativeDestructor)
     {
-        if (disposing && !isNativeDestructor)
+        if (!isNativeDestructor)
         {
             _contextMenu.Dispose();
         }
 
-        base.Dispose(disposing, isNativeDestructor);
+        base.Dispose(isNativeDestructor);
     }
 }

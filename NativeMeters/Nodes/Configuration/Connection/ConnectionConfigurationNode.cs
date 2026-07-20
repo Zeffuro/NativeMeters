@@ -255,9 +255,9 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             : ColorHelper.GetColor(14);
     }
 
-    protected override void Dispose(bool disposing, bool isNativeDestructor)
+    protected override void Dispose(bool isNativeDestructor)
     {
         Service.Framework.Update -= OnFrameworkUpdate;
-        base.Dispose(disposing, isNativeDestructor);
+        base.Dispose(isNativeDestructor);
     }
 }

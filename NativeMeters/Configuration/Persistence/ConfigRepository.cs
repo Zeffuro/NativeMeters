@@ -44,6 +44,21 @@ public static class ConfigRepository
         }, token);
     }
 
+    public static void SaveImmediately(SystemConfiguration config)
+    {
+        Clear();
+
+        var file = JsonFileWrapper.GetFileInfo(SystemConfiguration.FileName);
+        JsonFileWrapper.SaveFile(config, file.FullName);
+    }
+
+    public static void Clear()
+    {
+        _saveTokenSource?.Cancel();
+        _saveTokenSource?.Dispose();
+        _saveTokenSource = null;
+    }
+
     private static SystemConfiguration Load()
     {
         var file = JsonFileWrapper.GetFileInfo(SystemConfiguration.FileName);

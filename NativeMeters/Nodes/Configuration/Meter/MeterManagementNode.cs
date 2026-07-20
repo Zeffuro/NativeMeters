@@ -325,13 +325,13 @@ public class MeterManagementNode : SimpleComponentNode
             Math.Clamp(meter.Position.Y, 0.0f, maxY));
     }
 
-    protected override void Dispose(bool disposing, bool isNativeDestructor)
+    protected override void Dispose(bool isNativeDestructor)
     {
-        if (disposing && !isNativeDestructor && ownsAddMeterDialog)
+        if (!isNativeDestructor && ownsAddMeterDialog)
         {
             addMeterDialog.Dispose();
         }
 
-        base.Dispose(disposing, isNativeDestructor);
+        base.Dispose(isNativeDestructor);
     }
 }

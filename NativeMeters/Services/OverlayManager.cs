@@ -1,13 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Nodes.LayoutNodes;
 
 namespace NativeMeters.Services;
 
-public class OverlayManager : IDisposable {
+public class OverlayManager : IAsyncDisposable, IDisposable {
     private bool isDisposed;
     private readonly Dictionary<string, MeterListLayoutNode> activeMeters = new();
+
+    public async ValueTask DisposeAsync() {
+        if (isDisposed) {
+            return;
+        }
+        isDisposed = true;
+
+        await DetachAndDisposeAllAsync();
+    }
 
     public void Dispose() {
         if (isDisposed) {
@@ -20,23 +31,45 @@ public class OverlayManager : IDisposable {
 
     public void Setup() {
         Service.Framework.RunOnFrameworkThread(() => {
-            DetachAndDisposeAll();
+            DetachAndDisposeAllOnFrameworkThread();
             CreateAndAttachOverlays();
         });
     }
 
     private void DetachAndDisposeAll()
     {
+        if (Service.Framework.IsFrameworkUnloading)
+        {
+            activeMeters.Clear();
+            return;
+        }
+
         Service.Framework.RunOnFrameworkThread(() =>
         {
-            foreach (var node in activeMeters.Values)
-            {
-                node.OnDispose();
-                System.OverlayController.RemoveNode(node);
-            }
-
-            activeMeters.Clear();
+            DetachAndDisposeAllOnFrameworkThread();
         });
+    }
+
+    private async ValueTask DetachAndDisposeAllAsync()
+    {
+        if (Service.Framework.IsFrameworkUnloading)
+        {
+            activeMeters.Clear();
+            return;
+        }
+
+        await Service.Framework.RunSafely(DetachAndDisposeAllOnFrameworkThread);
+    }
+
+    private void DetachAndDisposeAllOnFrameworkThread()
+    {
+        foreach (var node in activeMeters.Values)
+        {
+            node.OnDispose();
+            System.OverlayController.RemoveNode(node);
+        }
+
+        activeMeters.Clear();
     }
 
     private void CreateAndAttachOverlays()

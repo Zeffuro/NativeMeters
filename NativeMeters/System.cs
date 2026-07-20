@@ -25,4 +25,21 @@ public static class System
 
     public static TagSearchAddon TagSearchAddon { get; set; } = null!;
     public static IconSearchAddon IconSearchAddon { get; set; } = null!;
+
+    public static void Clear()
+    {
+        ActiveMeterService = null!;
+        AddonConfigurationWindow = null!;
+        AddonDetailedBreakdownWindow = null!;
+        Config = null!;
+        CommandHandler = null!;
+        DtrService = null!;
+        MeterService = null!;
+        InternalMeterService = null!;
+        OverlayController = null!;
+        OverlayManager = null!;
+        TestMeterService = null!;
+        TagSearchAddon = null!;
+        IconSearchAddon = null!;
+    }
 }

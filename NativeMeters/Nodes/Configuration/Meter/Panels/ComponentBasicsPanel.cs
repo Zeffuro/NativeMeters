@@ -447,10 +447,10 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         }
     }
 
-    protected override void Dispose(bool disposing, bool isNativeDestructor)
+    protected override void Dispose(bool isNativeDestructor)
     {
         isDisposed = true;
-        var canCloseSearchAddons = disposing && !isNativeDestructor;
+        var canCloseSearchAddons = !isNativeDestructor;
 
         if (System.TagSearchAddon != null)
         {
@@ -471,6 +471,6 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         }
 
-        base.Dispose(disposing, isNativeDestructor);
+        base.Dispose(isNativeDestructor);
     }
 }

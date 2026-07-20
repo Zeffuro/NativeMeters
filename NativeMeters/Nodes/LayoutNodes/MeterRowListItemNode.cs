@@ -110,9 +110,9 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
         MeterComponentInteractions.ApplyClickthrough(node, MeterSettings.IsClickthrough);
     }
 
-    protected override void Dispose(bool disposing, bool isNativeDestructor)
+    protected override void Dispose(bool isNativeDestructor)
     {
         dynamicNodeList.Dispose();
-        base.Dispose(disposing, isNativeDestructor);
+        base.Dispose(isNativeDestructor);
     }
 }
