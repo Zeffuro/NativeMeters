@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using KamiToolKit.UiOverlay;
 using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Nodes.LayoutNodes;
@@ -30,10 +31,16 @@ public class OverlayManager : IAsyncDisposable, IDisposable {
     }
 
     public void Setup() {
-        Service.Framework.RunOnFrameworkThread(() => {
-            DetachAndDisposeAllOnFrameworkThread();
-            CreateAndAttachOverlays();
-        });
+        if (isDisposed || Service.Framework.IsFrameworkUnloading) return;
+
+        try
+        {
+            Service.Framework.RunOnFrameworkThread(SetupOnFrameworkThread);
+        }
+        catch (Exception exception)
+        {
+            Service.Logger.Error(exception, "Failed to schedule NativeMeters overlay setup.");
+        }
     }
 
     private void DetachAndDisposeAll()
@@ -66,10 +73,27 @@ public class OverlayManager : IAsyncDisposable, IDisposable {
         foreach (var node in activeMeters.Values)
         {
             node.OnDispose();
-            System.OverlayController.RemoveNode(node);
+            System.OverlayController?.RemoveNode(node);
         }
 
         activeMeters.Clear();
+    }
+
+    private void SetupOnFrameworkThread()
+    {
+        if (isDisposed || Service.Framework.IsFrameworkUnloading) return;
+
+        try
+        {
+            System.OverlayController ??= new OverlayController();
+
+            DetachAndDisposeAllOnFrameworkThread();
+            CreateAndAttachOverlays();
+        }
+        catch (Exception exception)
+        {
+            Service.Logger.Error(exception, "Failed to setup NativeMeters overlays.");
+        }
     }
 
     private void CreateAndAttachOverlays()
@@ -82,7 +106,7 @@ public class OverlayManager : IAsyncDisposable, IDisposable {
                 MeterSettings = meterConfig
             };
             activeMeters.Add(meterConfig.Id, node);
-            System.OverlayController.AddNode(node);
+            System.OverlayController?.AddNode(node);
         }
     }
 

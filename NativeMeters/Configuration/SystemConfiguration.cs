@@ -17,11 +17,23 @@ public class SystemConfiguration
 
     public void EnsureInitialized()
     {
+        General ??= new GeneralSettings();
+        ConnectionSettings ??= new ConnectionSettings();
+        InternalParser ??= new InternalParserSettings();
+        Meters ??= [];
+        DtrSettings ??= new DtrSettings();
+        Visibility ??= new VisibilitySettings();
+
         if (Meters.Count == 0)
         {
             var defaultMeter = new MeterSettings { Name = "DPS" };
             MeterPresets.ApplyDefaultStylish(defaultMeter);
             Meters.Add(defaultMeter);
+        }
+
+        foreach (var meter in Meters)
+        {
+            meter.EnsureInitialized();
         }
 
         ConfigMigrator.MigrateIfNeeded(this);

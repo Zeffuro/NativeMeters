@@ -106,7 +106,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
     {
         if (Combatant == null || MeterSettings == null) return;
 
-        ComponentRenderer.Update(node, settings, Width, Combatant);
+        ComponentRenderer.Update(node, settings, Width, Combatant, MeterSettings);
         MeterComponentInteractions.ApplyClickthrough(node, MeterSettings.IsClickthrough);
     }
 

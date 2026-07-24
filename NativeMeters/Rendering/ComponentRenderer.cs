@@ -13,20 +13,30 @@ namespace NativeMeters.Rendering;
 
 public static class ComponentRenderer
 {
-    public static void Update(NodeBase node, ComponentSettings settings, float containerWidth, object data)
+    public static void Update(NodeBase node, ComponentSettings settings, float containerWidth, object data, MeterSettings? meterSettings = null)
     {
         node.IsVisible = true;
 
         switch (node)
         {
             case BackgroundTextNode textNode:
-                textNode.FontSize = (int)settings.FontSize;
-                textNode.FontType = settings.FontType;
-                textNode.TextFlags = settings.TextFlags;
-                textNode.TextColor = data is Combatant c ? c.GetColor(settings.ColorMode, settings) : settings.TextColor;
-                textNode.TextOutlineColor = settings.TextOutlineColor;
+                textNode.FontSize = data is Combatant fontSizeCombatant
+                    ? (int)ColorResolver.GetTextFontSize(fontSizeCombatant, settings, meterSettings)
+                    : (int)settings.FontSize;
+                textNode.FontType = data is Combatant fontTypeCombatant
+                    ? ColorResolver.GetTextFontType(fontTypeCombatant, settings, meterSettings)
+                    : settings.FontType;
+                textNode.TextFlags = data is Combatant flagsCombatant
+                    ? ColorResolver.GetTextFlags(flagsCombatant, settings, meterSettings)
+                    : settings.TextFlags;
+                textNode.TextColor = data is Combatant c ? c.GetColor(settings.ColorMode, settings, meterSettings) : settings.TextColor;
+                textNode.TextOutlineColor = data is Combatant outlineCombatant
+                    ? ColorResolver.GetTextOutlineColor(outlineCombatant, settings, meterSettings)
+                    : settings.TextOutlineColor;
                 textNode.AlignmentType = settings.AlignmentType;
-                textNode.BackgroundColor = settings.TextBackgroundColor;
+                textNode.BackgroundColor = data is Combatant textBackgroundCombatant
+                    ? ColorResolver.GetTextBackgroundColor(textBackgroundCombatant, settings, meterSettings)
+                    : settings.TextBackgroundColor;
                 textNode.ShowBackground = settings.ShowBackground;
                 textNode.String = TagEngine.Process(settings.DataSource, data);
 
@@ -66,8 +76,8 @@ public static class ComponentRenderer
                     var selector = StatSelector.GetStatSelector(statName);
                     double maxStat = System.ActiveMeterService.GetMaxCombatantStat(selector);
                     progressNode.Progress = ViewUtils.CalculateProgressRatio(selector(comb), maxStat > 0 ? maxStat : 1.0);
-                    progressNode.BarColor = comb.GetColor(settings.ColorMode, settings);
-                    progressNode.BackgroundColor = settings.BarBackgroundColor;
+                    progressNode.BarColor = comb.GetColor(settings.ColorMode, settings, meterSettings);
+                    progressNode.BackgroundColor = ColorResolver.GetBarBackgroundColor(comb, settings, meterSettings);
                 }
                 break;
 
@@ -76,7 +86,9 @@ public static class ComponentRenderer
                 break;
 
             case NineGridNode backgroundNode:
-                backgroundNode.Color = settings.TextColor;
+                backgroundNode.Color = data is Combatant backgroundCombatant
+                    ? ColorResolver.GetRowBackgroundColor(backgroundCombatant, settings, meterSettings)
+                    : settings.TextColor;
                 break;
         }
 

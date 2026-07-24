@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
@@ -24,13 +26,35 @@ public sealed class MeterDisplaySection : MeterConfigSection
     private CheckboxNode? showLimitBreakToggle;
     private CheckboxNode? showNonPlayerToggle;
     private CheckboxNode? showPinSelfToggle;
+    private CheckboxNode? selfHighlightToggle;
+    private LabeledEnumDropdownNode<SelfTextOverrideMode>? selfTextTargetDropdown;
+    private CheckboxNode? selfTextColorToggle;
+    private ColorInputRow? selfTextColorInput;
+    private CheckboxNode? selfTextOutlineColorToggle;
+    private ColorInputRow? selfTextOutlineColorInput;
+    private CheckboxNode? selfBarColorToggle;
+    private ColorInputRow? selfBarColorInput;
+    private CheckboxNode? selfTextStyleToggle;
+    private LabeledNumericInputNode? selfTextFontSizeInput;
+    private LabeledEnumDropdownNode<FontType>? selfTextFontTypeDropdown;
+    private LabeledEnumDropdownNode<TextFlags>? selfTextFlagsDropdown;
 
     public MeterDisplaySection(Func<MeterSettings> getSettings) : base(getSettings) { }
+
+    private SelfRowOverrideSettings SelfRowOverride
+    {
+        get
+        {
+            Settings.EnsureInitialized();
+            return Settings.SelfRowOverride;
+        }
+    }
 
     public override void Refresh()
     {
         if (statDropdown == null) Initialize();
 
+        Settings.EnsureInitialized();
         IsInitialized = true;
 
         statDropdown!.SelectedOption = Settings.StatToTrack;
@@ -48,7 +72,24 @@ public sealed class MeterDisplaySection : MeterConfigSection
         showLimitBreakToggle!.IsChecked = Settings.ShowLimitBreak;
         showNonPlayerToggle!.IsChecked = Settings.ShowNonPlayerCombatants;
         showPinSelfToggle!.IsChecked = Settings.PinSelfToTop;
+        selfHighlightToggle!.IsChecked = SelfRowOverride.Enabled;
+        selfTextTargetDropdown!.SelectedOption = SelfRowOverride.TextColorMode;
+        selfTextColorToggle!.IsChecked = SelfRowOverride.OverrideTextColor;
+        selfTextColorInput!.CurrentColor = SelfRowOverride.TextColor;
+        selfTextColorInput!.DefaultColor = new SelfRowOverrideSettings().TextColor;
+        selfTextOutlineColorToggle!.IsChecked = SelfRowOverride.OverrideTextOutlineColor;
+        selfTextOutlineColorInput!.CurrentColor = SelfRowOverride.TextOutlineColor;
+        selfTextOutlineColorInput!.DefaultColor = new SelfRowOverrideSettings().TextOutlineColor;
+        selfBarColorToggle!.IsChecked = SelfRowOverride.OverrideBarColor;
+        selfBarColorInput!.CurrentColor = SelfRowOverride.BarColor;
+        selfBarColorInput!.DefaultColor = new SelfRowOverrideSettings().BarColor;
+        selfTextStyleToggle!.IsChecked = SelfRowOverride.OverrideTextStyle;
+        selfTextFontSizeInput!.Value = (int)SelfRowOverride.TextFontSize;
+        selfTextFontTypeDropdown!.SelectedOption = SelfRowOverride.TextFontType;
+        selfTextFlagsDropdown!.SelectedOption = SelfRowOverride.TextFlags;
 
+        ApplyDisplayDependencyState();
+        ApplySelfOverrideState();
         RecalculateSectionLayout();
     }
 
@@ -103,7 +144,11 @@ public sealed class MeterDisplaySection : MeterConfigSection
         {
             Size = new Vector2(Width, 20),
             String = "Show Background",
-            OnClick = val => Settings.ShowWindowBackground = val,
+            OnClick = val =>
+            {
+                Settings.ShowWindowBackground = val;
+                ApplyDisplayDependencyState();
+            },
         };
 
         backgroundColorInput = new ColorInputRow
@@ -121,7 +166,11 @@ public sealed class MeterDisplaySection : MeterConfigSection
         {
             Size = new Vector2(Width, 20),
             String = "Enable Header",
-            OnClick = val => Settings.HeaderEnabled = val
+            OnClick = val =>
+            {
+                Settings.HeaderEnabled = val;
+                ApplyDisplayDependencyState();
+            }
         };
 
         headerHeightInput = new LabeledNumericInputNode
@@ -135,7 +184,11 @@ public sealed class MeterDisplaySection : MeterConfigSection
         {
             Size = new Vector2(Width, 20),
             String = "Enable Footer",
-            OnClick = val => Settings.FooterEnabled = val
+            OnClick = val =>
+            {
+                Settings.FooterEnabled = val;
+                ApplyDisplayDependencyState();
+            }
         };
 
         footerHeightInput = new LabeledNumericInputNode
@@ -163,9 +216,257 @@ public sealed class MeterDisplaySection : MeterConfigSection
         {
             Size = new Vector2(Width, 20),
             String = "Pin Self To Top",
-            OnClick = val => Settings.PinSelfToTop = val
+            OnClick = val =>
+            {
+                Settings.PinSelfToTop = val;
+                System.OverlayManager.Setup();
+            }
         };
 
-        AddNode([statDropdown, maxRowsInput, scaleInput, rowHeightInput, rowSpacingInput, backgroundCheckbox, backgroundColorInput, headerToggle, headerHeightInput, footerToggle, footerHeightInput, showLimitBreakToggle, showNonPlayerToggle, showPinSelfToggle]);
+        selfHighlightToggle = new CheckboxNode
+        {
+            Size = new Vector2(Width, 20),
+            String = "Highlight Self",
+            TextTooltip = "Apply meter-specific colors to your own row.",
+            OnClick = val =>
+            {
+                SelfRowOverride.Enabled = val;
+                ApplySelfOverrideState();
+                RecalculateSectionLayout();
+            }
+        };
+
+        selfTextTargetDropdown = new LabeledEnumDropdownNode<SelfTextOverrideMode>
+        {
+            Size = new Vector2(Width, 28),
+            LabelText = "Self Text Target:",
+            Options = Enum.GetValues<SelfTextOverrideMode>().ToList(),
+            SelectedOption = SelfRowOverride.TextColorMode,
+            OnOptionSelected = val => SelfRowOverride.TextColorMode = val,
+        };
+
+        selfTextColorToggle = new CheckboxNode
+        {
+            Size = new Vector2(Width, 20),
+            String = "Override Self Text Color",
+            TextTooltip = "Uses the Self Text Target setting above.",
+            OnClick = val =>
+            {
+                SelfRowOverride.OverrideTextColor = val;
+                ApplySelfOverrideState();
+                RecalculateSectionLayout();
+            }
+        };
+
+        selfTextColorInput = new ColorInputRow
+        {
+            Label = "Self Text Color: ",
+            Size = new Vector2(Width, 28),
+            DefaultColor = new SelfRowOverrideSettings().TextColor,
+            CurrentColor = SelfRowOverride.TextColor,
+            OnColorConfirmed = color => SelfRowOverride.TextColor = color,
+            OnColorCanceled = color => SelfRowOverride.TextColor = color,
+            OnColorPreviewed = color => SelfRowOverride.TextColor = color,
+        };
+
+        selfTextOutlineColorToggle = new CheckboxNode
+        {
+            Size = new Vector2(Width, 20),
+            String = "Override Self Outline Color",
+            TextTooltip = "Uses the Self Text Target setting above.",
+            OnClick = val =>
+            {
+                SelfRowOverride.OverrideTextOutlineColor = val;
+                ApplySelfOverrideState();
+                RecalculateSectionLayout();
+            }
+        };
+
+        selfTextOutlineColorInput = new ColorInputRow
+        {
+            Label = "Self Outline Color: ",
+            Size = new Vector2(Width, 28),
+            DefaultColor = new SelfRowOverrideSettings().TextOutlineColor,
+            CurrentColor = SelfRowOverride.TextOutlineColor,
+            OnColorConfirmed = color => SelfRowOverride.TextOutlineColor = color,
+            OnColorCanceled = color => SelfRowOverride.TextOutlineColor = color,
+            OnColorPreviewed = color => SelfRowOverride.TextOutlineColor = color,
+        };
+
+        selfBarColorToggle = new CheckboxNode
+        {
+            Size = new Vector2(Width, 20),
+            String = "Override Self Bar Color",
+            OnClick = val =>
+            {
+                SelfRowOverride.OverrideBarColor = val;
+                ApplySelfOverrideState();
+                RecalculateSectionLayout();
+            }
+        };
+
+        selfBarColorInput = new ColorInputRow
+        {
+            Label = "Self Bar Color: ",
+            Size = new Vector2(Width, 28),
+            DefaultColor = new SelfRowOverrideSettings().BarColor,
+            CurrentColor = SelfRowOverride.BarColor,
+            OnColorConfirmed = color => SelfRowOverride.BarColor = color,
+            OnColorCanceled = color => SelfRowOverride.BarColor = color,
+            OnColorPreviewed = color => SelfRowOverride.BarColor = color,
+        };
+
+        selfTextStyleToggle = new CheckboxNode
+        {
+            Size = new Vector2(Width, 20),
+            String = "Override Self Text Style",
+            TextTooltip = "Uses the Self Text Target setting above.",
+            OnClick = val =>
+            {
+                SelfRowOverride.OverrideTextStyle = val;
+                ApplySelfOverrideState();
+                RecalculateSectionLayout();
+            }
+        };
+
+        selfTextFontSizeInput = new LabeledNumericInputNode
+        {
+            Size = new Vector2(Width, 28),
+            LabelText = "Self Text Size:",
+            Min = 6,
+            Max = 72,
+            OnValueUpdate = val => SelfRowOverride.TextFontSize = (uint)val,
+        };
+
+        selfTextFontTypeDropdown = new LabeledEnumDropdownNode<FontType>
+        {
+            Size = new Vector2(Width, 28),
+            LabelText = "Self Text Font:",
+            Options = Enum.GetValues<FontType>().ToList(),
+            SelectedOption = SelfRowOverride.TextFontType,
+            OnOptionSelected = val => SelfRowOverride.TextFontType = val,
+        };
+
+        selfTextFlagsDropdown = new LabeledEnumDropdownNode<TextFlags>
+        {
+            Size = new Vector2(Width, 28),
+            LabelText = "Self Text Style:",
+            Options = Enum.GetValues<TextFlags>().ToList(),
+            SelectedOption = SelfRowOverride.TextFlags,
+            OnOptionSelected = val => SelfRowOverride.TextFlags = val,
+        };
+
+        AddNode(statDropdown);
+        AddNode(maxRowsInput);
+        AddNode(scaleInput);
+        AddNode(rowHeightInput);
+        AddNode(rowSpacingInput);
+        AddNode(backgroundCheckbox);
+        AddTab(1);
+        AddNode(backgroundColorInput);
+        SubtractTab(1);
+        AddNode(headerToggle);
+        AddTab(1);
+        AddNode(headerHeightInput);
+        SubtractTab(1);
+        AddNode(footerToggle);
+        AddTab(1);
+        AddNode(footerHeightInput);
+        SubtractTab(1);
+        AddNode(showLimitBreakToggle);
+        AddNode(showNonPlayerToggle);
+        AddNode(showPinSelfToggle);
+        AddNode(selfHighlightToggle);
+        AddTab(1);
+        AddNode(selfTextTargetDropdown);
+        AddNode(selfTextColorToggle);
+        AddTab(1);
+        AddNode(selfTextColorInput);
+        SubtractTab(1);
+        AddNode(selfTextOutlineColorToggle);
+        AddTab(1);
+        AddNode(selfTextOutlineColorInput);
+        SubtractTab(1);
+        AddNode(selfBarColorToggle);
+        AddTab(1);
+        AddNode(selfBarColorInput);
+        SubtractTab(1);
+        AddNode(selfTextStyleToggle);
+        AddTab(1);
+        AddNode(selfTextFontSizeInput);
+        AddNode(selfTextFontTypeDropdown);
+        AddNode(selfTextFlagsDropdown);
+        SubtractTab(1);
+        SubtractTab(1);
+
+        ApplySelfOverrideState();
+    }
+
+    private void ApplyDisplayDependencyState()
+    {
+        if (backgroundColorInput == null
+            || headerHeightInput == null
+            || footerHeightInput == null)
+        {
+            return;
+        }
+
+        backgroundColorInput.IsEnabled = Settings.ShowWindowBackground;
+        headerHeightInput.IsEnabled = Settings.HeaderEnabled;
+        footerHeightInput.IsEnabled = Settings.FooterEnabled;
+    }
+
+    private void ApplySelfOverrideState()
+    {
+        if (selfTextTargetDropdown == null
+            || selfTextColorToggle == null
+            || selfTextColorInput == null
+            || selfTextOutlineColorToggle == null
+            || selfTextOutlineColorInput == null
+            || selfBarColorToggle == null
+            || selfBarColorInput == null
+            || selfTextStyleToggle == null
+            || selfTextFontSizeInput == null
+            || selfTextFontTypeDropdown == null
+            || selfTextFlagsDropdown == null)
+        {
+            return;
+        }
+
+        var isEnabled = SelfRowOverride.Enabled;
+        var isTextColorEnabled = isEnabled && SelfRowOverride.OverrideTextColor;
+        var isTextOutlineColorEnabled = isEnabled && SelfRowOverride.OverrideTextOutlineColor;
+        var isBarColorEnabled = isEnabled && SelfRowOverride.OverrideBarColor;
+        var isTextStyleEnabled = isEnabled && SelfRowOverride.OverrideTextStyle;
+
+        selfTextTargetDropdown.IsVisible = true;
+        selfTextColorToggle.IsVisible = true;
+        selfTextColorInput.IsVisible = true;
+        selfTextOutlineColorToggle.IsVisible = true;
+        selfTextOutlineColorInput.IsVisible = true;
+        selfBarColorToggle.IsVisible = true;
+        selfBarColorInput.IsVisible = true;
+        selfTextStyleToggle.IsVisible = true;
+        selfTextFontSizeInput.IsVisible = true;
+        selfTextFontTypeDropdown.IsVisible = true;
+        selfTextFlagsDropdown.IsVisible = true;
+
+        selfTextTargetDropdown.IsEnabled = isEnabled;
+        SetCheckboxEnabled(selfTextColorToggle, isEnabled);
+        selfTextColorInput.IsEnabled = isTextColorEnabled;
+        SetCheckboxEnabled(selfTextOutlineColorToggle, isEnabled);
+        selfTextOutlineColorInput.IsEnabled = isTextOutlineColorEnabled;
+        SetCheckboxEnabled(selfBarColorToggle, isEnabled);
+        selfBarColorInput.IsEnabled = isBarColorEnabled;
+        SetCheckboxEnabled(selfTextStyleToggle, isEnabled);
+        selfTextFontSizeInput.IsEnabled = isTextStyleEnabled;
+        selfTextFontTypeDropdown.IsEnabled = isTextStyleEnabled;
+        selfTextFlagsDropdown.IsEnabled = isTextStyleEnabled;
+    }
+
+    private static void SetCheckboxEnabled(CheckboxNode checkbox, bool isEnabled)
+    {
+        checkbox.IsEnabled = isEnabled;
+        checkbox.Alpha = isEnabled ? 1.0f : 0.45f;
     }
 }

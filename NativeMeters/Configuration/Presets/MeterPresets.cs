@@ -43,6 +43,7 @@ public static class MeterPresets
             var imported = ConfigSerializer.DeserializeCompressed<MeterSettings>(blob);
             if (imported != null)
             {
+                imported.EnsureInitialized();
                 ApplySettings(imported, target);
             }
         }
@@ -50,6 +51,8 @@ public static class MeterPresets
 
     public static void ApplySettings(MeterSettings source, MeterSettings target)
     {
+        source.EnsureInitialized();
+
         var oldId = target.Id;
         var oldPos = target.Position;
 
@@ -64,6 +67,7 @@ public static class MeterPresets
 
         target.Id = oldId;
         target.Position = oldPos;
+        target.EnsureInitialized();
     }
 
     public static void ApplyDefaultStylish(MeterSettings settings)
@@ -80,6 +84,7 @@ public static class MeterPresets
         settings.HeaderComponents = GetDefaultHeaderComponents();
         settings.RowComponents = GetDefaultStylishComponents();
         settings.FooterComponents = GetDefaultFooterComponents();
+        settings.EnsureInitialized();
     }
 
     public static List<ComponentSettings> GetDefaultHeaderComponents() =>

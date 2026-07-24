@@ -15,6 +15,7 @@ public abstract class ConfigPorter {
             var imported = ConfigSerializer.DeserializeConfig(clipboard);
             if (imported != null)
             {
+                imported.EnsureInitialized();
                 System.Config = imported;
                 ConfigRepository.Save(System.Config);
                 Service.NotificationManager.Success("Configuration imported from clipboard.");
@@ -73,6 +74,7 @@ public abstract class ConfigPorter {
                 return null;
             }
 
+            imported.EnsureInitialized();
             Service.NotificationManager.Success("Meter settings imported.");
             return imported;
         }

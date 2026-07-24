@@ -22,7 +22,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
     {
         this.onLayoutChanged = onLayoutChanged;
         this.target = target;
-        ItemSpacing = 4.0f;
+        ContentItemSpacing = 4.0f;
 
         componentsList = new VerticalListNode
         {

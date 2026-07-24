@@ -82,7 +82,7 @@ public sealed class StaticComponentContainerNode : ResNode
     private void UpdateComponentData(NodeBase node, ComponentSettings settings)
     {
         var encounter = System.ActiveMeterService.GetEncounter() ?? EmptyEncounter;
-        ComponentRenderer.Update(node, settings, Width, encounter);
+        ComponentRenderer.Update(node, settings, Width, encounter, MeterSettings);
         MeterComponentInteractions.ApplyClickthrough(node, MeterSettings?.IsClickthrough == true);
     }
 

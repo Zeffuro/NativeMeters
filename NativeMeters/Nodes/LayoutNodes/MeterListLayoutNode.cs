@@ -8,6 +8,7 @@ using KamiToolKit.Nodes;
 using KamiToolKit.UiOverlay;
 using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
+using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Services;
 
@@ -258,10 +259,12 @@ public sealed class MeterListLayoutNode : OverlayNode
             });
         }
 
+        var selector = StatSelector.GetStatSelector(MeterSettings.StatToTrack);
+        combatants.Sort((left, right) => selector(right).CompareTo(selector(left)));
+
         if (MeterSettings.PinSelfToTop && hasCombat)
         {
-            var selfIndex = combatants.FindIndex(combatant =>
-                combatant.Name.Equals("YOU", StringComparison.OrdinalIgnoreCase) || combatant.Name.Equals(Service.ObjectTable.LocalPlayer?.Name.ToString(), StringComparison.OrdinalIgnoreCase));
+            var selfIndex = combatants.FindIndex(combatant => combatant.IsSelf);
 
             if (selfIndex > 0)
             {
@@ -270,9 +273,6 @@ public sealed class MeterListLayoutNode : OverlayNode
                 combatants.Insert(0, self);
             }
         }
-
-        var selector = StatSelector.GetStatSelector(MeterSettings.StatToTrack);
-        combatants.Sort((left, right) => selector(right).CompareTo(selector(left)));
 
         cachedOptionsList = combatants
             .Take(MeterSettings.MaxCombatants)

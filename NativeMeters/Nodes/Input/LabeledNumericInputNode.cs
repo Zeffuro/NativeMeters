@@ -30,7 +30,11 @@ public class LabeledNumericInputNode : LabeledControlRowNode<NumericInputNode>
 
     public bool IsEnabled {
         get => ControlNode.IsEnabled;
-        set => ControlNode.IsEnabled = value;
+        set
+        {
+            ControlNode.IsEnabled = value;
+            Alpha = value ? 1.0f : 0.45f;
+        }
     }
 
     public Action<int>? OnValueUpdate {

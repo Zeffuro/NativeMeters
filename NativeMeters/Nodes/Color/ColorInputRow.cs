@@ -13,6 +13,7 @@ public class ColorInputRow : HorizontalListNode
     private static ColorPickerAddon? _sharedColorPickerAddon;
     private readonly LabelTextNode labelTextNode;
     private readonly ColorPreviewButtonNode colorPreview;
+    private bool isEnabled = true;
 
     public ColorInputRow()
     {
@@ -30,6 +31,8 @@ public class ColorInputRow : HorizontalListNode
 
         node.OnClick = () =>
         {
+            if (!IsEnabled) return;
+
             OpenSharedColorPicker(
                 CurrentColor,
                 DefaultColor,
@@ -55,6 +58,18 @@ public class ColorInputRow : HorizontalListNode
             base.IsVisible = value;
             colorPreview.IsVisible = value;
             labelTextNode.IsVisible = value;
+        }
+    }
+
+    public bool IsEnabled
+    {
+        get => isEnabled;
+        set
+        {
+            isEnabled = value;
+            colorPreview.IsEnabled = value;
+            colorPreview.Alpha = value ? 1.0f : 0.45f;
+            labelTextNode.Alpha = value ? 1.0f : 0.45f;
         }
     }
 

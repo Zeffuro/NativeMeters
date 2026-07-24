@@ -6,7 +6,6 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using KamiToolKit;
-using KamiToolKit.UiOverlay;
 using NativeMeters.Addons;
 using NativeMeters.Clients;
 using NativeMeters.Commands;
@@ -23,22 +22,21 @@ namespace NativeMeters;
 
 public class Plugin : IAsyncDalamudPlugin
 {
-    private static readonly TimeSpan FrameworkStartupTimeout = TimeSpan.FromSeconds(15);
+    private bool hasHandledLogin;
+    private bool isDisposed;
 
     [PluginService] private static IDalamudPluginInterface PluginInterface { get; set; } = null!;
 
-    public async Task LoadAsync(CancellationToken cancellationToken)
+    public Task LoadAsync(CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         PluginInterface.Create<Service>();
         System.Config = ConfigRepository.LoadOrDefault();
         ConfigRepository.Save(System.Config);
         ConfigBackup.DoConfigBackup(Service.PluginInterface);
 
         KamiToolKitLibrary.Initialize(Service.PluginInterface);
-        await Service.Framework.RunSafelyWithTimeout(() =>
-        {
-            System.OverlayController = new OverlayController();
-        }, cancellationToken, FrameworkStartupTimeout);
 
         System.MeterService = new MeterService(new WebSocketClient(), new IINACTIpcClient());
         System.InternalMeterService = new InternalMeterService();
@@ -78,36 +76,58 @@ public class Plugin : IAsyncDalamudPlugin
         Service.ClientState.Login += OnLogin;
 
         if (Service.ClientState.IsLoggedIn) {
-            await Service.Framework.RunSafelyWithTimeout(OnLogin, cancellationToken, FrameworkStartupTimeout);
+            try {
+                Service.Framework.RunOnFrameworkThread(OnLogin);
+            }
+            catch (Exception exception) {
+                Service.Logger.Error(exception, "Failed to schedule NativeMeters login startup.");
+            }
         }
+
+        return Task.CompletedTask;
     }
 
 
     private void OnFrameworkUpdate(IFramework framework) {
+        if (isDisposed) return;
+
         System.MeterService.ProcessPendingMessages();
 
         if (System.Config.General.PreviewEnabled) System.TestMeterService.Tick();
     }
 
     private void OnLogin() {
-        if (System.Config.ConnectionSettings.SelectedConnectionType == ConnectionType.Internal)
-        {
-            System.InternalMeterService.Enable();
-        }
-        else
-        {
-            System.MeterService.Enable();
+        if (isDisposed || hasHandledLogin) return;
 
-            if (System.Config.General.EnableInternalParserForBreakdown)
+        hasHandledLogin = true;
+
+        try {
+            if (System.Config.ConnectionSettings.SelectedConnectionType == ConnectionType.Internal)
             {
                 System.InternalMeterService.Enable();
             }
+            else
+            {
+                System.MeterService.Enable();
+
+                if (System.Config.General.EnableInternalParserForBreakdown)
+                {
+                    System.InternalMeterService.Enable();
+                }
+            }
+            System.AddonConfigurationWindow.DebugOpen();
         }
-        System.AddonConfigurationWindow.DebugOpen();
+        catch (Exception exception) {
+            hasHandledLogin = false;
+            Service.Logger.Error(exception, "Failed to enable NativeMeters services after login.");
+        }
     }
 
     public async ValueTask DisposeAsync()
     {
+        if (isDisposed) return;
+        isDisposed = true;
+
         try
         {
             Service.Framework.Update -= OnFrameworkUpdate;
