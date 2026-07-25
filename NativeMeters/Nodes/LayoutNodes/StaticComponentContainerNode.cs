@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -17,7 +18,7 @@ public sealed class StaticComponentContainerNode : ResNode
     private readonly DynamicNodeList graphManager;
     private readonly List<ComponentSettings> settingsList;
     private List<ComponentSettings>? cachedSortedSettings;
-    private int lastSettingsCount;
+    private int lastSettingsHash;
 
     private static readonly Encounter EmptyEncounter = new() { Title = "No Encounter" };
 
@@ -35,11 +36,11 @@ public sealed class StaticComponentContainerNode : ResNode
 
     public void Update()
     {
-        int count = settingsList.Count;
-        if (cachedSortedSettings == null || lastSettingsCount != count)
+        var settingsHash = CalculateComponentStructureHash(settingsList);
+        if (cachedSortedSettings == null || lastSettingsHash != settingsHash)
         {
             cachedSortedSettings = settingsList.OrderBy(s => s.ZIndex).ToList();
-            lastSettingsCount = count;
+            lastSettingsHash = settingsHash;
         }
 
         graphManager.Update(cachedSortedSettings, CreateComponent);
@@ -63,7 +64,13 @@ public sealed class StaticComponentContainerNode : ResNode
     {
         NodeBase node = settings.Type switch {
             MeterComponentType.JobIcon or MeterComponentType.Icon => new IconImageNode { FitTexture = true },
-            MeterComponentType.ProgressBar => new ProgressBarNode(),
+            MeterComponentType.ProgressBar => settings.ProgressBarType switch {
+                ProgressBarType.Cast => new ProgressBarCastGaugeNode(),
+                ProgressBarType.EnemyCast => new ProgressBarEnemyCastGaugeNode(),
+                ProgressBarType.PartyListHp => new ProgressBarPartyListHpNode(),
+                ProgressBarType.LimitBreak => new ProgressBarLimitBreakGaugeNode(),
+                _ => new ProgressBarToDoGaugeNode()
+            },
             MeterComponentType.Text => new BackgroundTextNode(),
             MeterComponentType.Background => new SimpleNineGridNode {
                 TexturePath = "ui/uld/ToolTipS.tex",
@@ -77,6 +84,21 @@ public sealed class StaticComponentContainerNode : ResNode
         };
 
         return node;
+    }
+
+    private static int CalculateComponentStructureHash(IEnumerable<ComponentSettings> components)
+    {
+        HashCode hash = new();
+
+        foreach (var component in components)
+        {
+            hash.Add(component.Id);
+            hash.Add(component.ZIndex);
+            hash.Add(component.Type);
+            hash.Add(component.ProgressBarType);
+        }
+
+        return hash.ToHashCode();
     }
 
     private void UpdateComponentData(NodeBase node, ComponentSettings settings)

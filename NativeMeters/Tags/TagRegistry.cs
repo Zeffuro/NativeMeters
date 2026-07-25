@@ -23,6 +23,7 @@ public static class TagRegistry
             new("1. Common", "Zone Name", "[zone]", "Current zone/instance", "The Goblet"),
 
             new("2. Damage", "Encounter DPS", "[encdps.0]", "Damage per second across entire encounter", "12345"),
+            new("2. Damage", "Encounter DPS (Compact)", "[encdps:c.1]", "Compact damage per second across entire encounter", "12.3K"),
             new("2. Damage", "Encounter DPS (Kilo)", "[encdps:k.1]", "Damage per second in thousands", "12.3k"),
             new("2. Damage", "Active DPS", "[dps.0]", "Damage per second while actively attacking", "12500"),
             new("2. Damage", "Damage Total", "[damage:m.2]", "Total damage dealt in millions", "4.20m"),

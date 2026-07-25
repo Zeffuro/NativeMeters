@@ -38,7 +38,30 @@ public class NumericFormatter : IValueFormatter
             return num.ToString($"F{precision ?? 0}", CultureInfo.InvariantCulture) + "m";
         }
 
+        if (format.Equals("c", StringComparison.OrdinalIgnoreCase))
+        {
+            return FormatCompact(num, precision ?? 1);
+        }
+
         var style = format.Equals("r", StringComparison.OrdinalIgnoreCase) ? "F" : "N";
         return num.ToString(style + (precision ?? 0), CultureInfo.InvariantCulture);
+    }
+
+    private static string FormatCompact(double num, int precision)
+    {
+        var abs = Math.Abs(num);
+
+        if (abs < 1000.0)
+            return num.ToString("N0", CultureInfo.InvariantCulture);
+
+        if (abs < 1_000_000.0)
+            return FormatCompactSuffix(num / 1000.0, precision, "K");
+
+        return FormatCompactSuffix(num / 1_000_000.0, precision, "M");
+    }
+
+    private static string FormatCompactSuffix(double num, int precision, string suffix)
+    {
+        return num.ToString($"F{precision}", CultureInfo.InvariantCulture) + suffix;
     }
 }

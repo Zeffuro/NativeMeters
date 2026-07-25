@@ -112,6 +112,8 @@ public class OverlayManager : IAsyncDisposable, IDisposable {
 
     public void UpdateSettings()
     {
+        if (isDisposed || Service.Framework.IsFrameworkUnloading) return;
+
         foreach (var node in activeMeters.Values)
         {
             node.UpdateSettings();
@@ -120,6 +122,8 @@ public class OverlayManager : IAsyncDisposable, IDisposable {
 
     public void UpdateActiveService()
     {
+        if (isDisposed || Service.Framework.IsFrameworkUnloading) return;
+
         IMeterService newService;
 
         if (System.Config.General.PreviewEnabled)

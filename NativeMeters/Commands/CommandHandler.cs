@@ -25,6 +25,7 @@ public class CommandHandler : IDisposable
             ["toggle"] = new(args => {
                 System.Config.General.IsEnabled = !System.Config.General.IsEnabled;
                 System.OverlayManager.Setup();
+                System.PartyListMeterManager?.UpdateSettings();
                 PrintChat($"Meters {(System.Config.General.IsEnabled ? "enabled" : "disabled")}.");
             }, "Toggle the meter display on/off"),
             ["breakdown"] = new(args => System.AddonDetailedBreakdownWindow.Toggle(), "Open the detailed breakdown window"),

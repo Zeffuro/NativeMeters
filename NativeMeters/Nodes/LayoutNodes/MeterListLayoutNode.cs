@@ -89,10 +89,17 @@ public sealed class MeterListLayoutNode : OverlayNode
     {
         if (MeterSettings == null) return 0;
         HashCode hash = new();
-        foreach (var c in MeterSettings.HeaderComponents) { hash.Add(c.Id); hash.Add(c.ZIndex); }
-        foreach (var c in MeterSettings.RowComponents) { hash.Add(c.Id); hash.Add(c.ZIndex); }
-        foreach (var c in MeterSettings.FooterComponents) { hash.Add(c.Id); hash.Add(c.ZIndex); }
+        foreach (var c in MeterSettings.HeaderComponents) AddComponentStructureHash(ref hash, c);
+        foreach (var c in MeterSettings.RowComponents) AddComponentStructureHash(ref hash, c);
+        foreach (var c in MeterSettings.FooterComponents) AddComponentStructureHash(ref hash, c);
         return hash.ToHashCode();
+    }
+
+    private static void AddComponentStructureHash(ref HashCode hash, ComponentSettings component)
+    {
+        hash.Add(component.Id);
+        hash.Add(component.ZIndex);
+        hash.Add(component.Type);
     }
 
     private void RecreateList()

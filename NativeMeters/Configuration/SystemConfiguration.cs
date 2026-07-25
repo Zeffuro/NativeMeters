@@ -13,6 +13,7 @@ public class SystemConfiguration
 
     public List<MeterSettings> Meters { get; set; } = new();
     public DtrSettings DtrSettings { get; set; } = new();
+    public PartyListMeterSettings PartyListMeter { get; set; } = new();
     public VisibilitySettings Visibility { get; set; } = new();
 
     public void EnsureInitialized()
@@ -22,6 +23,8 @@ public class SystemConfiguration
         InternalParser ??= new InternalParserSettings();
         Meters ??= [];
         DtrSettings ??= new DtrSettings();
+        PartyListMeter ??= new PartyListMeterSettings();
+        PartyListMeter.EnsureInitialized();
         Visibility ??= new VisibilitySettings();
 
         if (Meters.Count == 0)

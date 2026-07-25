@@ -28,5 +28,14 @@ public class LabeledTextInputNode : LabeledControlRowNode<TextInputNode>
         set => ControlNode.OnInputComplete = value;
     }
 
+    public bool IsEnabled {
+        get => ControlNode.IsEnabled;
+        set
+        {
+            ControlNode.IsEnabled = value;
+            Alpha = value ? 1.0f : 0.45f;
+        }
+    }
+
     public TextInputNode InnerInput => ControlNode;
 }

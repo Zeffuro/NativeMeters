@@ -69,6 +69,8 @@ public class Plugin : IAsyncDalamudPlugin
 
         System.CommandHandler = new CommandHandler();
 
+        System.PartyListMeterManager = new PartyListMeterManager();
+
         System.OverlayManager = new OverlayManager();
         System.OverlayManager.Setup();
 
@@ -115,6 +117,7 @@ public class Plugin : IAsyncDalamudPlugin
                     System.InternalMeterService.Enable();
                 }
             }
+            System.PartyListMeterManager.UpdateSettings();
             System.AddonConfigurationWindow.DebugOpen();
         }
         catch (Exception exception) {
@@ -145,6 +148,7 @@ public class Plugin : IAsyncDalamudPlugin
             }
 
             System.CommandHandler?.Dispose();
+            await Service.Framework.RunSafely(() => System.PartyListMeterManager?.Dispose());
             if (System.OverlayManager is not null)
             {
                 await System.OverlayManager.DisposeAsync();

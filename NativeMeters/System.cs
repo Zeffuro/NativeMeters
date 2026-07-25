@@ -21,6 +21,7 @@ public static class System
     public static InternalMeterService InternalMeterService { get; set; } = null!;
     public static OverlayController OverlayController { get; set; } = null!;
     public static OverlayManager OverlayManager { get; set; } = null!;
+    public static PartyListMeterManager PartyListMeterManager { get; set; } = null!;
     public static TestMeterService TestMeterService { get; set; } = null!;
 
     public static TagSearchAddon TagSearchAddon { get; set; } = null!;
@@ -38,6 +39,7 @@ public static class System
         InternalMeterService = null!;
         OverlayController = null!;
         OverlayManager = null!;
+        PartyListMeterManager = null!;
         TestMeterService = null!;
         TagSearchAddon = null!;
         IconSearchAddon = null!;

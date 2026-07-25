@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
@@ -10,6 +11,16 @@ namespace NativeMeters.Configuration;
 
 public enum MeterComponentType { Text, JobIcon, ProgressBar, Background, MenuButton, Separator, Icon }
 public enum ColorMode { Static, Job, Role }
+public enum ProgressBarColorTreatment
+{
+    Auto,
+
+    [Description("Flat Color")]
+    Flat,
+
+    [Description("Native Tint")]
+    NativeTint,
+}
 
 public class ComponentSettings
 {
@@ -36,6 +47,9 @@ public class ComponentSettings
     public Vector4 BarColor { get; set; } = ColorHelper.GetColor(50);
     public Vector4 BarBackgroundColor { get; set; } = KnownColor.Black.Vector();
     public ColorMode ColorMode { get; set; } = ColorMode.Job;
+    public ProgressBarType ProgressBarType { get; set; } = ProgressBarType.Cast;
+    public ProgressBarColorTreatment ProgressBarColorTreatment { get; set; } = ProgressBarColorTreatment.Auto;
+    public bool ProgressBarFillRightToLeft { get; set; }
     public bool ShowBackground { get; set; }
 
     public ComponentSettings DeepCopy()

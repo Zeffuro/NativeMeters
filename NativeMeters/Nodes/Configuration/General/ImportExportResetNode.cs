@@ -54,6 +54,8 @@ public sealed class ImportExportResetNode : HorizontalListNode
     private static void ResetConfig()
     {
         ConfigPorter.TryResetConfig();
+        System.OverlayManager.Setup();
+        System.PartyListMeterManager?.UpdateSettings();
         System.AddonConfigurationWindow.Close();
     }
 
@@ -64,6 +66,7 @@ public sealed class ImportExportResetNode : HorizontalListNode
         ConfigPorter.TryImportConfigFromClipboard();
         System.AddonConfigurationWindow.Close();
         System.OverlayManager.Setup();
+        System.PartyListMeterManager?.UpdateSettings();
     }
 
     private static void ExportConfig() => ConfigPorter.TryExportConfigToClipboard(System.Config);

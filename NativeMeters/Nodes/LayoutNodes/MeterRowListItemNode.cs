@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -10,6 +11,7 @@ using KamiToolKit.Nodes.Simplified;
 using NativeMeters.Configuration;
 using NativeMeters.Extensions;
 using NativeMeters.Models;
+using NativeMeters.Nodes.Components;
 using NativeMeters.Rendering;
 
 namespace NativeMeters.Nodes.LayoutNodes;
@@ -56,7 +58,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
         cachedSettings = ItemData.Settings;
 
         var components = MeterSettings.RowComponents;
-        int hash = components.Count;
+        int hash = CalculateComponentStructureHash(components);
         if (cachedSortedComponents == null || lastComponentHash != hash)
         {
             cachedSortedComponents = components.OrderBy(s => s.ZIndex).ToList();
@@ -83,10 +85,12 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
     {
         NodeBase node = settings.Type switch {
             MeterComponentType.JobIcon or MeterComponentType.Icon => new IconImageNode { FitTexture = true },
-            MeterComponentType.ProgressBar => MeterSettings!.ProgressBarType switch {
-                ProgressBarType.Cast => new ProgressBarCastNode(),
-                ProgressBarType.EnemyCast => new ProgressBarEnemyCastNode(),
-                _ => new ProgressBarNode()
+            MeterComponentType.ProgressBar => settings.ProgressBarType switch {
+                ProgressBarType.Cast => new ProgressBarCastGaugeNode(),
+                ProgressBarType.EnemyCast => new ProgressBarEnemyCastGaugeNode(),
+                ProgressBarType.PartyListHp => new ProgressBarPartyListHpNode(),
+                ProgressBarType.LimitBreak => new ProgressBarLimitBreakGaugeNode(),
+                _ => new ProgressBarToDoGaugeNode()
             },
             MeterComponentType.Text => new BackgroundTextNode(),
             MeterComponentType.Background => new SimpleNineGridNode {
@@ -100,6 +104,21 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
         };
 
         return node;
+    }
+
+    private static int CalculateComponentStructureHash(IEnumerable<ComponentSettings> components)
+    {
+        HashCode hash = new();
+
+        foreach (var component in components)
+        {
+            hash.Add(component.Id);
+            hash.Add(component.ZIndex);
+            hash.Add(component.Type);
+            hash.Add(component.ProgressBarType);
+        }
+
+        return hash.ToHashCode();
     }
 
     private void UpdateComponentData(NodeBase node, ComponentSettings settings)

@@ -64,21 +64,12 @@ public static class ComponentRenderer
                 }
                 break;
 
+            case IMeterProgressNode progressNode:
+                UpdateProgressNode(node, progressNode, settings, containerWidth, data, meterSettings);
+                break;
+
             case ProgressNode progressNode:
-                if (settings.Size.X > 0 || settings.Size.Y > 0)
-                {
-                    float componentWidth = settings.Size.X <= 0 ? containerWidth : settings.Size.X;
-                    progressNode.Size = new Vector2(componentWidth, settings.Size.Y > 0 ? settings.Size.Y : progressNode.Height);
-                }
-                if (data is Combatant comb)
-                {
-                    var statName = string.IsNullOrWhiteSpace(settings.DataSource) ? "ENCDPS" : settings.DataSource;
-                    var selector = StatSelector.GetStatSelector(statName);
-                    double maxStat = System.ActiveMeterService.GetMaxCombatantStat(selector);
-                    progressNode.Progress = ViewUtils.CalculateProgressRatio(selector(comb), maxStat > 0 ? maxStat : 1.0);
-                    progressNode.BarColor = comb.GetColor(settings.ColorMode, settings, meterSettings);
-                    progressNode.BackgroundColor = ColorResolver.GetBarBackgroundColor(comb, settings, meterSettings);
-                }
+                UpdateProgressNode(progressNode, settings, containerWidth, data, meterSettings);
                 break;
 
             case HeaderMenuButtonNode:
@@ -92,12 +83,52 @@ public static class ComponentRenderer
                 break;
         }
 
-        if ((node is not BackgroundTextNode || settings.Size.X > 0) && node is not ProgressNode)
+        if ((node is not BackgroundTextNode || settings.Size.X > 0) && node is not ProgressNode && node is not IMeterProgressNode)
         {
             float componentWidth = settings.Size.X <= 0 ? containerWidth : settings.Size.X;
             node.Size = settings.Size with { X = componentWidth };
         }
 
         node.Position = settings.Position;
+    }
+
+    private static void UpdateProgressNode(ProgressNode progressNode, ComponentSettings settings, float containerWidth, object data, MeterSettings? meterSettings)
+    {
+        if (settings.Size.X > 0 || settings.Size.Y > 0)
+        {
+            float componentWidth = settings.Size.X <= 0 ? containerWidth : settings.Size.X;
+            progressNode.Size = new Vector2(componentWidth, settings.Size.Y > 0 ? settings.Size.Y : progressNode.Height);
+        }
+
+        if (data is Combatant comb)
+        {
+            var statName = string.IsNullOrWhiteSpace(settings.DataSource) ? "ENCDPS" : settings.DataSource;
+            var selector = StatSelector.GetStatSelector(statName);
+            double maxStat = NativeMeters.System.ActiveMeterService.GetMaxCombatantStat(selector);
+            progressNode.Progress = ViewUtils.CalculateProgressRatio(selector(comb), maxStat > 0 ? maxStat : 1.0);
+            progressNode.BarColor = comb.GetColor(settings.ColorMode, settings, meterSettings);
+            progressNode.BackgroundColor = ColorResolver.GetBarBackgroundColor(comb, settings, meterSettings);
+        }
+    }
+
+    private static void UpdateProgressNode(NodeBase node, IMeterProgressNode progressNode, ComponentSettings settings, float containerWidth, object data, MeterSettings? meterSettings)
+    {
+        if (settings.Size.X > 0 || settings.Size.Y > 0)
+        {
+            float componentWidth = settings.Size.X <= 0 ? containerWidth : settings.Size.X;
+            node.Size = new Vector2(componentWidth, settings.Size.Y > 0 ? settings.Size.Y : node.Height);
+        }
+
+        if (data is Combatant comb)
+        {
+            var statName = string.IsNullOrWhiteSpace(settings.DataSource) ? "ENCDPS" : settings.DataSource;
+            var selector = StatSelector.GetStatSelector(statName);
+            double maxStat = NativeMeters.System.ActiveMeterService.GetMaxCombatantStat(selector);
+            progressNode.Progress = ViewUtils.CalculateProgressRatio(selector(comb), maxStat > 0 ? maxStat : 1.0);
+            progressNode.ColorTreatment = settings.ProgressBarColorTreatment;
+            progressNode.FillRightToLeft = settings.ProgressBarFillRightToLeft;
+            progressNode.BarColor = comb.GetColor(settings.ColorMode, settings, meterSettings);
+            progressNode.BackgroundColor = ColorResolver.GetBarBackgroundColor(comb, settings, meterSettings);
+        }
     }
 }

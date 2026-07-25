@@ -18,6 +18,7 @@ public static class TagDefinitions
 
         { "DPS", "[dps.0]" },
         { "DPS: Raw (No Comma)", "[dps:r.0]" },
+        { "DPS: Compact", "[dps:c.1]" },
         { "DPS: Kilo", "[dps:k.1]" },
         { "Dmg: Total", "[damage.0]" },
         { "Dmg: Percent", "[damagepct]%" },
@@ -33,6 +34,7 @@ public static class TagDefinitions
 
         { "Enc: Zone", "[zone]" },
         { "Enc: Duration", "[duration]" },
+        { "Enc: DPS Compact", "[encdps:c.1]" },
     };
 
     public static List<string> GetLabels() => Templates.Keys.ToList();

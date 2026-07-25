@@ -16,6 +16,9 @@ public sealed class ComponentVisualsPanel : VerticalListNode
     private readonly ComponentColorInputRowNode outlineColorInput;
     private readonly ComponentCheckboxRowNode backgroundCheckbox;
     private readonly ComponentColorInputRowNode backgroundTextColorInput;
+    private readonly ComponentEnumDropdownRowNode<ProgressBarType> barTypeDropdown;
+    private readonly ComponentEnumDropdownRowNode<ProgressBarColorTreatment> barColorTreatmentDropdown;
+    private readonly ComponentCheckboxRowNode barFillRightToLeftCheckbox;
     private readonly ComponentColorInputRowNode barColorInput;
     private readonly ComponentColorInputRowNode barBgColorInput;
 
@@ -51,6 +54,46 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             {
                 if (settings == null || isLoading) return;
                 settings.ColorMode = val;
+                OnSettingsChanged?.Invoke();
+            }
+        };
+
+        barTypeDropdown = new ComponentEnumDropdownRowNode<ProgressBarType>
+        {
+            LabelText = "Bar Type:",
+            Size = new Vector2(Width, 28),
+            Options = Enum.GetValues<ProgressBarType>().ToList(),
+            OnOptionSelected = val =>
+            {
+                if (settings == null || isLoading) return;
+                if (settings.ProgressBarType == val) return;
+                settings.ProgressBarType = val;
+                OnSettingsChanged?.Invoke();
+            }
+        };
+
+        barColorTreatmentDropdown = new ComponentEnumDropdownRowNode<ProgressBarColorTreatment>
+        {
+            LabelText = "Bar Tint:",
+            Size = new Vector2(Width, 28),
+            Options = Enum.GetValues<ProgressBarColorTreatment>().ToList(),
+            OnOptionSelected = val =>
+            {
+                if (settings == null || isLoading) return;
+                settings.ProgressBarColorTreatment = val;
+                OnSettingsChanged?.Invoke();
+            }
+        };
+
+        barFillRightToLeftCheckbox = new ComponentCheckboxRowNode
+        {
+            String = "Fill Right To Left",
+            Size = new Vector2(Width, 28),
+            OnClick = val =>
+            {
+                if (settings == null || isLoading) return;
+                if (settings.ProgressBarFillRightToLeft == val) return;
+                settings.ProgressBarFillRightToLeft = val;
                 OnSettingsChanged?.Invoke();
             }
         };
@@ -122,7 +165,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             }
         };
 
-        AddNode([headerLabel, colorModeDropdown, textColorInput, outlineColorInput, barColorInput, barBgColorInput, backgroundCheckbox, backgroundTextColorInput]);
+        AddNode([headerLabel, colorModeDropdown, textColorInput, outlineColorInput, barTypeDropdown, barColorTreatmentDropdown, barFillRightToLeftCheckbox, barColorInput, barBgColorInput, backgroundCheckbox, backgroundTextColorInput]);
     }
 
     public override bool IsVisible
@@ -140,6 +183,8 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             {
                 SetAllChildVisibility(false);
             }
+
+            RecalculateLayout();
         }
     }
 
@@ -157,6 +202,9 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         var wasOutlineColorVisible = outlineColorInput.IsVisible;
         var wasBackgroundCheckboxVisible = backgroundCheckbox.IsVisible;
         var wasBackgroundTextColorVisible = backgroundTextColorInput.IsVisible;
+        var wasBarTypeVisible = barTypeDropdown.IsVisible;
+        var wasBarColorTreatmentVisible = barColorTreatmentDropdown.IsVisible;
+        var wasBarFillRightToLeftVisible = barFillRightToLeftCheckbox.IsVisible;
         var wasBarColorVisible = barColorInput.IsVisible;
         var wasBarBgColorVisible = barBgColorInput.IsVisible;
 
@@ -179,6 +227,9 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         outlineColorInput.CurrentColor = settings.TextOutlineColor;
         backgroundCheckbox.IsChecked = settings.ShowBackground;
         backgroundTextColorInput.CurrentColor = settings.TextBackgroundColor;
+        barTypeDropdown.SelectedOption = settings.ProgressBarType;
+        barColorTreatmentDropdown.SelectedOption = settings.ProgressBarColorTreatment;
+        barFillRightToLeftCheckbox.IsChecked = settings.ProgressBarFillRightToLeft;
         barColorInput.CurrentColor = settings.BarColor;
         barBgColorInput.CurrentColor = settings.BarBackgroundColor;
 
@@ -191,6 +242,9 @@ public sealed class ComponentVisualsPanel : VerticalListNode
             || wasOutlineColorVisible != outlineColorInput.IsVisible
             || wasBackgroundCheckboxVisible != backgroundCheckbox.IsVisible
             || wasBackgroundTextColorVisible != backgroundTextColorInput.IsVisible
+            || wasBarTypeVisible != barTypeDropdown.IsVisible
+            || wasBarColorTreatmentVisible != barColorTreatmentDropdown.IsVisible
+            || wasBarFillRightToLeftVisible != barFillRightToLeftCheckbox.IsVisible
             || wasBarColorVisible != barColorInput.IsVisible
             || wasBarBgColorVisible != barBgColorInput.IsVisible)
         {
@@ -220,6 +274,9 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         outlineColorInput.IsVisible = isText;
         SetBackgroundCheckboxVisible(isText);
         backgroundTextColorInput.IsVisible = isText;
+        barTypeDropdown.IsVisible = isBar;
+        barColorTreatmentDropdown.IsVisible = isBar;
+        barFillRightToLeftCheckbox.IsVisible = isBar;
         barColorInput.IsVisible = isBar;
         barBgColorInput.IsVisible = isBar;
     }
@@ -232,6 +289,9 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         outlineColorInput.IsVisible = isVisible;
         SetBackgroundCheckboxVisible(isVisible);
         backgroundTextColorInput.IsVisible = isVisible;
+        barTypeDropdown.IsVisible = isVisible;
+        barColorTreatmentDropdown.IsVisible = isVisible;
+        barFillRightToLeftCheckbox.IsVisible = isVisible;
         barColorInput.IsVisible = isVisible;
         barBgColorInput.IsVisible = isVisible;
     }
@@ -250,7 +310,11 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         outlineColorInput.Width = Width;
         backgroundCheckbox.Width = Width;
         backgroundTextColorInput.Width = Width;
+        barTypeDropdown.Width = Width;
+        barColorTreatmentDropdown.Width = Width;
+        barFillRightToLeftCheckbox.Width = Width;
         barColorInput.Width = Width;
         barBgColorInput.Width = Width;
+        RecalculateLayout();
     }
 }

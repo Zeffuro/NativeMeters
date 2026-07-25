@@ -11,6 +11,7 @@ using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Configuration.Connection;
 using NativeMeters.Nodes.Configuration.General;
 using NativeMeters.Nodes.Configuration.Meter;
+using NativeMeters.Nodes.Configuration.PartyList;
 using NativeMeters.Nodes.Configuration.Visibility;
 
 namespace NativeMeters.Addons;
@@ -29,6 +30,7 @@ public class AddonConfigurationWindow : NativeAddon
 
     private GeneralScrollingAreaNode generalScrollingAreaNode = null!;
     private ConnectionScrollingAreaNode connectionScrollingAreaNode = null!;
+    private PartyListScrollingAreaNode partyListScrollingAreaNode = null!;
     private MeterManagementNode meterManagementNode = null!;
     private ColorConfigurationNode colorConfigurationNode = null!;
     private VisibilityScrollingAreaNode visibilityScrollingAreaNode = null!;
@@ -68,6 +70,14 @@ public class AddonConfigurationWindow : NativeAddon
         };
         connectionScrollingAreaNode.AttachNode(this);
 
+        partyListScrollingAreaNode = new PartyListScrollingAreaNode
+        {
+            Position = ContentStartPosition with { Y = tabContentY },
+            Size = ContentSize with { Y = tabContentHeight },
+            IsVisible = false,
+        };
+        partyListScrollingAreaNode.AttachNode(this);
+
         meterManagementNode = new MeterManagementNode(addMeterDialog)
         {
             Position = ContentStartPosition with { Y = tabContentY },
@@ -94,6 +104,7 @@ public class AddonConfigurationWindow : NativeAddon
 
         tabContent.Add(generalScrollingAreaNode);
         tabContent.Add(connectionScrollingAreaNode);
+        tabContent.Add(partyListScrollingAreaNode);
         tabContent.Add(meterManagementNode);
         tabContent.Add(colorConfigurationNode);
         tabContent.Add(visibilityScrollingAreaNode);
@@ -105,9 +116,10 @@ public class AddonConfigurationWindow : NativeAddon
             OnClick = () => SwitchTab(0)
         });
         tabBarNode.AddTab("Connection", () => SwitchTab(1));
-        tabBarNode.AddTab("Meters", () => SwitchTab(2));
-        tabBarNode.AddTab("Colors", () => SwitchTab(3));
-        tabBarNode.AddTab("Visibility", () => SwitchTab(4));
+        tabBarNode.AddTab("Party List", () => SwitchTab(2));
+        tabBarNode.AddTab("Meters", () => SwitchTab(3));
+        tabBarNode.AddTab("Colors", () => SwitchTab(4));
+        tabBarNode.AddTab("Visibility", () => SwitchTab(5));
 
         base.OnSetup(addon, atkValueSpan);
 
@@ -140,12 +152,15 @@ public class AddonConfigurationWindow : NativeAddon
                 connectionScrollingAreaNode.RecalculateSizes();
                 break;
             case 2:
-                meterManagementNode.RecalculateLayout();
+                partyListScrollingAreaNode.RecalculateSizes();
                 break;
             case 3:
-                colorConfigurationNode.RecalculateSizes();
+                meterManagementNode.RecalculateLayout();
                 break;
             case 4:
+                colorConfigurationNode.RecalculateSizes();
+                break;
+            case 5:
                 visibilityScrollingAreaNode.RecalculateSizes();
                 break;
         }
@@ -154,6 +169,8 @@ public class AddonConfigurationWindow : NativeAddon
     protected override unsafe void OnFinalize(AtkUnitBase* addon)
     {
         System.Config.General.PreviewEnabled = false;
+        System.OverlayManager?.UpdateActiveService();
+        System.PartyListMeterManager?.UpdateSettings();
         addMeterDialog.OnMeterCreated = null;
 
         ConfigRepository.Save(System.Config);

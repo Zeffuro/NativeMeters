@@ -34,6 +34,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
                     config.IsEnabled = isChecked;
                     ConfigRepository.Save(System.Config);
                     System.OverlayManager.Setup();
+                    System.PartyListMeterManager?.UpdateSettings();
                 },
             },
             new CheckboxNode
@@ -45,6 +46,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
                 {
                     config.PreviewEnabled = isChecked;
                     System.OverlayManager.UpdateActiveService();
+                    System.PartyListMeterManager?.UpdateSettings();
                 }
             },
         ]);

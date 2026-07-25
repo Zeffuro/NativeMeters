@@ -90,7 +90,18 @@ public enum SelfTextOverrideMode
 
 public enum ProgressBarType
 {
-    Cast,
-    EnemyCast,
-    ToDo
+    [Description("Cast")]
+    Cast = 0,
+
+    [Description("Enemy Cast")]
+    EnemyCast = 1,
+
+    [Description("To Do")]
+    ToDo = 2,
+
+    [Description("Party List Gauge")]
+    PartyListHp = 3,
+
+    [Description("Limit Break")]
+    LimitBreak = 5
 }
