@@ -102,7 +102,7 @@ public static class ComponentRenderer
 
         if (data is Combatant comb)
         {
-            var statName = string.IsNullOrWhiteSpace(settings.DataSource) ? "ENCDPS" : settings.DataSource;
+            var statName = StatSelector.NormalizeStatSelector(settings.DataSource);
             var selector = StatSelector.GetStatSelector(statName);
             double maxStat = NativeMeters.System.ActiveMeterService.GetMaxCombatantStat(selector);
             progressNode.Progress = ViewUtils.CalculateProgressRatio(selector(comb), maxStat > 0 ? maxStat : 1.0);
@@ -121,7 +121,7 @@ public static class ComponentRenderer
 
         if (data is Combatant comb)
         {
-            var statName = string.IsNullOrWhiteSpace(settings.DataSource) ? "ENCDPS" : settings.DataSource;
+            var statName = StatSelector.NormalizeStatSelector(settings.DataSource);
             var selector = StatSelector.GetStatSelector(statName);
             double maxStat = NativeMeters.System.ActiveMeterService.GetMaxCombatantStat(selector);
             progressNode.Progress = ViewUtils.CalculateProgressRatio(selector(comb), maxStat > 0 ? maxStat : 1.0);

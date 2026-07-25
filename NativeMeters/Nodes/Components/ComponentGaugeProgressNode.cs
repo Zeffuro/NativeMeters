@@ -18,6 +18,7 @@ public abstract unsafe class ComponentGaugeProgressNode : ComponentNode<AtkCompo
     private const float BrightTintTextureWeight = 0.12f;
     private const float BrightTintColorWeight = 0.90f;
     private const float BrightTintColorFloor = 0.03f;
+    private static readonly Vector3 LegacyAdditiveMultiplyColor = new Vector3(90.0f, 75.0f, 75.0f) / 255.0f;
 
     protected ImageNode BackdropImageNode { get; }
     protected NineGridNode? StaticBackdropNode { get; }
@@ -68,7 +69,7 @@ public abstract unsafe class ComponentGaugeProgressNode : ComponentNode<AtkCompo
     public Vector4 BackgroundColor
     {
         get => GetNodeColor(GetBackgroundColorNode(), style.BackgroundColorMode);
-        set => ApplyNodeColor(GetBackgroundColorNode(), value, style.BackgroundColorMode);
+        set => ApplyNodeColor(GetBackgroundColorNode(), value, style.BackgroundColorMode, GetBackgroundColorMultiplyColor());
     }
 
     public Vector4 BarColor
@@ -78,13 +79,13 @@ public abstract unsafe class ComponentGaugeProgressNode : ComponentNode<AtkCompo
         {
             var barColorMode = ResolveBarColorMode();
 
-            ApplyNodeColor(MainFillNode, value, barColorMode);
+            ApplyNodeColor(MainFillNode, value, barColorMode, style.MainFill.MultiplyColor);
 
             if (IncreaseFillNode != null)
-                ApplyNodeColor(IncreaseFillNode, value, barColorMode);
+                ApplyNodeColor(IncreaseFillNode, value, barColorMode, style.IncreaseFill?.MultiplyColor);
 
             if (DecreaseFillNode != null)
-                ApplyNodeColor(DecreaseFillNode, value, barColorMode);
+                ApplyNodeColor(DecreaseFillNode, value, barColorMode, style.DecreaseFill?.MultiplyColor);
         }
     }
 
@@ -359,17 +360,24 @@ public abstract unsafe class ComponentGaugeProgressNode : ComponentNode<AtkCompo
     private NodeBase GetBackgroundColorNode()
         => StaticBackdropNode ?? (NodeBase)BackdropImageNode;
 
+    private Vector3 GetBackgroundColorMultiplyColor()
+        => StaticBackdropNode != null && style.StaticBackdrop != null
+            ? style.StaticBackdrop.MultiplyColor
+            : style.Backdrop.MultiplyColor;
+
     private ComponentGaugeProgressColorMode ResolveBarColorMode()
         => ColorTreatment switch
         {
             ProgressBarColorTreatment.Flat => ComponentGaugeProgressColorMode.Flat,
             ProgressBarColorTreatment.NativeTint => style.NativeBarColorMode ?? style.BarColorMode,
+            ProgressBarColorTreatment.LegacyAdditive => ComponentGaugeProgressColorMode.LegacyAdditive,
             _ => style.BarColorMode,
         };
 
     private static Vector4 GetNodeColor(KamiToolKit.BaseTypes.NodeBase node, ComponentGaugeProgressColorMode colorMode)
         => colorMode switch
         {
+            ComponentGaugeProgressColorMode.LegacyAdditive => new Vector4(node.AddColor.X, node.AddColor.Y, node.AddColor.Z, node.Color.W),
             ComponentGaugeProgressColorMode.Additive => new Vector4(node.AddColor.X, node.AddColor.Y, node.AddColor.Z, node.Color.W),
             ComponentGaugeProgressColorMode.BrightAdditive => new Vector4(
                 Math.Max(0.0f, (node.AddColor.X - BrightTintColorFloor) / BrightTintColorWeight),
@@ -382,11 +390,14 @@ public abstract unsafe class ComponentGaugeProgressNode : ComponentNode<AtkCompo
             _ => node.Color,
         };
 
-    private static void ApplyNodeColor(KamiToolKit.BaseTypes.NodeBase node, Vector4 value, ComponentGaugeProgressColorMode colorMode)
+    private static void ApplyNodeColor(KamiToolKit.BaseTypes.NodeBase node, Vector4 value, ComponentGaugeProgressColorMode colorMode, Vector3? additiveMultiplyColor = null)
     {
-        if (colorMode == ComponentGaugeProgressColorMode.Additive)
+        if (colorMode == ComponentGaugeProgressColorMode.Additive || colorMode == ComponentGaugeProgressColorMode.LegacyAdditive)
         {
             node.Color = new Vector4(1.0f, 1.0f, 1.0f, value.W);
+            node.MultiplyColor = colorMode == ComponentGaugeProgressColorMode.LegacyAdditive
+                ? LegacyAdditiveMultiplyColor
+                : additiveMultiplyColor ?? Vector3.One;
             node.AddColor = new Vector3(value.X, value.Y, value.Z);
             return;
         }
@@ -486,6 +497,7 @@ public enum ComponentGaugeProgressColorMode
 {
     Multiply,
     Additive,
+    LegacyAdditive,
     BrightAdditive,
     TextureAlpha,
     Flat,

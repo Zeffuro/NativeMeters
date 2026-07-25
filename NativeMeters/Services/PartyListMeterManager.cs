@@ -291,8 +291,12 @@ public sealed unsafe class PartyListMeterManager : IDisposable
         {
             ProgressBarType.Cast => new ProgressBarCastGaugeNode(),
             ProgressBarType.EnemyCast => new ProgressBarEnemyCastGaugeNode(),
+            ProgressBarType.ToDo => new ProgressBarToDoGaugeNode(),
             ProgressBarType.PartyListHp => new ProgressBarPartyListHpNode(),
             ProgressBarType.LimitBreak => new ProgressBarLimitBreakGaugeNode(),
+            ProgressBarType.CastLegacy => new LegacyCastProgressBarNode(),
+            ProgressBarType.ToDoLegacy => new LegacyToDoProgressBarNode(),
+            ProgressBarType.EnemyCastLegacy => new LegacyEnemyCastProgressBarNode(),
             _ => new ProgressBarToDoGaugeNode(),
         };
 
@@ -446,7 +450,7 @@ public sealed unsafe class PartyListMeterManager : IDisposable
             return existingProgressNode;
         }
 
-        memberBarNodes[slotIndex]?.Dispose();
+        memberBarNodes[slotIndex].DisposeLater();
 
         barNode = CreateBarNode(Settings.BarType);
         barNode.AttachNode(rootNode, NodePosition.AsFirstChild);
@@ -577,7 +581,7 @@ public sealed unsafe class PartyListMeterManager : IDisposable
 
     private void DisposeAttachedNodes()
     {
-        rootNode?.Dispose();
+        rootNode.DisposeLater();
         ClearAttachedNodeReferences();
     }
 
@@ -585,7 +589,7 @@ public sealed unsafe class PartyListMeterManager : IDisposable
     {
         for (var index = 0; index < memberBarNodes.Length; index++)
         {
-            memberBarNodes[index]?.Dispose();
+            memberBarNodes[index].DisposeLater();
             memberBarNodes[index] = null;
             memberBarTypes[index] = null;
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.UiOverlay;
 using NativeMeters.Extensions;
 using NativeMeters.Models;
@@ -72,11 +73,25 @@ public class OverlayManager : IAsyncDisposable, IDisposable {
     {
         foreach (var node in activeMeters.Values)
         {
-            node.OnDispose();
-            System.OverlayController?.RemoveNode(node);
+            DetachAndDisposeOverlayNode(node, unregisterFromController: !isDisposed);
         }
 
         activeMeters.Clear();
+    }
+
+    private static void DetachAndDisposeOverlayNode(MeterListLayoutNode node, bool unregisterFromController)
+    {
+        node.OnDispose();
+        node.IsVisible = false;
+        node.EnableMoving = false;
+        node.EnableResizing = false;
+        node.RemoveNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision, NodeFlags.Focusable);
+
+        node.DetachNode();
+        node.Dispose();
+
+        if (unregisterFromController)
+            System.OverlayController?.RemoveNode(node);
     }
 
     private void SetupOnFrameworkThread()

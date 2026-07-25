@@ -5,6 +5,7 @@ using KamiToolKit.Nodes;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Input;
 using NativeMeters.Tags;
+using CheckboxNode = NativeMeters.Nodes.Input.SyncedCheckboxNode;
 
 namespace NativeMeters.Nodes.Configuration.Dtr;
 

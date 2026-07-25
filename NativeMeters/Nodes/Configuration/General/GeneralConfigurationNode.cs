@@ -4,6 +4,7 @@ using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Input;
+using CheckboxNode = NativeMeters.Nodes.Input.SyncedCheckboxNode;
 
 namespace NativeMeters.Nodes.Configuration.General;
 

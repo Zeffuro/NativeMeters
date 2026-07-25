@@ -1,5 +1,6 @@
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration.Persistence;
+using CheckboxNode = NativeMeters.Nodes.Input.SyncedCheckboxNode;
 
 namespace NativeMeters.Nodes.Configuration.Visibility;
 

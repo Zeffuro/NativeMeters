@@ -153,6 +153,7 @@ public class Plugin : IAsyncDalamudPlugin
             {
                 await System.OverlayManager.DisposeAsync();
             }
+            await Service.Framework.RunSafely(NodeDisposalExtensions.FlushPendingNodeDisposals);
 
             if (!Service.Framework.IsFrameworkUnloading)
             {

@@ -67,8 +67,12 @@ public sealed class StaticComponentContainerNode : ResNode
             MeterComponentType.ProgressBar => settings.ProgressBarType switch {
                 ProgressBarType.Cast => new ProgressBarCastGaugeNode(),
                 ProgressBarType.EnemyCast => new ProgressBarEnemyCastGaugeNode(),
+                ProgressBarType.ToDo => new ProgressBarToDoGaugeNode(),
                 ProgressBarType.PartyListHp => new ProgressBarPartyListHpNode(),
                 ProgressBarType.LimitBreak => new ProgressBarLimitBreakGaugeNode(),
+                ProgressBarType.CastLegacy => new LegacyCastProgressBarNode(),
+                ProgressBarType.ToDoLegacy => new LegacyToDoProgressBarNode(),
+                ProgressBarType.EnemyCastLegacy => new LegacyEnemyCastProgressBarNode(),
                 _ => new ProgressBarToDoGaugeNode()
             },
             MeterComponentType.Text => new BackgroundTextNode(),

@@ -241,7 +241,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         {
             Size = new Vector2(360, ControlHeight),
             LabelText = "Bar Type:",
-            Options = Enum.GetValues<ProgressBarType>().ToList(),
+            Options = ProgressBarTypeOptions.Ordered(),
             SelectedOption = config.BarType,
             OnOptionSelected = value =>
             {

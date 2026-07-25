@@ -62,7 +62,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         {
             LabelText = "Bar Type:",
             Size = new Vector2(Width, 28),
-            Options = Enum.GetValues<ProgressBarType>().ToList(),
+            Options = ProgressBarTypeOptions.Ordered(),
             OnOptionSelected = val =>
             {
                 if (settings == null || isLoading) return;

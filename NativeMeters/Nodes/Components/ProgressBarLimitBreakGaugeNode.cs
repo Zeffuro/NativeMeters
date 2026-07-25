@@ -33,7 +33,7 @@ public unsafe class ProgressBarLimitBreakGaugeNode() : ComponentGaugeProgressNod
             Position = Vector2.Zero,
             Size = new Vector2(NativeWidth, NativeHeight),
             Origin = Vector2.Zero,
-            WrapMode = WrapMode.Tile,
+            WrapMode = WrapMode.Stretch,
             ImageFlags = 0,
         },
         StaticBackdrop = new ComponentGaugeNineGridNodeStyle
@@ -68,7 +68,7 @@ public unsafe class ProgressBarLimitBreakGaugeNode() : ComponentGaugeProgressNod
             Position = Vector2.Zero,
             Size = new Vector2(NativeWidth, NativeHeight),
             Origin = Vector2.Zero,
-            WrapMode = WrapMode.Tile,
+            WrapMode = WrapMode.Stretch,
             ImageFlags = 0,
             Color = new Vector4(1.0f, 1.0f, 1.0f, 0.32f),
         },

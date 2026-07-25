@@ -5,6 +5,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using NativeMeters.Data.Stats;
 using NativeMeters.Models;
 
 namespace NativeMeters.Configuration;
@@ -20,10 +21,15 @@ public enum ProgressBarColorTreatment
 
     [Description("Native Tint")]
     NativeTint,
+
+    [Description("Legacy Additive")]
+    LegacyAdditive,
 }
 
 public class ComponentSettings
 {
+    public const string DefaultTextDataSource = "[name]";
+
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public MeterComponentType Type { get; set; }
     public string Name { get; set; } = "New Component";
@@ -32,7 +38,7 @@ public class ComponentSettings
     public Vector2 Size { get; set; } = new(100, 20);
     public int ZIndex { get; set; } = 0;
 
-    public string DataSource { get; set; } = "[name]";
+    public string DataSource { get; set; } = DefaultTextDataSource;
 
     public JobIconType JobIconType { get; set; } = JobIconType.Default;
     public uint IconId { get; set; } = 0;
@@ -51,6 +57,12 @@ public class ComponentSettings
     public ProgressBarColorTreatment ProgressBarColorTreatment { get; set; } = ProgressBarColorTreatment.Auto;
     public bool ProgressBarFillRightToLeft { get; set; }
     public bool ShowBackground { get; set; }
+
+    public void EnsureInitialized()
+    {
+        if (Type == MeterComponentType.ProgressBar)
+            DataSource = StatSelector.NormalizeStatSelector(DataSource);
+    }
 
     public ComponentSettings DeepCopy()
     {

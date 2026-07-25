@@ -5,6 +5,7 @@ using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
+using NativeMeters.Data.Stats;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Sections;
 
@@ -74,6 +75,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
         };
 
         if (component.Type is MeterComponentType.Icon or MeterComponentType.JobIcon or MeterComponentType.MenuButton) component.Size = new Vector2(24);
+        if (component.Type == MeterComponentType.ProgressBar) component.DataSource = StatSelector.DefaultStatSelector;
 
         TargetList.Add(component);
         Refresh();

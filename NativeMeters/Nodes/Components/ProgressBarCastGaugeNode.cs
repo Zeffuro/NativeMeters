@@ -33,7 +33,7 @@ public unsafe class ProgressBarCastGaugeNode() : ComponentGaugeProgressNode(Styl
             Position = Vector2.Zero,
             Size = new Vector2(NativeWidth, NativeHeight),
             Origin = Vector2.Zero,
-            WrapMode = WrapMode.Tile,
+            WrapMode = WrapMode.Stretch,
             ImageFlags = 0,
         },
         MainFill = new ComponentGaugeNineGridNodeStyle
@@ -59,7 +59,7 @@ public unsafe class ProgressBarCastGaugeNode() : ComponentGaugeProgressNode(Styl
             Position = Vector2.Zero,
             Size = new Vector2(NativeWidth, NativeHeight),
             Origin = Vector2.Zero,
-            WrapMode = WrapMode.Tile,
+            WrapMode = WrapMode.Stretch,
             ImageFlags = 0,
         },
     };

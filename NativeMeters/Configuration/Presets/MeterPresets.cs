@@ -6,6 +6,7 @@ using System.Reflection;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using NativeMeters.Configuration.Persistence;
+using NativeMeters.Data.Stats;
 using NativeMeters.Services;
 
 namespace NativeMeters.Configuration.Presets;
@@ -161,6 +162,7 @@ public static class MeterPresets
         {
             Name = "Progress Bar",
             Type = MeterComponentType.ProgressBar,
+            DataSource = StatSelector.DefaultStatSelector,
             Position = new Vector2(32, 10),
             Size = new Vector2(230, 20),
             ZIndex = 0,

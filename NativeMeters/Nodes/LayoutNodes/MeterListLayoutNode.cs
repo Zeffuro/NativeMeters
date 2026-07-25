@@ -109,10 +109,10 @@ public sealed class MeterListLayoutNode : OverlayNode
 
         isPreWarmed = false;
 
-        backgroundNode?.Dispose();
-        headerContainer?.Dispose();
-        footerContainer?.Dispose();
-        listNode?.Dispose();
+        backgroundNode.DisposeLater();
+        headerContainer.DisposeLater();
+        footerContainer.DisposeLater();
+        listNode.DisposeLater();
 
         backgroundNode = new MeterBackgroundNode {
             Size = Size,
@@ -215,13 +215,45 @@ public sealed class MeterListLayoutNode : OverlayNode
             listNode.Position = new Vector2(0, headerH);
 
             var desiredListSize = new Vector2(Width, Math.Max(0, Height - headerH - footerH));
-            if (listNode.Size != desiredListSize) listNode.Size = desiredListSize;
+            ResizeListNodeSafely(desiredListSize);
 
             if (Math.Abs(listNode.ItemSpacing - MeterSettings.RowSpacing) > 0.1f)
-                listNode.ItemSpacing = MeterSettings.RowSpacing;
+                UpdateListItemSpacingSafely(MeterSettings.RowSpacing);
 
             listNode.Update();
         }
+    }
+
+    private void ResizeListNodeSafely(Vector2 desiredSize)
+    {
+        if (listNode.Size == desiredSize)
+            return;
+
+        var oldRowCount = GetListNodeRowCount(listNode.Height, listNode.ItemSpacing);
+        var newRowCount = GetListNodeRowCount(desiredSize.Y, listNode.ItemSpacing);
+
+        if (oldRowCount != newRowCount)
+        {
+            listNode.DetachNode();
+            listNode.Size = desiredSize;
+            listNode.AttachNode(this);
+            return;
+        }
+
+        listNode.Size = desiredSize;
+    }
+
+    private void UpdateListItemSpacingSafely(float itemSpacing)
+    {
+        listNode.DetachNode();
+        listNode.ItemSpacing = itemSpacing;
+        listNode.AttachNode(this);
+    }
+
+    private static int GetListNodeRowCount(float height, float itemSpacing)
+    {
+        var rowPitch = Math.Max(1.0f, MeterRowListItemNode.ItemHeight + itemSpacing);
+        return (int)(height / rowPitch);
     }
 
     private void OnCombatDataUpdated()

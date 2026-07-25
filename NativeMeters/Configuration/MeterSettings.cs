@@ -48,6 +48,15 @@ public class MeterSettings
         RowComponents ??= [];
         HeaderComponents ??= [];
         FooterComponents ??= [];
+
+        foreach (var component in HeaderComponents)
+            component?.EnsureInitialized();
+
+        foreach (var component in RowComponents)
+            component?.EnsureInitialized();
+
+        foreach (var component in FooterComponents)
+            component?.EnsureInitialized();
     }
 }
 
@@ -103,5 +112,28 @@ public enum ProgressBarType
     PartyListHp = 3,
 
     [Description("Limit Break")]
-    LimitBreak = 5
+    LimitBreak = 5,
+
+    [Description("Cast (Legacy)")]
+    CastLegacy = 6,
+
+    [Description("ToDo (Legacy)")]
+    ToDoLegacy = 4,
+
+    [Description("Enemy Cast (Legacy)")]
+    EnemyCastLegacy = 7
+}
+
+public static class ProgressBarTypeOptions
+{
+    public static List<ProgressBarType> Ordered()
+        => [
+            ProgressBarType.Cast,
+            ProgressBarType.EnemyCast,
+            ProgressBarType.ToDo,
+            ProgressBarType.PartyListHp,
+            ProgressBarType.LimitBreak,
+            ProgressBarType.CastLegacy,
+            ProgressBarType.ToDoLegacy,
+        ];
 }

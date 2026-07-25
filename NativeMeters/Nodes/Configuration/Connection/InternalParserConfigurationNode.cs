@@ -5,6 +5,7 @@ using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Input;
+using CheckboxNode = NativeMeters.Nodes.Input.SyncedCheckboxNode;
 
 namespace NativeMeters.Nodes.Configuration.Connection;
 
@@ -74,7 +75,7 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
                 TextTooltip = "When enabled, damage from companions are shown as separate entries instead of being merged with the player.",
                 OnClick = isChecked =>
                 {
-                    config.UseYouForLocalPlayer = isChecked;
+                    config.ShowCompanions = isChecked;
                     ConfigRepository.Save(System.Config);
                 }
             },

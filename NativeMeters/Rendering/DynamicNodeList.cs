@@ -36,7 +36,7 @@ public class DynamicNodeList(NodeBase parentNode) : IDisposable
     private void RebuildStructure(List<ComponentSettings> settings, Func<ComponentSettings, NodeBase> factory)
     {
         Service.Logger.Debug("Rebuilding node structure for component list");
-        _componentMap.DisposeValues();
+        _componentMap.DisposeValuesLater();
         componentStructureMap.Clear();
 
         foreach (var setting in settings)
@@ -53,7 +53,7 @@ public class DynamicNodeList(NodeBase parentNode) : IDisposable
 
     public void Dispose()
     {
-        _componentMap.DisposeValues();
+        _componentMap.DisposeValuesLater();
         componentStructureMap.Clear();
     }
 }

@@ -10,11 +10,11 @@ namespace NativeMeters.Nodes.Input;
 
 internal class CheckboxRowNode : ResNode, IConfigurationNavigationNode
 {
-    private readonly CheckboxNode checkboxNode;
+    private readonly SyncedCheckboxNode checkboxNode;
 
     public CheckboxRowNode()
     {
-        checkboxNode = new CheckboxNode
+        checkboxNode = new SyncedCheckboxNode
         {
             DisableAutoResize = true,
         };

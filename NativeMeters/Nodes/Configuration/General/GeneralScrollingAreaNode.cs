@@ -2,6 +2,7 @@ using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Nodes.Configuration.Dtr;
+using CheckboxNode = NativeMeters.Nodes.Input.SyncedCheckboxNode;
 
 namespace NativeMeters.Nodes.Configuration.General;
 
