@@ -15,29 +15,30 @@ public sealed class MeterDisplaySection : MeterConfigSection
     private LabeledDropdownNode? statDropdown;
     private LabeledNumericInputNode? maxRowsInput;
     private LabeledNumericInputNode? scaleInput;
-    private CheckboxNode? backgroundCheckbox;
+    private CheckboxRowNode? backgroundCheckbox;
     private ColorInputRow? backgroundColorInput;
-    private CheckboxNode? headerToggle;
+    private CheckboxRowNode? headerToggle;
     private LabeledNumericInputNode? headerHeightInput;
-    private CheckboxNode? footerToggle;
+    private CheckboxRowNode? footerToggle;
     private LabeledNumericInputNode? footerHeightInput;
     private LabeledNumericInputNode? rowHeightInput;
     private LabeledNumericInputNode? rowSpacingInput;
-    private CheckboxNode? showLimitBreakToggle;
-    private CheckboxNode? showNonPlayerToggle;
-    private CheckboxNode? showPinSelfToggle;
-    private CheckboxNode? selfHighlightToggle;
+    private CheckboxRowNode? showLimitBreakToggle;
+    private CheckboxRowNode? showNonPlayerToggle;
+    private CheckboxRowNode? showPinSelfToggle;
+    private CheckboxRowNode? selfHighlightToggle;
     private LabeledEnumDropdownNode<SelfTextOverrideMode>? selfTextTargetDropdown;
-    private CheckboxNode? selfTextColorToggle;
+    private CheckboxRowNode? selfTextColorToggle;
     private ColorInputRow? selfTextColorInput;
-    private CheckboxNode? selfTextOutlineColorToggle;
+    private CheckboxRowNode? selfTextOutlineColorToggle;
     private ColorInputRow? selfTextOutlineColorInput;
-    private CheckboxNode? selfBarColorToggle;
+    private CheckboxRowNode? selfBarColorToggle;
     private ColorInputRow? selfBarColorInput;
-    private CheckboxNode? selfTextStyleToggle;
+    private CheckboxRowNode? selfTextStyleToggle;
     private LabeledNumericInputNode? selfTextFontSizeInput;
     private LabeledEnumDropdownNode<FontType>? selfTextFontTypeDropdown;
     private LabeledEnumDropdownNode<TextFlags>? selfTextFlagsDropdown;
+    private bool isLoading;
 
     public MeterDisplaySection(Func<MeterSettings> getSettings) : base(getSettings) { }
 
@@ -57,36 +58,44 @@ public sealed class MeterDisplaySection : MeterConfigSection
         Settings.EnsureInitialized();
         IsInitialized = true;
 
-        statDropdown!.SelectedOption = Settings.StatToTrack;
-        maxRowsInput!.Value = Settings.MaxCombatants;
-        scaleInput!.Value = Settings.Scale;
-        rowHeightInput!.Value = (int)Settings.RowHeight;
-        rowSpacingInput!.Value = (int)Settings.RowSpacing;
-        backgroundCheckbox!.IsChecked = Settings.ShowWindowBackground;
-        backgroundColorInput!.CurrentColor = Settings.WindowColor;
-        backgroundColorInput!.DefaultColor = new MeterSettings().WindowColor;
-        headerHeightInput!.Value = (int)Settings.HeaderHeight;
-        footerHeightInput!.Value = (int)Settings.FooterHeight;
-        headerToggle!.IsChecked = Settings.HeaderEnabled;
-        footerToggle!.IsChecked = Settings.FooterEnabled;
-        showLimitBreakToggle!.IsChecked = Settings.ShowLimitBreak;
-        showNonPlayerToggle!.IsChecked = Settings.ShowNonPlayerCombatants;
-        showPinSelfToggle!.IsChecked = Settings.PinSelfToTop;
-        selfHighlightToggle!.IsChecked = SelfRowOverride.Enabled;
-        selfTextTargetDropdown!.SelectedOption = SelfRowOverride.TextColorMode;
-        selfTextColorToggle!.IsChecked = SelfRowOverride.OverrideTextColor;
-        selfTextColorInput!.CurrentColor = SelfRowOverride.TextColor;
-        selfTextColorInput!.DefaultColor = new SelfRowOverrideSettings().TextColor;
-        selfTextOutlineColorToggle!.IsChecked = SelfRowOverride.OverrideTextOutlineColor;
-        selfTextOutlineColorInput!.CurrentColor = SelfRowOverride.TextOutlineColor;
-        selfTextOutlineColorInput!.DefaultColor = new SelfRowOverrideSettings().TextOutlineColor;
-        selfBarColorToggle!.IsChecked = SelfRowOverride.OverrideBarColor;
-        selfBarColorInput!.CurrentColor = SelfRowOverride.BarColor;
-        selfBarColorInput!.DefaultColor = new SelfRowOverrideSettings().BarColor;
-        selfTextStyleToggle!.IsChecked = SelfRowOverride.OverrideTextStyle;
-        selfTextFontSizeInput!.Value = (int)SelfRowOverride.TextFontSize;
-        selfTextFontTypeDropdown!.SelectedOption = SelfRowOverride.TextFontType;
-        selfTextFlagsDropdown!.SelectedOption = SelfRowOverride.TextFlags;
+        isLoading = true;
+        try
+        {
+            statDropdown!.SelectedOption = Settings.StatToTrack;
+            maxRowsInput!.Value = Settings.MaxCombatants;
+            scaleInput!.Value = Settings.Scale;
+            rowHeightInput!.Value = (int)Settings.RowHeight;
+            rowSpacingInput!.Value = (int)Settings.RowSpacing;
+            backgroundCheckbox!.IsChecked = Settings.ShowWindowBackground;
+            backgroundColorInput!.CurrentColor = Settings.WindowColor;
+            backgroundColorInput!.DefaultColor = new MeterSettings().WindowColor;
+            headerHeightInput!.Value = (int)Settings.HeaderHeight;
+            footerHeightInput!.Value = (int)Settings.FooterHeight;
+            headerToggle!.IsChecked = Settings.HeaderEnabled;
+            footerToggle!.IsChecked = Settings.FooterEnabled;
+            showLimitBreakToggle!.IsChecked = Settings.ShowLimitBreak;
+            showNonPlayerToggle!.IsChecked = Settings.ShowNonPlayerCombatants;
+            showPinSelfToggle!.IsChecked = Settings.PinSelfToTop;
+            selfHighlightToggle!.IsChecked = SelfRowOverride.Enabled;
+            selfTextTargetDropdown!.SelectedOption = SelfRowOverride.TextColorMode;
+            selfTextColorToggle!.IsChecked = SelfRowOverride.OverrideTextColor;
+            selfTextColorInput!.CurrentColor = SelfRowOverride.TextColor;
+            selfTextColorInput!.DefaultColor = new SelfRowOverrideSettings().TextColor;
+            selfTextOutlineColorToggle!.IsChecked = SelfRowOverride.OverrideTextOutlineColor;
+            selfTextOutlineColorInput!.CurrentColor = SelfRowOverride.TextOutlineColor;
+            selfTextOutlineColorInput!.DefaultColor = new SelfRowOverrideSettings().TextOutlineColor;
+            selfBarColorToggle!.IsChecked = SelfRowOverride.OverrideBarColor;
+            selfBarColorInput!.CurrentColor = SelfRowOverride.BarColor;
+            selfBarColorInput!.DefaultColor = new SelfRowOverrideSettings().BarColor;
+            selfTextStyleToggle!.IsChecked = SelfRowOverride.OverrideTextStyle;
+            selfTextFontSizeInput!.Value = (int)SelfRowOverride.TextFontSize;
+            selfTextFontTypeDropdown!.SelectedOption = SelfRowOverride.TextFontType;
+            selfTextFlagsDropdown!.SelectedOption = SelfRowOverride.TextFlags;
+        }
+        finally
+        {
+            isLoading = false;
+        }
 
         ApplyDisplayDependencyState();
         ApplySelfOverrideState();
@@ -100,7 +109,11 @@ public sealed class MeterDisplaySection : MeterConfigSection
             Size = new Vector2(Width, 28),
             LabelText = "Sort By: ",
             Options = StatSelector.GetAvailableStatSelectors(),
-            OnOptionSelected = val => Settings.StatToTrack = val,
+            OnOptionSelected = val =>
+            {
+                if (isLoading) return;
+                Settings.StatToTrack = val;
+            },
         };
 
         maxRowsInput = new LabeledNumericInputNode
@@ -108,7 +121,11 @@ public sealed class MeterDisplaySection : MeterConfigSection
             Size = new Vector2(Width, 28),
             LabelText = "Max Rows: ",
             Min = 1, Max = 40,
-            OnValueUpdate = val => Settings.MaxCombatants = val,
+            OnValueUpdate = val =>
+            {
+                if (isLoading) return;
+                Settings.MaxCombatants = val;
+            },
         };
 
         scaleInput = new LabeledNumericInputNode
@@ -117,7 +134,11 @@ public sealed class MeterDisplaySection : MeterConfigSection
             LabelText = "Scale %:",
             Min = 10, Max = 400,
             Step = 10,
-            OnValueUpdate = val => Settings.Scale = val,
+            OnValueUpdate = val =>
+            {
+                if (isLoading) return;
+                Settings.Scale = val;
+            },
         };
 
         rowHeightInput = new LabeledNumericInputNode
@@ -127,6 +148,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
             Min = 10, Max = 100,
             OnValueUpdate = val =>
             {
+                if (isLoading) return;
                 Settings.RowHeight = val;
                 System.OverlayManager.Setup();
             },
@@ -137,15 +159,20 @@ public sealed class MeterDisplaySection : MeterConfigSection
             Size = new Vector2(Width, 28),
             LabelText = "Row Spacing:",
             Min = 0, Max = 100,
-            OnValueUpdate = val => Settings.RowSpacing = val,
+            OnValueUpdate = val =>
+            {
+                if (isLoading) return;
+                Settings.RowSpacing = val;
+            },
         };
 
-        backgroundCheckbox = new CheckboxNode
+        backgroundCheckbox = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
             String = "Show Background",
             OnClick = val =>
             {
+                if (isLoading) return;
                 Settings.ShowWindowBackground = val;
                 ApplyDisplayDependencyState();
             },
@@ -162,12 +189,13 @@ public sealed class MeterDisplaySection : MeterConfigSection
             OnColorPreviewed = color => Settings.WindowColor = color,
         };
 
-        headerToggle = new CheckboxNode
+        headerToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
             String = "Enable Header",
             OnClick = val =>
             {
+                if (isLoading) return;
                 Settings.HeaderEnabled = val;
                 ApplyDisplayDependencyState();
             }
@@ -177,15 +205,20 @@ public sealed class MeterDisplaySection : MeterConfigSection
         {
             Size = new Vector2(Width, 28),
             LabelText = "Header Space:",
-            OnValueUpdate = val => Settings.HeaderHeight = val
+            OnValueUpdate = val =>
+            {
+                if (isLoading) return;
+                Settings.HeaderHeight = val;
+            }
         };
 
-        footerToggle = new CheckboxNode
+        footerToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
             String = "Enable Footer",
             OnClick = val =>
             {
+                if (isLoading) return;
                 Settings.FooterEnabled = val;
                 ApplyDisplayDependencyState();
             }
@@ -195,41 +228,55 @@ public sealed class MeterDisplaySection : MeterConfigSection
         {
             Size = new Vector2(Width, 28),
             LabelText = "Footer Space:",
-            OnValueUpdate = val => Settings.FooterHeight = val
+            OnValueUpdate = val =>
+            {
+                if (isLoading) return;
+                Settings.FooterHeight = val;
+            }
         };
 
-        showLimitBreakToggle = new CheckboxNode
+        showLimitBreakToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
             String = "Show Limit Break",
-            OnClick = val => Settings.ShowLimitBreak = val
+            OnClick = val =>
+            {
+                if (isLoading) return;
+                Settings.ShowLimitBreak = val;
+            }
         };
 
-        showNonPlayerToggle = new CheckboxNode
+        showNonPlayerToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
             String = "Show Non Player Combatants",
-            OnClick = val => Settings.ShowNonPlayerCombatants = val
+            OnClick = val =>
+            {
+                if (isLoading) return;
+                Settings.ShowNonPlayerCombatants = val;
+            }
         };
 
-        showPinSelfToggle = new CheckboxNode
+        showPinSelfToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
             String = "Pin Self To Top",
             OnClick = val =>
             {
+                if (isLoading) return;
                 Settings.PinSelfToTop = val;
                 System.OverlayManager.Setup();
             }
         };
 
-        selfHighlightToggle = new CheckboxNode
+        selfHighlightToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
             String = "Highlight Self",
             TextTooltip = "Apply meter-specific colors to your own row.",
             OnClick = val =>
             {
+                if (isLoading) return;
                 SelfRowOverride.Enabled = val;
                 ApplySelfOverrideState();
                 RecalculateSectionLayout();
@@ -242,16 +289,21 @@ public sealed class MeterDisplaySection : MeterConfigSection
             LabelText = "Self Text Target:",
             Options = Enum.GetValues<SelfTextOverrideMode>().ToList(),
             SelectedOption = SelfRowOverride.TextColorMode,
-            OnOptionSelected = val => SelfRowOverride.TextColorMode = val,
+            OnOptionSelected = val =>
+            {
+                if (isLoading) return;
+                SelfRowOverride.TextColorMode = val;
+            },
         };
 
-        selfTextColorToggle = new CheckboxNode
+        selfTextColorToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
             String = "Override Self Text Color",
             TextTooltip = "Uses the Self Text Target setting above.",
             OnClick = val =>
             {
+                if (isLoading) return;
                 SelfRowOverride.OverrideTextColor = val;
                 ApplySelfOverrideState();
                 RecalculateSectionLayout();
@@ -269,13 +321,14 @@ public sealed class MeterDisplaySection : MeterConfigSection
             OnColorPreviewed = color => SelfRowOverride.TextColor = color,
         };
 
-        selfTextOutlineColorToggle = new CheckboxNode
+        selfTextOutlineColorToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
             String = "Override Self Outline Color",
             TextTooltip = "Uses the Self Text Target setting above.",
             OnClick = val =>
             {
+                if (isLoading) return;
                 SelfRowOverride.OverrideTextOutlineColor = val;
                 ApplySelfOverrideState();
                 RecalculateSectionLayout();
@@ -293,12 +346,13 @@ public sealed class MeterDisplaySection : MeterConfigSection
             OnColorPreviewed = color => SelfRowOverride.TextOutlineColor = color,
         };
 
-        selfBarColorToggle = new CheckboxNode
+        selfBarColorToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
             String = "Override Self Bar Color",
             OnClick = val =>
             {
+                if (isLoading) return;
                 SelfRowOverride.OverrideBarColor = val;
                 ApplySelfOverrideState();
                 RecalculateSectionLayout();
@@ -316,13 +370,14 @@ public sealed class MeterDisplaySection : MeterConfigSection
             OnColorPreviewed = color => SelfRowOverride.BarColor = color,
         };
 
-        selfTextStyleToggle = new CheckboxNode
+        selfTextStyleToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
             String = "Override Self Text Style",
             TextTooltip = "Uses the Self Text Target setting above.",
             OnClick = val =>
             {
+                if (isLoading) return;
                 SelfRowOverride.OverrideTextStyle = val;
                 ApplySelfOverrideState();
                 RecalculateSectionLayout();
@@ -335,7 +390,11 @@ public sealed class MeterDisplaySection : MeterConfigSection
             LabelText = "Self Text Size:",
             Min = 6,
             Max = 72,
-            OnValueUpdate = val => SelfRowOverride.TextFontSize = (uint)val,
+            OnValueUpdate = val =>
+            {
+                if (isLoading) return;
+                SelfRowOverride.TextFontSize = (uint)val;
+            },
         };
 
         selfTextFontTypeDropdown = new LabeledEnumDropdownNode<FontType>
@@ -344,7 +403,11 @@ public sealed class MeterDisplaySection : MeterConfigSection
             LabelText = "Self Text Font:",
             Options = Enum.GetValues<FontType>().ToList(),
             SelectedOption = SelfRowOverride.TextFontType,
-            OnOptionSelected = val => SelfRowOverride.TextFontType = val,
+            OnOptionSelected = val =>
+            {
+                if (isLoading) return;
+                SelfRowOverride.TextFontType = val;
+            },
         };
 
         selfTextFlagsDropdown = new LabeledEnumDropdownNode<TextFlags>
@@ -353,7 +416,11 @@ public sealed class MeterDisplaySection : MeterConfigSection
             LabelText = "Self Text Style:",
             Options = Enum.GetValues<TextFlags>().ToList(),
             SelectedOption = SelfRowOverride.TextFlags,
-            OnOptionSelected = val => SelfRowOverride.TextFlags = val,
+            OnOptionSelected = val =>
+            {
+                if (isLoading) return;
+                SelfRowOverride.TextFlags = val;
+            },
         };
 
         AddNode(statDropdown);
@@ -464,9 +531,6 @@ public sealed class MeterDisplaySection : MeterConfigSection
         selfTextFlagsDropdown.IsEnabled = isTextStyleEnabled;
     }
 
-    private static void SetCheckboxEnabled(CheckboxNode checkbox, bool isEnabled)
-    {
-        checkbox.IsEnabled = isEnabled;
-        checkbox.Alpha = isEnabled ? 1.0f : 0.45f;
-    }
+    private static void SetCheckboxEnabled(CheckboxRowNode checkbox, bool isEnabled)
+        => checkbox.IsEnabled = isEnabled;
 }

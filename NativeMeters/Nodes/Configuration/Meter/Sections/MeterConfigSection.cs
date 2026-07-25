@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using KamiToolKit.BaseTypes;
+using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 
@@ -8,6 +10,7 @@ namespace NativeMeters.Nodes.Configuration.Meter.Sections;
 
 public abstract class MeterConfigSection : CollapsingHeaderNode
 {
+    private const float HeaderHeight = 28.0f;
     protected const float ChildIndent = 8.0f;
 
     protected readonly Func<MeterSettings> GetMeterSettings;
@@ -95,21 +98,30 @@ public abstract class MeterConfigSection : CollapsingHeaderNode
     {
         if (contentNode == null)
         {
-            base.OnRecalculateLayout();
+            Height = HeaderHeight;
             return;
         }
 
         ApplyContentLayout();
+
+        if (IsCollapsed)
+        {
+            contentNode.IsVisible = false;
+            SetDirectContentRowsVisible(false);
+            Height = HeaderHeight;
+            return;
+        }
+
+        contentNode.IsVisible = true;
+        SetDirectContentRowsVisible(true);
         contentNode.RecalculateLayout();
-        base.OnRecalculateLayout();
+        contentNode.Position = new Vector2(ChildIndent, HeaderHeight + FirstItemSpacing);
+
+        Height = contentNode.Y + contentNode.Height + ItemSpacing;
     }
 
     protected void RecalculateSectionLayout()
-    {
-        ApplyContentLayout();
-        contentNode.RecalculateLayout();
-        RecalculateLayout();
-    }
+        => RecalculateLayout();
 
     private void ApplyContentLayout()
     {
@@ -117,5 +129,21 @@ public abstract class MeterConfigSection : CollapsingHeaderNode
 
         contentNode.X = ChildIndent;
         contentNode.Width = Math.Max(0.0f, Width - ChildIndent);
+    }
+
+    private void SetDirectContentRowsVisible(bool isVisible)
+    {
+        foreach (var node in contentNode.Nodes)
+        {
+            node.IsVisible = isVisible;
+
+            if (node is ILayoutListNode layoutNode)
+            {
+                foreach (var childNode in layoutNode.Nodes)
+                {
+                    childNode.IsVisible = isVisible;
+                }
+            }
+        }
     }
 }

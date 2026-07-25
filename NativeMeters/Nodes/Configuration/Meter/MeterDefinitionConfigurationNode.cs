@@ -37,6 +37,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
     private readonly ScrollingNode<VerticalListNode> scrollingArea;
 
     private readonly List<MeterConfigSection> sections = [];
+    private readonly Dictionary<MeterConfigSection, bool> sectionExpandedStates = [];
 
     public MeterDefinitionConfigurationNode()
     {
@@ -100,7 +101,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
             ContentNode =
             {
                 FitContents = true,
-                FitWidth = true,
+                FitWidth = false,
                 ItemSpacing = 6.0f,
             },
             AutoHideScrollBar = true,
@@ -135,8 +136,19 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
 
         foreach (var section in sections)
         {
+            sectionExpandedStates[section] = !section.IsCollapsed;
+
             section.OnToggle = _ =>
             {
+                var isExpanded = !section.IsCollapsed;
+                if (sectionExpandedStates.TryGetValue(section, out var previousExpandedState)
+                    && previousExpandedState == isExpanded)
+                {
+                    return;
+                }
+
+                sectionExpandedStates[section] = isExpanded;
+
                 if (section is { IsCollapsed: false, IsInitialized: false })
                 {
                     section.Refresh();
@@ -205,18 +217,30 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
 
     private void HandleLayoutChange()
     {
+        RecalculateScrollingContent();
         ConfigurationNavigation.Apply(scrollingArea.ContentNode, NavigationStartIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex);
-
-        scrollingArea.RecalculateSizes();
-        ApplyScrollingContentGutter();
         OnLayoutChanged?.Invoke();
     }
 
-    private void ApplyScrollingContentGutter()
+    private void RecalculateScrollingContent()
     {
-        scrollingArea.ContentNode.Width = Math.Max(0.0f, scrollingArea.Width - ScrollbarContentGutter);
+        var oldScrollPosition = scrollingArea.ScrollBarNode.ScrollPosition;
+        var contentWidth = Math.Max(0.0f, scrollingArea.Width - ScrollbarContentGutter);
+
+        scrollingArea.RecalculateSizes();
+        scrollingArea.ContentNode.Width = contentWidth;
+
+        foreach (var section in sections)
+        {
+            section.Width = contentWidth;
+        }
+
+        // The first pass lets nested sections settle after width/visibility changes;
+        // the second pass positions siblings using those final section heights.
+        scrollingArea.ContentNode.RecalculateLayout();
         scrollingArea.ContentNode.RecalculateLayout();
         scrollingArea.ScrollBarNode.UpdateScrollParams();
+        scrollingArea.ScrollBarNode.ScrollPosition = Math.Clamp(oldScrollPosition, 0, scrollingArea.ScrollBarNode.ScrollMaxPosition);
     }
 
     private void HandlePresetSelection(string presetName)

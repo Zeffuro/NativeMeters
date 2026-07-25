@@ -173,6 +173,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         get => base.IsVisible;
         set
         {
+            var changed = base.IsVisible != value;
             base.IsVisible = value;
 
             if (value)
@@ -184,7 +185,10 @@ public sealed class ComponentVisualsPanel : VerticalListNode
                 SetAllChildVisibility(false);
             }
 
-            RecalculateLayout();
+            if (changed)
+            {
+                RecalculateLayout();
+            }
         }
     }
 
@@ -315,6 +319,5 @@ public sealed class ComponentVisualsPanel : VerticalListNode
         barFillRightToLeftCheckbox.Width = Width;
         barColorInput.Width = Width;
         barBgColorInput.Width = Width;
-        RecalculateLayout();
     }
 }

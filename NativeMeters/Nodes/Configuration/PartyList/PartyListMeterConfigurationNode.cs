@@ -24,7 +24,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
 
     private readonly PartyListMeterSettings config = System.Config.PartyListMeter;
 
-    private CheckboxNode enabledToggle = null!;
+    private CheckboxRowNode enabledToggle = null!;
     private HoldButtonNode resetButton = null!;
     private HorizontalListNode formatRow = null!;
     private LabeledTextInputNode formatInput = null!;
@@ -43,11 +43,11 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
     private ColorInputRow textColorInput = null!;
     private ColorInputRow outlineColorInput = null!;
 
-    private CheckboxNode showSelfToggle = null!;
-    private CheckboxNode showPartyToggle = null!;
-    private CheckboxNode hideWhenNoDataToggle = null!;
+    private CheckboxRowNode showSelfToggle = null!;
+    private CheckboxRowNode showPartyToggle = null!;
+    private CheckboxRowNode hideWhenNoDataToggle = null!;
     private LabeledEnumDropdownNode<PartyListMeterAnchor> anchorDropdown = null!;
-    private CheckboxNode showMemberBarsToggle = null!;
+    private CheckboxRowNode showMemberBarsToggle = null!;
     private HorizontalListNode barOffsetRow = null!;
     private HorizontalListNode barSizeRow = null!;
     private LabeledNumericInputNode barOffsetXInput = null!;
@@ -55,12 +55,12 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
     private LabeledNumericInputNode barWidthInput = null!;
     private LabeledNumericInputNode barHeightInput = null!;
     private LabeledEnumDropdownNode<ProgressBarType> barTypeDropdown = null!;
-    private CheckboxNode barFillRightToLeftToggle = null!;
+    private CheckboxRowNode barFillRightToLeftToggle = null!;
     private LabeledEnumDropdownNode<ColorMode> barColorModeDropdown = null!;
     private LabeledEnumDropdownNode<ProgressBarColorTreatment> barColorTreatmentDropdown = null!;
     private ColorInputRow barColorInput = null!;
     private ColorInputRow barBackgroundColorInput = null!;
-    private CheckboxNode showRaidDpsToggle = null!;
+    private CheckboxRowNode showRaidDpsToggle = null!;
     private HorizontalListNode raidFormatRow = null!;
     private LabeledTextInputNode raidFormatInput = null!;
     private CircleButtonNode raidFormatHelpButton = null!;
@@ -89,7 +89,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             String = "Party List Meter",
         });
 
-        enabledToggle = new CheckboxNode
+        enabledToggle = new CheckboxRowNode
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
@@ -115,7 +115,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             OnClick = ResetPartyListSettings,
         };
 
-        showSelfToggle = new CheckboxNode
+        showSelfToggle = new CheckboxRowNode
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
@@ -128,7 +128,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             },
         };
 
-        showPartyToggle = new CheckboxNode
+        showPartyToggle = new CheckboxRowNode
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
@@ -141,7 +141,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             },
         };
 
-        hideWhenNoDataToggle = new CheckboxNode
+        hideWhenNoDataToggle = new CheckboxRowNode
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
@@ -213,7 +213,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             },
         };
 
-        showMemberBarsToggle = new CheckboxNode
+        showMemberBarsToggle = new CheckboxRowNode
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
@@ -250,7 +250,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             },
         };
 
-        barFillRightToLeftToggle = new CheckboxNode
+        barFillRightToLeftToggle = new CheckboxRowNode
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
@@ -336,7 +336,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             },
         };
 
-        showRaidDpsToggle = new CheckboxNode
+        showRaidDpsToggle = new CheckboxRowNode
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
@@ -468,10 +468,16 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             },
         };
 
+        var resetRow = new HorizontalListNode
+        {
+            Size = new Vector2(360.0f, ResetButtonHeight),
+        };
+        resetRow.AddNode(resetButton);
+
         AddNode(1, new NodeBase[]
         {
-            CreateFixedHeightRow(enabledToggle),
-            CreateFixedHeightRow(resetButton, fitChildWidth: false),
+            enabledToggle,
+            resetRow,
         });
 
         AddNode(new CategoryTextNode
@@ -481,9 +487,9 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         });
         AddNode(1, new NodeBase[]
         {
-            CreateFixedHeightRow(showSelfToggle),
-            CreateFixedHeightRow(showPartyToggle),
-            CreateFixedHeightRow(hideWhenNoDataToggle),
+            showSelfToggle,
+            showPartyToggle,
+            hideWhenNoDataToggle,
             formatRow,
             anchorDropdown,
             memberOffsetRow,
@@ -498,11 +504,11 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         });
         AddNode(1, new NodeBase[]
         {
-            CreateFixedHeightRow(showMemberBarsToggle),
+            showMemberBarsToggle,
             barOffsetRow,
             barSizeRow,
             barTypeDropdown,
-            CreateFixedHeightRow(barFillRightToLeftToggle),
+            barFillRightToLeftToggle,
             barColorModeDropdown,
             barColorTreatmentDropdown,
             barColorInput,
@@ -516,7 +522,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         });
         AddNode(1, new NodeBase[]
         {
-            CreateFixedHeightRow(showRaidDpsToggle),
+            showRaidDpsToggle,
             raidFormatRow,
             raidOffsetRow,
             raidSizeRow,

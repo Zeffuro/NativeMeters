@@ -1,6 +1,7 @@
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
+using NativeMeters.Nodes.Input;
 
 namespace NativeMeters.Nodes.Configuration.PartyList;
 
@@ -122,11 +123,8 @@ internal sealed partial class PartyListMeterConfigurationNode
         outlineColorInput.IsEnabled = isEnabled;
     }
 
-    private static void SetCheckboxEnabled(CheckboxNode checkbox, bool isEnabled)
-    {
-        checkbox.IsEnabled = isEnabled;
-        checkbox.Alpha = isEnabled ? 1.0f : 0.45f;
-    }
+    private static void SetCheckboxEnabled(CheckboxRowNode checkbox, bool isEnabled)
+        => checkbox.IsEnabled = isEnabled;
 
     private static void SetButtonEnabled(CircleButtonNode button, bool isEnabled)
     {

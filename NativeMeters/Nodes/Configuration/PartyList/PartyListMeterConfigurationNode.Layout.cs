@@ -1,6 +1,5 @@
 using System;
 using System.Numerics;
-using KamiToolKit.BaseTypes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using NativeMeters.Nodes.Input;
@@ -13,12 +12,6 @@ internal sealed partial class PartyListMeterConfigurationNode
     private const float CompactInputControlWidth = 82.0f;
     private const float CompactAxisLabelWidth = 24.0f;
     private const float CompactSizeLabelWidth = 64.0f;
-
-    private static FixedHeightRowNode CreateFixedHeightRow(
-        NodeBase child,
-        float height = ControlHeight,
-        bool fitChildWidth = true)
-        => new(child, height, fitChildWidth);
 
     private static CircleButtonNode CreateFormatHelpButton()
         => new()
@@ -170,45 +163,5 @@ internal sealed partial class PartyListMeterConfigurationNode
 
         input.Size = new Vector2(Math.Min(maxInputWidth, preferredInputWidth), ControlHeight);
         row.RecalculateLayout();
-    }
-
-    private sealed class FixedHeightRowNode : ResNode
-    {
-        private readonly NodeBase child;
-        private readonly bool fitChildWidth;
-
-        public FixedHeightRowNode(NodeBase child, float height, bool fitChildWidth)
-        {
-            this.child = child;
-            this.fitChildWidth = fitChildWidth;
-
-            Height = height;
-            child.Position = Vector2.Zero;
-            child.Height = height;
-            child.AttachNode(this);
-        }
-
-        public override bool IsVisible
-        {
-            get => base.IsVisible;
-            set
-            {
-                base.IsVisible = value;
-                child.IsVisible = value;
-            }
-        }
-
-        protected override void OnSizeChanged()
-        {
-            base.OnSizeChanged();
-
-            child.Position = Vector2.Zero;
-            child.Height = Height;
-
-            if (fitChildWidth)
-            {
-                child.Width = Width;
-            }
-        }
     }
 }

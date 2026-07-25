@@ -9,9 +9,10 @@ namespace NativeMeters.Nodes.Configuration.Meter.Sections;
 public sealed class MeterGeneralSection : MeterConfigSection
 {
     private LabeledTextInputNode? nameInput;
-    private CheckboxNode? enabledCheckbox;
-    private CheckboxNode? lockedCheckbox;
-    private CheckboxNode? clickthroughCheckbox;
+    private CheckboxRowNode? enabledCheckbox;
+    private CheckboxRowNode? lockedCheckbox;
+    private CheckboxRowNode? clickthroughCheckbox;
+    private bool isLoading;
 
     public MeterGeneralSection(Func<MeterSettings> getSettings) : base(getSettings) { }
 
@@ -21,10 +22,18 @@ public sealed class MeterGeneralSection : MeterConfigSection
 
         IsInitialized = true;
 
-        nameInput!.Text = Settings.Name;
-        enabledCheckbox!.IsChecked = Settings.IsEnabled;
-        lockedCheckbox!.IsChecked = Settings.IsLocked;
-        clickthroughCheckbox!.IsChecked = Settings.IsClickthrough;
+        isLoading = true;
+        try
+        {
+            nameInput!.Text = Settings.Name;
+            enabledCheckbox!.IsChecked = Settings.IsEnabled;
+            lockedCheckbox!.IsChecked = Settings.IsLocked;
+            clickthroughCheckbox!.IsChecked = Settings.IsClickthrough;
+        }
+        finally
+        {
+            isLoading = false;
+        }
 
         RecalculateSectionLayout();
     }
@@ -39,32 +48,38 @@ public sealed class MeterGeneralSection : MeterConfigSection
         };
         AddNode(nameInput);
 
-        enabledCheckbox = new CheckboxNode
+        enabledCheckbox = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
             String = "Enabled",
             OnClick = val =>
             {
+                if (isLoading) return;
                 Settings.IsEnabled = val;
                 System.OverlayManager.Setup();
             },
         };
         AddNode(enabledCheckbox);
 
-        lockedCheckbox = new CheckboxNode
+        lockedCheckbox = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
             String = "Lock Position/Size",
-            OnClick = val => Settings.IsLocked = val,
+            OnClick = val =>
+            {
+                if (isLoading) return;
+                Settings.IsLocked = val;
+            },
         };
         AddNode(lockedCheckbox);
 
-        clickthroughCheckbox = new CheckboxNode
+        clickthroughCheckbox = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
             String = "Clickthrough",
             OnClick = val =>
             {
+                if (isLoading) return;
                 Settings.IsClickthrough = val;
                 System.OverlayManager.Setup();
             },

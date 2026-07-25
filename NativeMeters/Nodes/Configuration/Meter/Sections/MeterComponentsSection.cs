@@ -99,7 +99,8 @@ public sealed class MeterComponentsSection : MeterConfigSection
         componentsList.Clear();
 
         foreach (var component in TargetList) {
-            var node = new ComponentSettingsNode {
+            var node = new ComponentSettingsNode
+            {
                 OnLayoutChanged = RefreshSectionLayout,
                 OnChanged = () =>
                 {
@@ -123,7 +124,16 @@ public sealed class MeterComponentsSection : MeterConfigSection
                     Refresh();
                     System.OverlayManager.Setup();
                 },
-                OnToggle = _ => RefreshSectionLayout()
+            };
+
+            var wasExpanded = !node.IsCollapsed;
+            node.OnToggle = _ =>
+            {
+                var isExpanded = !node.IsCollapsed;
+                if (wasExpanded == isExpanded) return;
+
+                wasExpanded = isExpanded;
+                RefreshSectionLayout();
             };
 
             componentsList.AddNode(node);
