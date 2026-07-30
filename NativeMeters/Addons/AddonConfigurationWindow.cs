@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Classes;
@@ -13,6 +14,7 @@ using NativeMeters.Nodes.Configuration.General;
 using NativeMeters.Nodes.Configuration.Meter;
 using NativeMeters.Nodes.Configuration.PartyList;
 using NativeMeters.Nodes.Configuration.Visibility;
+using NativeMeters.Services;
 
 namespace NativeMeters.Addons;
 
@@ -168,24 +170,39 @@ public class AddonConfigurationWindow : NativeAddon
 
     protected override unsafe void OnFinalize(AtkUnitBase* addon)
     {
-        System.Config.General.PreviewEnabled = false;
-        System.OverlayManager?.UpdateActiveService();
-        System.PartyListMeterManager?.UpdateSettings();
+        var config = System.Config;
+        if (config is not null)
+        {
+            config.General.PreviewEnabled = false;
+        }
+
+        if (Service.Framework is not null)
+        {
+            System.OverlayManager?.UpdateActiveService();
+            System.PartyListMeterManager?.UpdateSettings();
+        }
+
         addMeterDialog.OnMeterCreated = null;
 
-        ConfigRepository.Save(System.Config);
+        if (config is not null)
+        {
+            ConfigRepository.Save(config);
+        }
+
         base.OnFinalize(addon);
     }
 
     protected override unsafe void OnHide(AtkUnitBase* addon)
     {
         addMeterDialog.Close();
+        System.TextFlagsPickerAddon?.Close();
         base.OnHide(addon);
     }
 
     public override void Dispose()
     {
         addMeterDialog.Close();
+        System.TextFlagsPickerAddon?.Close();
         addMeterDialog.OnMeterCreated = null;
         addMeterDialog.Dispose();
         base.Dispose();
@@ -193,7 +210,18 @@ public class AddonConfigurationWindow : NativeAddon
 
     public override async ValueTask DisposeAsync()
     {
+        if (ThreadSafety.IsMainThread)
+        {
+            Dispose();
+            return;
+        }
+
         await addMeterDialog.CloseAsync();
+        if (System.TextFlagsPickerAddon is not null)
+        {
+            await System.TextFlagsPickerAddon.CloseAsync();
+        }
+
         addMeterDialog.OnMeterCreated = null;
         await addMeterDialog.DisposeAsync();
         await base.DisposeAsync();

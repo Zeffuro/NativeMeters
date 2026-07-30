@@ -9,6 +9,7 @@ using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Extensions;
+using NativeMeters.Nodes.Components.Gauge;
 
 namespace NativeMeters.Nodes.Components;
 
@@ -374,7 +375,7 @@ public abstract unsafe class ComponentGaugeProgressNode : ComponentNode<AtkCompo
             _ => style.BarColorMode,
         };
 
-    private static Vector4 GetNodeColor(KamiToolKit.BaseTypes.NodeBase node, ComponentGaugeProgressColorMode colorMode)
+    private static Vector4 GetNodeColor(NodeBase node, ComponentGaugeProgressColorMode colorMode)
         => colorMode switch
         {
             ComponentGaugeProgressColorMode.LegacyAdditive => new Vector4(node.AddColor.X, node.AddColor.Y, node.AddColor.Z, node.Color.W),
@@ -386,11 +387,10 @@ public abstract unsafe class ComponentGaugeProgressNode : ComponentNode<AtkCompo
                 node.Color.W),
             ComponentGaugeProgressColorMode.Multiply => new Vector4(node.MultiplyColor.X, node.MultiplyColor.Y, node.MultiplyColor.Z, node.Color.W),
             ComponentGaugeProgressColorMode.TextureAlpha => new Vector4(1.0f, 1.0f, 1.0f, node.Color.W),
-            ComponentGaugeProgressColorMode.Flat => node.Color,
             _ => node.Color,
         };
 
-    private static void ApplyNodeColor(KamiToolKit.BaseTypes.NodeBase node, Vector4 value, ComponentGaugeProgressColorMode colorMode, Vector3? additiveMultiplyColor = null)
+    private static void ApplyNodeColor(NodeBase node, Vector4 value, ComponentGaugeProgressColorMode colorMode, Vector3? additiveMultiplyColor = null)
     {
         if (colorMode == ComponentGaugeProgressColorMode.Additive || colorMode == ComponentGaugeProgressColorMode.LegacyAdditive)
         {
@@ -433,78 +433,4 @@ public abstract unsafe class ComponentGaugeProgressNode : ComponentNode<AtkCompo
         node.MultiplyColor = Vector3.One;
         node.AddColor = Vector3.Zero;
     }
-}
-
-public sealed class ComponentGaugeProgressStyle
-{
-    public required IReadOnlyList<Part> Parts { get; init; }
-    public uint PartsListId { get; init; }
-    public float? NativeWidth { get; init; }
-    public float? NativeHeight { get; init; }
-    public float? GaugeNativeWidth { get; init; }
-    public float TransitionFillHeight { get; init; }
-    public ComponentGaugeImageNodeStyle Backdrop { get; init; } = null!;
-    public ComponentGaugeNineGridNodeStyle? StaticBackdrop { get; init; }
-    public ComponentGaugeNineGridNodeStyle MainFill { get; init; } = null!;
-    public ComponentGaugeNineGridNodeStyle? IncreaseFill { get; init; }
-    public ComponentGaugeNineGridNodeStyle? DecreaseFill { get; init; }
-    public ComponentGaugeNineGridNodeStyle? Border { get; init; }
-    public ComponentGaugeImageNodeStyle? BorderImage { get; init; }
-    public bool UseGaugeBorderSlot { get; init; }
-    public ComponentGaugeProgressColorMode BackgroundColorMode { get; init; } = ComponentGaugeProgressColorMode.Multiply;
-    public ComponentGaugeProgressColorMode BarColorMode { get; init; } = ComponentGaugeProgressColorMode.Multiply;
-    public ComponentGaugeProgressColorMode? NativeBarColorMode { get; init; }
-    public ComponentGaugeProgressFillDirection FillDirection { get; init; } = ComponentGaugeProgressFillDirection.LeftToRight;
-}
-
-public sealed class ComponentGaugeImageNodeStyle
-{
-    public uint NodeId { get; init; }
-    public uint PartId { get; init; }
-    public Vector2 Position { get; init; }
-    public Vector2 Size { get; init; }
-    public Vector2 Origin { get; init; }
-    public NodeFlags NodeFlags { get; init; }
-    public DrawFlags DrawFlags { get; init; }
-    public WrapMode WrapMode { get; init; } = WrapMode.Tile;
-    public ImageNodeFlags ImageFlags { get; init; }
-    public Vector4 Color { get; init; } = Vector4.One;
-    public Vector3 MultiplyColor { get; init; } = Vector3.One;
-    public Vector3 AddColor { get; init; } = Vector3.Zero;
-}
-
-public sealed class ComponentGaugeNineGridNodeStyle
-{
-    public uint NodeId { get; init; }
-    public uint PartId { get; init; }
-    public Vector2 Position { get; init; }
-    public Vector2 Size { get; init; }
-    public Vector2 Origin { get; init; }
-    public NodeFlags NodeFlags { get; init; }
-    public DrawFlags DrawFlags { get; init; }
-    public float TopOffset { get; init; }
-    public float BottomOffset { get; init; }
-    public float LeftOffset { get; init; }
-    public float RightOffset { get; init; }
-    public uint BlendMode { get; init; }
-    public byte PartsRenderType { get; init; }
-    public Vector4 Color { get; init; } = Vector4.One;
-    public Vector3 MultiplyColor { get; init; } = Vector3.One;
-    public Vector3 AddColor { get; init; } = Vector3.Zero;
-}
-
-public enum ComponentGaugeProgressColorMode
-{
-    Multiply,
-    Additive,
-    LegacyAdditive,
-    BrightAdditive,
-    TextureAlpha,
-    Flat,
-}
-
-public enum ComponentGaugeProgressFillDirection
-{
-    LeftToRight,
-    RightToLeft,
 }

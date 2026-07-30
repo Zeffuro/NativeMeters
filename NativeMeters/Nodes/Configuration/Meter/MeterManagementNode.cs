@@ -84,12 +84,12 @@ public class MeterManagementNode : SimpleComponentNode
             ItemSpacing = 2.0f,
             OptionsList = meterSettings,
             OnItemSelected = SelectMeter,
-            NoResultsString = "No meters found.",
             NavIndex = 7,
             NavUp = 6,
             NavDown = 100,
             NavRight = 150,
         };
+        selectionListNode.NoResultsTextNode.String = "No meters found.";
 
         buttonRow = new HorizontalFlexNode
         {
@@ -197,6 +197,11 @@ public class MeterManagementNode : SimpleComponentNode
 
     private void SelectMeter(MeterSettings? meter)
     {
+        if (!ReferenceEquals(selectedMeter, meter))
+        {
+            System.TextFlagsPickerAddon?.Close();
+        }
+
         selectedMeter = meter;
         removeButtonNode.IsEnabled = meter is not null;
         configNode.SelectEntry(meter);

@@ -34,6 +34,11 @@ public class MeterService : MeterServiceBase, IDisposable
         if (System.Config.ConnectionSettings.SelectedConnectionType == ConnectionType.Internal)
             return;
 
+        if (activeConnection != null)
+            return;
+
+        isManuallyDisabled = false;
+
         // Pre-warm the JSON deserializer to prevent a 500ms hitch on the first message
         Task.Run(PreWarmJsonDeserializer);
 
@@ -133,7 +138,7 @@ public class MeterService : MeterServiceBase, IDisposable
     }
 
     public void RequestReconnect() => reconnectionManager.RequestReconnect();
-    public override void ClearMeter() { CombatData = null; InvokeCombatDataUpdated(); SendChatCommand("clear"); }
+    public override void ClearMeter() { ResetLocalData(); SendChatCommand("clear"); }
     public override void EndEncounter()
     {
         if (System.Config.General.EnableEncounterHistory)
@@ -161,8 +166,9 @@ public class MeterService : MeterServiceBase, IDisposable
     {
         isManuallyDisabled = true;
         activeConnection?.Dispose();
+        activeConnection = null;
         messageQueue.Clear();
-        CombatData = null;
+        ResetLocalData();
     }
 
     private const string JsonWarmupPayload = """

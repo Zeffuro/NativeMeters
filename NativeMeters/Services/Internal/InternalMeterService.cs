@@ -10,13 +10,19 @@ public class InternalMeterService : MeterServiceBase, IDisposable
     private readonly NetworkCombatParser networkParser = new();
 
     private bool disposed;
+    private bool enabled;
     private DateTime lastEmit = DateTime.MinValue;
     private const int EmitIntervalMs = 500;
 
-    public override bool IsConnected => !disposed;
+    public bool IsDisposed => disposed;
+
+    public override bool IsConnected => enabled && !disposed;
 
     public void Enable()
     {
+        if (disposed || enabled) return;
+
+        enabled = true;
         networkParser.OnActionResult += combatTracker.HandleActionResult;
         networkParser.OnActorDeath += combatTracker.HandleDeath;
         networkParser.Enable();
@@ -67,8 +73,14 @@ public class InternalMeterService : MeterServiceBase, IDisposable
     {
         combatTracker.Reset();
         networkParser.ResetTracking();
-        CombatData = null;
-        InvokeCombatDataUpdated();
+        base.ResetLocalData();
+    }
+
+    public override void ResetLocalData()
+    {
+        combatTracker.Reset();
+        networkParser.ResetTracking();
+        base.ResetLocalData();
     }
 
     public override void EndEncounter()
@@ -86,11 +98,18 @@ public class InternalMeterService : MeterServiceBase, IDisposable
     public void Dispose()
     {
         if (disposed) return;
-        disposed = true;
+        var wasEnabled = enabled;
 
-        Service.Framework.Update -= OnFrameworkTick;
-        networkParser.OnActionResult -= combatTracker.HandleActionResult;
-        networkParser.OnActorDeath -= combatTracker.HandleDeath;
+        disposed = true;
+        enabled = false;
+
+        if (wasEnabled)
+        {
+            Service.Framework.Update -= OnFrameworkTick;
+            networkParser.OnActionResult -= combatTracker.HandleActionResult;
+            networkParser.OnActorDeath -= combatTracker.HandleDeath;
+        }
+
         networkParser.Dispose();
         combatTracker.Reset();
         CombatData = null;

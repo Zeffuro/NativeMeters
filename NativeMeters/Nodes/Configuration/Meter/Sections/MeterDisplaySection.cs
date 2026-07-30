@@ -37,7 +37,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
     private CheckboxRowNode? selfTextStyleToggle;
     private LabeledNumericInputNode? selfTextFontSizeInput;
     private LabeledEnumDropdownNode<FontType>? selfTextFontTypeDropdown;
-    private LabeledEnumDropdownNode<TextFlags>? selfTextFlagsDropdown;
+    private LabeledTextFlagsInputNode? selfTextFlagsInput;
     private bool isLoading;
 
     public MeterDisplaySection(Func<MeterSettings> getSettings) : base(getSettings) { }
@@ -90,7 +90,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
             selfTextStyleToggle!.IsChecked = SelfRowOverride.OverrideTextStyle;
             selfTextFontSizeInput!.Value = (int)SelfRowOverride.TextFontSize;
             selfTextFontTypeDropdown!.SelectedOption = SelfRowOverride.TextFontType;
-            selfTextFlagsDropdown!.SelectedOption = SelfRowOverride.TextFlags;
+            selfTextFlagsInput!.Value = SelfRowOverride.TextFlags;
         }
         finally
         {
@@ -410,13 +410,11 @@ public sealed class MeterDisplaySection : MeterConfigSection
             },
         };
 
-        selfTextFlagsDropdown = new LabeledEnumDropdownNode<TextFlags>
+        selfTextFlagsInput = new LabeledTextFlagsInputNode
         {
-            Size = new Vector2(Width, 28),
+            Width = Width,
             LabelText = "Self Text Style:",
-            Options = Enum.GetValues<TextFlags>().ToList(),
-            SelectedOption = SelfRowOverride.TextFlags,
-            OnOptionSelected = val =>
+            OnValueChanged = val =>
             {
                 if (isLoading) return;
                 SelfRowOverride.TextFlags = val;
@@ -462,7 +460,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         AddTab(1);
         AddNode(selfTextFontSizeInput);
         AddNode(selfTextFontTypeDropdown);
-        AddNode(selfTextFlagsDropdown);
+        AddNode(selfTextFlagsInput);
         SubtractTab(1);
         SubtractTab(1);
 
@@ -495,7 +493,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
             || selfTextStyleToggle == null
             || selfTextFontSizeInput == null
             || selfTextFontTypeDropdown == null
-            || selfTextFlagsDropdown == null)
+            || selfTextFlagsInput == null)
         {
             return;
         }
@@ -516,7 +514,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         selfTextStyleToggle.IsVisible = true;
         selfTextFontSizeInput.IsVisible = true;
         selfTextFontTypeDropdown.IsVisible = true;
-        selfTextFlagsDropdown.IsVisible = true;
+        selfTextFlagsInput.IsVisible = true;
 
         selfTextTargetDropdown.IsEnabled = isEnabled;
         SetCheckboxEnabled(selfTextColorToggle, isEnabled);
@@ -528,7 +526,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         SetCheckboxEnabled(selfTextStyleToggle, isEnabled);
         selfTextFontSizeInput.IsEnabled = isTextStyleEnabled;
         selfTextFontTypeDropdown.IsEnabled = isTextStyleEnabled;
-        selfTextFlagsDropdown.IsEnabled = isTextStyleEnabled;
+        selfTextFlagsInput.IsEnabled = isTextStyleEnabled;
     }
 
     private static void SetCheckboxEnabled(CheckboxRowNode checkbox, bool isEnabled)

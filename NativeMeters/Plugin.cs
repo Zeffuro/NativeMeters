@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using Dalamud.Utility;
 using KamiToolKit;
+using KamiToolKit.BaseTypes;
 using NativeMeters.Addons;
 using NativeMeters.Clients;
 using NativeMeters.Commands;
@@ -49,6 +51,13 @@ public class Plugin : IAsyncDalamudPlugin
 
         System.TagSearchAddon = new TagSearchAddon { Title = "Search Tags", InternalName = "NativeMeters_TagPicker", Size = new Vector2(480, 600) };
         System.IconSearchAddon = new IconSearchAddon { Title = "Select Icon", InternalName = "NativeMeters_IconPicker" };
+        System.TextFlagsPickerAddon = new TextFlagsPickerAddon
+        {
+            Title = "Text Flags",
+            InternalName = "NativeMeters_TextFlags",
+            Size = new Vector2(240.0f, 340.0f),
+            RememberClosePosition = false,
+        };
 
         System.AddonConfigurationWindow = new AddonConfigurationWindow
         {
@@ -76,6 +85,7 @@ public class Plugin : IAsyncDalamudPlugin
 
         Service.Framework.Update += OnFrameworkUpdate;
         Service.ClientState.Login += OnLogin;
+        Service.ClientState.Logout += OnLogout;
 
         if (Service.ClientState.IsLoggedIn) {
             try {
@@ -126,6 +136,25 @@ public class Plugin : IAsyncDalamudPlugin
         }
     }
 
+    private void OnLogout(int type, int code)
+    {
+        if (isDisposed) return;
+
+        hasHandledLogin = false;
+
+        try
+        {
+            System.MeterService?.ResetLocalData();
+            System.InternalMeterService?.ResetLocalData();
+            System.TestMeterService?.ResetLocalData();
+            System.PartyListMeterManager?.UpdateSettings();
+        }
+        catch (Exception exception)
+        {
+            Service.Logger.Error(exception, "Failed to reset NativeMeters state after logout.");
+        }
+    }
+
     public async ValueTask DisposeAsync()
     {
         if (isDisposed) return;
@@ -135,6 +164,7 @@ public class Plugin : IAsyncDalamudPlugin
         {
             Service.Framework.Update -= OnFrameworkUpdate;
             Service.ClientState.Login -= OnLogin;
+            Service.ClientState.Logout -= OnLogout;
 
             if (System.AddonConfigurationWindow is not null)
             {
@@ -148,30 +178,32 @@ public class Plugin : IAsyncDalamudPlugin
             }
 
             System.CommandHandler?.Dispose();
-            await Service.Framework.RunSafely(() => System.PartyListMeterManager?.Dispose());
+            await Service.Framework.RunOnFrameworkThreadIfNeeded(() => System.PartyListMeterManager?.Dispose());
+
             if (System.OverlayManager is not null)
             {
                 await System.OverlayManager.DisposeAsync();
             }
-            await Service.Framework.RunSafely(NodeDisposalExtensions.FlushPendingNodeDisposals);
+            await Service.Framework.RunOnFrameworkThreadIfNeeded(NodeDisposalExtensions.FlushPendingNodeDisposals);
 
             if (!Service.Framework.IsFrameworkUnloading)
             {
                 await ColorInputRow.DisposeSharedColorPicker();
-                if (System.TagSearchAddon is not null) await System.TagSearchAddon.DisposeAsync();
-                if (System.IconSearchAddon is not null) await System.IconSearchAddon.DisposeAsync();
-                if (System.AddonConfigurationWindow is not null) await System.AddonConfigurationWindow.DisposeAsync();
-                if (System.AddonDetailedBreakdownWindow is not null) await System.AddonDetailedBreakdownWindow.DisposeAsync();
+                await DisposeNativeAddon(System.TagSearchAddon);
+                await DisposeNativeAddon(System.IconSearchAddon);
+                await DisposeNativeAddon(System.TextFlagsPickerAddon);
+                await DisposeNativeAddon(System.AddonConfigurationWindow);
+                await DisposeNativeAddon(System.AddonDetailedBreakdownWindow);
             }
 
-            await Service.Framework.RunSafely(() => System.OverlayController?.Dispose());
+            await Service.Framework.RunOnFrameworkThreadIfNeeded(() => System.OverlayController?.Dispose());
 
             System.DtrService?.Dispose();
             System.TestMeterService?.Dispose();
             System.InternalMeterService?.Dispose();
             System.MeterService?.Dispose();
 
-            await Service.Framework.RunSafely(KamiToolKitLibrary.Dispose);
+            await Service.Framework.RunOnFrameworkThreadIfNeeded(KamiToolKitLibrary.Dispose);
         }
         finally
         {
@@ -180,5 +212,19 @@ public class Plugin : IAsyncDalamudPlugin
             Service.Clear();
             PluginInterface = null!;
         }
+    }
+
+    private static async ValueTask DisposeNativeAddon(NativeAddon? addon)
+    {
+        if (addon is null)
+            return;
+
+        if (ThreadSafety.IsMainThread)
+        {
+            addon.Dispose();
+            return;
+        }
+
+        await addon.DisposeAsync();
     }
 }

@@ -16,6 +16,7 @@ public interface IMeterService
 
     // --- Management Methods ---
     void ClearMeter();
+    void ResetLocalData();
     void EndEncounter();
     void Reconnect();
 

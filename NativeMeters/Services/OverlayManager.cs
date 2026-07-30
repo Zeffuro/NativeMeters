@@ -60,13 +60,7 @@ public class OverlayManager : IAsyncDisposable, IDisposable {
 
     private async ValueTask DetachAndDisposeAllAsync()
     {
-        if (Service.Framework.IsFrameworkUnloading)
-        {
-            activeMeters.Clear();
-            return;
-        }
-
-        await Service.Framework.RunSafely(DetachAndDisposeAllOnFrameworkThread);
+        await Service.Framework.RunOnFrameworkThreadIfNeeded(DetachAndDisposeAllOnFrameworkThread);
     }
 
     private void DetachAndDisposeAllOnFrameworkThread()

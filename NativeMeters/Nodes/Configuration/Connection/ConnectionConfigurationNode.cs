@@ -248,6 +248,9 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
     private void OnFrameworkUpdate(IFramework framework)
     {
+        if (System.ActiveMeterService is null)
+            return;
+
         bool isConnected = System.ActiveMeterService.IsConnected;
 
         statusNode.LabelText = isConnected ? "Status: Connected" : "Status: Disconnected";
@@ -258,7 +261,11 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
     protected override void Dispose(bool isNativeDestructor)
     {
-        Service.Framework.Update -= OnFrameworkUpdate;
+        if (Service.Framework is not null)
+        {
+            Service.Framework.Update -= OnFrameworkUpdate;
+        }
+
         base.Dispose(isNativeDestructor);
     }
 }

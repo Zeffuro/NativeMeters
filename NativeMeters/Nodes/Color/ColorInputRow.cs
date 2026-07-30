@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using System.Threading.Tasks;
 using AetherBags.Nodes.Color;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addons;
 using KamiToolKit.Nodes;
@@ -122,10 +123,17 @@ public class ColorInputRow : HorizontalListNode
 
     public static async ValueTask DisposeSharedColorPicker()
     {
-        //await Task.WhenAll( _sharedColorPickerAddon?.DisposeAsync().AsTask() ?? Task.CompletedTask);
         if (_sharedColorPickerAddon != null)
         {
-            await _sharedColorPickerAddon.DisposeAsync();
+            if (ThreadSafety.IsMainThread)
+            {
+                _sharedColorPickerAddon.Dispose();
+            }
+            else
+            {
+                await _sharedColorPickerAddon.DisposeAsync();
+            }
+
             _sharedColorPickerAddon = null;
         }
     }

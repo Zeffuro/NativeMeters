@@ -27,6 +27,11 @@ internal sealed partial class PartyListMeterConfigurationNode
             showPartyToggle.IsChecked = config.ShowPartyMembers;
             hideWhenNoDataToggle.IsChecked = config.HideWhenNoCombatData;
             formatInput.Text = config.MemberFormat;
+            highlightTopMemberToggle.IsChecked = config.HighlightTopMember;
+            topMemberStatDropdown.SelectedOption = config.TopMemberStat;
+            topMemberFormatInput.Text = config.TopMemberFormat;
+            topMemberTextColorInput.CurrentColor = config.TopMemberTextColor;
+            topMemberTextColorInput.DefaultColor = defaults.TopMemberTextColor;
             anchorDropdown.SelectedOption = config.Anchor;
             offsetXInput.Value = config.OffsetX;
             offsetYInput.Value = config.OffsetY;
@@ -55,10 +60,17 @@ internal sealed partial class PartyListMeterConfigurationNode
             raidWidthInput.Value = config.RaidWidth;
             raidHeightInput.Value = config.RaidHeight;
             raidAlignmentDropdown.SelectedOption = config.RaidAlignment;
+            raidFontSizeInput.Value = (int)config.RaidFontSize;
+            raidFontTypeDropdown.SelectedOption = config.RaidFontType;
+            raidTextFlagsInput.Value = config.RaidTextFlags;
+            raidTextColorInput.CurrentColor = config.RaidTextColor;
+            raidTextColorInput.DefaultColor = defaults.RaidTextColor;
+            raidOutlineColorInput.CurrentColor = config.RaidTextOutlineColor;
+            raidOutlineColorInput.DefaultColor = defaults.RaidTextOutlineColor;
 
             fontSizeInput.Value = (int)config.FontSize;
             fontTypeDropdown.SelectedOption = config.FontType;
-            textFlagsDropdown.SelectedOption = config.TextFlags;
+            textFlagsInput.Value = config.TextFlags;
             textColorInput.CurrentColor = config.TextColor;
             textColorInput.DefaultColor = defaults.TextColor;
             outlineColorInput.CurrentColor = config.TextOutlineColor;
@@ -83,15 +95,22 @@ internal sealed partial class PartyListMeterConfigurationNode
         SetCheckboxEnabled(showSelfToggle, isEnabled);
         SetCheckboxEnabled(showPartyToggle, isEnabled);
         SetCheckboxEnabled(hideWhenNoDataToggle, isEnabled);
+        SetCheckboxEnabled(highlightTopMemberToggle, isEnabled);
         SetCheckboxEnabled(showMemberBarsToggle, isEnabled);
         SetCheckboxEnabled(showRaidDpsToggle, isEnabled);
 
         var areMemberBarsEnabled = isEnabled && config.ShowMemberBars;
         var isRaidDpsEnabled = isEnabled && config.ShowRaidDps;
+        var isTopMemberEnabled = isEnabled && config.HighlightTopMember;
 
         formatInput.IsEnabled = isEnabled;
         SetButtonEnabled(formatHelpButton, isEnabled);
         SetButtonEnabled(browseTagButton, isEnabled);
+        topMemberStatDropdown.IsEnabled = isTopMemberEnabled;
+        topMemberFormatInput.IsEnabled = isTopMemberEnabled;
+        SetButtonEnabled(topMemberFormatHelpButton, isTopMemberEnabled);
+        SetButtonEnabled(topMemberBrowseTagButton, isTopMemberEnabled);
+        topMemberTextColorInput.IsEnabled = isTopMemberEnabled;
         anchorDropdown.IsEnabled = isEnabled;
         offsetXInput.IsEnabled = isEnabled;
         offsetYInput.IsEnabled = isEnabled;
@@ -116,9 +135,14 @@ internal sealed partial class PartyListMeterConfigurationNode
         raidWidthInput.IsEnabled = isRaidDpsEnabled;
         raidHeightInput.IsEnabled = isRaidDpsEnabled;
         raidAlignmentDropdown.IsEnabled = isRaidDpsEnabled;
+        raidFontSizeInput.IsEnabled = isRaidDpsEnabled;
+        raidFontTypeDropdown.IsEnabled = isRaidDpsEnabled;
+        raidTextFlagsInput.IsEnabled = isRaidDpsEnabled;
+        raidTextColorInput.IsEnabled = isRaidDpsEnabled;
+        raidOutlineColorInput.IsEnabled = isRaidDpsEnabled;
         fontSizeInput.IsEnabled = isEnabled;
         fontTypeDropdown.IsEnabled = isEnabled;
-        textFlagsDropdown.IsEnabled = isEnabled;
+        textFlagsInput.IsEnabled = isEnabled;
         textColorInput.IsEnabled = isEnabled;
         outlineColorInput.IsEnabled = isEnabled;
     }

@@ -8,6 +8,7 @@ using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
+using NativeMeters.Data.Stats;
 using NativeMeters.Nodes.Color;
 using NativeMeters.Nodes.Input;
 using NativeMeters.Tags;
@@ -30,15 +31,22 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
     private LabeledTextInputNode formatInput = null!;
     private CircleButtonNode formatHelpButton = null!;
     private CircleButtonNode browseTagButton = null!;
-    private HorizontalListNode memberOffsetRow = null!;
-    private HorizontalListNode memberSizeRow = null!;
+    private CheckboxRowNode highlightTopMemberToggle = null!;
+    private LabeledDropdownNode topMemberStatDropdown = null!;
+    private HorizontalListNode topMemberFormatRow = null!;
+    private LabeledTextInputNode topMemberFormatInput = null!;
+    private CircleButtonNode topMemberFormatHelpButton = null!;
+    private CircleButtonNode topMemberBrowseTagButton = null!;
+    private ColorInputRow topMemberTextColorInput = null!;
+    private LabeledInputPairRowNode memberOffsetRow = null!;
+    private LabeledInputPairRowNode memberSizeRow = null!;
     private LabeledNumericInputNode offsetXInput = null!;
     private LabeledNumericInputNode offsetYInput = null!;
     private LabeledNumericInputNode widthInput = null!;
     private LabeledNumericInputNode heightInput = null!;
     private LabeledNumericInputNode fontSizeInput = null!;
     private LabeledEnumDropdownNode<FontType> fontTypeDropdown = null!;
-    private LabeledEnumDropdownNode<TextFlags> textFlagsDropdown = null!;
+    private LabeledTextFlagsInputNode textFlagsInput = null!;
     private LabeledEnumDropdownNode<AlignmentType> memberAlignmentDropdown = null!;
     private ColorInputRow textColorInput = null!;
     private ColorInputRow outlineColorInput = null!;
@@ -48,8 +56,8 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
     private CheckboxRowNode hideWhenNoDataToggle = null!;
     private LabeledEnumDropdownNode<PartyListMeterAnchor> anchorDropdown = null!;
     private CheckboxRowNode showMemberBarsToggle = null!;
-    private HorizontalListNode barOffsetRow = null!;
-    private HorizontalListNode barSizeRow = null!;
+    private LabeledInputPairRowNode barOffsetRow = null!;
+    private LabeledInputPairRowNode barSizeRow = null!;
     private LabeledNumericInputNode barOffsetXInput = null!;
     private LabeledNumericInputNode barOffsetYInput = null!;
     private LabeledNumericInputNode barWidthInput = null!;
@@ -65,13 +73,18 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
     private LabeledTextInputNode raidFormatInput = null!;
     private CircleButtonNode raidFormatHelpButton = null!;
     private CircleButtonNode raidBrowseTagButton = null!;
-    private HorizontalListNode raidOffsetRow = null!;
-    private HorizontalListNode raidSizeRow = null!;
+    private LabeledInputPairRowNode raidOffsetRow = null!;
+    private LabeledInputPairRowNode raidSizeRow = null!;
     private LabeledNumericInputNode raidOffsetXInput = null!;
     private LabeledNumericInputNode raidOffsetYInput = null!;
     private LabeledNumericInputNode raidWidthInput = null!;
     private LabeledNumericInputNode raidHeightInput = null!;
     private LabeledEnumDropdownNode<AlignmentType> raidAlignmentDropdown = null!;
+    private LabeledNumericInputNode raidFontSizeInput = null!;
+    private LabeledEnumDropdownNode<FontType> raidFontTypeDropdown = null!;
+    private LabeledTextFlagsInputNode raidTextFlagsInput = null!;
+    private ColorInputRow raidTextColorInput = null!;
+    private ColorInputRow raidOutlineColorInput = null!;
 
     private bool isDisposed;
     private bool isLoading;
@@ -177,6 +190,80 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         browseTagButton = CreateTagBrowserButton(() => OpenTagPicker(formatInput));
         formatRow.AddNode(new NodeBase[] { formatInput, formatHelpButton, browseTagButton });
 
+        highlightTopMemberToggle = new CheckboxRowNode
+        {
+            Size = new Vector2(360.0f, CheckboxHeight),
+            IsVisible = true,
+            String = "Highlight Top Member",
+            IsChecked = config.HighlightTopMember,
+            TextTooltip = "Applies a separate member text format and color to the highest party member for the selected stat.",
+            OnClick = isChecked =>
+            {
+                config.HighlightTopMember = isChecked;
+                SaveAndUpdate();
+                ApplyEnabledState();
+            },
+        };
+
+        topMemberStatDropdown = new LabeledDropdownNode
+        {
+            Size = new Vector2(360, ControlHeight),
+            LabelText = "Top Stat:",
+            Options = StatSelector.GetAvailableStatSelectors(),
+            SelectedOption = config.TopMemberStat,
+            OnOptionSelected = value =>
+            {
+                config.TopMemberStat = StatSelector.NormalizeStatSelector(value);
+                SaveAndUpdate();
+            },
+        };
+
+        topMemberFormatRow = new HorizontalListNode
+        {
+            Size = new Vector2(420, ControlHeight),
+            ItemSpacing = 2.0f,
+        };
+
+        topMemberFormatInput = new LabeledTextInputNode
+        {
+            Size = new Vector2(360, ControlHeight),
+            LabelText = "Top Format:",
+            Text = config.TopMemberFormat,
+            Placeholder = "[dps:c.1]",
+            OnInputComplete = value =>
+            {
+                config.TopMemberFormat = value.ToString();
+                SaveAndUpdate();
+            },
+        };
+
+        topMemberFormatHelpButton = CreateFormatHelpButton();
+        topMemberBrowseTagButton = CreateTagBrowserButton(() => OpenTagPicker(topMemberFormatInput));
+        topMemberFormatRow.AddNode(new NodeBase[] { topMemberFormatInput, topMemberFormatHelpButton, topMemberBrowseTagButton });
+
+        topMemberTextColorInput = new ColorInputRow
+        {
+            Label = "Top Text Color: ",
+            Size = new Vector2(Width, ControlHeight),
+            DefaultColor = new PartyListMeterSettings().TopMemberTextColor,
+            CurrentColor = config.TopMemberTextColor,
+            OnColorConfirmed = color =>
+            {
+                config.TopMemberTextColor = color;
+                SaveAndUpdate();
+            },
+            OnColorCanceled = color =>
+            {
+                config.TopMemberTextColor = color;
+                SaveAndUpdate();
+            },
+            OnColorPreviewed = color =>
+            {
+                config.TopMemberTextColor = color;
+                System.PartyListMeterManager?.UpdateSettings();
+            },
+        };
+
         anchorDropdown = new LabeledEnumDropdownNode<PartyListMeterAnchor>
         {
             Size = new Vector2(360, ControlHeight),
@@ -190,15 +277,15 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             },
         };
 
-        memberOffsetRow = CreatePairedInputRow();
-        memberSizeRow = CreatePairedInputRow();
+        memberOffsetRow = CreatePairedInputRow("Position:");
+        memberSizeRow = CreatePairedInputRow("Size:");
         offsetXInput = CreateCompactNumericInput("X:", config.OffsetX, -500, 500, value => config.OffsetX = value);
         offsetYInput = CreateCompactNumericInput("Y:", config.OffsetY, -500, 500, value => config.OffsetY = value);
         widthInput = CreateCompactNumericInput("Width:", config.Width, 1, 500, value => config.Width = value);
         heightInput = CreateCompactNumericInput("Height:", config.Height, 1, 100, value => config.Height = value);
         fontSizeInput = CreateNumericInput("Font Size:", (int)config.FontSize, 6, 72, value => config.FontSize = (uint)value);
-        memberOffsetRow.AddNode(new NodeBase[] { offsetXInput, offsetYInput });
-        memberSizeRow.AddNode(new NodeBase[] { widthInput, heightInput });
+        memberOffsetRow.AddInputPair(offsetXInput, offsetYInput);
+        memberSizeRow.AddInputPair(widthInput, heightInput);
 
         memberAlignmentDropdown = new LabeledEnumDropdownNode<AlignmentType>
         {
@@ -228,14 +315,14 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             },
         };
 
-        barOffsetRow = CreatePairedInputRow();
-        barSizeRow = CreatePairedInputRow();
+        barOffsetRow = CreatePairedInputRow("Position:");
+        barSizeRow = CreatePairedInputRow("Size:");
         barOffsetXInput = CreateCompactNumericInput("X:", config.BarOffsetX, -500, 500, value => config.BarOffsetX = value);
         barOffsetYInput = CreateCompactNumericInput("Y:", config.BarOffsetY, -500, 500, value => config.BarOffsetY = value);
         barWidthInput = CreateCompactNumericInput("Width:", config.BarWidth, 1, 500, value => config.BarWidth = value);
         barHeightInput = CreateCompactNumericInput("Height:", config.BarHeight, 1, 100, value => config.BarHeight = value);
-        barOffsetRow.AddNode(new NodeBase[] { barOffsetXInput, barOffsetYInput });
-        barSizeRow.AddNode(new NodeBase[] { barWidthInput, barHeightInput });
+        barOffsetRow.AddInputPair(barOffsetXInput, barOffsetYInput);
+        barSizeRow.AddInputPair(barWidthInput, barHeightInput);
 
         barTypeDropdown = new LabeledEnumDropdownNode<ProgressBarType>
         {
@@ -374,14 +461,14 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         raidBrowseTagButton = CreateTagBrowserButton(() => OpenTagPicker(raidFormatInput));
         raidFormatRow.AddNode(new NodeBase[] { raidFormatInput, raidFormatHelpButton, raidBrowseTagButton });
 
-        raidOffsetRow = CreatePairedInputRow();
-        raidSizeRow = CreatePairedInputRow();
+        raidOffsetRow = CreatePairedInputRow("Position:");
+        raidSizeRow = CreatePairedInputRow("Size:");
         raidOffsetXInput = CreateCompactNumericInput("X:", config.RaidOffsetX, -500, 500, value => config.RaidOffsetX = value);
         raidOffsetYInput = CreateCompactNumericInput("Y:", config.RaidOffsetY, -500, 500, value => config.RaidOffsetY = value);
         raidWidthInput = CreateCompactNumericInput("Width:", config.RaidWidth, 1, 500, value => config.RaidWidth = value);
         raidHeightInput = CreateCompactNumericInput("Height:", config.RaidHeight, 1, 100, value => config.RaidHeight = value);
-        raidOffsetRow.AddNode(new NodeBase[] { raidOffsetXInput, raidOffsetYInput });
-        raidSizeRow.AddNode(new NodeBase[] { raidWidthInput, raidHeightInput });
+        raidOffsetRow.AddInputPair(raidOffsetXInput, raidOffsetYInput);
+        raidSizeRow.AddInputPair(raidWidthInput, raidHeightInput);
 
         raidAlignmentDropdown = new LabeledEnumDropdownNode<AlignmentType>
         {
@@ -393,6 +480,78 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             {
                 config.RaidAlignment = value;
                 SaveAndUpdate();
+            },
+        };
+
+        raidFontSizeInput = CreateNumericInput("Raid Font Size:", (int)config.RaidFontSize, 6, 72, value => config.RaidFontSize = (uint)value);
+
+        raidFontTypeDropdown = new LabeledEnumDropdownNode<FontType>
+        {
+            Size = new Vector2(360, ControlHeight),
+            LabelText = "Raid Font:",
+            Options = Enum.GetValues<FontType>().ToList(),
+            SelectedOption = config.RaidFontType,
+            OnOptionSelected = value =>
+            {
+                config.RaidFontType = value;
+                SaveAndUpdate();
+            },
+        };
+
+        raidTextFlagsInput = new LabeledTextFlagsInputNode
+        {
+            Width = 360,
+            LabelText = "Raid Text Style:",
+            OnValueChanged = value =>
+            {
+                config.RaidTextFlags = value;
+                SaveAndUpdate();
+            },
+        };
+
+        raidTextColorInput = new ColorInputRow
+        {
+            Label = "Raid Text Color: ",
+            Size = new Vector2(Width, ControlHeight),
+            DefaultColor = new PartyListMeterSettings().RaidTextColor,
+            CurrentColor = config.RaidTextColor,
+            OnColorConfirmed = color =>
+            {
+                config.RaidTextColor = color;
+                SaveAndUpdate();
+            },
+            OnColorCanceled = color =>
+            {
+                config.RaidTextColor = color;
+                SaveAndUpdate();
+            },
+            OnColorPreviewed = color =>
+            {
+                config.RaidTextColor = color;
+                System.PartyListMeterManager?.UpdateSettings();
+            },
+        };
+
+        raidOutlineColorInput = new ColorInputRow
+        {
+            Label = "Raid Outline Color: ",
+            Size = new Vector2(Width, ControlHeight),
+            DefaultColor = new PartyListMeterSettings().RaidTextOutlineColor,
+            CurrentColor = config.RaidTextOutlineColor,
+            OnColorConfirmed = color =>
+            {
+                config.RaidTextOutlineColor = color;
+                SaveAndUpdate();
+            },
+            OnColorCanceled = color =>
+            {
+                config.RaidTextOutlineColor = color;
+                SaveAndUpdate();
+            },
+            OnColorPreviewed = color =>
+            {
+                config.RaidTextOutlineColor = color;
+                System.PartyListMeterManager?.UpdateSettings();
             },
         };
 
@@ -409,13 +568,11 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             },
         };
 
-        textFlagsDropdown = new LabeledEnumDropdownNode<TextFlags>
+        textFlagsInput = new LabeledTextFlagsInputNode
         {
-            Size = new Vector2(360, ControlHeight),
+            Width = 360,
             LabelText = "Text Style:",
-            Options = Enum.GetValues<TextFlags>().ToList(),
-            SelectedOption = config.TextFlags,
-            OnOptionSelected = value =>
+            OnValueChanged = value =>
             {
                 config.TextFlags = value;
                 SaveAndUpdate();
@@ -500,6 +657,19 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         AddNode(new CategoryTextNode
         {
             Height = CategoryHeight,
+            String = "Top Member",
+        });
+        AddNode(1, new NodeBase[]
+        {
+            highlightTopMemberToggle,
+            topMemberStatDropdown,
+            topMemberFormatRow,
+            topMemberTextColorInput,
+        });
+
+        AddNode(new CategoryTextNode
+        {
+            Height = CategoryHeight,
             String = "Member Bar",
         });
         AddNode(1, new NodeBase[]
@@ -527,18 +697,23 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             raidOffsetRow,
             raidSizeRow,
             raidAlignmentDropdown,
+            raidFontSizeInput,
+            raidFontTypeDropdown,
+            raidTextFlagsInput,
+            raidTextColorInput,
+            raidOutlineColorInput,
         });
 
         AddNode(new CategoryTextNode
         {
             Height = CategoryHeight,
-            String = "Shared Text Style",
+            String = "Member Text Style",
         });
         AddNode(1, new NodeBase[]
         {
             fontSizeInput,
             fontTypeDropdown,
-            textFlagsDropdown,
+            textFlagsInput,
             textColorInput,
             outlineColorInput,
         });

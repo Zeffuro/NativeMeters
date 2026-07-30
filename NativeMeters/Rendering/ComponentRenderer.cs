@@ -104,7 +104,7 @@ public static class ComponentRenderer
         {
             var statName = StatSelector.NormalizeStatSelector(settings.DataSource);
             var selector = StatSelector.GetStatSelector(statName);
-            double maxStat = NativeMeters.System.ActiveMeterService.GetMaxCombatantStat(selector);
+            double maxStat = System.ActiveMeterService.GetMaxCombatantStat(selector);
             progressNode.Progress = ViewUtils.CalculateProgressRatio(selector(comb), maxStat > 0 ? maxStat : 1.0);
             progressNode.BarColor = comb.GetColor(settings.ColorMode, settings, meterSettings);
             progressNode.BackgroundColor = ColorResolver.GetBarBackgroundColor(comb, settings, meterSettings);
@@ -123,7 +123,7 @@ public static class ComponentRenderer
         {
             var statName = StatSelector.NormalizeStatSelector(settings.DataSource);
             var selector = StatSelector.GetStatSelector(statName);
-            double maxStat = NativeMeters.System.ActiveMeterService.GetMaxCombatantStat(selector);
+            double maxStat = System.ActiveMeterService.GetMaxCombatantStat(selector);
             progressNode.Progress = ViewUtils.CalculateProgressRatio(selector(comb), maxStat > 0 ? maxStat : 1.0);
             progressNode.ColorTreatment = settings.ProgressBarColorTreatment;
             progressNode.FillRightToLeft = settings.ProgressBarFillRightToLeft;

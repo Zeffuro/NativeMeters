@@ -2,12 +2,13 @@ using System.ComponentModel;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using NativeMeters.Data.Stats;
 
 namespace NativeMeters.Configuration;
 
 public class PartyListMeterSettings
 {
-    private const int CurrentSettingsVersion = 1;
+    private const int CurrentSettingsVersion = 3;
 
     public int SettingsVersion { get; set; }
 
@@ -18,6 +19,10 @@ public class PartyListMeterSettings
     public bool HideWhenNoCombatData { get; set; } = true;
 
     public string MemberFormat { get; set; } = "[dps:c.1]";
+
+    public bool HighlightTopMember { get; set; } = false;
+    public string TopMemberStat { get; set; } = StatSelector.DefaultStatSelector;
+    public string TopMemberFormat { get; set; } = "[dps:c.1]";
 
     public bool ShowMemberBars { get; set; } = false;
 
@@ -49,9 +54,15 @@ public class PartyListMeterSettings
     public TextFlags TextFlags { get; set; } = TextFlags.Edge;
     public AlignmentType MemberAlignment { get; set; } = AlignmentType.Right;
     public AlignmentType RaidAlignment { get; set; } = AlignmentType.Left;
+    public uint RaidFontSize { get; set; } = 10;
+    public FontType RaidFontType { get; set; } = FontType.MiedingerMed;
+    public TextFlags RaidTextFlags { get; set; } = TextFlags.Edge;
 
     public Vector4 TextColor { get; set; } = ColorHelper.GetColor(50);
+    public Vector4 TopMemberTextColor { get; set; } = new(1.0f, 0.84f, 0.22f, 1.0f);
     public Vector4 TextOutlineColor { get; set; } = ColorHelper.GetColor(36);
+    public Vector4 RaidTextColor { get; set; } = ColorHelper.GetColor(50);
+    public Vector4 RaidTextOutlineColor { get; set; } = ColorHelper.GetColor(36);
     public Vector4 BarColor { get; set; } = ColorHelper.GetColor(50);
     public Vector4 BarBackgroundColor { get; set; } = ColorHelper.GetColor(50);
 
@@ -65,6 +76,9 @@ public class PartyListMeterSettings
         ShowPartyMembers = defaults.ShowPartyMembers;
         HideWhenNoCombatData = defaults.HideWhenNoCombatData;
         MemberFormat = defaults.MemberFormat;
+        HighlightTopMember = defaults.HighlightTopMember;
+        TopMemberStat = defaults.TopMemberStat;
+        TopMemberFormat = defaults.TopMemberFormat;
         ShowMemberBars = defaults.ShowMemberBars;
         ShowRaidDps = defaults.ShowRaidDps;
         RaidDpsFormat = defaults.RaidDpsFormat;
@@ -90,8 +104,14 @@ public class PartyListMeterSettings
         TextFlags = defaults.TextFlags;
         MemberAlignment = defaults.MemberAlignment;
         RaidAlignment = defaults.RaidAlignment;
+        RaidFontSize = defaults.RaidFontSize;
+        RaidFontType = defaults.RaidFontType;
+        RaidTextFlags = defaults.RaidTextFlags;
         TextColor = defaults.TextColor;
+        TopMemberTextColor = defaults.TopMemberTextColor;
         TextOutlineColor = defaults.TextOutlineColor;
+        RaidTextColor = defaults.RaidTextColor;
+        RaidTextOutlineColor = defaults.RaidTextOutlineColor;
         BarColor = defaults.BarColor;
         BarBackgroundColor = defaults.BarBackgroundColor;
     }
@@ -101,7 +121,24 @@ public class PartyListMeterSettings
         var defaults = new PartyListMeterSettings();
 
         MemberFormat ??= defaults.MemberFormat;
+        TopMemberStat = StatSelector.NormalizeStatSelector(TopMemberStat);
+        TopMemberFormat ??= defaults.TopMemberFormat;
         RaidDpsFormat ??= defaults.RaidDpsFormat;
+
+        if (SettingsVersion < 2)
+        {
+            TopMemberFormat = MemberFormat;
+            TopMemberTextColor = TextColor;
+        }
+
+        if (SettingsVersion < 3)
+        {
+            RaidFontSize = FontSize;
+            RaidFontType = FontType;
+            RaidTextFlags = TextFlags;
+            RaidTextColor = TextColor;
+            RaidTextOutlineColor = TextOutlineColor;
+        }
 
         SettingsVersion = CurrentSettingsVersion;
     }

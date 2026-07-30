@@ -6,11 +6,13 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
+using KamiToolKit.Classes;
 using KamiToolKit.Controllers;
 using KamiToolKit.Enums;
 using KamiToolKit.Extensions;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
+using NativeMeters.Data.Stats;
 using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Components;
@@ -65,14 +67,6 @@ public sealed unsafe class PartyListMeterManager : IDisposable
     {
         if (!ThreadSafety.IsMainThread)
             return;
-
-        if (Service.Framework.IsFrameworkUnloading)
-        {
-            ClearAttachedNodeReferences();
-            partyListController = null;
-            isEnabled = false;
-            return;
-        }
 
         Disable();
     }
@@ -192,6 +186,7 @@ public sealed unsafe class PartyListMeterManager : IDisposable
         var maxDps = resolvedCombatants.Count == 0
             ? 0.0
             : resolvedCombatants.Values.Max(combatant => combatant.ENCDPS);
+        var topMemberHudIndex = ResolveTopMemberHudIndex(resolvedCombatants);
 
         if (!Settings.ShowMemberBars)
             DisposeMemberBarNodes();
@@ -216,7 +211,7 @@ public sealed unsafe class PartyListMeterManager : IDisposable
             }
 
             ApplyBarNodeSettings(hudData.HudIndex, hudData.AnchorNode, addon, combatant, maxDps);
-            ApplyTextNodeSettings(hudData.HudIndex, hudData.AnchorNode, addon, combatant);
+            ApplyTextNodeSettings(hudData.HudIndex, hudData.AnchorNode, addon, combatant, hudData.HudIndex == topMemberHudIndex);
         }
 
         HideInactiveSlots(activeSlots);
@@ -369,7 +364,31 @@ public sealed unsafe class PartyListMeterManager : IDisposable
             : null;
     }
 
-    private void ApplyTextNodeSettings(int slotIndex, AtkResNode* anchorNode, AddonPartyList* addon, Combatant combatant)
+    private int? ResolveTopMemberHudIndex(IReadOnlyDictionary<int, Combatant> resolvedCombatants)
+    {
+        if (!Settings.HighlightTopMember || resolvedCombatants.Count == 0)
+            return null;
+
+        var statName = StatSelector.NormalizeStatSelector(Settings.TopMemberStat);
+        var selector = StatSelector.GetStatSelector(statName);
+
+        var topValue = 0.0;
+        int? topHudIndex = null;
+
+        foreach (var (hudIndex, combatant) in resolvedCombatants)
+        {
+            var value = selector(combatant);
+            if (value <= topValue)
+                continue;
+
+            topValue = value;
+            topHudIndex = hudIndex;
+        }
+
+        return topHudIndex;
+    }
+
+    private void ApplyTextNodeSettings(int slotIndex, AtkResNode* anchorNode, AddonPartyList* addon, Combatant combatant, bool isTopMember)
     {
         var textNode = memberTextNodes[slotIndex];
         if (textNode == null)
@@ -377,14 +396,14 @@ public sealed unsafe class PartyListMeterManager : IDisposable
 
         var unitBase = (AtkUnitBase*)addon;
         var localAnchorPosition = GetLocalPosition(addon, anchorNode);
-        var text = TagEngine.Process(Settings.MemberFormat, combatant);
+        var text = TagEngine.Process(isTopMember ? Settings.TopMemberFormat : Settings.MemberFormat, combatant);
 
         if (rootNode != null)
             rootNode.Size = unitBase->RootSize;
 
         textNode.Position = localAnchorPosition + new Vector2(Settings.OffsetX, Settings.OffsetY);
         textNode.Size = new Vector2(Settings.Width, Settings.Height);
-        ApplySharedTextStyle(textNode, Settings.MemberAlignment);
+        ApplyMemberTextStyle(textNode, isTopMember ? Settings.TopMemberTextColor : Settings.TextColor);
 
         if (cachedText[slotIndex] != text)
         {
@@ -491,7 +510,7 @@ public sealed unsafe class PartyListMeterManager : IDisposable
 
         textNode.Position = localAnchorPosition + new Vector2(Settings.RaidOffsetX, Settings.RaidOffsetY);
         textNode.Size = new Vector2(Settings.RaidWidth, Settings.RaidHeight);
-        ApplySharedTextStyle(textNode, Settings.RaidAlignment);
+        ApplyRaidTextStyle(textNode);
 
         if (cachedRaidText != text)
         {
@@ -503,14 +522,41 @@ public sealed unsafe class PartyListMeterManager : IDisposable
         textNode.MarkDirty();
     }
 
-    private void ApplySharedTextStyle(TextNode textNode, AlignmentType alignmentType)
+    private void ApplyMemberTextStyle(TextNode textNode, Vector4 textColor)
+        => ApplyTextStyle(
+            textNode,
+            Settings.FontSize,
+            Settings.FontType,
+            Settings.TextFlags,
+            Settings.MemberAlignment,
+            textColor,
+            Settings.TextOutlineColor);
+
+    private void ApplyRaidTextStyle(TextNode textNode)
+        => ApplyTextStyle(
+            textNode,
+            Settings.RaidFontSize,
+            Settings.RaidFontType,
+            Settings.RaidTextFlags,
+            Settings.RaidAlignment,
+            Settings.RaidTextColor,
+            Settings.RaidTextOutlineColor);
+
+    private static void ApplyTextStyle(
+        TextNode textNode,
+        uint fontSize,
+        FontType fontType,
+        TextFlags textFlags,
+        AlignmentType alignmentType,
+        Vector4 textColor,
+        Vector4 textOutlineColor)
     {
-        textNode.FontSize = Settings.FontSize;
-        textNode.FontType = Settings.FontType;
-        textNode.TextFlags = Settings.TextFlags;
+        textNode.FontSize = fontSize;
+        textNode.FontType = fontType;
+        textNode.TextFlags = textFlags;
         textNode.AlignmentType = alignmentType;
-        textNode.TextColor = Settings.TextColor;
-        textNode.TextOutlineColor = Settings.TextOutlineColor;
+        textNode.TextColor = textColor;
+        textNode.TextOutlineColor = textOutlineColor;
     }
 
     private static Vector2 GetLocalPosition(AddonPartyList* addon, AtkResNode* anchorNode)

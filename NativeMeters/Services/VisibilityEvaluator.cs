@@ -14,8 +14,17 @@ public static unsafe class VisibilityEvaluator
     {
         var settings = System.Config.Visibility;
         if (!settings.HasAnyCondition) return false;
+        if (CheckAlwaysHideConditions(settings)) return true;
         if (CheckAlwaysShowConditions(settings)) return false;
         return CheckHideConditions(settings);
+    }
+
+    private static bool CheckAlwaysHideConditions(VisibilitySettings settings)
+    {
+        if (settings.HideInPvP && Service.ClientState.IsPvPExcludingDen)
+            return true;
+
+        return false;
     }
 
     private static bool CheckAlwaysShowConditions(VisibilitySettings settings)
@@ -60,9 +69,6 @@ public static unsafe class VisibilityEvaluator
             return true;
 
         if (settings.HideInSanctuary && TerritoryInfo.Instance()->InSanctuary)
-            return true;
-
-        if (settings.HideInPvP && Service.ClientState.IsPvPExcludingDen)
             return true;
 
         if (settings.HideWhilePerforming && condition.IsPerforming)

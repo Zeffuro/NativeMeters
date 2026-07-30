@@ -97,6 +97,12 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
 
                     if (isChecked)
                     {
+                        if (System.InternalMeterService.IsDisposed)
+                        {
+                            System.InternalMeterService = new Services.Internal.InternalMeterService();
+                            System.AddonDetailedBreakdownWindow.ReSubscribeToEvents();
+                        }
+
                         System.InternalMeterService.Enable();
                     }
                     else if (!System.Config.ConnectionSettings.SelectedConnectionType.Equals(ConnectionType.Internal))

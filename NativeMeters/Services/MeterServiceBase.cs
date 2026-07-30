@@ -19,6 +19,15 @@ public abstract class MeterServiceBase : IMeterService
     public abstract void EndEncounter();
     public abstract void Reconnect();
 
+    public virtual void ResetLocalData()
+    {
+        CombatData = null;
+        LastEvent = null;
+        EncounterHistory.Clear();
+        SelectedEncounterIndex = -1;
+        InvokeCombatDataUpdated();
+    }
+
     protected void InvokeCombatDataUpdated()
     {
         CombatDataUpdated?.Invoke();

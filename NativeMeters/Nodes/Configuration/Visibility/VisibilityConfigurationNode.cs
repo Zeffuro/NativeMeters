@@ -119,6 +119,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
                 IsVisible = true,
                 String = "Hide in PvP",
                 IsChecked = config.HideInPvP,
+                TextTooltip = "Overrides Always Show conditions.",
                 OnClick = isChecked =>
                 {
                     config.HideInPvP = isChecked;

@@ -512,6 +512,8 @@ public unsafe class NetworkCombatParser : IDisposable
     {
         actionEffectHook?.Dispose();
         actorControlHook?.Dispose();
+        actionEffectHook = null;
+        actorControlHook = null;
         statusTracker.Clear();
         enabled = false;
     }

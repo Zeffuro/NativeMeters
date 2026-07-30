@@ -26,6 +26,7 @@ public static class System
 
     public static TagSearchAddon TagSearchAddon { get; set; } = null!;
     public static IconSearchAddon IconSearchAddon { get; set; } = null!;
+    public static TextFlagsPickerAddon TextFlagsPickerAddon { get; set; } = null!;
 
     public static void Clear()
     {
@@ -43,5 +44,6 @@ public static class System
         TestMeterService = null!;
         TagSearchAddon = null!;
         IconSearchAddon = null!;
+        TextFlagsPickerAddon = null!;
     }
 }

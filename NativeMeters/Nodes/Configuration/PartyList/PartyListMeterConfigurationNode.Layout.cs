@@ -10,8 +10,7 @@ namespace NativeMeters.Nodes.Configuration.PartyList;
 internal sealed partial class PartyListMeterConfigurationNode
 {
     private const float CompactInputControlWidth = 82.0f;
-    private const float CompactAxisLabelWidth = 24.0f;
-    private const float CompactSizeLabelWidth = 64.0f;
+    private const float CompactLabelWidth = 64.0f;
 
     private static CircleButtonNode CreateFormatHelpButton()
         => new()
@@ -51,11 +50,12 @@ internal sealed partial class PartyListMeterConfigurationNode
             },
         };
 
-    private static HorizontalListNode CreatePairedInputRow()
+    private static LabeledInputPairRowNode CreatePairedInputRow(string label)
         => new()
         {
             Size = new Vector2(360, ControlHeight),
-            ItemSpacing = 6.0f,
+            LabelText = label,
+            MaximumControlWidth = float.PositiveInfinity,
         };
 
     private LabeledNumericInputNode CreateCompactNumericInput(
@@ -66,7 +66,7 @@ internal sealed partial class PartyListMeterConfigurationNode
         Action<int> applyValue)
     {
         var input = CreateNumericInput(label, value, min, max, applyValue);
-        input.LabelWidth = label is "X:" or "Y:" ? CompactAxisLabelWidth : CompactSizeLabelWidth;
+        input.LabelWidth = CompactLabelWidth;
         input.ControlSpacing = 4.0f;
         input.MaximumControlWidth = CompactInputControlWidth;
         input.Size = new Vector2(GetCompactNumericInputWidth(input), ControlHeight);
@@ -87,6 +87,10 @@ internal sealed partial class PartyListMeterConfigurationNode
             || formatInput == null
             || formatHelpButton == null
             || browseTagButton == null
+            || topMemberFormatRow == null
+            || topMemberFormatInput == null
+            || topMemberFormatHelpButton == null
+            || topMemberBrowseTagButton == null
             || raidFormatRow == null
             || raidFormatInput == null
             || raidFormatHelpButton == null
@@ -96,6 +100,7 @@ internal sealed partial class PartyListMeterConfigurationNode
         }
 
         UpdateFormatRowLayout(formatRow, formatInput, formatHelpButton, browseTagButton);
+        UpdateFormatRowLayout(topMemberFormatRow, topMemberFormatInput, topMemberFormatHelpButton, topMemberBrowseTagButton);
         UpdateFormatRowLayout(raidFormatRow, raidFormatInput, raidFormatHelpButton, raidBrowseTagButton);
     }
 
@@ -120,13 +125,13 @@ internal sealed partial class PartyListMeterConfigurationNode
     }
 
     private static void UpdatePairedInputRowLayout(
-        HorizontalListNode row,
+        LabeledInputPairRowNode row,
         LabeledNumericInputNode firstInput,
         LabeledNumericInputNode secondInput)
     {
         row.Height = ControlHeight;
 
-        var availableWidth = Math.Max(0.0f, row.Width - row.ItemSpacing);
+        var availableWidth = Math.Max(0.0f, row.InputRow.Width - row.InputRow.ItemSpacing);
         var firstInputWidth = GetCompactNumericInputWidth(firstInput);
         var secondInputWidth = GetCompactNumericInputWidth(secondInput);
 
@@ -138,7 +143,7 @@ internal sealed partial class PartyListMeterConfigurationNode
 
         firstInput.Size = new Vector2(firstInputWidth, ControlHeight);
         secondInput.Size = new Vector2(secondInputWidth, ControlHeight);
-        row.RecalculateLayout();
+        row.InputRow.RecalculateLayout();
     }
 
     private static float GetCompactNumericInputWidth(LabeledNumericInputNode input)
@@ -163,5 +168,24 @@ internal sealed partial class PartyListMeterConfigurationNode
 
         input.Size = new Vector2(Math.Min(maxInputWidth, preferredInputWidth), ControlHeight);
         row.RecalculateLayout();
+    }
+
+    private sealed class LabeledInputPairRowNode : LabeledControlRowNode<HorizontalListNode>
+    {
+        public LabeledInputPairRowNode() : base(new HorizontalListNode
+        {
+            ItemSpacing = 6.0f,
+            FitHeight = true,
+        })
+        {
+        }
+
+        public HorizontalListNode InputRow => ControlNode;
+
+        public void AddInputPair(LabeledNumericInputNode firstInput, LabeledNumericInputNode secondInput)
+        {
+            ControlNode.AddNode(firstInput);
+            ControlNode.AddNode(secondInput);
+        }
     }
 }
