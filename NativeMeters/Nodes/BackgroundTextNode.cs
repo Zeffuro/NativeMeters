@@ -9,7 +9,7 @@ using Lumina.Text.ReadOnly;
 
 namespace NativeMeters.Nodes;
 
-public class BackgroundTextNode : SimpleComponentNode
+public class BackgroundTextNode : ResNode
 {
     public readonly NineGridNode BackgroundNode;
     public readonly TextNode TextNode;
