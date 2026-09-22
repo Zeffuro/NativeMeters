@@ -1,13 +1,13 @@
-using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Nodes;
 using NativeMeters.Nodes.Components.Gauge;
 
 namespace NativeMeters.Nodes.Components;
 
-public unsafe class ProgressBarLimitBreakGaugeNode() : ComponentGaugeProgressNode(Style)
+public unsafe class ProgressBarLimitBreakGaugeNode : ComponentGaugeProgressNode
 {
     private const string TexturePath = "ui/uld/LimitBreak.tex";
     private const float NativeWidth = 164.0f;
@@ -16,16 +16,13 @@ public unsafe class ProgressBarLimitBreakGaugeNode() : ComponentGaugeProgressNod
     private const NodeFlags VisibleGaugeNodeFlags =
         NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents;
 
-    private static ComponentGaugeProgressStyle Style { get; } = new()
+    public ProgressBarLimitBreakGaugeNode()
     {
-        PartsListId = 1,
-        NativeWidth = NativeWidth,
-        NativeHeight = NativeHeight,
-        BackgroundColorMode = ComponentGaugeProgressColorMode.TextureAlpha,
-        BarColorMode = ComponentGaugeProgressColorMode.BrightAdditive,
-        NativeBarColorMode = ComponentGaugeProgressColorMode.BrightAdditive,
-        Parts = CreateParts(),
-        Backdrop = new ComponentGaugeImageNodeStyle
+        BackgroundColorMode = GaugeColorMode.TextureAlpha;
+        DefaultColorMode = GaugeColorMode.BrightAdditive;
+        NativeColorMode = GaugeColorMode.BrightAdditive;
+
+        BackdropImageNode = new ImageNode
         {
             NodeId = 12,
             NodeFlags = VisibleGaugeNodeFlags,
@@ -35,9 +32,12 @@ public unsafe class ProgressBarLimitBreakGaugeNode() : ComponentGaugeProgressNod
             Size = new Vector2(NativeWidth, NativeHeight),
             Origin = Vector2.Zero,
             WrapMode = WrapMode.Stretch,
-            ImageFlags = 0,
-        },
-        StaticBackdrop = new ComponentGaugeNineGridNodeStyle
+            ImageNodeFlags = 0,
+        };
+        BackdropImageNode.AddPart(CreateParts());
+        BackdropImageNode.Node->PartsList->Id = 1;
+
+        StaticBackdropNode = new NineGridNode
         {
             NodeId = 13,
             NodeFlags = VisibleGaugeNodeFlags,
@@ -46,8 +46,11 @@ public unsafe class ProgressBarLimitBreakGaugeNode() : ComponentGaugeProgressNod
             Position = new Vector2(0.0f, 3.0f),
             Size = new Vector2(NativeWidth, 12.0f),
             Origin = Vector2.Zero,
-        },
-        MainFill = new ComponentGaugeNineGridNodeStyle
+            Parts = CreateParts(),
+        };
+        StaticBackdropNode.Node->PartsList->Id = 1;
+
+        MainFillNode = new NineGridNode
         {
             NodeId = 11,
             NodeFlags = VisibleGaugeNodeFlags,
@@ -59,8 +62,11 @@ public unsafe class ProgressBarLimitBreakGaugeNode() : ComponentGaugeProgressNod
             LeftOffset = 18.0f,
             RightOffset = 18.0f,
             PartsRenderType = 240,
-        },
-        BorderImage = new ComponentGaugeImageNodeStyle
+            Parts = CreateParts(),
+        };
+        MainFillNode.Node->PartsList->Id = 1;
+
+        BorderImageNode = new ImageNode
         {
             NodeId = 14,
             NodeFlags = VisibleGaugeNodeFlags,
@@ -70,12 +76,16 @@ public unsafe class ProgressBarLimitBreakGaugeNode() : ComponentGaugeProgressNod
             Size = new Vector2(NativeWidth, NativeHeight),
             Origin = Vector2.Zero,
             WrapMode = WrapMode.Stretch,
-            ImageFlags = 0,
+            ImageNodeFlags = 0,
             Color = new Vector4(1.0f, 1.0f, 1.0f, 0.32f),
-        },
-    };
+        };
+        BorderImageNode.AddPart(CreateParts());
+        BorderImageNode.Node->PartsList->Id = 1;
 
-    private static IReadOnlyList<Part> CreateParts()
+        InitializeGauge(new Vector2(NativeWidth, NativeHeight));
+    }
+
+    private static Part[] CreateParts()
         => [
             new()
             {

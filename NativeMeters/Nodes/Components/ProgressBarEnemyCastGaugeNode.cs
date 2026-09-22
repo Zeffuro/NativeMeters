@@ -1,13 +1,13 @@
-using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Nodes;
 using NativeMeters.Nodes.Components.Gauge;
 
 namespace NativeMeters.Nodes.Components;
 
-public unsafe class ProgressBarEnemyCastGaugeNode() : ComponentGaugeProgressNode(Style)
+public unsafe class ProgressBarEnemyCastGaugeNode : ComponentGaugeProgressNode
 {
     private const string TexturePath = "ui/uld/PartyList_GaugeCast.tex";
     private const float NativeWidth = 204.0f;
@@ -17,16 +17,12 @@ public unsafe class ProgressBarEnemyCastGaugeNode() : ComponentGaugeProgressNode
     private const NodeFlags VisibleGaugeNodeFlags =
         NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents;
 
-    private static ComponentGaugeProgressStyle Style { get; } = new()
+    public ProgressBarEnemyCastGaugeNode()
     {
-        PartsListId = 1,
-        NativeWidth = NativeWidth,
-        NativeHeight = NativeHeight,
-        GaugeNativeWidth = GaugeWidth,
-        BackgroundColorMode = ComponentGaugeProgressColorMode.TextureAlpha,
-        BarColorMode = ComponentGaugeProgressColorMode.Multiply,
-        Parts = CreateParts(),
-        Backdrop = new ComponentGaugeImageNodeStyle
+        BackgroundColorMode = GaugeColorMode.TextureAlpha;
+        DefaultColorMode = GaugeColorMode.Multiply;
+
+        BackdropImageNode = new ImageNode
         {
             NodeId = 12,
             NodeFlags = VisibleGaugeNodeFlags,
@@ -36,9 +32,12 @@ public unsafe class ProgressBarEnemyCastGaugeNode() : ComponentGaugeProgressNode
             Size = new Vector2(NativeWidth, NativeHeight),
             Origin = Vector2.Zero,
             WrapMode = WrapMode.Stretch,
-            ImageFlags = 0,
-        },
-        MainFill = new ComponentGaugeNineGridNodeStyle
+            ImageNodeFlags = 0,
+        };
+        BackdropImageNode.AddPart(CreateParts());
+        BackdropImageNode.Node->PartsList->Id = 1;
+
+        MainFillNode = new NineGridNode
         {
             NodeId = 11,
             NodeFlags = VisibleGaugeNodeFlags,
@@ -50,10 +49,14 @@ public unsafe class ProgressBarEnemyCastGaugeNode() : ComponentGaugeProgressNode
             LeftOffset = 10.0f,
             RightOffset = 10.0f,
             PartsRenderType = 240,
-        },
-    };
+            Parts = CreateParts(),
+        };
+        MainFillNode.Node->PartsList->Id = 1;
 
-    private static IReadOnlyList<Part> CreateParts()
+        InitializeGauge(new Vector2(NativeWidth, NativeHeight), GaugeWidth);
+    }
+
+    private static Part[] CreateParts()
         => [
             new()
             {

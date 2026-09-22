@@ -1,13 +1,13 @@
-using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Nodes;
 using NativeMeters.Nodes.Components.Gauge;
 
 namespace NativeMeters.Nodes.Components;
 
-public unsafe class ProgressBarCastGaugeNode() : ComponentGaugeProgressNode(Style)
+public unsafe class ProgressBarCastGaugeNode : ComponentGaugeProgressNode
 {
     private const string TexturePath = "ui/uld/Parameter_Gauge.tex";
     private const float NativeWidth = 160.0f;
@@ -17,15 +17,12 @@ public unsafe class ProgressBarCastGaugeNode() : ComponentGaugeProgressNode(Styl
     private const NodeFlags VisibleGaugeNodeFlags =
         NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents;
 
-    private static ComponentGaugeProgressStyle Style { get; } = new()
+    public ProgressBarCastGaugeNode()
     {
-        PartsListId = 1,
-        NativeWidth = NativeWidth,
-        NativeHeight = NativeHeight,
-        BackgroundColorMode = ComponentGaugeProgressColorMode.TextureAlpha,
-        BarColorMode = ComponentGaugeProgressColorMode.Additive,
-        Parts = CreateParts(),
-        Backdrop = new ComponentGaugeImageNodeStyle
+        BackgroundColorMode = GaugeColorMode.TextureAlpha;
+        DefaultColorMode = GaugeColorMode.Additive;
+
+        BackdropImageNode = new ImageNode
         {
             NodeId = 12,
             NodeFlags = VisibleGaugeNodeFlags,
@@ -35,9 +32,12 @@ public unsafe class ProgressBarCastGaugeNode() : ComponentGaugeProgressNode(Styl
             Size = new Vector2(NativeWidth, NativeHeight),
             Origin = Vector2.Zero,
             WrapMode = WrapMode.Stretch,
-            ImageFlags = 0,
-        },
-        MainFill = new ComponentGaugeNineGridNodeStyle
+            ImageNodeFlags = 0,
+        };
+        BackdropImageNode.AddPart(CreateParts());
+        BackdropImageNode.Node->PartsList->Id = 1;
+
+        MainFillNode = new NineGridNode
         {
             NodeId = 11,
             NodeFlags = VisibleGaugeNodeFlags,
@@ -50,8 +50,11 @@ public unsafe class ProgressBarCastGaugeNode() : ComponentGaugeProgressNode(Styl
             RightOffset = 7.0f,
             MultiplyColor = NativeCastFillMultiplyColor,
             PartsRenderType = 36,
-        },
-        BorderImage = new ComponentGaugeImageNodeStyle
+            Parts = CreateParts(),
+        };
+        MainFillNode.Node->PartsList->Id = 1;
+
+        BorderImageNode = new ImageNode
         {
             NodeId = 13,
             NodeFlags = VisibleGaugeNodeFlags,
@@ -61,11 +64,15 @@ public unsafe class ProgressBarCastGaugeNode() : ComponentGaugeProgressNode(Styl
             Size = new Vector2(NativeWidth, NativeHeight),
             Origin = Vector2.Zero,
             WrapMode = WrapMode.Stretch,
-            ImageFlags = 0,
-        },
-    };
+            ImageNodeFlags = 0,
+        };
+        BorderImageNode.AddPart(CreateParts());
+        BorderImageNode.Node->PartsList->Id = 1;
 
-    private static IReadOnlyList<Part> CreateParts()
+        InitializeGauge(new Vector2(NativeWidth, NativeHeight));
+    }
+
+    private static Part[] CreateParts()
         => [
             new()
             {

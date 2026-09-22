@@ -1,10 +1,9 @@
 namespace NativeMeters.Nodes.Components.Gauge;
 
-public enum ComponentGaugeProgressColorMode
+public enum GaugeColorMode
 {
     Multiply,
     Additive,
-    LegacyAdditive,
     BrightAdditive,
     TextureAlpha,
     Flat,

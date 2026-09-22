@@ -1,13 +1,13 @@
-using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Nodes;
 using NativeMeters.Nodes.Components.Gauge;
 
 namespace NativeMeters.Nodes.Components;
 
-public unsafe class ProgressBarPartyListHpNode() : ComponentGaugeProgressNode(Style)
+public unsafe class ProgressBarPartyListHpNode : ComponentGaugeProgressNode
 {
     private const string TexturePath = "ui/uld/PartyList_GaugeHP.tex";
     private const float NativeWidth = 96.0f;
@@ -22,16 +22,12 @@ public unsafe class ProgressBarPartyListHpNode() : ComponentGaugeProgressNode(St
     private const NodeFlags TransitionNodeFlags =
         NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents;
 
-    private static ComponentGaugeProgressStyle Style { get; } = new()
+    public ProgressBarPartyListHpNode()
     {
-        PartsListId = 1,
-        NativeWidth = NativeWidth,
-        NativeHeight = NativeStripHeight,
-        TransitionFillHeight = NativeStripHeight * 3.0f,
-        BackgroundColorMode = ComponentGaugeProgressColorMode.TextureAlpha,
-        BarColorMode = ComponentGaugeProgressColorMode.Multiply,
-        Parts = CreateParts(),
-        Backdrop = new ComponentGaugeImageNodeStyle
+        BackgroundColorMode = GaugeColorMode.TextureAlpha;
+        DefaultColorMode = GaugeColorMode.Multiply;
+
+        BackdropImageNode = new ImageNode
         {
             NodeId = 12,
             NodeFlags = BackdropNodeFlags,
@@ -41,9 +37,12 @@ public unsafe class ProgressBarPartyListHpNode() : ComponentGaugeProgressNode(St
             Size = new Vector2(NativeWidth, NativeStripHeight),
             Origin = new Vector2(BackdropOriginX, 0.0f),
             WrapMode = WrapMode.Stretch,
-            ImageFlags = 0,
-        },
-        MainFill = new ComponentGaugeNineGridNodeStyle
+            ImageNodeFlags = 0,
+        };
+        BackdropImageNode.AddPart(CreateParts());
+        BackdropImageNode.Node->PartsList->Id = 1;
+
+        MainFillNode = new NineGridNode
         {
             NodeId = 11,
             NodeFlags = FillNodeFlags,
@@ -55,14 +54,22 @@ public unsafe class ProgressBarPartyListHpNode() : ComponentGaugeProgressNode(St
             LeftOffset = 6,
             RightOffset = 6,
             PartsRenderType = 240,
-        },
-        IncreaseFill = CreateTransitionNodeStyle(9, 108),
-        DecreaseFill = CreateTransitionNodeStyle(10, 252),
-    };
+            Parts = CreateParts(),
+        };
+        MainFillNode.Node->PartsList->Id = 1;
 
-    private static ComponentGaugeNineGridNodeStyle CreateTransitionNodeStyle(uint nodeId, byte partsRenderType)
+        IncreaseFillNode = CreateTransitionNode(9, 108);
+        DecreaseFillNode = CreateTransitionNode(10, 252);
+        IncreaseFillNode.Node->PartsList->Id = 1;
+        DecreaseFillNode.Node->PartsList->Id = 1;
+
+        InitializeGauge(new Vector2(NativeWidth, NativeStripHeight));
+    }
+
+    private static NineGridNode CreateTransitionNode(uint nodeId, byte partsRenderType)
         => new()
         {
+            Parts = CreateParts(),
             NodeId = nodeId,
             NodeFlags = TransitionNodeFlags,
             DrawFlags = TransitionDrawFlags,
@@ -76,7 +83,7 @@ public unsafe class ProgressBarPartyListHpNode() : ComponentGaugeProgressNode(St
             PartsRenderType = partsRenderType,
         };
 
-    private static IReadOnlyList<Part> CreateParts()
+    private static Part[] CreateParts()
         => [
             new() { Id = 0, TexturePath = TexturePath, TextureCoordinates = new Vector2(16.0f, 0.0f), Size = new Vector2(96.0f, 16.0f) },
             new() { Id = 1, TexturePath = TexturePath, TextureCoordinates = new Vector2(0.0f, 0.0f), Size = new Vector2(16.0f, 48.0f) },

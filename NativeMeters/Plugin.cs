@@ -29,7 +29,7 @@ public class Plugin : IAsyncDalamudPlugin
 
     [PluginService] private static IDalamudPluginInterface PluginInterface { get; set; } = null!;
 
-    public Task LoadAsync(CancellationToken cancellationToken)
+    public async Task LoadAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -38,7 +38,7 @@ public class Plugin : IAsyncDalamudPlugin
         ConfigRepository.Save(System.Config);
         ConfigBackup.DoConfigBackup(Service.PluginInterface);
 
-        KamiToolKitLibrary.Initialize(Service.PluginInterface);
+        await KamiToolKitLibrary.InitializeAsync(Service.PluginInterface);
 
         System.MeterService = new MeterService(new WebSocketClient(), new IINACTIpcClient());
         System.InternalMeterService = new InternalMeterService();
@@ -89,14 +89,12 @@ public class Plugin : IAsyncDalamudPlugin
 
         if (Service.ClientState.IsLoggedIn) {
             try {
-                Service.Framework.RunOnFrameworkThread(OnLogin);
+                await Service.Framework.RunOnFrameworkThread(OnLogin);
             }
             catch (Exception exception) {
                 Service.Logger.Error(exception, "Failed to schedule NativeMeters login startup.");
             }
         }
-
-        return Task.CompletedTask;
     }
 
 

@@ -74,7 +74,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
 
         var presetsDropdown = new StringDropDownNode
         {
-            Size = new Vector2(120, 28),
+            Size = new Vector2(250, 28),
             Options = MeterPresets.GetPresetNames(),
             OnOptionSelected = HandlePresetSelection
         };

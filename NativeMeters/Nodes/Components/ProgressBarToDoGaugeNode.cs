@@ -1,13 +1,13 @@
-using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
+using KamiToolKit.Nodes;
 using NativeMeters.Nodes.Components.Gauge;
 
 namespace NativeMeters.Nodes.Components;
 
-public unsafe class ProgressBarToDoGaugeNode() : ComponentGaugeProgressNode(Style)
+public unsafe class ProgressBarToDoGaugeNode : ComponentGaugeProgressNode
 {
     private const string TexturePath = "ui/uld/ToDoList.tex";
     private const float NativeWidth = 44.0f;
@@ -18,16 +18,13 @@ public unsafe class ProgressBarToDoGaugeNode() : ComponentGaugeProgressNode(Styl
     private const NodeFlags VisibleGaugeNodeFlags =
         HiddenGaugeNodeFlags | NodeFlags.Visible;
 
-    private static ComponentGaugeProgressStyle Style { get; } = new()
+    public ProgressBarToDoGaugeNode()
     {
-        PartsListId = 1,
-        NativeWidth = NativeWidth,
-        NativeHeight = NativeHeight,
-        BackgroundColorMode = ComponentGaugeProgressColorMode.Flat,
-        BarColorMode = ComponentGaugeProgressColorMode.Flat,
-        NativeBarColorMode = ComponentGaugeProgressColorMode.Additive,
-        Parts = CreateParts(),
-        Backdrop = new ComponentGaugeImageNodeStyle
+        BackgroundColorMode = GaugeColorMode.Flat;
+        DefaultColorMode = GaugeColorMode.Flat;
+        NativeColorMode = GaugeColorMode.Additive;
+
+        BackdropImageNode = new ImageNode
         {
             NodeId = 12,
             NodeFlags = HiddenGaugeNodeFlags,
@@ -37,9 +34,12 @@ public unsafe class ProgressBarToDoGaugeNode() : ComponentGaugeProgressNode(Styl
             Size = new Vector2(NativeWidth, NativeHeight),
             Origin = Vector2.Zero,
             WrapMode = WrapMode.Tile,
-            ImageFlags = 0,
-        },
-        StaticBackdrop = new ComponentGaugeNineGridNodeStyle
+            ImageNodeFlags = 0,
+        };
+        BackdropImageNode.AddPart(CreateParts());
+        BackdropImageNode.Node->PartsList->Id = 1;
+
+        StaticBackdropNode = new NineGridNode
         {
             NodeId = 13,
             NodeFlags = VisibleGaugeNodeFlags,
@@ -50,8 +50,11 @@ public unsafe class ProgressBarToDoGaugeNode() : ComponentGaugeProgressNode(Styl
             Origin = Vector2.Zero,
             LeftOffset = 6.0f,
             RightOffset = 6.0f,
-        },
-        MainFill = new ComponentGaugeNineGridNodeStyle
+            Parts = CreateParts(),
+        };
+        StaticBackdropNode.Node->PartsList->Id = 1;
+
+        MainFillNode = new NineGridNode
         {
             NodeId = 11,
             NodeFlags = VisibleGaugeNodeFlags,
@@ -62,10 +65,14 @@ public unsafe class ProgressBarToDoGaugeNode() : ComponentGaugeProgressNode(Styl
             Origin = Vector2.Zero,
             LeftOffset = 4.0f,
             RightOffset = 4.0f,
-        },
-    };
+            Parts = CreateParts(),
+        };
+        MainFillNode.Node->PartsList->Id = 1;
 
-    private static IReadOnlyList<Part> CreateParts()
+        InitializeGauge(new Vector2(NativeWidth, NativeHeight));
+    }
+
+    private static Part[] CreateParts()
         => [
             new()
             {

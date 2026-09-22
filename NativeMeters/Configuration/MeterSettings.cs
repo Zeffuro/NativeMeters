@@ -22,6 +22,7 @@ public class MeterSettings
 
     public float RowHeight { get; set; } = 36.0f;
     public float RowSpacing { get; set; } = 0.0f;
+    public bool ShowScrollbar { get; set; } = false;
 
     public bool HeaderEnabled { get; set; } = true;
     public bool FooterEnabled { get; set; } = true;
@@ -35,6 +36,7 @@ public class MeterSettings
     public string StatToTrack { get; set; } = "ENCDPS";
     public ProgressBarType ProgressBarType { get; set; } = ProgressBarType.Cast;
     public bool ShowWindowBackground { get; set; } = true;
+    public MeterBackgroundStyle BackgroundStyle { get; set; } = MeterBackgroundStyle.Tooltip;
     public Vector4 WindowColor { get; set; } = new(0, 0, 0, 0.5f);
     public SelfRowOverrideSettings SelfRowOverride { get; set; } = new();
 

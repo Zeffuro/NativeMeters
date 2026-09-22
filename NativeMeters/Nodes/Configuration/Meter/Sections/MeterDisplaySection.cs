@@ -16,6 +16,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
     private LabeledNumericInputNode? maxRowsInput;
     private LabeledNumericInputNode? scaleInput;
     private CheckboxRowNode? backgroundCheckbox;
+    private LabeledEnumDropdownNode<MeterBackgroundStyle>? backgroundStyleDropdown;
     private ColorInputRow? backgroundColorInput;
     private CheckboxRowNode? headerToggle;
     private LabeledNumericInputNode? headerHeightInput;
@@ -23,6 +24,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
     private LabeledNumericInputNode? footerHeightInput;
     private LabeledNumericInputNode? rowHeightInput;
     private LabeledNumericInputNode? rowSpacingInput;
+    private CheckboxRowNode? scrollbarToggle;
     private CheckboxRowNode? showLimitBreakToggle;
     private CheckboxRowNode? showNonPlayerToggle;
     private CheckboxRowNode? showPinSelfToggle;
@@ -66,7 +68,9 @@ public sealed class MeterDisplaySection : MeterConfigSection
             scaleInput!.Value = Settings.Scale;
             rowHeightInput!.Value = (int)Settings.RowHeight;
             rowSpacingInput!.Value = (int)Settings.RowSpacing;
+            scrollbarToggle!.IsChecked = Settings.ShowScrollbar;
             backgroundCheckbox!.IsChecked = Settings.ShowWindowBackground;
+            backgroundStyleDropdown!.SelectedOption = Settings.BackgroundStyle;
             backgroundColorInput!.CurrentColor = Settings.WindowColor;
             backgroundColorInput!.DefaultColor = new MeterSettings().WindowColor;
             headerHeightInput!.Value = (int)Settings.HeaderHeight;
@@ -178,6 +182,17 @@ public sealed class MeterDisplaySection : MeterConfigSection
             },
         };
 
+        scrollbarToggle = new CheckboxRowNode
+        {
+            Size = new Vector2(Width, 20),
+            String = "Show Scrollbar",
+            OnClick = value =>
+            {
+                if (isLoading) return;
+                Settings.ShowScrollbar = value;
+            },
+        };
+
         backgroundColorInput = new ColorInputRow
         {
             Label = "Background Color: ",
@@ -199,6 +214,23 @@ public sealed class MeterDisplaySection : MeterConfigSection
                 Settings.HeaderEnabled = val;
                 ApplyDisplayDependencyState();
             }
+        };
+
+        backgroundStyleDropdown = new LabeledEnumDropdownNode<MeterBackgroundStyle>
+        {
+            Size = new Vector2(Width, 28),
+            LabelText = "Background Style:",
+            Options = Enum.GetValues<MeterBackgroundStyle>().ToList(),
+            OnOptionSelected = value =>
+            {
+                if (isLoading) return;
+                Settings.BackgroundStyle = value;
+                if (value != MeterBackgroundStyle.Tooltip)
+                {
+                    Settings.WindowColor = Settings.WindowColor with { W = 1.0f };
+                    backgroundColorInput.CurrentColor = Settings.WindowColor;
+                }
+            },
         };
 
         headerHeightInput = new LabeledNumericInputNode
@@ -426,8 +458,10 @@ public sealed class MeterDisplaySection : MeterConfigSection
         AddNode(scaleInput);
         AddNode(rowHeightInput);
         AddNode(rowSpacingInput);
+        AddNode(scrollbarToggle);
         AddNode(backgroundCheckbox);
         AddTab(1);
+        AddNode(backgroundStyleDropdown);
         AddNode(backgroundColorInput);
         SubtractTab(1);
         AddNode(headerToggle);
@@ -477,6 +511,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         }
 
         backgroundColorInput.IsEnabled = Settings.ShowWindowBackground;
+        backgroundStyleDropdown!.IsEnabled = Settings.ShowWindowBackground;
         headerHeightInput.IsEnabled = Settings.HeaderEnabled;
         footerHeightInput.IsEnabled = Settings.FooterEnabled;
     }

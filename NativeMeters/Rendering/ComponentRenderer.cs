@@ -8,6 +8,7 @@ using NativeMeters.Models;
 using NativeMeters.Nodes;
 using NativeMeters.Nodes.Components;
 using NativeMeters.Tags;
+using BackgroundTextNode = NativeMeters.Nodes.BackgroundTextNode;
 
 namespace NativeMeters.Rendering;
 

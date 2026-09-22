@@ -1,34 +1,54 @@
 using System;
+using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 
 namespace NativeMeters.Nodes.Components;
 
-internal sealed class LegacyToDoProgressBarNode : ProgressBarNode, IMeterProgressNode
+internal abstract class LegacyProgressBarNode<T> : ProgressNode, IMeterProgressNode where T : ProgressNode, new()
 {
+    public T BarNode { get; }
+    private readonly NineGridNode fillNode;
     private float progress;
     private bool fillRightToLeft;
+
+    protected LegacyProgressBarNode(Func<T, NineGridNode> getFillNode)
+    {
+        BarNode = new T();
+        fillNode = getFillNode(BarNode);
+        BarNode.AttachNode(this);
+    }
 
     public override float Progress
     {
         get => progress;
         set
         {
-            progress = Math.Clamp(value, 0.0f, 1.0f);
+            progress = float.IsFinite(value) ? Math.Clamp(value, 0, 1) : 0;
             ApplyProgress();
         }
     }
 
-    public ProgressBarColorTreatment ColorTreatment { get; set; } = ProgressBarColorTreatment.Auto;
+    public override Vector4 BarColor
+    {
+        get => BarNode.BarColor;
+        set => BarNode.BarColor = value;
+    }
+
+    public override Vector4 BackgroundColor
+    {
+        get => BarNode.BackgroundColor;
+        set => BarNode.BackgroundColor = value;
+    }
+
+    public ProgressBarColorTreatment ColorTreatment { get; set; }
 
     public bool FillRightToLeft
     {
         get => fillRightToLeft;
         set
         {
-            if (fillRightToLeft == value)
-                return;
-
+            if (fillRightToLeft == value) return;
             fillRightToLeft = value;
             ApplyProgress();
         }
@@ -37,101 +57,20 @@ internal sealed class LegacyToDoProgressBarNode : ProgressBarNode, IMeterProgres
     protected override void OnSizeChanged()
     {
         base.OnSizeChanged();
+        BarNode.Size = Size;
         ApplyProgress();
     }
 
     private void ApplyProgress()
     {
         var fillWidth = Width * progress;
-        ForegroundNode.Width = fillWidth;
-        ForegroundNode.X = fillRightToLeft ? Math.Max(0.0f, Width - fillWidth) : 0.0f;
+        fillNode.Width = fillWidth;
+        fillNode.X = fillRightToLeft ? Math.Max(0, Width - fillWidth) : 0;
     }
 }
 
-internal sealed class LegacyCastProgressBarNode : ProgressBarCastNode, IMeterProgressNode
-{
-    private float progress;
-    private bool fillRightToLeft;
+internal sealed class LegacyToDoProgressBarNode() : LegacyProgressBarNode<ProgressBarNode>(node => node.ForegroundNode);
 
-    public override float Progress
-    {
-        get => progress;
-        set
-        {
-            progress = Math.Clamp(value, 0.0f, 1.0f);
-            ApplyProgress();
-        }
-    }
+internal sealed class LegacyCastProgressBarNode() : LegacyProgressBarNode<ProgressBarCastNode>(node => node.ProgressNode);
 
-    public ProgressBarColorTreatment ColorTreatment { get; set; } = ProgressBarColorTreatment.Auto;
-
-    public bool FillRightToLeft
-    {
-        get => fillRightToLeft;
-        set
-        {
-            if (fillRightToLeft == value)
-                return;
-
-            fillRightToLeft = value;
-            ApplyProgress();
-        }
-    }
-
-    protected override void OnSizeChanged()
-    {
-        base.OnSizeChanged();
-        ApplyProgress();
-    }
-
-    private void ApplyProgress()
-    {
-        var fillWidth = Width * progress;
-        ProgressNode.Width = fillWidth;
-        ProgressNode.X = fillRightToLeft ? Math.Max(0.0f, Width - fillWidth) : 0.0f;
-    }
-}
-
-internal sealed class LegacyEnemyCastProgressBarNode : ProgressBarEnemyCastNode, IMeterProgressNode
-{
-    private float progress;
-    private bool fillRightToLeft;
-
-    public override float Progress
-    {
-        get => progress;
-        set
-        {
-            progress = Math.Clamp(value, 0.0f, 1.0f);
-            ApplyProgress();
-        }
-    }
-
-    public ProgressBarColorTreatment ColorTreatment { get; set; } = ProgressBarColorTreatment.Auto;
-
-    public bool FillRightToLeft
-    {
-        get => fillRightToLeft;
-        set
-        {
-            if (fillRightToLeft == value)
-                return;
-
-            fillRightToLeft = value;
-            ApplyProgress();
-        }
-    }
-
-    protected override void OnSizeChanged()
-    {
-        base.OnSizeChanged();
-        ApplyProgress();
-    }
-
-    private void ApplyProgress()
-    {
-        var fillWidth = Width * progress;
-        ProgressNode.Width = fillWidth;
-        ProgressNode.X = fillRightToLeft ? Math.Max(0.0f, Width - fillWidth) : 0.0f;
-    }
-}
+internal sealed class LegacyEnemyCastProgressBarNode() : LegacyProgressBarNode<ProgressBarEnemyCastNode>(node => node.ProgressNode);

@@ -116,6 +116,7 @@ public sealed class MeterListLayoutNode : OverlayNode
 
         backgroundNode = new MeterBackgroundNode {
             Size = Size,
+            Style = MeterSettings.BackgroundStyle,
             BackgroundColor = MeterSettings.WindowColor,
             IsVisible = MeterSettings.ShowWindowBackground
         };
@@ -131,6 +132,7 @@ public sealed class MeterListLayoutNode : OverlayNode
 
         listNode = new ListNode<CombatantRowData, MeterRowListItemNode> {
             ItemSpacing = MeterSettings.RowSpacing,
+            AutoResetScroll = false,
             OptionsList = [],
         };
 
@@ -142,8 +144,6 @@ public sealed class MeterListLayoutNode : OverlayNode
             listNode.RemoveNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision);
         }
 
-        listNode.ScrollBarNode.IsVisible = false;
-        listNode.ScrollBarNode.IsEnabled = false;
         listNode.AttachNode(this);
 
         RebuildList();
@@ -185,10 +185,15 @@ public sealed class MeterListLayoutNode : OverlayNode
 
         float headerH = MeterSettings.HeaderEnabled ? MeterSettings.HeaderHeight : 0;
         float footerH = (MeterSettings.FooterEnabled && !MeterSettings.IsCollapsed) ? MeterSettings.FooterHeight : 0;
+        var contentInset = MeterSettings.ShowWindowBackground
+            && MeterSettings.BackgroundStyle is MeterBackgroundStyle.Window or MeterBackgroundStyle.WindowFocused
+                ? 8.0f : 0.0f;
+        var contentWidth = Math.Max(0, Width - contentInset * 2);
 
         if (backgroundNode != null)
         {
             backgroundNode.IsVisible = MeterSettings.ShowWindowBackground;
+            backgroundNode.Style = MeterSettings.BackgroundStyle;
             backgroundNode.BackgroundColor = MeterSettings.WindowColor;
             backgroundNode.Size = Size;
         }
@@ -196,31 +201,48 @@ public sealed class MeterListLayoutNode : OverlayNode
         if (headerContainer != null)
         {
             headerContainer.IsVisible = MeterSettings.HeaderEnabled;
-            headerContainer.Size = new Vector2(Width, headerH);
-            headerContainer.Position = Vector2.Zero;
+            headerContainer.Size = new Vector2(contentWidth, headerH);
+            headerContainer.Position = new Vector2(contentInset, MeterSettings.IsCollapsed ? 0 : contentInset);
             headerContainer.Update();
         }
 
         if (footerContainer != null)
         {
             footerContainer.IsVisible = MeterSettings.FooterEnabled && !MeterSettings.IsCollapsed;
-            footerContainer.Size = new Vector2(Width, footerH);
-            footerContainer.Position = new Vector2(0, Height - footerH);
+            footerContainer.Size = new Vector2(contentWidth, footerH);
+            footerContainer.Position = new Vector2(contentInset, Height - footerH - contentInset);
             footerContainer.Update();
         }
 
         if (listNode != null)
         {
             listNode.IsVisible = !MeterSettings.IsCollapsed;
-            listNode.Position = new Vector2(0, headerH);
+            listNode.Position = new Vector2(contentInset, headerH + contentInset);
 
-            var desiredListSize = new Vector2(Width, Math.Max(0, Height - headerH - footerH));
+            var desiredListSize = new Vector2(contentWidth, Math.Max(0, Height - headerH - footerH - contentInset * 2));
             ResizeListNodeSafely(desiredListSize);
 
             if (Math.Abs(listNode.ItemSpacing - MeterSettings.RowSpacing) > 0.1f)
                 UpdateListItemSpacingSafely(MeterSettings.RowSpacing);
 
+            UpdateScrollbarLayout();
             listNode.Update();
+        }
+    }
+
+    private void UpdateScrollbarLayout()
+    {
+        if (MeterSettings == null || listNode == null) return;
+
+        var showScrollbar = MeterSettings.ShowScrollbar && !MeterSettings.IsClickthrough
+            && listNode.OptionNodes.Count > 0 && listNode.OptionsList.Count > listNode.OptionNodes.Count;
+        listNode.ScrollBarNode.IsVisible = showScrollbar;
+
+        var rowWidth = Math.Max(0, listNode.Width - (showScrollbar ? 16.0f : 0.0f));
+        foreach (var row in listNode.OptionNodes)
+        {
+            if (row.Width != rowWidth)
+                row.Width = rowWidth;
         }
     }
 
@@ -280,6 +302,7 @@ public sealed class MeterListLayoutNode : OverlayNode
         if (hash == lastCombatDataHash && cachedOptionsList != null)
         {
             listNode.OptionsList = cachedOptionsList;
+            UpdateScrollbarLayout();
             return;
         }
         lastCombatDataHash = hash;
@@ -318,7 +341,11 @@ public sealed class MeterListLayoutNode : OverlayNode
             .Select(combatant => new CombatantRowData(combatant, MeterSettings))
             .ToList();
 
+        var resetScroll = listNode.OptionsList.Count > cachedOptionsList.Count;
         listNode.OptionsList = cachedOptionsList;
+        if (resetScroll)
+            listNode.ResetScroll();
+        UpdateScrollbarLayout();
     }
 
     public void OnDispose()
