@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using NativeMeters.Extensions;
 using NativeMeters.Models;
 
@@ -13,16 +14,50 @@ public class InternalMeterService : MeterServiceBase, IDisposable
     private bool enabled;
     private DateTime lastEmit = DateTime.MinValue;
     private const int EmitIntervalMs = 500;
+    private uint territoryId;
 
     public bool IsDisposed => disposed;
 
     public override bool IsConnected => enabled && !disposed;
+    public ulong UnattributedDotDamage => networkParser.UnattributedDotDamage;
+
+    internal string StartCapture()
+    {
+        if (!System.Config.General.DebugEnabled) throw new InvalidOperationException("Enable Debug Mode before capturing.");
+        if (!IsConnected) throw new InvalidOperationException("Enable the internal parser before capturing.");
+        if (networkParser.Capture.IsActive) return networkParser.Capture.FilePath!;
+
+        var path = networkParser.Capture.Start();
+        networkParser.Capture.Record("CaptureStart", new
+        {
+            Version = typeof(InternalMeterService).Assembly.GetName().Version?.ToString(),
+            BuildId = typeof(InternalMeterService).Module.ModuleVersionId,
+            LocalPlayerId = Service.ObjectTable.LocalPlayer?.GameObjectId,
+            LocalPlayerName = Service.ObjectTable.LocalPlayer?.Name.TextValue,
+        });
+        RecordMeterSnapshot();
+        networkParser.Capture.Flush();
+        if (!networkParser.Capture.IsActive) throw new InvalidOperationException("Could not start the capture. Check the plugin log.");
+
+        return path;
+    }
+
+    internal string? StopCapture()
+    {
+        if (!networkParser.Capture.IsActive) return null;
+
+        networkParser.ProcessPendingTicks(true);
+        RecordMeterSnapshot();
+        networkParser.Capture.Dispose();
+        return networkParser.Capture.FilePath;
+    }
 
     public void Enable()
     {
         if (disposed || enabled) return;
 
         enabled = true;
+        territoryId = Service.ClientState.TerritoryType;
         networkParser.OnActionResult += combatTracker.HandleActionResult;
         networkParser.OnActorDeath += combatTracker.HandleDeath;
         networkParser.Enable();
@@ -35,20 +70,52 @@ public class InternalMeterService : MeterServiceBase, IDisposable
     {
         if (disposed) return;
 
+        if (!System.Config.General.DebugEnabled && networkParser.Capture.IsActive) StopCapture();
+
+        if (territoryId != Service.ClientState.TerritoryType)
+        {
+            territoryId = Service.ClientState.TerritoryType;
+            networkParser.ResetTracking();
+        }
+
+        networkParser.ProcessPendingTicks();
         combatTracker.UpdateCombatState();
 
         if (combatTracker.DidEncounterJustEnd)
         {
+            networkParser.ProcessPendingTicks(true);
+
             if (System.Config.General.EnableEncounterHistory)
                 ArchiveCurrentEncounter();
         }
 
         if ((DateTime.Now - lastEmit).TotalMilliseconds < EmitIntervalMs) return;
+
         lastEmit = DateTime.Now;
+        networkParser.UpdateTracking();
 
-        if (!combatTracker.HasData) return;
+        if (combatTracker.HasData) UpdateCombatData();
 
-        UpdateCombatData();
+        RecordMeterSnapshot();
+        networkParser.Capture.Flush();
+    }
+
+    private void RecordMeterSnapshot()
+    {
+        if (!networkParser.Capture.IsActive) return;
+
+        var combatants = combatTracker.GetCombatants();
+        var encounter = combatTracker.BuildEncounter(combatants.Values);
+        networkParser.Capture.Record("Meter", new
+        {
+            TerritoryId = Service.ClientState.TerritoryType,
+            Settings = System.Config.InternalParser,
+            combatTracker.IsInCombat,
+            DurationSeconds = encounter.Duration.TotalSeconds,
+            encounter.Damage,
+            UnattributedDotDamage,
+            Actors = combatants.Select(pair => new { Name = pair.Key, pair.Value.Damage, pair.Value.Encdps }).ToArray(),
+        });
     }
 
     private void UpdateCombatData()
@@ -85,6 +152,8 @@ public class InternalMeterService : MeterServiceBase, IDisposable
 
     public override void EndEncounter()
     {
+        networkParser.ProcessPendingTicks(true);
+
         if (System.Config.General.EnableEncounterHistory)
             ArchiveCurrentEncounter();
 
@@ -98,6 +167,8 @@ public class InternalMeterService : MeterServiceBase, IDisposable
     public void Dispose()
     {
         if (disposed) return;
+
+        StopCapture();
         var wasEnabled = enabled;
 
         disposed = true;

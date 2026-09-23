@@ -1,0 +1,34 @@
+{
+  "Statuses": {
+    "161": {
+      "Name": "thunder",
+      "ActionId": 144,
+      "ApplicationSide": "target"
+    },
+    "162": {
+      "Name": "thunder ii",
+      "ActionId": 7447,
+      "ApplicationSide": "target"
+    },
+    "163": {
+      "Name": "thunder iii",
+      "ActionId": 153,
+      "ApplicationSide": "target"
+    },
+    "1210": {
+      "Name": "thunder iv",
+      "ActionId": 7420,
+      "ApplicationSide": "target"
+    },
+    "3871": {
+      "Name": "high thunder",
+      "ActionId": 36986,
+      "ApplicationSide": "target"
+    },
+    "3872": {
+      "Name": "high thunder ii",
+      "ActionId": 36987,
+      "ApplicationSide": "target"
+    }
+  }
+}

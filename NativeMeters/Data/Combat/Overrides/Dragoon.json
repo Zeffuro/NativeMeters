@@ -1,0 +1,14 @@
+{
+  "Statuses": {
+    "118": {
+      "Name": "chaos thrust",
+      "ActionId": 88,
+      "ApplicationSide": "target"
+    },
+    "2719": {
+      "Name": "chaotic spring",
+      "ActionId": 25772,
+      "ApplicationSide": "target"
+    }
+  }
+}

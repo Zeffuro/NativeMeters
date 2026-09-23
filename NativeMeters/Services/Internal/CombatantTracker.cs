@@ -51,9 +51,10 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
 
     public void AddAction(ActionResultEvent evt)
     {
-        var now = DateTime.UtcNow;
+        var now = evt.TimestampUtc == default ? DateTime.UtcNow : evt.TimestampUtc;
         FirstActionTime ??= now;
-        LastActionTime = now;
+        if (now < FirstActionTime) FirstActionTime = now;
+        if (LastActionTime == null || now > LastActionTime) LastActionTime = now;
 
         TrackUptime(evt, now);
 
@@ -102,8 +103,7 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
 
     private void TrackUptime(ActionResultEvent evt, DateTime now)
     {
-        // TODO: When DoTs/HoTs eventually are properly tracked checking for ActionId == 0 won't be enough.
-        if (evt.ActionId == 0) return;
+        if (evt.IsPeriodic || evt.ActionId == 0) return;
 
         var action = ActionSheet.GetRowOrDefault(evt.ActionId);
         if (action == null) return;
@@ -137,8 +137,8 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
             ActionBreakdown[evt.ActionId] = stat;
         }
 
-        stat.FirstUsed ??= now;
-        stat.LastUsed = now;
+        if (stat.FirstUsed == null || now < stat.FirstUsed) stat.FirstUsed = now;
+        if (stat.LastUsed == null || now > stat.LastUsed) stat.LastUsed = now;
 
         stat.Hits++;
         if (isDamage)

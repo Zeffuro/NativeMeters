@@ -13,16 +13,16 @@ public class EncounterState
     public string? EncounterName { get; set; }
     public string? ZoneName { get; private set; }
 
-    public void EnsureStarted()
+    public void EnsureStarted(DateTime occurredAt)
     {
-        if (!IsActive) Start();
+        if (!IsActive) Start(occurredAt);
     }
 
-    public void Start()
+    public void Start(DateTime? occurredAt = null)
     {
         if (IsActive) return;
-        StartTime = DateTime.Now;
-        LastActionTime = DateTime.Now;
+        StartTime = occurredAt ?? DateTime.UtcNow;
+        LastActionTime = occurredAt ?? DateTime.MinValue;
         EndTime = DateTime.MinValue;
         IsActive = true;
 
@@ -30,12 +30,16 @@ public class EncounterState
         EncounterName = ZoneName;
     }
 
-    public void UpdateLastAction() => LastActionTime = DateTime.Now;
+    public void UpdateLastAction(DateTime occurredAt)
+    {
+        if (LastActionTime == DateTime.MinValue || occurredAt < StartTime) StartTime = occurredAt;
+        if (occurredAt > LastActionTime) LastActionTime = occurredAt;
+    }
 
     public void End()
     {
         if (!IsActive) return;
-        EndTime = DateTime.Now;
+        EndTime = DateTime.UtcNow;
         IsActive = false;
     }
 
@@ -46,7 +50,7 @@ public class EncounterState
         DateTime end;
         if (IsActive)
         {
-            end = DateTime.Now;
+            end = DateTime.UtcNow;
         }
         else
         {

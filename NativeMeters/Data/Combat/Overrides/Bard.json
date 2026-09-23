@@ -1,0 +1,24 @@
+{
+  "Statuses": {
+    "124": {
+      "Name": "venomous bite",
+      "ActionId": 100,
+      "ApplicationSide": "target"
+    },
+    "129": {
+      "Name": "windbite",
+      "ActionId": 113,
+      "ApplicationSide": "target"
+    },
+    "1200": {
+      "Name": "caustic bite",
+      "ActionId": 7406,
+      "ApplicationSide": "target"
+    },
+    "1201": {
+      "Name": "stormbite",
+      "ActionId": 7407,
+      "ApplicationSide": "target"
+    }
+  }
+}

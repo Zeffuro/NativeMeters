@@ -1,0 +1,26 @@
+{
+  "Statuses": {
+    "1714": {
+      "Name": "nightbloom",
+      "ActionId": 0,
+      "PotencyStatusByAction": {
+        "11386": 438784,
+        "23290": 1714
+      },
+      "TimeProc": {
+        "DamageType": "magic"
+      },
+      "ApplicationSide": "target"
+    },
+    "1723": {
+      "Name": "feather rain",
+      "ActionId": 11426,
+      "ApplicationSide": "target"
+    },
+    "3712": {
+      "Name": "breath of magic",
+      "ActionId": 34567,
+      "ApplicationSide": "target"
+    }
+  }
+}

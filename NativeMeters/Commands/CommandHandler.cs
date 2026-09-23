@@ -57,6 +57,16 @@ public class CommandHandler : IDisposable
         var subCommandName = parts[0].ToLowerInvariant();
         var subArgs = parts.Length > 1 ? parts[1] : string.Empty;
 
+        if (subCommandName == "debug" && System.Config.General.DebugEnabled)
+        {
+            var debugArgs = subArgs.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+            if (debugArgs.Length == 2 && debugArgs[0].Equals("capture", StringComparison.OrdinalIgnoreCase))
+                Capture(debugArgs[1]);
+            else
+                PrintChat("Use /ntm debug capture start or /ntm debug capture stop.");
+            return;
+        }
+
         if (subCommands.TryGetValue(subCommandName, out var sub))
         {
             sub.Action(subArgs);
@@ -64,6 +74,31 @@ public class CommandHandler : IDisposable
         else
         {
             PrintChat($"Unknown command: {subCommandName}. Type '{command} help' for a list of commands.");
+        }
+    }
+
+    private static void Capture(string args)
+    {
+        try
+        {
+            switch (args.Trim().ToLowerInvariant())
+            {
+                case "start":
+                    PrintChat($"Capturing to {System.InternalMeterService.StartCapture()}");
+                    break;
+                case "stop":
+                    var path = System.InternalMeterService.StopCapture();
+                    PrintChat(path == null ? "No capture is running." : $"Capture saved to {path}");
+                    break;
+                default:
+                    PrintChat("Use /ntm debug capture start or /ntm debug capture stop.");
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Service.Logger.Error(ex, "Parser capture failed.");
+            PrintChat($"Capture failed: {ex.Message}");
         }
     }
 

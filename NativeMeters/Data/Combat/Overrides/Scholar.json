@@ -1,0 +1,24 @@
+{
+  "Statuses": {
+    "179": {
+      "Name": "bio",
+      "ActionId": 17864,
+      "ApplicationSide": "target"
+    },
+    "189": {
+      "Name": "bio ii",
+      "ActionId": 17865,
+      "ApplicationSide": "target"
+    },
+    "1895": {
+      "Name": "biolysis",
+      "ActionId": 16540,
+      "ApplicationSide": "target"
+    },
+    "3883": {
+      "Name": "baneful impaction",
+      "ActionId": 37012,
+      "ApplicationSide": "target"
+    }
+  }
+}

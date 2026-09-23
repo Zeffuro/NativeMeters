@@ -1,0 +1,19 @@
+{
+  "Statuses": {
+    "838": {
+      "Name": "combust",
+      "ActionId": 3599,
+      "ApplicationSide": "target"
+    },
+    "843": {
+      "Name": "combust ii",
+      "ActionId": 3608,
+      "ApplicationSide": "target"
+    },
+    "1881": {
+      "Name": "combust iii",
+      "ActionId": 16554,
+      "ApplicationSide": "target"
+    }
+  }
+}

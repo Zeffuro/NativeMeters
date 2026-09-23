@@ -1,7 +1,11 @@
+using System;
+
 namespace NativeMeters.Models.Internal;
 
 public readonly struct ActionResultEvent
 {
+    public DateTime TimestampUtc { get; init; }
+
     public ulong SourceId { get; init; }
     public string SourceName { get; init; }
     public uint SourceJobId { get; init; }
@@ -20,6 +24,8 @@ public readonly struct ActionResultEvent
     public bool IsCrit { get; init; }
     public bool IsDirectHit { get; init; }
     public bool IsMiss { get; init; }
+    public bool IsPeriodic { get; init; }
+    public bool IsEstimated { get; init; }
 
     public uint ActionId { get; init; }
     public bool IsDamageTakenOnly { get; init; }

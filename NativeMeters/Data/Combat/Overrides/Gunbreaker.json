@@ -1,0 +1,14 @@
+{
+  "Statuses": {
+    "1837": {
+      "Name": "sonic break",
+      "ActionId": 16153,
+      "ApplicationSide": "target"
+    },
+    "1838": {
+      "Name": "bow shock",
+      "ActionId": 16159,
+      "ApplicationSide": "target"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "Statuses": {
+    "143": {
+      "Name": "aero",
+      "ActionId": 121,
+      "ApplicationSide": "target"
+    },
+    "144": {
+      "Name": "aero ii",
+      "ActionId": 132,
+      "ApplicationSide": "target"
+    },
+    "1871": {
+      "Name": "dia",
+      "ActionId": 16532,
+      "ApplicationSide": "target"
+    }
+  }
+}

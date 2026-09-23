@@ -1,10 +1,8 @@
 using System;
-using System.Numerics;
-using Dalamud.Game.ClientState.Conditions;
+using System.Collections.Generic;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
-using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Group;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
@@ -24,15 +22,18 @@ internal enum ActorControlCategory : uint
     DoT = 0x605,
 }
 
-public unsafe class NetworkCombatParser : IDisposable
+public unsafe partial class NetworkCombatParser : IDisposable
 {
     public event Action<ActionResultEvent>? OnActionResult;
     public event Action<ulong, string>? OnActorDeath;
+    public ulong UnattributedDotDamage { get; private set; }
+
+    internal ParserCapture Capture { get; } = new();
 
     private const uint InvalidGameObjectId = 0xE0000000;
     private const uint MountActionOffset = 0xD000000;
     private const uint ItemActionOffset = 0x2000000;
-    private const uint StrikingDummyNameId = 541;
+    private const int MaxTrackedActions = 4096;
 
     [Flags]
     private enum EffectFlags : byte
@@ -47,9 +48,14 @@ public unsafe class NetworkCombatParser : IDisposable
     {
         None = 0,
         HasHighBytes = 0x40,
+        AppliesToSource = 0x80,
     }
 
     private readonly StatusTracker statusTracker = new();
+    private readonly Queue<PendingTick> pendingTicks = new();
+    private readonly record struct PendingTick(uint TargetId, uint StatusId, uint Amount, long ObservedAt, DateTime TimestampUtc, uint SourceId);
+    private readonly HashSet<(uint Source, uint Sequence, uint Target, int Index)> seenActions = new();
+    private readonly Queue<(uint Source, uint Sequence, uint Target, int Index)> actionOrder = new();
 
     private Hook<ActionEffectHandler.Delegates.Receive>? actionEffectHook;
     private Hook<PacketDispatcher.Delegates.HandleActorControlPacket>? actorControlHook;
@@ -76,7 +82,47 @@ public unsafe class NetworkCombatParser : IDisposable
         Service.Logger.Information("[Internal Parser] Hooks enabled");
     }
 
-    public void ResetTracking() => statusTracker.Clear();
+    public void ResetTracking()
+    {
+        if (Capture.IsActive) Capture.Record("TrackingReset", new { UnattributedDotDamage });
+
+        statusTracker.Clear();
+        pendingTicks.Clear();
+        seenActions.Clear();
+        actionOrder.Clear();
+        UnattributedDotDamage = 0;
+    }
+
+    public void UpdateTracking() => statusTracker.Update();
+
+    public void ProcessPendingTicks(bool flush = false, uint? targetId = null)
+    {
+        for (var i = pendingTicks.Count; i > 0; i--)
+        {
+            var tick = pendingTicks.Dequeue();
+            var age = Environment.TickCount64 - tick.ObservedAt;
+            if ((targetId != null && tick.TargetId != targetId) || (!flush && age < 150))
+            {
+                pendingTicks.Enqueue(tick);
+                continue;
+            }
+
+            try
+            {
+                if (!flush && age < 2000 && statusTracker.HasPendingApplication(tick.TargetId, tick.StatusId, tick.ObservedAt))
+                {
+                    pendingTicks.Enqueue(tick);
+                    continue;
+                }
+
+                HandleDoTTick(tick);
+            }
+            catch (Exception ex)
+            {
+                Service.Logger.Error(ex, "Could not process a deferred periodic tick.");
+            }
+        }
+    }
 
     private unsafe bool IsEntityInFilter(ulong entityId)
     {
@@ -121,164 +167,13 @@ public unsafe class NetworkCombatParser : IDisposable
         return false;
     }
 
-    private void ActionEffectDetour(
-        uint casterEntityId, Character* casterPtr, Vector3* targetPos,
-        ActionEffectHandler.Header* header, ActionEffectHandler.TargetEffects* effects,
-        GameObjectId* targetEntityIds)
-    {
-        actionEffectHook!.Original(casterEntityId, casterPtr, targetPos, header, effects, targetEntityIds);
-
-        try
-        {
-            if (header->NumTargets == 0) return;
-
-            ulong resolvedSourceId = casterEntityId;
-            string resolvedSourceName = casterPtr->NameString;
-            uint resolvedSourceJobId = 0;
-
-            bool sourceInFilter = IsEntityInFilter(casterEntityId);
-
-            if (casterPtr->GameObject.OwnerId != InvalidGameObjectId)
-            {
-                var owner = Service.ObjectTable.SearchById(casterPtr->GameObject.OwnerId);
-                var casterObj = Service.ObjectTable.SearchById(casterEntityId);
-
-                if (System.Config.InternalParser.ShowCompanions &&
-                    casterObj is IBattleNpc npc && IsCompanionNpc(npc))
-                {
-                    resolvedSourceJobId = npc.ClassJob.RowId;
-                }
-                else if (System.Config.InternalParser.MergePetDamage && owner is IPlayerCharacter pcOwner)
-                {
-                    resolvedSourceId = pcOwner.GameObjectId;
-                    resolvedSourceName = pcOwner.Name.TextValue;
-                    resolvedSourceJobId = pcOwner.ClassJob.RowId;
-                }
-            }
-            else if (Service.ObjectTable.SearchById(casterEntityId) is IPlayerCharacter pc)
-            {
-                resolvedSourceJobId = pc.ClassJob.RowId;
-            }
-
-            var actionId = (ActionType)header->ActionType switch
-            {
-                ActionType.Mount => MountActionOffset + header->ActionId,
-                ActionType.Item => ItemActionOffset + header->ActionId,
-                _ => header->SpellId
-            };
-
-            var isLimitBreak = false;
-            if (actionId is > 0 and < MountActionOffset and < ItemActionOffset)
-            {
-                var action = ActionSheet.GetRowOrDefault(actionId);
-                if (action.HasValue)
-                {
-                    isLimitBreak = action.Value.ActionCategory.RowId == 9;
-                }
-            }
-
-            for (var i = 0; i < header->NumTargets; i++)
-            {
-                var targetId = (uint)(targetEntityIds[i] & uint.MaxValue);
-                var targetObj = Service.ObjectTable.SearchById(targetId);
-                if (targetObj == null) continue;
-
-                bool targetInFilter = IsEntityInFilter(targetId);
-
-                if (!sourceInFilter && !targetInFilter) continue;
-
-                uint currentHp = 0;
-                uint maxHp = 0;
-
-                if (targetObj is IBattleChara bc)
-                {
-                    currentHp = bc.CurrentHp;
-                    maxHp = bc.MaxHp;
-                }
-
-                for (var j = 0; j < 8; j++)
-                {
-                    ref var effect = ref effects[i].Effects[j];
-                    var type = (ActionEffectType)effect.Type;
-                    if (type == ActionEffectType.Nothing) continue;
-
-                    if (type != ActionEffectType.Damage &&
-                        type != ActionEffectType.Heal &&
-                        type != ActionEffectType.BlockedDamage &&
-                        type != ActionEffectType.ParriedDamage &&
-                        type != ActionEffectType.Miss) continue;
-
-                    var amountFlags = (AmountFlags)effect.Param4;
-
-                    uint amount = effect.Value;
-                    if (amountFlags.HasFlag(AmountFlags.HasHighBytes))
-                    {
-                        amount += (uint)effect.Param3 << 16;
-                    }
-
-                    resolvedSourceName = GetResolvedName(resolvedSourceId, resolvedSourceName);
-
-                    var targetName = GetResolvedName(targetId, targetObj.Name.TextValue);
-
-                    var evt = new ActionResultEvent
-                    {
-                        SourceId = resolvedSourceId,
-                        SourceName = resolvedSourceName,
-                        SourceJobId = resolvedSourceJobId,
-                        TargetId = targetId,
-                        TargetName = targetName,
-                        TargetCurrentHp = currentHp,
-                        TargetMaxHp = maxHp,
-                        TargetJobId = targetObj switch
-                        {
-                            IPlayerCharacter tpc => tpc.ClassJob.RowId,
-                            IBattleNpc tnpc when System.Config.InternalParser.ShowCompanions
-                                                 && IsCompanionNpc(tnpc) => tnpc.ClassJob.RowId,
-                            _ => 0
-                        },
-                        IsPlayerTarget = targetObj is IPlayerCharacter ||
-                                         (System.Config.InternalParser.ShowCompanions && IsCompanionNpc(targetObj)),
-                        ActionId = actionId,
-                    };
-
-                    switch (type)
-                    {
-                        case ActionEffectType.Damage:
-                        case ActionEffectType.BlockedDamage:
-                        case ActionEffectType.ParriedDamage:
-                            var damageFlags = (EffectFlags)effect.Param0;
-                            OnActionResult?.Invoke(evt with {
-                                Damage = amount,
-                                IsCrit = damageFlags.HasFlag(EffectFlags.Critical),
-                                IsDirectHit = damageFlags.HasFlag(EffectFlags.DirectHit),
-                                IsLimitBreak = isLimitBreak,
-                            });
-                            break;
-
-                        case ActionEffectType.Heal:
-                            var healFlags = (EffectFlags)effect.Param1;
-                            OnActionResult?.Invoke(evt with {
-                                Healing = amount,
-                                IsCrit = healFlags.HasFlag(EffectFlags.Critical),
-                                IsLimitBreak = isLimitBreak,
-                            });
-                            break;
-
-                        case ActionEffectType.Miss:
-                            OnActionResult?.Invoke(evt with { Damage = 0, IsMiss = true, IsLimitBreak = isLimitBreak });
-                            break;
-                    }
-                }
-            }
-        }
-        catch (Exception ex) { Service.Logger.Error($"[Internal Parser] {ex}"); }
-    }
-
     private void ActorControlDetour(
         uint entityId, uint category, uint arg1, uint arg2,
         uint arg3, uint arg4, uint arg5, uint arg6,
         uint arg7, uint arg8, GameObjectId targetId, bool isRecorded)
     {
+        var receivedAt = DateTime.UtcNow;
+        var observedAt = Environment.TickCount64;
         actorControlHook!.Original(entityId, category, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, targetId, isRecorded);
 
         try
@@ -286,7 +181,23 @@ public unsafe class NetworkCombatParser : IDisposable
             switch ((ActorControlCategory)category)
             {
                 case ActorControlCategory.DoT:
-                    HandleDoTTick(entityId, arg1, arg2);
+                    if (Capture.IsActive)
+                    {
+                        Capture.Record("ActorControlTick", new
+                        {
+                            EntityId = entityId, Category = category, TargetId = targetId.Id,
+                            Arg1 = arg1, Arg2 = arg2, Arg3 = arg3, Arg4 = arg4,
+                            Arg5 = arg5, Arg6 = arg6, Arg7 = arg7, Arg8 = arg8,
+                            TimestampUtc = receivedAt,
+                        });
+                    }
+
+                    var tick = new PendingTick(entityId, arg1, arg2, observedAt, receivedAt, arg3);
+                    if (!statusTracker.HasGroundSource(arg1, arg3) &&
+                        statusTracker.HasPendingApplication(entityId, arg1, observedAt) && pendingTicks.Count < 1024)
+                        pendingTicks.Enqueue(tick);
+                    else
+                        HandleDoTTick(tick);
                     break;
 
                 case ActorControlCategory.HoT:
@@ -294,6 +205,8 @@ public unsafe class NetworkCombatParser : IDisposable
                     break;
 
                 case ActorControlCategory.Death:
+                    ProcessPendingTicks(true, entityId);
+                    statusTracker.RemoveTarget(entityId);
                     var deadObj = Service.ObjectTable.SearchById(entityId);
                     if (deadObj is IPlayerCharacter deadPc)
                     {
@@ -312,116 +225,93 @@ public unsafe class NetworkCombatParser : IDisposable
         }
     }
 
-    // DoT/HoT damage is estimated, I'm not going to decompile FFXIV Plugin to copy how they simulate DoTs.
-    // If anyone wants to take a crack at it, be my guest but don't decompile Ravahn's FFXIV Plugin.
-    private void HandleDoTTick(uint entityId, uint statusId, uint amount)
+    private void HandleDoTTick(PendingTick tick)
     {
+        var (entityId, statusId, amount, observedAt, timestampUtc, packetSourceId) = tick;
         var target = Service.ObjectTable.SearchById(entityId);
-        var localPlayer = Service.ObjectTable.LocalPlayer;
-        if (localPlayer == null) return;
+        var allocations = statusTracker.AllocateTick(entityId, statusId, amount, observedAt, packetSourceId);
+        if (Capture.IsActive)
+            Capture.Record("PeriodicTick", new { TargetId = entityId, StatusId = statusId, Amount = amount, Allocations = allocations, TimestampUtc = timestampUtc });
 
-        bool targetInFilter = IsEntityInFilter(entityId);
-
-        if (statusId != 0)
+        if (allocations.Count == 0)
         {
-            var sourceId = statusTracker.GetSource(entityId, statusId);
-            if (sourceId != null)
-            {
-                if (!IsEntityInFilter(sourceId.Value) && !targetInFilter) return;
-
-                var sourceObj = Service.ObjectTable.SearchById((uint)sourceId);
-                if (sourceObj is IPlayerCharacter pc)
-                {
-                    InvokeDoT(pc.GameObjectId, pc.Name.TextValue, pc.ClassJob.RowId,
-                               entityId, target?.Name.TextValue ?? "", amount);
-                    return;
-                }
-                if (System.Config.InternalParser.ShowCompanions &&
-                    sourceObj is IBattleNpc npc && IsCompanionNpc(npc))
-                {
-                    InvokeDoT(npc.GameObjectId, npc.Name.TextValue, npc.ClassJob.RowId,
-                               entityId, target?.Name.TextValue ?? "", amount);
-                    return;
-                }
-            }
-        }
-
-        var sources = statusTracker.GetDoTSources(entityId);
-
-        if (sources.Count == 0)
-        {
-            if (target is IBattleChara battle && CanUseLocalPlayerAsFallbackDotSource(battle, localPlayer))
-            {
-                InvokeDoT(localPlayer.GameObjectId, localPlayer.Name.TextValue,
-                           localPlayer.ClassJob.RowId, entityId,
-                           target.Name.TextValue, amount);
-            }
+            UnattributedDotDamage += amount;
             return;
         }
 
-        if (sources.Count == 1)
+        var targetInFilter = IsEntityInFilter(entityId);
+        foreach (var allocation in allocations)
         {
-            var sourceId = sources[0];
-            if (!IsEntityInFilter(sourceId) && !targetInFilter) return;
+            if (allocation.Amount == 0) continue;
 
-            var sourceObj = Service.ObjectTable.SearchById((uint)sourceId);
-            if (sourceObj is IPlayerCharacter pc)
+            if (!TryResolveDotSource(allocation.SourceId, out var sourceId, out var sourceName, out var sourceJobId))
             {
-                InvokeDoT(sources[0], pc.Name.TextValue, pc.ClassJob.RowId,
-                           entityId, target?.Name.TextValue ?? "", amount);
+                UnattributedDotDamage += allocation.Amount;
+                continue;
             }
-            else if (System.Config.InternalParser.ShowCompanions &&
-                     sourceObj is IBattleNpc npc && IsCompanionNpc(npc))
-            {
-                InvokeDoT(sources[0], npc.Name.TextValue, npc.ClassJob.RowId,
-                           entityId, target?.Name.TextValue ?? "", amount);
-            }
-            return;
-        }
 
-        var splitAmount = (uint)(amount / sources.Count);
-        foreach (var sourceId in sources)
-        {
-            if (!IsEntityInFilter(sourceId) && !targetInFilter) continue;
+            if (!IsEntityInFilter(allocation.SourceId) && !targetInFilter) continue;
 
-            var sourceObj = Service.ObjectTable.SearchById((uint)sourceId);
-            if (sourceObj is IPlayerCharacter pc)
+            EmitActionResult(new ActionResultEvent
             {
-                InvokeDoT(sourceId, pc.Name.TextValue, pc.ClassJob.RowId,
-                           entityId, target?.Name.TextValue ?? "", splitAmount);
-            }
-            else if (System.Config.InternalParser.ShowCompanions &&
-                     sourceObj is IBattleNpc npc && IsCompanionNpc(npc))
-            {
-                InvokeDoT(sourceId, npc.Name.TextValue, npc.ClassJob.RowId,
-                           entityId, target?.Name.TextValue ?? "", splitAmount);
-            }
+                TimestampUtc = timestampUtc,
+                SourceId = sourceId,
+                SourceName = GetResolvedName(sourceId, sourceName),
+                SourceJobId = sourceJobId,
+                TargetId = entityId,
+                TargetName = GetResolvedName(entityId, target?.Name.TextValue ?? ""),
+                TargetJobId = target switch
+                {
+                    IPlayerCharacter player => player.ClassJob.RowId,
+                    IBattleNpc npc when System.Config.InternalParser.ShowCompanions && IsCompanionNpc(npc)
+                        => npc.ClassJob.RowId,
+                    _ => 0,
+                },
+                IsPlayerTarget = target is IPlayerCharacter ||
+                                 (target != null && System.Config.InternalParser.ShowCompanions && IsCompanionNpc(target)),
+                Damage = allocation.Amount,
+                ActionId = allocation.ActionId,
+                IsPeriodic = true,
+                IsEstimated = allocation.Estimated,
+            });
         }
     }
 
-    private static bool CanUseLocalPlayerAsFallbackDotSource(IBattleChara target, IPlayerCharacter localPlayer)
+    private static bool TryResolveDotSource(ulong actorId, out ulong sourceId, out string name, out uint jobId)
     {
-        if (!Service.Condition[ConditionFlag.InCombat]) return false;
+        sourceId = actorId;
+        name = "";
+        jobId = 0;
+        if (actorId is 0 or InvalidGameObjectId) return false;
 
-        var isTrainingDummy = target.NameId == StrikingDummyNameId;
-        var isTargetingLocalPlayer = target.TargetObjectId == localPlayer.GameObjectId;
+        var source = Service.ObjectTable.SearchById(actorId);
+        if (source == null) return false;
 
-        return isTrainingDummy || isTargetingLocalPlayer;
-    }
-
-    private void InvokeDoT(ulong sourceId, string sourceName, uint sourceJobId, uint targetId, string targetName, uint amount)
-    {
-        OnActionResult?.Invoke(new ActionResultEvent
+        if (source is IPlayerCharacter player)
         {
-            SourceId = sourceId,
-            SourceName = GetResolvedName(sourceId, sourceName),
-            SourceJobId = sourceJobId,
-            TargetId = targetId,
-            TargetName = GetResolvedName(targetId, targetName),
-            IsPlayerTarget = false,
-            Damage = amount,
-            ActionId = 0,
-        });
+            name = player.Name.TextValue;
+            jobId = player.ClassJob.RowId;
+            return true;
+        }
+
+        if (System.Config.InternalParser.ShowCompanions && source is IBattleNpc npc && IsCompanionNpc(npc))
+        {
+            name = npc.Name.TextValue;
+            jobId = npc.ClassJob.RowId;
+            return true;
+        }
+
+        if (System.Config.InternalParser.MergePetDamage && source.OwnerId is not (0 or InvalidGameObjectId) &&
+            Service.ObjectTable.SearchById(source.OwnerId) is IPlayerCharacter owner)
+        {
+            sourceId = owner.GameObjectId;
+            name = owner.Name.TextValue;
+            jobId = owner.ClassJob.RowId;
+            return true;
+        }
+
+        name = source.Name.TextValue;
+        return true;
     }
 
     private void HandleHoTTick(uint entityId, uint statusId, uint amount)
@@ -479,7 +369,7 @@ public unsafe class NetworkCombatParser : IDisposable
 
         if (!sourceInFilter && !targetInFilter) return;
 
-        OnActionResult?.Invoke(new ActionResultEvent
+        EmitActionResult(new ActionResultEvent
         {
             SourceId = resolvedSourceId,
             SourceName = GetResolvedName(resolvedSourceId, resolvedSourceName),
@@ -489,7 +379,16 @@ public unsafe class NetworkCombatParser : IDisposable
             TargetJobId = hotJobId,
             IsPlayerTarget = true,
             Healing = amount,
+            IsPeriodic = true,
         });
+    }
+
+    private void EmitActionResult(ActionResultEvent result)
+    {
+        if (result.TimestampUtc == default) result = result with { TimestampUtc = DateTime.UtcNow };
+        if (Capture.IsActive) Capture.Record("Action", result);
+
+        OnActionResult?.Invoke(result);
     }
 
     private string GetResolvedName(ulong id, string originalName)
@@ -515,6 +414,7 @@ public unsafe class NetworkCombatParser : IDisposable
         actionEffectHook = null;
         actorControlHook = null;
         statusTracker.Clear();
+        Capture.Dispose();
         enabled = false;
     }
 }

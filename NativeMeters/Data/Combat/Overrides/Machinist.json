@@ -1,0 +1,19 @@
+{
+  "Statuses": {
+    "861": {
+      "Name": "wildfire",
+      "ActionId": 2878,
+      "ApplicationSide": "target"
+    },
+    "1205": {
+      "Name": "flamethrower",
+      "ActionId": 7418,
+      "ApplicationSide": "source"
+    },
+    "1866": {
+      "Name": "bioblaster",
+      "ActionId": 16499,
+      "ApplicationSide": "target"
+    }
+  }
+}

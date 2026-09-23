@@ -47,17 +47,21 @@ public class CombatTracker
 
     public void HandleActionResult(ActionResultEvent evt)
     {
+        var occurredAt = evt.TimestampUtc == default ? DateTime.UtcNow : evt.TimestampUtc;
+        var belongsToEndedEncounter = evt.IsPeriodic && !encounterState.IsActive &&
+            occurredAt >= encounterState.StartTime && occurredAt <= encounterState.EndTime;
+
         if (evt.Damage > 0)
         {
-            if (!encounterState.IsActive)
+            if (!encounterState.IsActive && !belongsToEndedEncounter)
             {
                 Reset();
-                encounterState.EnsureStarted();
+                encounterState.EnsureStarted(occurredAt);
             }
-            encounterState.UpdateLastAction();
+            encounterState.UpdateLastAction(occurredAt);
         }
 
-        if (!encounterState.IsActive) return;
+        if (!encounterState.IsActive && !belongsToEndedEncounter) return;
 
         if (!evt.IsDamageTakenOnly)
         {

@@ -1,0 +1,24 @@
+{
+  "Statuses": {
+    "2614": {
+      "Name": "eukrasian dosis",
+      "ActionId": 24293,
+      "ApplicationSide": "target"
+    },
+    "2615": {
+      "Name": "eukrasian dosis ii",
+      "ActionId": 24308,
+      "ApplicationSide": "target"
+    },
+    "2616": {
+      "Name": "eukrasian dosis iii",
+      "ActionId": 24314,
+      "ApplicationSide": "target"
+    },
+    "3897": {
+      "Name": "eukrasian dyskrasia",
+      "ActionId": 37032,
+      "ApplicationSide": "target"
+    }
+  }
+}

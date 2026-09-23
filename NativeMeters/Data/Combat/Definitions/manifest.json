@@ -1,0 +1,33 @@
+{
+  "Repository": "ravahn/FFXIV_ACT_Plugin",
+  "SourceCommit": "e96d3710c3c595a23d1cd83cb58802120f9564cb",
+  "Files": [
+    "Astrologian.json",
+    "Bard.json",
+    "BlackMage.json",
+    "BlueMage.json",
+    "Chocobo.json",
+    "Dancer.json",
+    "DarkKnight.json",
+    "Dragoon.json",
+    "Eureka.json",
+    "Gunbreaker.json",
+    "JobRole.json",
+    "LimitBreak.json",
+    "Machinist.json",
+    "Monk.json",
+    "Ninja.json",
+    "NPC.json",
+    "Paladin.json",
+    "Pictomancer.json",
+    "Reaper.json",
+    "RedMage.json",
+    "Sage.json",
+    "Samurai.json",
+    "Scholar.json",
+    "Summoner.json",
+    "Viper.json",
+    "Warrior.json",
+    "WhiteMage.json"
+  ]
+}

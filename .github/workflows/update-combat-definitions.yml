@@ -1,0 +1,38 @@
+name: Update combat definitions
+
+on:
+  workflow_dispatch:
+    inputs:
+      UpstreamRef:
+        description: ACT branch, tag or commit
+        default: master
+  schedule:
+    - cron: '23 8 * * 1'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency: update-combat-definitions
+
+jobs:
+  Update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - name: Download definitions
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM_REF: ${{ inputs.UpstreamRef || 'master' }}
+        run: ./scripts/Update-CombatDefinitions.ps1 -Ref $env:UPSTREAM_REF
+      - name: Open update pull request
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
+        with:
+          branch: codex/update-combat-definitions
+          add-paths: NativeMeters/Data/Combat/Definitions
+          commit-message: Update combat definitions
+          title: Update combat definitions
+          body: Refresh upstream definitions. Local overrides are unchanged. Build and review affected jobs before merging.
