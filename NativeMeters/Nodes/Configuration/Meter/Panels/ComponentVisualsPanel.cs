@@ -23,6 +23,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
     private readonly ComponentColorInputRowNode barBgColorInput;
 
     private bool isLoading = false;
+    private float? lastChildWidth;
 
     public Action? OnSettingsChanged { get; set; }
     public Action? OnLayoutChanged { get; set; }
@@ -307,6 +308,8 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
     protected override void OnSizeChanged()
     {
+        if (lastChildWidth == Width) return;
+        lastChildWidth = Width;
         base.OnSizeChanged();
         headerLabel.Width = Width;
         colorModeDropdown.Width = Width;

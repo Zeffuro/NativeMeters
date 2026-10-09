@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Plugin.Services;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
-using NativeMeters.Configuration.Persistence;
 using NativeMeters.Data.Stats;
+using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Sections;
 
@@ -15,9 +16,15 @@ public sealed class MeterComponentsSection : MeterConfigSection
 {
     private readonly Action onLayoutChanged;
     private readonly ComponentTarget target;
-    private readonly VerticalListNode componentsList;
+    private readonly ConfigurationVerticalListNode componentsList;
     private readonly HorizontalListNode addRow;
     private readonly StringDropDownNode typeDropdown;
+    private readonly List<Func<List<ComponentSettings>, bool>> pendingEdits = [];
+    private List<ComponentSettings>? pendingTarget;
+    private IFramework? editFramework;
+    private MeterSettings? displayedMeter;
+    private List<ComponentSettings>? displayedTarget;
+    private readonly Dictionary<string, bool> componentCollapsedStates = [];
 
     public MeterComponentsSection(Func<MeterSettings> getSettings, Action onLayoutChanged, ComponentTarget target) : base(getSettings)
     {
@@ -25,7 +32,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
         this.target = target;
         ContentItemSpacing = 4.0f;
 
-        componentsList = new VerticalListNode
+        componentsList = new ConfigurationVerticalListNode
         {
             FitContents = true,
             FitWidth = true,
@@ -65,21 +72,75 @@ public sealed class MeterComponentsSection : MeterConfigSection
     {
         if (!Enum.TryParse<MeterComponentType>(selectedComponent, out var parsedComponentType)) return;
 
-        var component = new ComponentSettings {
-            Id = Guid.NewGuid().ToString(),
-            Type = parsedComponentType,
-            Name = $"New {parsedComponentType}",
-            Size = new Vector2(100, 20),
-            Position = Vector2.Zero,
-            ZIndex = TargetList.Count > 0 ? TargetList.Max(c => c.ZIndex) + 1 : 0
-        };
+        QueueEdit(components =>
+        {
+            var component = new ComponentSettings {
+                Id = Guid.NewGuid().ToString(),
+                Type = parsedComponentType,
+                Name = $"New {parsedComponentType}",
+                Size = new Vector2(100, 20),
+                Position = Vector2.Zero,
+                ZIndex = components.Count > 0 ? components.Max(c => c.ZIndex) + 1 : 0
+            };
 
-        if (component.Type is MeterComponentType.Icon or MeterComponentType.JobIcon or MeterComponentType.MenuButton) component.Size = new Vector2(24);
-        if (component.Type == MeterComponentType.ProgressBar) component.DataSource = StatSelector.DefaultStatSelector;
+            if (component.Type is MeterComponentType.Icon or MeterComponentType.JobIcon or MeterComponentType.MenuButton) component.Size = new Vector2(24);
+            if (component.Type == MeterComponentType.ProgressBar) component.DataSource = StatSelector.DefaultStatSelector;
 
-        TargetList.Add(component);
-        Refresh();
-        System.OverlayManager.Setup();
+            components.Add(component);
+            return true;
+        });
+    }
+
+    private void QueueEdit(Func<List<ComponentSettings>, bool> edit)
+    {
+        if (IsDisposed || Service.Framework.IsFrameworkUnloading) return;
+
+        if (editFramework is null)
+        {
+            pendingTarget = TargetList;
+            editFramework = Service.Framework;
+            editFramework.Update += ApplyPendingEdits;
+        }
+
+        pendingEdits.Add(edit);
+    }
+
+    private void ApplyPendingEdits(IFramework framework)
+    {
+        var components = pendingTarget;
+        var edits = pendingEdits.ToArray();
+        CancelPendingEdits();
+
+        if (IsDisposed || framework.IsFrameworkUnloading || components is null
+            || !ReferenceEquals(components, TargetList)) return;
+
+        try
+        {
+            var changed = false;
+            foreach (var edit in edits) changed |= edit(components);
+            if (!changed) return;
+
+            Refresh(reuseExisting: true);
+            System.OverlayManager.Setup();
+        }
+        catch (Exception exception)
+        {
+            Service.Logger.Error(exception, "Failed to apply NativeMeters component edit.");
+        }
+    }
+
+    private void CancelPendingEdits()
+    {
+        if (editFramework is not null) editFramework.Update -= ApplyPendingEdits;
+        editFramework = null;
+        pendingTarget = null;
+        pendingEdits.Clear();
+    }
+
+    protected override void Dispose(bool isNativeDestructor)
+    {
+        CancelPendingEdits();
+        base.Dispose(isNativeDestructor);
     }
 
     private void RefreshSectionLayout()
@@ -88,8 +149,32 @@ public sealed class MeterComponentsSection : MeterConfigSection
         onLayoutChanged();
     }
 
-    public override void Refresh()
+    public override void Refresh() => Refresh(reuseExisting: false);
+
+    private void Refresh(bool reuseExisting)
     {
+        CancelPendingEdits();
+        var components = TargetList;
+        if (!ReferenceEquals(displayedMeter, Settings) || !ReferenceEquals(displayedTarget, components))
+        {
+            reuseExisting = false;
+            componentCollapsedStates.Clear();
+            displayedMeter = Settings;
+            displayedTarget = components;
+        }
+        else
+        {
+            foreach (var node in componentsList.Nodes.OfType<ComponentSettingsNode>())
+            {
+                if (node.RowComponent is { } component)
+                    componentCollapsedStates[component.Id] = node.IsCollapsed;
+            }
+        }
+
+        var componentIds = components.Select(component => component.Id).ToHashSet();
+        foreach (var id in componentCollapsedStates.Keys.Where(id => !componentIds.Contains(id)).ToArray())
+            componentCollapsedStates.Remove(id);
+
         if (IsCollapsed)
         {
             IsInitialized = false;
@@ -98,50 +183,81 @@ public sealed class MeterComponentsSection : MeterConfigSection
         }
 
         IsInitialized = true;
-        componentsList.Clear();
+        var existingNodes = componentsList.Nodes.OfType<ComponentSettingsNode>().ToArray();
+        foreach (var node in existingNodes) node.OnLayoutChanged = null;
 
-        foreach (var component in TargetList) {
-            var node = new ComponentSettingsNode
+        try
+        {
+            if (!reuseExisting) componentsList.Clear();
+
+            var retained = reuseExisting
+                ? existingNodes.Where(node => components.Any(component => ReferenceEquals(node.RowComponent, component))).ToList()
+                : [];
+            var nodes = new List<ComponentSettingsNode>(components.Count);
+            var added = new List<ComponentSettingsNode>();
+            foreach (var component in components)
             {
-                OnLayoutChanged = RefreshSectionLayout,
-                OnChanged = () =>
+                var node = retained.FirstOrDefault(node => ReferenceEquals(node.RowComponent, component));
+                if (node is null)
                 {
-                    ConfigRepository.Save(System.Config);
-                    System.OverlayManager.UpdateSettings();
-                },
-                OnDeleted = () => {
-                    TargetList.Remove(component);
-                    Refresh();
-                    System.OverlayManager.Setup();
-                },
-                OnDuplicate = (source) => {
-                    var copy = source.DeepCopy();
+                    node = CreateEditor(component);
+                    added.Add(node);
+                }
+                else
+                {
+                    retained.Remove(node);
+                }
+                nodes.Add(node);
+            }
 
-                    int index = TargetList.IndexOf(source);
-                    if (index != -1 && index < TargetList.Count - 1)
-                        TargetList.Insert(index + 1, copy);
-                    else
-                        TargetList.Add(copy);
-
-                    Refresh();
-                    System.OverlayManager.Setup();
-                },
-            };
-
-            var wasExpanded = !node.IsCollapsed;
-            node.OnToggle = _ =>
+            if (reuseExisting)
             {
-                var isExpanded = !node.IsCollapsed;
-                if (wasExpanded == isExpanded) return;
-
-                wasExpanded = isExpanded;
-                RefreshSectionLayout();
-            };
-
-            componentsList.AddNode(node);
-            node.RowComponent = component;
+                var removed = existingNodes.Except(nodes).ToArray();
+                if (removed.Length > 0) componentsList.RemoveNode(removed);
+            }
+            if (added.Count > 0) componentsList.AddNode(added);
+            if (reuseExisting && !componentsList.Nodes.SequenceEqual(nodes))
+            {
+                var order = nodes.Select((node, index) => (node, index)).ToDictionary(item => item.node, item => item.index);
+                componentsList.ReorderNodes((left, right) => order[(ComponentSettingsNode)left].CompareTo(order[(ComponentSettingsNode)right]));
+            }
+        }
+        finally
+        {
+            foreach (var node in componentsList.Nodes.OfType<ComponentSettingsNode>())
+                node.OnLayoutChanged = RefreshSectionLayout;
         }
 
         RefreshSectionLayout();
+    }
+
+    private ComponentSettingsNode CreateEditor(ComponentSettings component)
+    {
+        var node = new ComponentSettingsNode
+        {
+            IsCollapsed = componentCollapsedStates.GetValueOrDefault(component.Id),
+            RowComponent = component,
+            OnChanged = () => System.OverlayManager.UpdateSettings(),
+            OnDeleted = () => QueueEdit(components => components.Remove(component)),
+            OnDuplicate = source => QueueEdit(components =>
+            {
+                var index = components.IndexOf(source);
+                if (index == -1) return false;
+
+                components.Insert(index + 1, source.DeepCopy());
+                return true;
+            }),
+        };
+
+        var wasExpanded = !node.IsCollapsed;
+        node.OnToggle = _ =>
+        {
+            var isExpanded = !node.IsCollapsed;
+            if (wasExpanded == isExpanded) return;
+
+            wasExpanded = isExpanded;
+            RefreshSectionLayout();
+        };
+        return node;
     }
 }

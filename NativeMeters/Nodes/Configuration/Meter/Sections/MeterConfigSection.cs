@@ -8,13 +8,14 @@ using NativeMeters.Configuration;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Sections;
 
-public abstract class MeterConfigSection : CollapsingHeaderNode
+public abstract class MeterConfigSection : CollapsingHeaderNode, ILayoutListNode
 {
     private const float HeaderHeight = 28.0f;
     protected const float ChildIndent = 8.0f;
 
     protected readonly Func<MeterSettings> GetMeterSettings;
     private readonly TabbedVerticalListNode contentNode;
+    private float? lastLayoutWidth;
 
     protected MeterSettings Settings => GetMeterSettings();
     protected float ContentItemSpacing
@@ -89,10 +90,20 @@ public abstract class MeterConfigSection : CollapsingHeaderNode
 
     protected override void OnSizeChanged()
     {
+        if (lastLayoutWidth == Width) return;
+        lastLayoutWidth = Width;
         base.OnSizeChanged();
 
         ApplyContentLayout();
     }
+
+    public new void RecalculateLayout()
+    {
+        OnRecalculateLayout();
+        if (NavIndex != 0) OnRecalculateNavigation();
+    }
+
+    void ILayoutListNode.RecalculateLayout() => RecalculateLayout();
 
     protected override void OnRecalculateLayout()
     {
@@ -128,7 +139,7 @@ public abstract class MeterConfigSection : CollapsingHeaderNode
         if (contentNode == null) return;
 
         contentNode.X = ChildIndent;
-        contentNode.Width = Math.Max(0.0f, Width - ChildIndent);
+        ConfigurationLayout.SetWidth(contentNode, Math.Max(0.0f, Width - ChildIndent));
     }
 
     private void SetDirectContentRowsVisible(bool isVisible)

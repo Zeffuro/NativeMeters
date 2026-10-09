@@ -52,6 +52,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
     private readonly BreakdownTableLayout tableLayout = new();
     private bool needsCollisionRefresh;
     private float lastScrollPosition = -1.0f;
+    private bool isUiReady;
 
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
@@ -172,9 +173,8 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         scrollingContent.ScrollBarNode.OnValueChanged = _ => QueueCollisionRefresh();
         scrollingContent.AttachNode(this);
 
+        isUiReady = true;
         ReSubscribeToEvents();
-
-        RefreshData();
 
         base.OnSetup(addon, atkValueSpan);
     }
@@ -184,8 +184,10 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         if (hookedService != null)
         {
             hookedService.CombatDataUpdated -= OnCombatDataUpdated;
+            hookedService = null;
         }
 
+        if (!isUiReady) return;
         hookedService = System.InternalMeterService;
         hookedService.CombatDataUpdated += OnCombatDataUpdated;
 
@@ -265,7 +267,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
     private void RefreshData()
     {
-        if (scrollingContent == null) return;
+        if (!isUiReady) return;
 
         UpdateEncounterLabel();
 
@@ -532,6 +534,9 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
     protected override unsafe void OnFinalize(AtkUnitBase* addon)
     {
+        isUiReady = false;
+        needsCollisionRefresh = false;
+        lastScrollPosition = -1.0f;
         if (hookedService != null)
         {
             hookedService.CombatDataUpdated -= OnCombatDataUpdated;
@@ -539,6 +544,15 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         }
 
         sectionPool.Clear();
+        tabBarNode = null!;
+        summaryBar = null!;
+        scrollingContent = null!;
+        tableHeader = null!;
+        prevButton = null!;
+        nextButton = null!;
+        encounterLabelNode = null!;
+        sortDropdown = null!;
+        orderLockButton = null!;
 
         base.OnFinalize(addon);
     }

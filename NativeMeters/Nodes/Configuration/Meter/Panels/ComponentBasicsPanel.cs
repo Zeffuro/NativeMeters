@@ -47,6 +47,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
     private bool isLoading;
     private bool isDisposed;
+    private float? lastChildWidth;
 
     private Action<string>? currentTagInsertAction;
     private Action<TagInfo>? currentTagSelectionAction;
@@ -390,6 +391,8 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
     private void UpdateChildWidths()
     {
+        if (lastChildWidth == Width) return;
+        lastChildWidth = Width;
         nameInput.Size = new Vector2(Width, InputHeight);
 
         sourceRow.Size = new Vector2(Width, RowHeight);

@@ -80,10 +80,10 @@ internal sealed class ComponentColorInputRowNode : ResNode, IConfigurationNaviga
         base.OnSizeChanged();
 
         colorPreview.Position = Vector2.Zero;
-        colorPreview.Size = new Vector2(Math.Min(PreviewSize, Height));
+        ConfigurationLayout.SetSize(colorPreview, new Vector2(Math.Min(PreviewSize, Height)));
 
         labelTextNode.Position = new Vector2(LabelOffset, 0.0f);
-        labelTextNode.Size = new Vector2(Math.Max(0.0f, Width - LabelOffset), Height);
+        ConfigurationLayout.SetSize(labelTextNode, new Vector2(Math.Max(0.0f, Width - LabelOffset), Height));
     }
 
     private void OpenColorPicker()

@@ -36,15 +36,8 @@ public class BackgroundTextNode : ResNode
         TextNode.AttachNode(this);
     }
 
-    private ReadOnlySeString lastLayoutString = string.Empty;
-
     public void UpdateLayout()
     {
-        var currentString = TextNode.String;
-
-        if (currentString == lastLayoutString) return;
-        lastLayoutString = currentString;
-
         RecalculateBackgroundSize();
     }
 
@@ -93,7 +86,7 @@ public class BackgroundTextNode : ResNode
         get => TextNode.String;
         set
         {
-            if (TextNode.String.ToString() == value.ToString()) return;
+            if (TextNode.String == value) return;
             TextNode.String = value;
             UpdateLayout();
         }
@@ -102,13 +95,23 @@ public class BackgroundTextNode : ResNode
     public int FontSize
     {
         get => (int)TextNode.FontSize;
-        set { TextNode.FontSize = (uint)value; UpdateLayout(); }
+        set
+        {
+            if (FontSize == value) return;
+            TextNode.FontSize = (uint)value;
+            UpdateLayout();
+        }
     }
 
     public FontType FontType
     {
         get => TextNode.FontType;
-        set { TextNode.FontType = value; UpdateLayout(); }
+        set
+        {
+            if (FontType == value) return;
+            TextNode.FontType = value;
+            UpdateLayout();
+        }
     }
 
     public bool ShowBackground
@@ -145,6 +148,7 @@ public class BackgroundTextNode : ResNode
         get => TextNode.TextFlags;
         set
         {
+            if (TextFlags == value) return;
             TextNode.TextFlags = value;
             UpdateLayout();
         }
@@ -155,12 +159,50 @@ public class BackgroundTextNode : ResNode
         get => TextNode.AlignmentType;
         set
         {
+            if (AlignmentType == value) return;
             TextNode.AlignmentType = value;
             RecalculateBackgroundSize();
         }
     }
 
-    public Vector2 Padding { get; set; } = new(6, 2);
+    public Vector2 Padding
+    {
+        get;
+        set
+        {
+            if (field == value) return;
+            field = value;
+            RecalculateBackgroundSize();
+        }
+    } = new(6, 2);
+
+    public override float Width
+    {
+        get => base.Width;
+        set
+        {
+            if (base.Width != (ushort)value) base.Width = value;
+        }
+    }
+
+    public override float Height
+    {
+        get => base.Height;
+        set
+        {
+            if (base.Height != (ushort)value) base.Height = value;
+        }
+    }
+
+    public override Vector2 Size
+    {
+        get => base.Size;
+        set
+        {
+            var nativeSize = new Vector2((ushort)value.X, (ushort)value.Y);
+            if (base.Size != nativeSize) base.Size = value;
+        }
+    }
 
     protected override void OnSizeChanged()
     {

@@ -81,7 +81,6 @@ public class OverlayManager : IAsyncDisposable, IDisposable {
         node.EnableResizing = false;
         node.RemoveNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision, NodeFlags.Focusable);
 
-        node.DetachNode();
         node.Dispose();
 
         if (unregisterFromController)

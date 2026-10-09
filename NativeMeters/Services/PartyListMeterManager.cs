@@ -402,7 +402,8 @@ public sealed unsafe class PartyListMeterManager : IDisposable
             rootNode.Size = unitBase->RootSize;
 
         textNode.Position = localAnchorPosition + new Vector2(Settings.OffsetX, Settings.OffsetY);
-        textNode.Size = new Vector2(Settings.Width, Settings.Height);
+        var textSize = new Vector2(Settings.Width, Settings.Height);
+        if (textNode.Size != textSize) textNode.Size = textSize;
         ApplyMemberTextStyle(textNode, isTopMember ? Settings.TopMemberTextColor : Settings.TextColor);
 
         if (cachedText[slotIndex] != text)
@@ -436,7 +437,8 @@ public sealed unsafe class PartyListMeterManager : IDisposable
         var progress = maxDps > 0.0 ? combatant.ENCDPS / maxDps : 0.0;
 
         barNode.Position = localAnchorPosition + new Vector2(Settings.BarOffsetX, Settings.BarOffsetY);
-        barNode.Size = new Vector2(Settings.BarWidth, Settings.BarHeight);
+        var barSize = new Vector2(Settings.BarWidth, Settings.BarHeight);
+        if (barNode.Size != barSize) barNode.Size = barSize;
         progressNode.Progress = (float)progress;
         progressNode.ColorTreatment = Settings.BarColorTreatment;
         progressNode.FillRightToLeft = Settings.BarFillRightToLeft;
@@ -509,7 +511,8 @@ public sealed unsafe class PartyListMeterManager : IDisposable
         var text = TagEngine.Process(Settings.RaidDpsFormat, encounter);
 
         textNode.Position = localAnchorPosition + new Vector2(Settings.RaidOffsetX, Settings.RaidOffsetY);
-        textNode.Size = new Vector2(Settings.RaidWidth, Settings.RaidHeight);
+        var textSize = new Vector2(Settings.RaidWidth, Settings.RaidHeight);
+        if (textNode.Size != textSize) textNode.Size = textSize;
         ApplyRaidTextStyle(textNode);
 
         if (cachedRaidText != text)
@@ -551,10 +554,10 @@ public sealed unsafe class PartyListMeterManager : IDisposable
         Vector4 textColor,
         Vector4 textOutlineColor)
     {
-        textNode.FontSize = fontSize;
-        textNode.FontType = fontType;
-        textNode.TextFlags = textFlags;
-        textNode.AlignmentType = alignmentType;
+        if (textNode.FontSize != fontSize) textNode.FontSize = fontSize;
+        if (textNode.FontType != fontType) textNode.FontType = fontType;
+        if (textNode.TextFlags != textFlags) textNode.TextFlags = textFlags;
+        if (textNode.AlignmentType != alignmentType) textNode.AlignmentType = alignmentType;
         textNode.TextColor = textColor;
         textNode.TextOutlineColor = textOutlineColor;
     }

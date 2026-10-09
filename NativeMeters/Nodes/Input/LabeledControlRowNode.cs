@@ -96,10 +96,10 @@ public abstract class LabeledControlRowNode<TControl> : ResNode, IConfigurationN
             : Math.Min(MaximumControlWidth, availableControlWidth);
 
         LabelNode.Position = Vector2.Zero;
-        LabelNode.Size = new Vector2(labelWidth, Height);
+        ConfigurationLayout.SetSize(LabelNode, new Vector2(labelWidth, Height));
 
         ControlNode.Position = new Vector2(controlX, 0.0f);
-        ControlNode.Size = new Vector2(controlWidth, Height);
+        ConfigurationLayout.SetSize(ControlNode, new Vector2(controlWidth, Height));
     }
 
     protected virtual void OnVisibilityChanged(bool isVisible) { }

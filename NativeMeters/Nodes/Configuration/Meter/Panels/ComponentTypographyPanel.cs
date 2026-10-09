@@ -22,6 +22,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
     public Action? OnLayoutChanged { get; set; }
 
     private bool isLoading;
+    private float? lastChildWidth;
 
     public ComponentTypographyPanel()
     {
@@ -125,6 +126,8 @@ public sealed class ComponentTypographyPanel : VerticalListNode
 
     protected override void OnSizeChanged()
     {
+        if (lastChildWidth == Width) return;
+        lastChildWidth = Width;
         base.OnSizeChanged();
         headerLabel.Width = Width;
         fontTypeEnumDropdown.Width = Width;

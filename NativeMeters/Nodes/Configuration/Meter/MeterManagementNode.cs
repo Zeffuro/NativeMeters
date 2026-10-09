@@ -137,7 +137,7 @@ public class MeterManagementNode : SimpleComponentNode
         };
 
         separatorNode = new VerticalLineNode { Width = SeparatorWidth };
-        configNode = new MeterConfigurationNode();
+        configNode = new MeterConfigurationNode(UpdateMeterLabel);
 
         layoutContainer = new HorizontalListNode
         {
@@ -285,6 +285,17 @@ public class MeterManagementNode : SimpleComponentNode
     private void SortMeters()
     {
         meterSettings.Sort(MeterListItemNode.Compare);
+    }
+
+    private void UpdateMeterLabel(MeterSettings meter)
+    {
+        foreach (var node in selectionListNode.OptionNodes)
+        {
+            if (!ReferenceEquals(node.ItemData, meter)) continue;
+
+            node.ItemData = null;
+            node.ItemData = meter;
+        }
     }
 
     private void ApplyNavigation()

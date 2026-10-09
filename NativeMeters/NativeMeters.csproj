@@ -1,6 +1,6 @@
 <Project Sdk="Dalamud.NET.Sdk/15.0.0">
     <PropertyGroup>
-        <Version>1.0.3.7</Version>
+        <Version>1.0.3.8</Version>
         <LangVersion>Preview</LangVersion>
         <DebugType>portable</DebugType>
     </PropertyGroup>
@@ -33,6 +33,7 @@
         <InternalName>NativeMeters</InternalName>
         <Punchline>Meters that feel like part of the game. Who needs ImGui when you have AtkNodes?</Punchline>
         <Description>Native DPS Meters for Final Fantasy XIV, still in beta and may be subject to change.</Description>
+        <Changelog>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)/changelog.md')), '(?ms)^# [^\r\n]+.*?(?=^# |\z)').Value.Trim())</Changelog>
         <RepoUrl>https://github.com/Zeffuro/NativeMeters</RepoUrl>
         <IconUrl>https://raw.githubusercontent.com/Zeffuro/NativeMeters/master/Media/icon.png</IconUrl>
         <ImageUrls>https://raw.githubusercontent.com/Zeffuro/NativeMeters/master/Media/screenshot1.png;https://raw.githubusercontent.com/Zeffuro/NativeMeters/master/Media/screenshot2.png;https://raw.githubusercontent.com/Zeffuro/NativeMeters/master/Media/screenshot3.png</ImageUrls>

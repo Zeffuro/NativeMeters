@@ -39,7 +39,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
     private readonly List<MeterConfigSection> sections = [];
     private readonly Dictionary<MeterConfigSection, bool> sectionExpandedStates = [];
 
-    public MeterDefinitionConfigurationNode()
+    public MeterDefinitionConfigurationNode(Action<MeterSettings>? onNameChanged = null)
     {
         containerLayout = new VerticalListNode
         {
@@ -110,7 +110,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
         };
         containerLayout.AddNode(scrollingArea);
 
-        sections.Add(new MeterGeneralSection(() => settings)
+        sections.Add(new MeterGeneralSection(() => settings, onNameChanged)
         {
             Width = 200,
             String = "General Settings",
@@ -152,9 +152,12 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
                 if (section is { IsCollapsed: false, IsInitialized: false })
                 {
                     section.Refresh();
+                    if (section is not MeterComponentsSection) HandleLayoutChange();
                 }
-
-                HandleLayoutChange();
+                else
+                {
+                    HandleLayoutChange();
+                }
             };
 
             scrollingArea.ContentNode.AddNode(section);
@@ -165,17 +168,17 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
     {
         base.OnSizeChanged();
 
-        containerLayout.Size = Size;
+        ConfigurationLayout.SetSize(containerLayout, Size);
 
-        headerContainer.Width = Width;
+        ConfigurationLayout.SetWidth(headerContainer, Width);
 
         float buttonsWidth = Math.Max(200, Width * 0.6f);
-        buttonsList.Size = new Vector2(buttonsWidth, 32);
+        ConfigurationLayout.SetSize(buttonsList, new Vector2(buttonsWidth, 32));
         buttonsList.Position = new Vector2(Width - buttonsWidth - 10, 2);
         buttonsList.RecalculateLayout();
 
         var scrollHeight = Math.Max(0, Height - headerContainer.Height - containerLayout.ItemSpacing);
-        scrollingArea.Size = new Vector2(Width, scrollHeight);
+        ConfigurationLayout.SetSize(scrollingArea, new Vector2(Width, scrollHeight));
 
         HandleLayoutChange();
     }
@@ -187,14 +190,17 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
         settings = meterSettings;
 
         IsRefreshing = true;
-
-        foreach (var section in sections)
+        try
         {
-            section.IsCollapsed = section is MeterComponentsSection;
-            section.Refresh();
+            foreach (var section in sections)
+            {
+                section.Refresh();
+            }
         }
-
-        IsRefreshing = false;
+        finally
+        {
+            IsRefreshing = false;
+        }
         HandleLayoutChange();
     }
 
@@ -202,21 +208,25 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
     {
         scrollingArea.IsVisible = false;
         IsRefreshing = true;
-
-        foreach (var section in sections)
+        try
         {
-            section.IsInitialized = false;
-            section.IsCollapsed = section is MeterComponentsSection;
-            section.Refresh();
+            foreach (var section in sections)
+            {
+                section.IsInitialized = false;
+                section.Refresh();
+            }
         }
-
-        IsRefreshing = false;
-        scrollingArea.IsVisible = true;
+        finally
+        {
+            IsRefreshing = false;
+            scrollingArea.IsVisible = true;
+        }
         HandleLayoutChange();
     }
 
     private void HandleLayoutChange()
     {
+        if (IsRefreshing) return;
         RecalculateScrollingContent();
         ConfigurationNavigation.Apply(scrollingArea.ContentNode, NavigationStartIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex, NavigationReturnIndex);
         OnLayoutChanged?.Invoke();
@@ -227,12 +237,11 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
         var oldScrollPosition = scrollingArea.ScrollBarNode.ScrollPosition;
         var contentWidth = Math.Max(0.0f, scrollingArea.Width - ScrollbarContentGutter);
 
-        scrollingArea.RecalculateSizes();
-        scrollingArea.ContentNode.Width = contentWidth;
+        ConfigurationLayout.SetWidth(scrollingArea.ContentNode, contentWidth);
 
         foreach (var section in sections)
         {
-            section.Width = contentWidth;
+            ConfigurationLayout.SetWidth(section, contentWidth);
         }
 
         // The first pass lets nested sections settle after width/visibility changes;

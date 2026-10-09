@@ -33,7 +33,8 @@ public static class ColorResolver
 
     public static Vector4 GetTextOutlineColor(Combatant combatant, ComponentSettings settings, MeterSettings? meterSettings = null)
     {
-        if (TryGetSelfOverride(combatant, meterSettings, out var selfOverride)
+        if (meterSettings?.SelfRowOverride is { OverrideTextOutlineColor: true }
+            && TryGetSelfOverride(combatant, meterSettings, out var selfOverride)
             && selfOverride.OverrideTextOutlineColor
             && IsTextOverrideTarget(settings, selfOverride))
         {
@@ -45,7 +46,8 @@ public static class ColorResolver
 
     public static Vector4 GetTextBackgroundColor(Combatant combatant, ComponentSettings settings, MeterSettings? meterSettings = null)
     {
-        if (TryGetSelfOverride(combatant, meterSettings, out var selfOverride)
+        if (meterSettings?.SelfRowOverride is { OverrideTextBackgroundColor: true }
+            && TryGetSelfOverride(combatant, meterSettings, out var selfOverride)
             && selfOverride.OverrideTextBackgroundColor
             && IsTextOverrideTarget(settings, selfOverride))
         {
@@ -57,7 +59,8 @@ public static class ColorResolver
 
     public static uint GetTextFontSize(Combatant combatant, ComponentSettings settings, MeterSettings? meterSettings = null)
     {
-        if (TryGetSelfOverride(combatant, meterSettings, out var selfOverride)
+        if (meterSettings?.SelfRowOverride is { OverrideTextStyle: true }
+            && TryGetSelfOverride(combatant, meterSettings, out var selfOverride)
             && selfOverride.OverrideTextStyle
             && IsTextOverrideTarget(settings, selfOverride))
         {
@@ -69,7 +72,8 @@ public static class ColorResolver
 
     public static FontType GetTextFontType(Combatant combatant, ComponentSettings settings, MeterSettings? meterSettings = null)
     {
-        if (TryGetSelfOverride(combatant, meterSettings, out var selfOverride)
+        if (meterSettings?.SelfRowOverride is { OverrideTextStyle: true }
+            && TryGetSelfOverride(combatant, meterSettings, out var selfOverride)
             && selfOverride.OverrideTextStyle
             && IsTextOverrideTarget(settings, selfOverride))
         {
@@ -81,7 +85,8 @@ public static class ColorResolver
 
     public static TextFlags GetTextFlags(Combatant combatant, ComponentSettings settings, MeterSettings? meterSettings = null)
     {
-        if (TryGetSelfOverride(combatant, meterSettings, out var selfOverride)
+        if (meterSettings?.SelfRowOverride is { OverrideTextStyle: true }
+            && TryGetSelfOverride(combatant, meterSettings, out var selfOverride)
             && selfOverride.OverrideTextStyle
             && IsTextOverrideTarget(settings, selfOverride))
         {
@@ -93,7 +98,8 @@ public static class ColorResolver
 
     public static Vector4 GetBarBackgroundColor(Combatant combatant, ComponentSettings settings, MeterSettings? meterSettings = null)
     {
-        if (TryGetSelfOverride(combatant, meterSettings, out var selfOverride)
+        if (meterSettings?.SelfRowOverride is { OverrideBarBackgroundColor: true }
+            && TryGetSelfOverride(combatant, meterSettings, out var selfOverride)
             && selfOverride.OverrideBarBackgroundColor)
         {
             return selfOverride.BarBackgroundColor;
@@ -104,7 +110,8 @@ public static class ColorResolver
 
     public static Vector4 GetRowBackgroundColor(Combatant combatant, ComponentSettings settings, MeterSettings? meterSettings = null)
     {
-        if (TryGetSelfOverride(combatant, meterSettings, out var selfOverride)
+        if (meterSettings?.SelfRowOverride is { OverrideRowBackgroundColor: true }
+            && TryGetSelfOverride(combatant, meterSettings, out var selfOverride)
             && selfOverride.OverrideRowBackgroundColor)
         {
             return selfOverride.RowBackgroundColor;
@@ -159,6 +166,18 @@ public static class ColorResolver
         out Vector4 color)
     {
         color = default;
+
+        if (meterSettings?.SelfRowOverride is not { Enabled: true } configuredOverride)
+            return false;
+
+        var applies = settings.Type switch
+        {
+            MeterComponentType.Text => configuredOverride.OverrideTextColor && IsTextOverrideTarget(settings, configuredOverride),
+            MeterComponentType.ProgressBar => configuredOverride.OverrideBarColor,
+            MeterComponentType.Background => configuredOverride.OverrideRowBackgroundColor,
+            _ => false
+        };
+        if (!applies) return false;
 
         if (!TryGetSelfOverride(combatant, meterSettings, out var selfOverride))
             return false;

@@ -13,8 +13,12 @@ public sealed class MeterGeneralSection : MeterConfigSection
     private CheckboxRowNode? lockedCheckbox;
     private CheckboxRowNode? clickthroughCheckbox;
     private bool isLoading;
+    private readonly Action<MeterSettings>? onNameChanged;
 
-    public MeterGeneralSection(Func<MeterSettings> getSettings) : base(getSettings) { }
+    public MeterGeneralSection(Func<MeterSettings> getSettings, Action<MeterSettings>? onNameChanged = null) : base(getSettings)
+    {
+        this.onNameChanged = onNameChanged;
+    }
 
     public override void Refresh()
     {
@@ -44,7 +48,16 @@ public sealed class MeterGeneralSection : MeterConfigSection
         {
             Size = new Vector2(Width, 28),
             LabelText = "Meter Name: ",
-            OnInputComplete = val => Settings.Name = val.ToString(),
+            OnInputComplete = val =>
+            {
+                if (isLoading) return;
+
+                var name = val.ToString();
+                if (Settings.Name == name) return;
+
+                Settings.Name = name;
+                onNameChanged?.Invoke(Settings);
+            },
         };
         AddNode(nameInput);
 

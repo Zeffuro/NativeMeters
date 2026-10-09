@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Plugin.Services;
@@ -30,6 +31,8 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
     private readonly HorizontalListNode urlContainer;
     private readonly LabeledTextInputNode urlInputNode;
     private readonly CircleButtonNode urlResetButton;
+    private bool? lastConnectionState;
+    private long lastStatusCheck;
 
     public Action<ConnectionType>? OnConnectionTypeChanged { get; set; }
 
@@ -251,7 +254,16 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         if (System.ActiveMeterService is null)
             return;
 
+        var timestamp = Stopwatch.GetTimestamp();
+        if (lastConnectionState.HasValue && Stopwatch.GetElapsedTime(lastStatusCheck, timestamp).TotalMilliseconds < 250)
+            return;
+
+        lastStatusCheck = timestamp;
         bool isConnected = System.ActiveMeterService.IsConnected;
+        if (lastConnectionState == isConnected)
+            return;
+
+        lastConnectionState = isConnected;
 
         statusNode.LabelText = isConnected ? "Status: Connected" : "Status: Disconnected";
         statusNode.LabelTextColor = isConnected

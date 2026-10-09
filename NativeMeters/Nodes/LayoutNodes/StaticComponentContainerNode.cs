@@ -19,6 +19,7 @@ public sealed class StaticComponentContainerNode : ResNode
     private readonly List<ComponentSettings> settingsList;
     private List<ComponentSettings>? cachedSortedSettings;
     private int lastSettingsHash;
+    private ResNode? emptyGuard;
 
     private static readonly Encounter EmptyEncounter = new() { Title = "No Encounter" };
 
@@ -47,8 +48,16 @@ public sealed class StaticComponentContainerNode : ResNode
 
         if (settingsList.Count == 0)
         {
-            var guard = new ResNode { Height = 0 };
-            guard.AttachNode(this);
+            if (emptyGuard == null)
+            {
+                emptyGuard = new ResNode { Height = 0 };
+                emptyGuard.AttachNode(this);
+            }
+        }
+        else if (emptyGuard != null)
+        {
+            emptyGuard.DisposeLater();
+            emptyGuard = null;
         }
 
         foreach (var settings in cachedSortedSettings)

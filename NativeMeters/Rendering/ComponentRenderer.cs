@@ -87,10 +87,16 @@ public static class ComponentRenderer
         if ((node is not BackgroundTextNode || settings.Size.X > 0) && node is not ProgressNode && node is not IMeterProgressNode)
         {
             float componentWidth = settings.Size.X <= 0 ? containerWidth : settings.Size.X;
-            node.Size = settings.Size with { X = componentWidth };
+            SetSize(node, settings.Size with { X = componentWidth });
         }
 
         node.Position = settings.Position;
+    }
+
+    private static void SetSize(NodeBase node, Vector2 size)
+    {
+        var nativeSize = new Vector2((ushort)size.X, (ushort)size.Y);
+        if (node.Size != nativeSize) node.Size = size;
     }
 
     private static void UpdateProgressNode(ProgressNode progressNode, ComponentSettings settings, float containerWidth, object data, MeterSettings? meterSettings)
@@ -98,7 +104,8 @@ public static class ComponentRenderer
         if (settings.Size.X > 0 || settings.Size.Y > 0)
         {
             float componentWidth = settings.Size.X <= 0 ? containerWidth : settings.Size.X;
-            progressNode.Size = new Vector2(componentWidth, settings.Size.Y > 0 ? settings.Size.Y : progressNode.Height);
+            var size = new Vector2(componentWidth, settings.Size.Y > 0 ? settings.Size.Y : progressNode.Height);
+            SetSize(progressNode, size);
         }
 
         if (data is Combatant comb)
@@ -117,7 +124,8 @@ public static class ComponentRenderer
         if (settings.Size.X > 0 || settings.Size.Y > 0)
         {
             float componentWidth = settings.Size.X <= 0 ? containerWidth : settings.Size.X;
-            node.Size = new Vector2(componentWidth, settings.Size.Y > 0 ? settings.Size.Y : node.Height);
+            var size = new Vector2(componentWidth, settings.Size.Y > 0 ? settings.Size.Y : node.Height);
+            if (node.Size != size) node.Size = size;
         }
 
         if (data is Combatant comb)

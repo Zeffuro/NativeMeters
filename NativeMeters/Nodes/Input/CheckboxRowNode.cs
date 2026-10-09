@@ -89,6 +89,6 @@ internal class CheckboxRowNode : ResNode, IConfigurationNavigationNode
         base.OnSizeChanged();
 
         checkboxNode.Position = Vector2.Zero;
-        checkboxNode.Size = Size;
+        ConfigurationLayout.SetSize(checkboxNode, Size);
     }
 }

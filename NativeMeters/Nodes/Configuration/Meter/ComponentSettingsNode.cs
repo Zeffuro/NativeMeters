@@ -9,7 +9,7 @@ using NativeMeters.Nodes.Configuration.Meter.Panels;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
-public sealed class ComponentSettingsNode : CollapsingHeaderNode
+public sealed class ComponentSettingsNode : CollapsingHeaderNode, ILayoutListNode
 {
     private const float HeaderHeight = 28.0f;
     private const float ChildIndent = 8.0f;
@@ -17,11 +17,14 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
     private ComponentSettings? settings;
 
     private readonly ComponentBasicsPanel basicsPanel;
-    private readonly ComponentTypographyPanel typographyPanel;
-    private readonly ComponentVisualsPanel visualsPanel;
+    private ComponentTypographyPanel? typographyPanel;
+    private ComponentVisualsPanel? visualsPanel;
     private readonly HorizontalListNode buttonRow;
 
     private bool isLoadingComponent;
+    private bool isCreatingPanels;
+    private bool isInitialized;
+    private float? lastLayoutWidth;
 
     public Action? OnChanged { get; set; }
     public Action? OnDeleted { get; set; }
@@ -34,17 +37,18 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
         set
         {
             settings = value;
-            if (settings == null) return;
-
-            String = $"{settings.Type} - {settings.Name}";
+            String = settings == null ? string.Empty : $"{settings.Type} - {settings.Name}";
 
             isLoadingComponent = true;
 
             try
             {
-                basicsPanel.LoadSettings(settings);
-                typographyPanel.LoadSettings(settings);
-                visualsPanel.LoadSettings(settings);
+                if (settings != null)
+                {
+                    basicsPanel.LoadSettings(settings);
+                    typographyPanel?.LoadSettings(settings);
+                    visualsPanel?.LoadSettings(settings);
+                }
             }
             finally
             {
@@ -66,20 +70,6 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
             Width = Width,
             OnSettingsChanged = NotifyChanged,
             OnNameChanged = name => { if (settings != null) String = $"{settings.Type} - {name}"; },
-            OnLayoutChanged = RefreshComponentLayout
-        };
-
-        typographyPanel = new ComponentTypographyPanel
-        {
-            Width = Width,
-            OnSettingsChanged = NotifyChanged,
-            OnLayoutChanged = RefreshComponentLayout
-        };
-
-        visualsPanel = new ComponentVisualsPanel
-        {
-            Width = Width,
-            OnSettingsChanged = NotifyChanged,
             OnLayoutChanged = RefreshComponentLayout
         };
 
@@ -107,7 +97,9 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
 
         buttonRow.AddNode([duplicateButton, deleteButton]);
 
-        AddNode([basicsPanel, typographyPanel, visualsPanel, buttonRow]);
+        AddNode([basicsPanel, buttonRow]);
+        isInitialized = true;
+        RecalculateLayout();
     }
 
     public override void AddNode(NodeBase? node)
@@ -118,6 +110,8 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
 
     protected override void OnSizeChanged()
     {
+        if (lastLayoutWidth == Width) return;
+        lastLayoutWidth = Width;
         base.OnSizeChanged();
 
         foreach (var node in Nodes)
@@ -126,9 +120,21 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
         }
     }
 
+    public new void RecalculateLayout()
+    {
+        OnRecalculateLayout();
+        if (NavIndex != 0) OnRecalculateNavigation();
+    }
+
+    void ILayoutListNode.RecalculateLayout() => RecalculateLayout();
+
     protected override void OnRecalculateLayout()
     {
-        if (IsCollapsed)
+        if (!isInitialized || isCreatingPanels || isLoadingComponent) return;
+
+        EnsureOptionalPanels();
+
+        if (IsCollapsed || settings == null)
         {
             foreach (var node in Nodes)
             {
@@ -158,7 +164,7 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
 
     private void NotifyChanged()
     {
-        if (MeterDefinitionConfigurationNode.IsRefreshing) return;
+        if (settings == null || isLoadingComponent || isCreatingPanels || MeterDefinitionConfigurationNode.IsRefreshing) return;
 
         ConfigRepository.Save(System.Config);
         OnChanged?.Invoke();
@@ -173,7 +179,7 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
 
     private void RefreshComponentLayout()
     {
-        if (isLoadingComponent) return;
+        if (!isInitialized || isLoadingComponent || isCreatingPanels) return;
 
         RecalculateLayout();
         OnLayoutChanged?.Invoke();
@@ -182,7 +188,7 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
     private void ApplyChildLayout(NodeBase node)
     {
         node.X = ChildIndent;
-        node.Width = Math.Max(0.0f, Width - ChildIndent);
+        ConfigurationLayout.SetWidth(node, Math.Max(0.0f, Width - ChildIndent));
     }
 
     private bool ShouldShowNode(NodeBase node)
@@ -192,18 +198,57 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode
             return true;
         }
 
-        if (settings == null)
-        {
-            return node.IsVisible;
-        }
-
         return node switch
         {
-            _ when node == typographyPanel => settings.Type == MeterComponentType.Text,
-            _ when node == visualsPanel => settings.Type is MeterComponentType.Text or MeterComponentType.ProgressBar or MeterComponentType.Background,
+            _ when node == typographyPanel => settings?.Type == MeterComponentType.Text,
+            _ when node == visualsPanel => settings?.Type is MeterComponentType.Text or MeterComponentType.ProgressBar or MeterComponentType.Background,
             _ => node.IsVisible
         };
     }
+
+    private void EnsureOptionalPanels()
+    {
+        if (settings == null || IsCollapsed) return;
+        var needsTypography = settings.Type == MeterComponentType.Text;
+        var needsVisuals = settings.Type is MeterComponentType.Text or MeterComponentType.ProgressBar or MeterComponentType.Background;
+        if ((!needsTypography || typographyPanel != null) && (!needsVisuals || visualsPanel != null)) return;
+
+        isCreatingPanels = true;
+        isLoadingComponent = true;
+        try
+        {
+            if (needsTypography && typographyPanel == null)
+            {
+                typographyPanel = new ComponentTypographyPanel
+                {
+                    OnSettingsChanged = NotifyChanged,
+                    OnLayoutChanged = RefreshComponentLayout
+                };
+                typographyPanel.LoadSettings(settings);
+                AddNode(typographyPanel);
+            }
+
+            if (needsVisuals && visualsPanel == null)
+            {
+                visualsPanel = new ComponentVisualsPanel
+                {
+                    OnSettingsChanged = NotifyChanged,
+                    OnLayoutChanged = RefreshComponentLayout
+                };
+                visualsPanel.LoadSettings(settings);
+                AddNode(visualsPanel);
+            }
+
+            NodeList.Sort((left, right) => ChildOrder(left).CompareTo(ChildOrder(right)));
+        }
+        finally
+        {
+            isLoadingComponent = false;
+            isCreatingPanels = false;
+        }
+    }
+
+    private int ChildOrder(NodeBase node) => node == basicsPanel ? 0 : node == typographyPanel ? 1 : node == visualsPanel ? 2 : 3;
 
     private void SetButtonRowVisible(bool isVisible)
     {

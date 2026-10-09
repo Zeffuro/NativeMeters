@@ -180,6 +180,8 @@ public sealed class MeterListLayoutNode : OverlayNode
         EnableMoving = !MeterSettings.IsLocked;
         EnableResizing = !MeterSettings.IsLocked && !MeterSettings.IsCollapsed;
 
+        if (!IsVisible) return;
+
         var scaleFactor = MeterSettings.Scale / 100f;
         Scale = new Vector2(scaleFactor);
 
@@ -195,23 +197,25 @@ public sealed class MeterListLayoutNode : OverlayNode
             backgroundNode.IsVisible = MeterSettings.ShowWindowBackground;
             backgroundNode.Style = MeterSettings.BackgroundStyle;
             backgroundNode.BackgroundColor = MeterSettings.WindowColor;
-            backgroundNode.Size = Size;
+            if (backgroundNode.Size != Size) backgroundNode.Size = Size;
         }
 
         if (headerContainer != null)
         {
             headerContainer.IsVisible = MeterSettings.HeaderEnabled;
-            headerContainer.Size = new Vector2(contentWidth, headerH);
+            var headerSize = new Vector2(contentWidth, headerH);
+            if (headerContainer.Size != headerSize) headerContainer.Size = headerSize;
             headerContainer.Position = new Vector2(contentInset, MeterSettings.IsCollapsed ? 0 : contentInset);
-            headerContainer.Update();
+            if (headerContainer.IsVisible) headerContainer.Update();
         }
 
         if (footerContainer != null)
         {
             footerContainer.IsVisible = MeterSettings.FooterEnabled && !MeterSettings.IsCollapsed;
-            footerContainer.Size = new Vector2(contentWidth, footerH);
+            var footerSize = new Vector2(contentWidth, footerH);
+            if (footerContainer.Size != footerSize) footerContainer.Size = footerSize;
             footerContainer.Position = new Vector2(contentInset, Height - footerH - contentInset);
-            footerContainer.Update();
+            if (footerContainer.IsVisible) footerContainer.Update();
         }
 
         if (listNode != null)
@@ -226,7 +230,7 @@ public sealed class MeterListLayoutNode : OverlayNode
                 UpdateListItemSpacingSafely(MeterSettings.RowSpacing);
 
             UpdateScrollbarLayout();
-            listNode.Update();
+            if (listNode.IsVisible) listNode.Update();
         }
     }
 

@@ -64,7 +64,9 @@ public abstract unsafe class GaugeBarNode : ComponentNode<AtkComponentGaugeBar, 
         get => progress;
         set
         {
-            progress = float.IsFinite(value) ? Math.Clamp(value, 0, 1) : 0;
+            var normalized = float.IsFinite(value) ? Math.Clamp(value, 0, 1) : 0;
+            if (progress == normalized) return;
+            progress = normalized;
             UpdateGaugeValue();
         }
     }
@@ -95,6 +97,7 @@ public abstract unsafe class GaugeBarNode : ComponentNode<AtkComponentGaugeBar, 
         get => barColor ?? GaugeColors.Get(MainFillNode, BarColorMode);
         set
         {
+            if (barColor == value) return;
             barColor = value;
             RefreshBarColor();
         }

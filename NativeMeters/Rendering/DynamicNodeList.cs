@@ -53,7 +53,7 @@ public class DynamicNodeList(NodeBase parentNode) : IDisposable
 
     public void Dispose()
     {
-        _componentMap.DisposeValuesLater();
+        _componentMap.Clear();
         componentStructureMap.Clear();
     }
 }
