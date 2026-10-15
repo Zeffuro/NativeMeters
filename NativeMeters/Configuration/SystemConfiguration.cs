@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using NativeMeters.Configuration.Presets;
+using NativeMeters.Models;
 
 namespace NativeMeters.Configuration;
 
@@ -19,6 +20,10 @@ public class SystemConfiguration
     public void EnsureInitialized()
     {
         General ??= new GeneralSettings();
+        General.JobColors ??= new(JobColorMaps.DefaultColors);
+        foreach (var (jobId, color) in JobColorMaps.DefaultColors)
+            General.JobColors.TryAdd(jobId, color);
+
         ConnectionSettings ??= new ConnectionSettings();
         InternalParser ??= new InternalParserSettings();
         Meters ??= [];

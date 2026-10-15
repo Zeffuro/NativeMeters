@@ -1,3 +1,7 @@
+# 1.0.3.9
+
+- Add basic BST support.
+
 # 1.0.3.8
 
 - Made some performance optimizations.

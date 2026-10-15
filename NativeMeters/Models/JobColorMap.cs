@@ -27,6 +27,7 @@ public static class JobColorMaps
         { 34, new Vector4(228f / 255f, 109f / 255f, 4f / 255f, 1f) },   // SAM
         { 39, new Vector4(150f / 255f, 90f / 255f, 144f / 255f, 1f) },  // RPR
         { 41, new Vector4(16f / 255f, 130f / 255f, 16f / 255f, 1f) },   // VPR
+        { 43, new Vector4(184f / 255f, 154f / 255f, 106f / 255f, 1f) }, // BST
 
         // Physical Ranged DPS
         { 23, new Vector4(145f / 255f, 186f / 255f, 94f / 255f, 1f) },  // BRD
