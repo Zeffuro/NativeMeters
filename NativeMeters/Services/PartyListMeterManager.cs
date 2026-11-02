@@ -396,7 +396,7 @@ public sealed unsafe class PartyListMeterManager : IDisposable
 
         var unitBase = (AtkUnitBase*)addon;
         var localAnchorPosition = GetLocalPosition(addon, anchorNode);
-        var text = TagEngine.Process(isTopMember ? Settings.TopMemberFormat : Settings.MemberFormat, combatant);
+        var text = TagEngine.ProcessCached(isTopMember ? Settings.TopMemberFormat : Settings.MemberFormat, combatant, textNode);
 
         if (rootNode != null)
             rootNode.Size = unitBase->RootSize;
@@ -508,7 +508,7 @@ public sealed unsafe class PartyListMeterManager : IDisposable
         }
 
         var localAnchorPosition = GetLocalPosition(addon, anchorNode);
-        var text = TagEngine.Process(Settings.RaidDpsFormat, encounter);
+        var text = TagEngine.ProcessCached(Settings.RaidDpsFormat, encounter, textNode);
 
         textNode.Position = localAnchorPosition + new Vector2(Settings.RaidOffsetX, Settings.RaidOffsetY);
         var textSize = new Vector2(Settings.RaidWidth, Settings.RaidHeight);

@@ -39,7 +39,7 @@ public static class ComponentRenderer
                     ? ColorResolver.GetTextBackgroundColor(textBackgroundCombatant, settings, meterSettings)
                     : settings.TextBackgroundColor;
                 textNode.ShowBackground = settings.ShowBackground;
-                textNode.String = TagEngine.Process(settings.DataSource, data);
+                textNode.String = TagEngine.ProcessCached(settings.DataSource, data, textNode);
 
                 if (settings.Size.X > 0) node.Width = settings.Size.X;
                 if (settings.Size.Y > 0) node.Height = settings.Size.Y;

@@ -19,6 +19,11 @@ public static class StatSelector
         "Deaths"
     ];
 
+    private static readonly HashSet<Func<Combatant, double>> BuiltInSelectors =
+        new(AvailableStatSelectors.ConvertAll(GetStatSelector));
+
+    internal static bool IsBuiltIn(Func<Combatant, double> selector) => BuiltInSelectors.Contains(selector);
+
     // TODO: Add all / do it better.
     public static List<string> GetAvailableStatSelectors() =>
     [

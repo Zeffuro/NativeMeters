@@ -1,12 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NativeMeters.Data.Stats;
 using NativeMeters.Models;
 
 namespace NativeMeters.Services;
 
 public abstract class MeterServiceBase : IMeterService
 {
+    private readonly Dictionary<Func<Combatant, double>, double> statMaxima = new();
+    private CombatDataMessage? maximaData;
+    private DateTime maximaFrame;
+    private bool maximaPrivacy;
+
     protected CombatDataMessage? CombatData { get; set; }
     protected CombatDataMessage? LastEvent { get; set; }
 
@@ -30,6 +36,8 @@ public abstract class MeterServiceBase : IMeterService
 
     protected void InvokeCombatDataUpdated()
     {
+        statMaxima.Clear();
+        maximaData = null;
         CombatDataUpdated?.Invoke();
     }
 
@@ -142,7 +150,31 @@ public abstract class MeterServiceBase : IMeterService
     public int SelectedHistoryIndex => SelectedEncounterIndex;
 
     public double GetMaxCombatantStat(Func<Combatant, double> selector)
-        => GetCombatants().Any() ? GetCombatants().Max(selector) : 1.0;
+    {
+        if (!StatSelector.IsBuiltIn(selector))
+            return GetCombatants().Any() ? GetCombatants().Max(selector) : 1.0;
+
+        var data = GetViewedCombatData();
+        var frame = Service.Framework.LastUpdateUTC;
+        var privacy = System.Config.General.PrivacyMode;
+        if (!ReferenceEquals(maximaData, data) || maximaFrame != frame || maximaPrivacy != privacy)
+        {
+            statMaxima.Clear();
+            maximaData = data;
+            maximaFrame = frame;
+            maximaPrivacy = privacy;
+        }
+
+        if (statMaxima.TryGetValue(selector, out var maximum))
+        {
+            if (privacy) _ = GetCombatants();
+            return maximum;
+        }
+
+        maximum = GetCombatants().Any() ? GetCombatants().Max(selector) : 1.0;
+        statMaxima[selector] = maximum;
+        return maximum;
+    }
 
     public virtual bool HasCombatData()
         => GetViewedCombatData() != null;

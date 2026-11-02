@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using NativeMeters.Models;
@@ -17,17 +18,22 @@ public static class TagEngine
     private static readonly ValueFormatterChain FormatterChain = new();
 
     private static readonly Dictionary<string, List<ParsedTag>> ParseCache = new(StringComparer.Ordinal);
+    private static readonly ConditionalWeakTable<object, TagTextCache> TextCaches = new();
+
+    public static string ProcessCached(string input, object data, object owner)
+    {
+        if (string.IsNullOrEmpty(input)) return string.Empty;
+        var segments = GetSegments(input);
+        if (segments.Count == 1 && segments[0].IsLiteral) return segments[0].LiteralText;
+        return TextCaches.GetValue(owner, static _ => new TagTextCache()).Process(segments, data);
+    }
 
     public static string Process(string input, object data)
     {
         if (string.IsNullOrEmpty(input))
             return string.Empty;
 
-        if (!ParseCache.TryGetValue(input, out var segments))
-        {
-            segments = ParseTemplate(input);
-            ParseCache[input] = segments;
-        }
+        var segments = GetSegments(input);
 
         if (segments.Count == 1 && segments[0].IsLiteral)
             return segments[0].LiteralText;
@@ -46,6 +52,16 @@ public static class TagEngine
     public static void ClearCache()
     {
         ParseCache.Clear();
+    }
+
+    private static List<ParsedTag> GetSegments(string input)
+    {
+        if (!ParseCache.TryGetValue(input, out var segments))
+        {
+            segments = ParseTemplate(input);
+            ParseCache[input] = segments;
+        }
+        return segments;
     }
 
     private static List<ParsedTag> ParseTemplate(string input)
@@ -88,6 +104,14 @@ public static class TagEngine
     private static string ResolveTag(ParsedTag tag, object data)
     {
         var rawValue = PropertyAccessor.GetValue(tag.Key, data);
+        return FormatTag(tag, rawValue, data);
+    }
+
+    internal static object? GetTagValue(ParsedTag tag, object data)
+        => PropertyAccessor.GetValue(tag.Key, data);
+
+    internal static string FormatTag(ParsedTag tag, object? rawValue, object data)
+    {
         if (rawValue == null)
             return tag.OriginalText;
 
