@@ -85,6 +85,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
     {
         NodeBase node = settings.Type switch {
             MeterComponentType.JobIcon or MeterComponentType.Icon => new IconImageNode { FitTexture = true },
+            MeterComponentType.Asset => new AssetImageNode(),
             MeterComponentType.ProgressBar => settings.ProgressBarType switch {
                 ProgressBarType.Cast => new ProgressBarCastGaugeNode(),
                 ProgressBarType.EnemyCast => new ProgressBarEnemyCastGaugeNode(),
@@ -129,7 +130,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
     {
         if (Combatant == null || MeterSettings == null) return;
 
-        ComponentRenderer.Update(node, settings, Width, Combatant, MeterSettings);
+        ComponentRenderer.Update(node, settings, Width, Combatant, MeterSettings, ItemData);
         MeterComponentInteractions.ApplyClickthrough(node, MeterSettings.IsClickthrough);
     }
 

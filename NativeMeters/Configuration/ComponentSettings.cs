@@ -10,7 +10,7 @@ using NativeMeters.Models;
 
 namespace NativeMeters.Configuration;
 
-public enum MeterComponentType { Text, JobIcon, ProgressBar, Background, MenuButton, Separator, Icon }
+public enum MeterComponentType { Text = 0, JobIcon = 1, ProgressBar = 2, Background = 3, MenuButton = 4, Separator = 5, Icon = 6, Asset = 7 }
 public enum ColorMode { Static, Job, Role }
 public enum ProgressBarColorTreatment
 {
@@ -42,6 +42,8 @@ public class ComponentSettings
 
     public JobIconType JobIconType { get; set; } = JobIconType.Default;
     public uint IconId { get; set; } = 0;
+    public MeterAsset Asset { get; set; } = MeterAsset.DutyClock;
+    public MeterButtonAction ButtonAction { get; set; } = MeterButtonAction.ContextMenu;
 
     public uint FontSize { get; set; } = 14;
     public FontType FontType { get; set; } = FontType.Axis;

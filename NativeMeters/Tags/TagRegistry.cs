@@ -20,6 +20,9 @@ public static class TagRegistry
             new("1. Common", "Job Abbreviation", "[job]", "Job name", "Warrior"),
             new("1. Common", "Job Abbreviation", "[job.3]", "3-letter job abbreviation", "WAR"),
             new("1. Common", "Duration", "[duration]", "Combat time (mm:ss)", "04:20"),
+            new("1. Common", "Rank", "[rank]", "Position in this meter", "2"),
+            new("1. Common", "Combatant Count", "[combatantcount]", "Number of combatants in this meter", "8"),
+            new("1. Common", "Rank / Count", "[rank]/[combatantcount]", "Position out of the total", "2/8"),
             new("1. Common", "Zone Name", "[zone]", "Current zone/instance", "The Goblet"),
 
             new("2. Damage", "Encounter DPS", "[encdps.0]", "Damage per second across entire encounter", "12345"),

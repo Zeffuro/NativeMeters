@@ -15,6 +15,8 @@ public static class TagDefinitions
         { "Name: First", "[name_first]" },
         { "Name: Initial", "[name_first.1]" },
         { "Job: Abbr", "[job.3]" },
+        { "Rank", "[rank]" },
+        { "Rank / Count", "[rank]/[combatantcount]" },
 
         { "DPS", "[dps.0]" },
         { "DPS: Raw (No Comma)", "[dps:r.0]" },

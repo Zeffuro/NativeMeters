@@ -44,6 +44,13 @@ public static class PropertyAccessor
 
     public static object? GetValue(string key, object data)
     {
+        if (data is CombatantTagContext row)
+        {
+            if (key.Equals("rank", StringComparison.OrdinalIgnoreCase)) return row.RankValue;
+            if (key.Equals("combatantcount", StringComparison.OrdinalIgnoreCase)) return row.CountValue;
+            data = row.Combatant;
+        }
+
         if (CustomTagRegistry.TryResolve(key, data, out var customValue))
             return customValue;
         

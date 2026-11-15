@@ -28,6 +28,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
     private CheckboxRowNode? showLimitBreakToggle;
     private CheckboxRowNode? showNonPlayerToggle;
     private CheckboxRowNode? showPinSelfToggle;
+    private CheckboxRowNode? keepSelfVisibleToggle;
     private CheckboxRowNode? selfHighlightToggle;
     private LabeledEnumDropdownNode<SelfTextOverrideMode>? selfTextTargetDropdown;
     private CheckboxRowNode? selfTextColorToggle;
@@ -80,6 +81,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
             showLimitBreakToggle!.IsChecked = Settings.ShowLimitBreak;
             showNonPlayerToggle!.IsChecked = Settings.ShowNonPlayerCombatants;
             showPinSelfToggle!.IsChecked = Settings.PinSelfToTop;
+            keepSelfVisibleToggle!.IsChecked = Settings.KeepSelfVisibleWhenCollapsed;
             selfHighlightToggle!.IsChecked = SelfRowOverride.Enabled;
             selfTextTargetDropdown!.SelectedOption = SelfRowOverride.TextColorMode;
             selfTextColorToggle!.IsChecked = SelfRowOverride.OverrideTextColor;
@@ -301,6 +303,17 @@ public sealed class MeterDisplaySection : MeterConfigSection
             }
         };
 
+        keepSelfVisibleToggle = new CheckboxRowNode
+        {
+            Size = new Vector2(Width, 20),
+            String = "Keep Self Visible When Collapsed",
+            TextTooltip = "Collapse to your own row, keeping your expanded window size for reopening.",
+            OnClick = value =>
+            {
+                if (!isLoading) Settings.KeepSelfVisibleWhenCollapsed = value;
+            }
+        };
+
         selfHighlightToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
@@ -475,6 +488,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         AddNode(showLimitBreakToggle);
         AddNode(showNonPlayerToggle);
         AddNode(showPinSelfToggle);
+        AddNode(keepSelfVisibleToggle);
         AddNode(selfHighlightToggle);
         AddTab(1);
         AddNode(selfTextTargetDropdown);

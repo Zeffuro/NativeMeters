@@ -1,3 +1,12 @@
+# 1.0.3.10
+
+- Added an option to keep your own row visible when collapsed.
+- Added more button actions.
+- Added rank and combatant count tags.
+- Added an Asset component with a duty clock.
+- Made removing meters safer.
+- Added the Analicecube preset.
+
 # 1.0.3.9
 
 - Add basic BST support.

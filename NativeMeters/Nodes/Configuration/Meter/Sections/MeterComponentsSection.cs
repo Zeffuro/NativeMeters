@@ -47,7 +47,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
 
         typeDropdown = new StringDropDownNode {
             Size = new Vector2(150, 28),
-            Options = Enum.GetNames<MeterComponentType>().ToList(),
+            Options = Enum.GetValues<MeterComponentType>().Select(type => type.GetDisplayName()).ToList(),
         };
         addRow.AddNode(typeDropdown);
 
@@ -70,6 +70,7 @@ public sealed class MeterComponentsSection : MeterConfigSection
 
     private void AddNewComponent(string? selectedComponent)
     {
+        if (selectedComponent == "Button") selectedComponent = nameof(MeterComponentType.MenuButton);
         if (!Enum.TryParse<MeterComponentType>(selectedComponent, out var parsedComponentType)) return;
 
         QueueEdit(components =>
@@ -77,13 +78,13 @@ public sealed class MeterComponentsSection : MeterConfigSection
             var component = new ComponentSettings {
                 Id = Guid.NewGuid().ToString(),
                 Type = parsedComponentType,
-                Name = $"New {parsedComponentType}",
+                Name = $"New {parsedComponentType.GetDisplayName()}",
                 Size = new Vector2(100, 20),
                 Position = Vector2.Zero,
                 ZIndex = components.Count > 0 ? components.Max(c => c.ZIndex) + 1 : 0
             };
 
-            if (component.Type is MeterComponentType.Icon or MeterComponentType.JobIcon or MeterComponentType.MenuButton) component.Size = new Vector2(24);
+            if (component.Type is MeterComponentType.Icon or MeterComponentType.JobIcon or MeterComponentType.MenuButton or MeterComponentType.Asset) component.Size = new Vector2(24);
             if (component.Type == MeterComponentType.ProgressBar) component.DataSource = StatSelector.DefaultStatSelector;
 
             components.Add(component);

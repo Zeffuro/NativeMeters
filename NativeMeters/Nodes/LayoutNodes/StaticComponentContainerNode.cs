@@ -73,6 +73,7 @@ public sealed class StaticComponentContainerNode : ResNode
     {
         NodeBase node = settings.Type switch {
             MeterComponentType.JobIcon or MeterComponentType.Icon => new IconImageNode { FitTexture = true },
+            MeterComponentType.Asset => new AssetImageNode(),
             MeterComponentType.ProgressBar => settings.ProgressBarType switch {
                 ProgressBarType.Cast => new ProgressBarCastGaugeNode(),
                 ProgressBarType.EnemyCast => new ProgressBarEnemyCastGaugeNode(),

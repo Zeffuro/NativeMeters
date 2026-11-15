@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.UiOverlay;
 using NativeMeters.Extensions;
@@ -11,6 +12,8 @@ namespace NativeMeters.Services;
 
 public class OverlayManager : IAsyncDisposable, IDisposable {
     private bool isDisposed;
+    private readonly object setupSync = new();
+    private IFramework? setupFramework;
     private readonly Dictionary<string, MeterListLayoutNode> activeMeters = new();
 
     public async ValueTask DisposeAsync() {
@@ -18,6 +21,7 @@ public class OverlayManager : IAsyncDisposable, IDisposable {
             return;
         }
         isDisposed = true;
+        CancelPendingSetup();
 
         await DetachAndDisposeAllAsync();
     }
@@ -27,6 +31,7 @@ public class OverlayManager : IAsyncDisposable, IDisposable {
             return;
         }
         isDisposed = true;
+        CancelPendingSetup();
 
         DetachAndDisposeAll();
     }
@@ -36,11 +41,45 @@ public class OverlayManager : IAsyncDisposable, IDisposable {
 
         try
         {
-            Service.Framework.RunOnFrameworkThread(SetupOnFrameworkThread);
+            Service.Framework.RunOnFrameworkThread(QueueSetupOnFrameworkThread);
         }
         catch (Exception exception)
         {
             Service.Logger.Error(exception, "Failed to schedule NativeMeters overlay setup.");
+        }
+    }
+
+    private void QueueSetupOnFrameworkThread()
+    {
+        lock (setupSync)
+        {
+            if (isDisposed || Service.Framework.IsFrameworkUnloading || setupFramework != null) return;
+            setupFramework = Service.Framework;
+            // Rebuild after native UI callbacks return.
+            setupFramework.Update += ApplyPendingSetup;
+        }
+    }
+
+    private void ApplyPendingSetup(IFramework framework)
+    {
+        lock (setupSync)
+        {
+            if (!ReferenceEquals(setupFramework, framework)) return;
+            framework.Update -= ApplyPendingSetup;
+            setupFramework = null;
+        }
+
+        if (isDisposed || framework.IsFrameworkUnloading) return;
+        SetupOnFrameworkThread();
+    }
+
+    private void CancelPendingSetup()
+    {
+        lock (setupSync)
+        {
+            if (setupFramework == null) return;
+            setupFramework.Update -= ApplyPendingSetup;
+            setupFramework = null;
         }
     }
 

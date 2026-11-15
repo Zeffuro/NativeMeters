@@ -14,7 +14,7 @@ namespace NativeMeters.Rendering;
 
 public static class ComponentRenderer
 {
-    public static void Update(NodeBase node, ComponentSettings settings, float containerWidth, object data, MeterSettings? meterSettings = null)
+    public static void Update(NodeBase node, ComponentSettings settings, float containerWidth, object data, MeterSettings? meterSettings = null, CombatantTagContext? tagContext = null)
     {
         node.IsVisible = true;
 
@@ -39,10 +39,14 @@ public static class ComponentRenderer
                     ? ColorResolver.GetTextBackgroundColor(textBackgroundCombatant, settings, meterSettings)
                     : settings.TextBackgroundColor;
                 textNode.ShowBackground = settings.ShowBackground;
-                textNode.String = TagEngine.ProcessCached(settings.DataSource, data, textNode);
+                textNode.String = TagEngine.ProcessCached(settings.DataSource, tagContext ?? data, textNode);
 
                 if (settings.Size.X > 0) node.Width = settings.Size.X;
                 if (settings.Size.Y > 0) node.Height = settings.Size.Y;
+                break;
+
+            case AssetImageNode assetNode:
+                assetNode.IsVisible = assetNode.ApplyAsset(settings.Asset);
                 break;
 
             case IconImageNode iconNode:
@@ -73,7 +77,10 @@ public static class ComponentRenderer
                 UpdateProgressNode(progressNode, settings, containerWidth, data, meterSettings);
                 break;
 
-            case HeaderMenuButtonNode:
+            case HeaderMenuButtonNode buttonNode:
+                buttonNode.Configure(meterSettings, settings.ButtonAction);
+                break;
+
             case HorizontalLineNode:
                 break;
 

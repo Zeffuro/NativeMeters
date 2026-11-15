@@ -28,6 +28,8 @@ public sealed class ComponentBasicsPanel : VerticalListNode
     private readonly CircleButtonNode browseTagButton;
     private readonly ComponentStringDropdownRowNode barStatDropdown;
     private readonly ComponentEnumDropdownRowNode<JobIconType> jobIconTypeEnumDropdown;
+    private readonly ComponentEnumDropdownRowNode<MeterButtonAction> buttonActionDropdown;
+    private readonly ComponentEnumDropdownRowNode<MeterAsset> assetDropdown;
 
     private readonly HorizontalListNode iconRow;
     private readonly ComponentNumericInputRowNode iconIdInput;
@@ -131,6 +133,32 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
+        buttonActionDropdown = new ComponentEnumDropdownRowNode<MeterButtonAction>
+        {
+            LabelText = "Button Action: ",
+            Size = new Vector2(Width, InputHeight),
+            Options = Enum.GetValues<MeterButtonAction>().ToList(),
+            OnOptionSelected = val =>
+            {
+                if (settings == null || isLoading) return;
+                settings.ButtonAction = val;
+                OnSettingsChanged?.Invoke();
+            }
+        };
+
+        assetDropdown = new ComponentEnumDropdownRowNode<MeterAsset>
+        {
+            LabelText = "Asset: ",
+            Size = new Vector2(Width, InputHeight),
+            Options = Enum.GetValues<MeterAsset>().ToList(),
+            OnOptionSelected = val =>
+            {
+                if (settings == null || isLoading) return;
+                settings.Asset = val;
+                OnSettingsChanged?.Invoke();
+            }
+        };
+
         iconIdInput = new ComponentNumericInputRowNode
         {
             LabelText = "Icon ID:",
@@ -221,7 +249,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
             }
         };
 
-        AddNode([nameInput, sourceRow, barStatDropdown, jobIconTypeEnumDropdown, iconRow, posRow, sizeRow, zIndexInput]);
+        AddNode([nameInput, sourceRow, barStatDropdown, jobIconTypeEnumDropdown, buttonActionDropdown, assetDropdown, iconRow, posRow, sizeRow, zIndexInput]);
     }
 
     public override bool IsVisible
@@ -297,6 +325,8 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         if (settings.Type == MeterComponentType.ProgressBar) barStatDropdown.SelectedOption = settings.DataSource;
         if (settings.Type == MeterComponentType.JobIcon) jobIconTypeEnumDropdown.SelectedOption = settings.JobIconType;
+        if (settings.Type == MeterComponentType.MenuButton) buttonActionDropdown.SelectedOption = settings.ButtonAction;
+        if (settings.Type == MeterComponentType.Asset) assetDropdown.SelectedOption = settings.Asset;
 
         isLoading = false;
         RecalculateLayout();
@@ -309,11 +339,14 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         var isBar = settings?.Type == MeterComponentType.ProgressBar;
         var isJobIcon = settings?.Type == MeterComponentType.JobIcon;
         var isIcon = settings?.Type == MeterComponentType.Icon;
+        var isButton = settings?.Type == MeterComponentType.MenuButton;
 
         nameInput.IsVisible = true;
         SetSourceRowVisible(isText);
         barStatDropdown.IsVisible = isBar;
         jobIconTypeEnumDropdown.IsVisible = isJobIcon;
+        buttonActionDropdown.IsVisible = isButton;
+        assetDropdown.IsVisible = settings?.Type == MeterComponentType.Asset;
         SetIconRowVisible(isIcon);
         posRow.IsVisible = true;
         posXInput.IsVisible = true;
@@ -330,6 +363,8 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         SetSourceRowVisible(isVisible);
         barStatDropdown.IsVisible = isVisible;
         jobIconTypeEnumDropdown.IsVisible = isVisible;
+        buttonActionDropdown.IsVisible = isVisible;
+        assetDropdown.IsVisible = isVisible;
         SetIconRowVisible(isVisible);
         posRow.IsVisible = isVisible;
         posXInput.IsVisible = isVisible;
@@ -381,6 +416,8 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         LayoutRow(sourceRow, ref yPosition);
         LayoutRow(barStatDropdown, ref yPosition);
         LayoutRow(jobIconTypeEnumDropdown, ref yPosition);
+        LayoutRow(buttonActionDropdown, ref yPosition);
+        LayoutRow(assetDropdown, ref yPosition);
         LayoutRow(iconRow, ref yPosition);
         LayoutRow(posRow, ref yPosition);
         LayoutRow(sizeRow, ref yPosition);
@@ -403,6 +440,8 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         barStatDropdown.Size = new Vector2(Width, InputHeight);
         jobIconTypeEnumDropdown.Size = new Vector2(Width, InputHeight);
+        buttonActionDropdown.Size = new Vector2(Width, InputHeight);
+        assetDropdown.Size = new Vector2(Width, InputHeight);
 
         iconRow.Size = new Vector2(Width, RowHeight);
         browseIconButton.Size = new Vector2(InputHeight, InputHeight);

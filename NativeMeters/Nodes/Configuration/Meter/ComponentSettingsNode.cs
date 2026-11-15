@@ -37,7 +37,7 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode, ILayoutListNod
         set
         {
             settings = value;
-            String = settings == null ? string.Empty : $"{settings.Type} - {settings.Name}";
+            String = settings == null ? string.Empty : $"{settings.Type.GetDisplayName()} - {settings.Name}";
 
             isLoadingComponent = true;
 
@@ -69,7 +69,7 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode, ILayoutListNod
         {
             Width = Width,
             OnSettingsChanged = NotifyChanged,
-            OnNameChanged = name => { if (settings != null) String = $"{settings.Type} - {name}"; },
+            OnNameChanged = name => { if (settings != null) String = $"{settings.Type.GetDisplayName()} - {name}"; },
             OnLayoutChanged = RefreshComponentLayout
         };
 
