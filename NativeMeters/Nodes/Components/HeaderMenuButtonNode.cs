@@ -59,6 +59,8 @@ public class HeaderMenuButtonNode : SimpleComponentNode
 
     private void ExecuteAction()
     {
+        if (MeterSettings is { } meter && System.OverlayManager.GetPlacement(meter) != null) return;
+
         switch (ButtonAction)
         {
             case MeterButtonAction.ToggleCollapse:

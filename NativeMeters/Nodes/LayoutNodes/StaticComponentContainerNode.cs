@@ -35,7 +35,7 @@ public sealed class StaticComponentContainerNode : ResNode
         graphManager = new DynamicNodeList(this);
     }
 
-    public void Update()
+    public void Update(Encounter? encounter = null)
     {
         var settingsHash = CalculateComponentStructureHash(settingsList);
         if (cachedSortedSettings == null || lastSettingsHash != settingsHash)
@@ -60,11 +60,13 @@ public sealed class StaticComponentContainerNode : ResNode
             emptyGuard = null;
         }
 
+        encounter ??= System.ActiveMeterService.GetEncounter() ?? EmptyEncounter;
         foreach (var settings in cachedSortedSettings)
         {
             if (graphManager.Components.TryGetValue(settings.Id, out var node))
             {
-                UpdateComponentData(node, settings);
+                ComponentRenderer.Update(node, settings, Width, encounter, MeterSettings);
+                MeterComponentInteractions.ApplyClickthrough(node, MeterSettings?.IsClickthrough == true);
             }
         }
     }
@@ -113,13 +115,6 @@ public sealed class StaticComponentContainerNode : ResNode
         }
 
         return hash.ToHashCode();
-    }
-
-    private void UpdateComponentData(NodeBase node, ComponentSettings settings)
-    {
-        var encounter = System.ActiveMeterService.GetEncounter() ?? EmptyEncounter;
-        ComponentRenderer.Update(node, settings, Width, encounter, MeterSettings);
-        MeterComponentInteractions.ApplyClickthrough(node, MeterSettings?.IsClickthrough == true);
     }
 
     protected override void Dispose(bool isNativeDestructor)

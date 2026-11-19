@@ -13,6 +13,7 @@ public class BackgroundTextNode : ResNode
 {
     public readonly NineGridNode BackgroundNode;
     public readonly TextNode TextNode;
+    public bool ConstrainBackground { get; init; }
 
     public BackgroundTextNode()
     {
@@ -49,12 +50,19 @@ public class BackgroundTextNode : ResNode
         float textHeight = textSize.Y > 0 ? textSize.Y : 10.0f;
 
         // Background size based on actual text size plus padding
-        var bgSize = new Vector2(
-            Math.Max(30.0f, textWidth + Padding.X * 2),
-            Math.Max(20.0f, textHeight + Padding.Y * 2)
-        );
-
-        BackgroundNode.Size = bgSize;
+        var minimumSize = new Vector2(30, 20);
+        var bgSize = Vector2.Max(minimumSize, new Vector2(textWidth, textHeight) + Padding * 2);
+        if (ConstrainBackground)
+        {
+            bgSize = Vector2.Min(bgSize, Size);
+            var nativeSize = Vector2.Max(bgSize, minimumSize);
+            BackgroundNode.Size = nativeSize;
+            BackgroundNode.Scale = bgSize / nativeSize;
+        }
+        else
+        {
+            BackgroundNode.Size = bgSize;
+        }
 
         float bgX = TextNode.AlignmentType switch
         {
@@ -78,7 +86,10 @@ public class BackgroundTextNode : ResNode
             _ => (TextNode.Height - bgSize.Y) / 2
         };
 
-        BackgroundNode.Position = new Vector2(bgX, bgY);
+        var position = new Vector2(bgX, bgY);
+        BackgroundNode.Position = ConstrainBackground
+            ? Vector2.Clamp(position, Vector2.Zero, Size - bgSize)
+            : position;
     }
 
     public ReadOnlySeString String

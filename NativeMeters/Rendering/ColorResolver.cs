@@ -234,6 +234,6 @@ public static class ColorResolver
         };
     }
 
-    private static bool IsNameTextComponent(ComponentSettings settings)
+    internal static bool IsNameTextComponent(ComponentSettings settings)
         => settings.DataSource?.Contains("[name", global::System.StringComparison.OrdinalIgnoreCase) == true;
 }

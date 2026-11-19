@@ -35,11 +35,11 @@ public class MeterManagementNode : SimpleComponentNode
     private readonly VerticalLineNode separatorNode;
     private readonly MeterConfigurationNode configNode;
     private readonly AddMeterDialogAddon addMeterDialog;
+    private readonly MeterImportConfirmationAddon importConfirmation;
     private readonly List<MeterSettings> meterSettings;
 
     private MeterSettings? selectedMeter;
     private string currentSearch = string.Empty;
-    private readonly bool ownsAddMeterDialog;
 
     public int TabBarNavIndex
     {
@@ -51,19 +51,13 @@ public class MeterManagementNode : SimpleComponentNode
         }
     } = 3;
 
-    public MeterManagementNode(AddMeterDialogAddon? sharedAddMeterDialog = null)
+    internal MeterManagementNode(AddMeterDialogAddon addMeterDialog, MeterImportConfirmationAddon importConfirmation)
     {
         meterSettings = System.Config.Meters.ToList();
         SortMeters();
 
-        ownsAddMeterDialog = sharedAddMeterDialog is null;
-        addMeterDialog = sharedAddMeterDialog ?? new AddMeterDialogAddon
-        {
-            InternalName = "NativeMetersAddMeter",
-            Title = "Add Meter",
-            Size = new Vector2(440.0f, 190.0f),
-            RememberClosePosition = false,
-        };
+        this.addMeterDialog = addMeterDialog;
+        this.importConfirmation = importConfirmation;
         addMeterDialog.OnMeterCreated = AddMeter;
 
         searchInputNode = new TextInputNode
@@ -137,7 +131,7 @@ public class MeterManagementNode : SimpleComponentNode
         };
 
         separatorNode = new VerticalLineNode { Width = SeparatorWidth };
-        configNode = new MeterConfigurationNode(UpdateMeterLabel);
+        configNode = new MeterConfigurationNode(importConfirmation, UpdateMeterLabel);
 
         layoutContainer = new HorizontalListNode
         {
@@ -199,6 +193,7 @@ public class MeterManagementNode : SimpleComponentNode
     {
         if (!ReferenceEquals(selectedMeter, meter))
         {
+            importConfirmation.Cancel();
             System.TextFlagsPickerAddon?.Close();
         }
 
@@ -339,15 +334,5 @@ public class MeterManagementNode : SimpleComponentNode
         meter.Position = new Vector2(
             Math.Clamp(meter.Position.X, 0.0f, maxX),
             Math.Clamp(meter.Position.Y, 0.0f, maxY));
-    }
-
-    protected override void Dispose(bool isNativeDestructor)
-    {
-        if (!isNativeDestructor && ownsAddMeterDialog)
-        {
-            addMeterDialog.Dispose();
-        }
-
-        base.Dispose(isNativeDestructor);
     }
 }

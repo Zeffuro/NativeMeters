@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,16 +9,28 @@ using KamiToolKit.Classes;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Data.Stats;
 using NativeMeters.Services;
+using static NativeMeters.Configuration.Presets.MeterPresetComponents;
 
 namespace NativeMeters.Configuration.Presets;
 
 public static class MeterPresets
 {
+    private const float StylishWidth = 270f;
+    private const float StylishLeft = 8f;
+    private const float StylishTextLeft = 40f;
+    private const float StylishRight = StylishWidth - StylishLeft;
+
+    private static readonly PropertyInfo[] SettingsProperties = typeof(MeterSettings)
+        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        .Where(property => property is { CanRead: true, CanWrite: true })
+        .ToArray();
+
     private static string PresetsDirectory => Path.Combine(Service.PluginInterface.AssemblyLocation.Directory?.FullName!, "Assets", "Presets");
 
     public static List<string> GetPresetNames()
     {
         var names = new List<string> { "Default Stylish" };
+        names.AddRange(ShowcaseMeterPresets.Names);
 
         if (Directory.Exists(PresetsDirectory))
         {
@@ -30,12 +43,26 @@ public static class MeterPresets
     }
 
     public static void ApplyPreset(string name, MeterSettings target)
+        => ApplyPreset(name, target, null);
+
+    public static void ApplyPreset(string name, MeterSettings target, CustomMeterBarStyle? barStyle,
+        bool? showBackground = null, ProgressBarType? barType = null, ColorMode? playerColor = null,
+        ProgressBarColorTreatment? barTint = null, ColorMode? barColor = null, string? sortBy = null,
+        string? fillStat = null)
+    {
+        if (!TryApplyPreset(name, target)) return;
+        ApplyAppearance(target, barStyle, showBackground, barType, playerColor, barTint, barColor, sortBy, fillStat);
+    }
+
+    private static bool TryApplyPreset(string name, MeterSettings target)
     {
         if (name == "Default Stylish")
         {
             ApplyDefaultStylish(target);
-            return;
+            return true;
         }
+
+        if (ShowcaseMeterPresets.TryApply(name, target)) return true;
 
         var filePath = Path.Combine(PresetsDirectory, $"{name}.txt");
         if (File.Exists(filePath))
@@ -44,10 +71,23 @@ public static class MeterPresets
             var imported = ConfigSerializer.DeserializeCompressed<MeterSettings>(blob);
             if (imported != null)
             {
-                imported.EnsureInitialized();
                 ApplySettings(imported, target);
+                if (name == "FFXIV Party") AlignFfxivPartyName(target);
+                return true;
             }
         }
+
+        return false;
+    }
+
+    private static void AlignFfxivPartyName(MeterSettings target)
+    {
+        var bar = target.RowComponents.Find(row => row is
+            { Type: MeterComponentType.ProgressBar, ProgressBarType: ProgressBarType.Cast });
+        var name = target.RowComponents.Find(row => row is { Type: MeterComponentType.Text, Name: "Player Name" });
+        if (bar == null || name == null) return;
+
+        name.Position = name.Position with { X = MathF.Round(bar.Position.X + bar.Size.X * CastGaugeFillInset) };
     }
 
     public static void ApplySettings(MeterSettings source, MeterSettings target)
@@ -57,14 +97,8 @@ public static class MeterPresets
         var oldId = target.Id;
         var oldPos = target.Position;
 
-        foreach (var prop in typeof(MeterSettings).GetProperties(BindingFlags.Public | BindingFlags.Instance))
-        {
-            if (prop is { CanWrite: true, CanRead: true })
-            {
-                var value = prop.GetValue(source);
-                prop.SetValue(target, value);
-            }
-        }
+        foreach (var property in SettingsProperties)
+            property.SetValue(target, property.GetValue(source));
 
         target.Id = oldId;
         target.Position = oldPos;
@@ -73,13 +107,14 @@ public static class MeterPresets
 
     public static void ApplyDefaultStylish(MeterSettings settings)
     {
+        settings.Layout = MeterLayout.Vertical;
         settings.RowHeight = 32.0f;
         settings.RowSpacing = 0f;
         settings.HeaderHeight = 34.0f;
         settings.FooterHeight = 24.0f;
         settings.HeaderEnabled = true;
         settings.FooterEnabled = true;
-        settings.Size = new Vector2(270, 320);
+        settings.Size = new Vector2(StylishWidth, 320);
         settings.ShowWindowBackground = false;
 
         settings.HeaderComponents = GetDefaultHeaderComponents();
@@ -94,114 +129,46 @@ public static class MeterPresets
         {
             Name = "Menu Button",
             Type = MeterComponentType.MenuButton,
-            Position = new Vector2(6, 0),
-            Size = new Vector2(24, 24),
-            ZIndex = 2
+            Position = new Vector2(StylishLeft, 2),
+            Size = new Vector2(22),
+            ZIndex = 2,
         },
+        Text("Duration", "[duration]", StylishTextLeft, 3, 56, 20, 16, color: ColorHelper.GetColor(37)),
+        Text("Encounter Name", "[name]", 102, 3, StylishRight - 102, 20, 16, AlignmentType.Right),
         new()
-        {
-            Name = "Duration",
-            Type = MeterComponentType.Text,
-            DataSource = "[duration]",
-            Position = new Vector2(32, 2),
-            Size = new Vector2(60, 20),
-            FontSize = 16,
-            TextColor = ColorHelper.GetColor(37),
-            AlignmentType = AlignmentType.Left,
-            ZIndex = 1
-        },
-        new()
-        {
-            Name = "Encounter Name",
-            Type = MeterComponentType.Text,
-            DataSource = "[name]",
-            Position = new Vector2(88, 2),
-            Size = new Vector2(170, 20),
-            FontSize = 16,
-            AlignmentType = AlignmentType.Right,
-            ZIndex = 1
-        },
-        new ()
         {
             Name = "Separator",
             Type = MeterComponentType.Separator,
-            Position = new Vector2(8, 25),
-            Size = new Vector2(254, 4),
+            Position = new Vector2(StylishLeft, 27),
+            Size = new Vector2(StylishRight - StylishLeft, 4),
         }
     ];
 
     public static List<ComponentSettings> GetDefaultFooterComponents() =>
     [
-        new()
-        {
-            Name = "Deaths Label",
-            Type = MeterComponentType.Text,
-            DataSource = "Deaths: [deaths]",
-            Position = new Vector2(5, 2),
-            Size = new Vector2(270, 20),
-            FontSize = 14,
-            AlignmentType = AlignmentType.Left,
-            ZIndex = 1
-        },
-        new()
-        {
-            Name = "Raid DPS Label",
-            Type = MeterComponentType.Text,
-            DataSource = "Raid DPS: [dps]",
-            Position = new Vector2(-14, 2),
-            Size = new Vector2(270, 20),
-            FontSize = 14,
-            AlignmentType = AlignmentType.Right,
-            ZIndex = 1
-        }
+        Text("Deaths Label", "Deaths: [deaths]", StylishLeft, 2, 94, 20),
+        Text("Raid DPS Label", "Raid DPS: [dps]", 110, 2, StylishRight - 110, 20, 14, AlignmentType.Right),
     ];
 
-    public static List<ComponentSettings> GetDefaultStylishComponents() =>
-    [
-        new()
-        {
-            Name = "Progress Bar",
-            Type = MeterComponentType.ProgressBar,
-            DataSource = StatSelector.DefaultStatSelector,
-            Position = new Vector2(32, 10),
-            Size = new Vector2(230, 20),
-            ZIndex = 0,
-            ColorMode = ColorMode.Job,
-        },
-        new()
-        {
-            Name = "Job Icon",
-            Type = MeterComponentType.JobIcon,
-            Position = new Vector2(2, 0),
-            Size = new Vector2(32),
-            ZIndex = 1
-        },
-        new()
-        {
-            Name = "Player Name",
-            Type = MeterComponentType.Text,
-            DataSource = "[name]",
-            Position = new Vector2(36, -5),
-            Size = new Vector2(150, 20),
-            ZIndex = 2,
-            FontSize = 14,
-            TextFlags = TextFlags.Edge,
-            ColorMode = ColorMode.Job,
-            TextColor = ColorHelper.GetColor(50)
-        },
-        new()
-        {
-            Name = "Stat Value",
-            Type = MeterComponentType.Text,
-            DataSource = "[ENCDPS]",
-            Position = new Vector2(26, -5),
-            Size = new Vector2(230, 20),
-            ZIndex = 2,
-            FontSize = 14,
-            AlignmentType = AlignmentType.Right,
-            TextFlags = TextFlags.Edge,
-            ColorMode = ColorMode.Static,
-            TextColor = new Vector4(1, 1, 1, 0.9f)
-        }
-    ];
+    public static List<ComponentSettings> GetDefaultStylishComponents()
+    {
+        var barWidth = MathF.Round((StylishRight - StylishTextLeft) / (1f - 2f * CastGaugeFillInset));
+        var barLeft = MathF.Round(StylishTextLeft - barWidth * CastGaugeFillInset);
+        return
+        [
+            new()
+            {
+                Name = "Progress Bar",
+                Type = MeterComponentType.ProgressBar,
+                DataSource = StatSelector.DefaultStatSelector,
+                Position = new Vector2(barLeft, 14),
+                Size = new Vector2(barWidth, 16),
+                ZIndex = 0,
+                ColorMode = ColorMode.Job,
+            },
+            Job(StylishLeft, 3, 26),
+            Text("Player Name", "[name]", StylishTextLeft, 0, 148, 18),
+            Text("Stat Value", "[ENCDPS]", 196, 0, StylishRight - 196, 18, 14, AlignmentType.Right),
+        ];
+    }
 }

@@ -3,6 +3,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiToolKit.ContextMenu;
 using KamiToolKit.Enums;
 using NativeMeters.Configuration;
+using NativeMeters.Configuration.Persistence;
 using NativeMeters.Data.Stats;
 using NativeMeters.Extensions;
 using NativeMeters.Services;
@@ -46,7 +47,9 @@ public static class MeterContextMenu
         string lockLabel = meterSettings.IsLocked ? "✓ Locked" : "Locked";
         menu.AddItem(lockLabel, () =>
         {
+            if (!System.Config.Meters.Contains(meterSettings)) return;
             meterSettings.IsLocked = !meterSettings.IsLocked;
+            ConfigRepository.Save(System.Config);
         });
 
         string clickthroughLabel = meterSettings.IsClickthrough ? "✓ Clickthrough" : "Clickthrough";

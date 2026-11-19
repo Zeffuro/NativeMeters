@@ -11,7 +11,10 @@ public static class ConfigRepository
 
     public static SystemConfiguration LoadOrDefault()
     {
-        var config = Load() ?? new SystemConfiguration();
+        var file = JsonFileWrapper.GetFileInfo(SystemConfiguration.FileName);
+        var config = file.Exists
+            ? JsonFileWrapper.LoadFile<SystemConfiguration>(file.FullName)
+            : new SystemConfiguration { SetupStatus = SetupStatus.Pending };
         config.EnsureInitialized();
         return config;
     }
@@ -57,13 +60,5 @@ public static class ConfigRepository
         _saveTokenSource?.Cancel();
         _saveTokenSource?.Dispose();
         _saveTokenSource = null;
-    }
-
-    private static SystemConfiguration Load()
-    {
-        var file = JsonFileWrapper.GetFileInfo(SystemConfiguration.FileName);
-        var config = JsonFileWrapper.LoadFile<SystemConfiguration>(file.FullName);
-        config.EnsureInitialized();
-        return config;
     }
 }

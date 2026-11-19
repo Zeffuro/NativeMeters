@@ -15,16 +15,18 @@ using NativeMeters.Nodes.Configuration.Meter;
 using NativeMeters.Nodes.Configuration.PartyList;
 using NativeMeters.Nodes.Configuration.Visibility;
 using NativeMeters.Services;
+using static NativeMeters.Nodes.Configuration.Setup.SetupControls;
 
 namespace NativeMeters.Addons;
 
 public class AddonConfigurationWindow : NativeAddon
 {
+    private readonly MeterImportConfirmationAddon meterImportConfirmation;
     private readonly AddMeterDialogAddon addMeterDialog = new()
     {
         InternalName = "NativeMetersAddMeter",
         Title = "Add Meter",
-        Size = new Vector2(440.0f, 190.0f),
+        Size = new Vector2(DialogWidth, DialogHeight),
         RememberClosePosition = false,
     };
 
@@ -39,8 +41,22 @@ public class AddonConfigurationWindow : NativeAddon
 
     private readonly List<NodeBase> tabContent = new();
 
+    public AddonConfigurationWindow()
+    {
+        meterImportConfirmation = new MeterImportConfirmationAddon(this)
+        {
+            InternalName = "NativeMetersImportConfirm",
+            Title = "Import Meter",
+            Size = new Vector2(456, 134),
+            RememberClosePosition = false,
+            EnableContextMenu = false,
+            DepthLayer = 6,
+        };
+    }
+
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
+        System.OverlayManager?.CancelPlacement();
         var tabContentY = ContentStartPosition.Y + 40;
         var tabContentHeight = ContentSize.Y - 40;
 
@@ -80,7 +96,7 @@ public class AddonConfigurationWindow : NativeAddon
         };
         partyListScrollingAreaNode.AttachNode(this);
 
-        meterManagementNode = new MeterManagementNode(addMeterDialog)
+        meterManagementNode = new MeterManagementNode(addMeterDialog, meterImportConfirmation)
         {
             Position = ContentStartPosition with { Y = tabContentY },
             Size = ContentSize with { Y = tabContentHeight },
@@ -131,6 +147,7 @@ public class AddonConfigurationWindow : NativeAddon
 
     private void SwitchTab(int index)
     {
+        if (index != 3) meterImportConfirmation.Cancel();
         for (var i = 0; i < tabContent.Count; i++)
         {
             var isSelected = i == index;
@@ -170,6 +187,7 @@ public class AddonConfigurationWindow : NativeAddon
 
     protected override unsafe void OnFinalize(AtkUnitBase* addon)
     {
+        meterImportConfirmation.Cancel();
         var config = System.Config;
         if (config is not null)
         {
@@ -194,6 +212,7 @@ public class AddonConfigurationWindow : NativeAddon
 
     protected override unsafe void OnHide(AtkUnitBase* addon)
     {
+        meterImportConfirmation.Cancel();
         addMeterDialog.Close();
         System.TextFlagsPickerAddon?.Close();
         base.OnHide(addon);
@@ -201,6 +220,7 @@ public class AddonConfigurationWindow : NativeAddon
 
     public override void Dispose()
     {
+        meterImportConfirmation.Dispose();
         addMeterDialog.Close();
         System.TextFlagsPickerAddon?.Close();
         addMeterDialog.OnMeterCreated = null;
@@ -217,6 +237,7 @@ public class AddonConfigurationWindow : NativeAddon
         }
 
         await addMeterDialog.CloseAsync();
+        await meterImportConfirmation.DisposeAsync();
         if (System.TextFlagsPickerAddon is not null)
         {
             await System.TextFlagsPickerAddon.CloseAsync();

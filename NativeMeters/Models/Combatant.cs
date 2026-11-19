@@ -279,6 +279,8 @@ public class Combatant : IEquatable<Combatant>
     [JsonIgnore]
     public TimeSpan? ActiveTime { get; set; }
 
+    internal bool? IsLocalInternalActor { get; set; }
+
     public bool Equals(Combatant? other)
     {
         if (other is null) return false;

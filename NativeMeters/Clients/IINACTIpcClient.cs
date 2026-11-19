@@ -92,18 +92,17 @@ public class IINACTIpcClient
         return true;
     }
 
-    public bool IsIINACTRunning
+    public bool IsIINACTRunning => IsListening();
+
+    internal static bool IsListening()
     {
-        get
+        try
         {
-            try
-            {
-                return Service.PluginInterface.GetIpcSubscriber<bool>(ListeningEndpoint).InvokeFunc();
-            }
-            catch
-            {
-                return false;
-            }
+            return Service.PluginInterface.GetIpcSubscriber<bool>(ListeningEndpoint).InvokeFunc();
+        }
+        catch
+        {
+            return false;
         }
     }
 

@@ -19,6 +19,8 @@ public class TestMeterService : MeterServiceBase, IDisposable
         GenerateFakeData();
     }
 
+    internal Combatant? GetSampleCombatant() => GetCombatant(fixedCombatants[0].Name);
+
     private void GenerateFakeData()
     {
         var combatants = fixedCombatants

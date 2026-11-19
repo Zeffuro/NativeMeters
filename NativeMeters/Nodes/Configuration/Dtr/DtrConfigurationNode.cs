@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration.Persistence;
@@ -23,17 +24,17 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
     {
         var settings = System.Config.DtrSettings;
         ItemSpacing = 2;
-        FitWidth = true;
 
         AddNode(new CategoryTextNode
         {
-            Height = 18,
+            TextFlags = TextFlags.Ellipsis,
             String = "Server Info Bar",
+            Height = 18,
         });
 
         var enableCheckbox = new CheckboxNode
         {
-            Size = Size with { Y = 20 },
+            Height = 20,
             String = "Enabled",
             IsChecked = settings.Enabled,
             OnClick = isChecked =>
@@ -44,6 +45,19 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
             }
         };
         AddNode(1, enableCheckbox);
+        AddNode(1, new CheckboxNode
+        {
+            Height = 20,
+            String = "Show personal DPS",
+            TextTooltip = "Use your own DPS instead of party DPS for the [dps] tag.",
+            IsChecked = settings.UsePersonalDps,
+            OnClick = isChecked =>
+            {
+                settings.UsePersonalDps = isChecked;
+                System.DtrService?.UpdateBar();
+                ConfigRepository.Save(System.Config);
+            }
+        });
         AddNode(new ResNode { Height = 10 });
 
         formatRow = new HorizontalListNode
@@ -102,7 +116,7 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
         AddNode(1, [
             new CheckboxNode
             {
-                Size = Size with { Y = 20 },
+                Height = 20,
                 String = "Show when disconnected",
                 IsChecked = settings.ShowWhenDisconnected,
                 OnClick = isChecked =>
@@ -128,7 +142,7 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
 
         AddNode(1, new CheckboxNode
         {
-            Size = Size with { Y = 20 },
+            Height = 20,
             String = "Click to open config window",
             IsChecked = settings.ClickToOpenConfig,
             OnClick = isChecked =>
@@ -138,14 +152,14 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
             }
         });
 
-        SubtractTab(1);
         RecalculateLayout();
     }
 
     protected override void OnSizeChanged()
     {
         base.OnSizeChanged();
-        UpdateFormatRowLayout();
+        FitWidth = Width > TabSize + ItemSpacing;
+        if (FitWidth) UpdateFormatRowLayout();
     }
 
     private void UpdateFormatRowLayout()

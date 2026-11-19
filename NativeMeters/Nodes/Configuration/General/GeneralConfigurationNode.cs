@@ -10,23 +10,18 @@ namespace NativeMeters.Nodes.Configuration.General;
 
 internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
 {
+    private const float CheckboxHeight = 20.0f;
+
     public GeneralConfigurationNode()
     {
         GeneralSettings config = System.Config.General;
 
         ItemSpacing = 2;
-        FitWidth = true;
-
-        AddNode(new CategoryTextNode
-        {
-            Height = 18,
-            String = "General Configuration",
-        });
 
         AddNode(1, [
             new CheckboxNode
             {
-                Size = Size with { Y = 18 },
+                Height = CheckboxHeight,
                 IsVisible = true,
                 String = "Enabled",
                 IsChecked = config.IsEnabled,
@@ -40,7 +35,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             },
             new CheckboxNode
             {
-                Size = Size with { Y = 20 },
+                Height = CheckboxHeight,
                 String = "Preview",
                 IsChecked = config.PreviewEnabled,
                 OnClick = isChecked =>
@@ -57,7 +52,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
         AddNode(1, [
             new CheckboxNode
             {
-                Size = Size with { Y = 18 },
+                Height = CheckboxHeight,
                 IsVisible = true,
                 String = "Replace YOU with your name",
                 IsChecked = config.ReplaceYou,
@@ -69,7 +64,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             },
             new CheckboxNode
             {
-                Size = Size with { Y = 18 },
+                Height = CheckboxHeight,
                 IsVisible = true,
                 String = "Privacy Mode",
                 IsChecked = config.PrivacyMode,
@@ -87,7 +82,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
         AddNode(1, [
             new CheckboxNode
             {
-                Size = Size with { Y = 18 },
+                Height = CheckboxHeight,
                 String = "Run internal parser for detailed breakdown (even when using ACT/IINACT)",
                 IsChecked = config.EnableInternalParserForBreakdown,
                 OnClick = isChecked =>
@@ -113,7 +108,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             },
             new CheckboxNode
             {
-                Size = Size with { Y = 18 },
+                Height = CheckboxHeight,
                 IsVisible = true,
                 String = "Enable Encounter History",
                 IsChecked = config.EnableEncounterHistory,
@@ -128,7 +123,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
         AddNode(2, [
             new CheckboxNode
             {
-                Size = Size with { Y = 18 },
+                Height = CheckboxHeight,
                 IsVisible = true,
                 String = "Auto-switch to live when new fight starts",
                 IsChecked = config.AutoSwitchToLiveEncounter,
@@ -159,7 +154,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
         AddNode(1, [
             new CheckboxNode
             {
-                Size = Size with { Y = 18 },
+                Height = CheckboxHeight,
                 String = "Clear ACT when clearing Meter",
                 IsChecked = config.ClearActWithMeter,
                 OnClick = val =>
@@ -170,7 +165,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             },
             new CheckboxNode
             {
-                Size = Size with { Y = 18 },
+                Height = CheckboxHeight,
                 String = "Force ACT to end encounter after combat",
                 IsChecked = config.ForceEndEncounter,
                 OnClick = val =>
@@ -203,7 +198,12 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
         ]);
         AddNode(1, encounterButtonRow);
 
-        SubtractTab(1);
         RecalculateLayout();
+    }
+
+    protected override void OnSizeChanged()
+    {
+        base.OnSizeChanged();
+        FitWidth = Width >= 2 * TabSize + ItemSpacing;
     }
 }

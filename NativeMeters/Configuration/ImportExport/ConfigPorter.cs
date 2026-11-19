@@ -16,7 +16,10 @@ public abstract class ConfigPorter {
             if (imported != null)
             {
                 imported.EnsureInitialized();
+                if (imported.SetupStatus == SetupStatus.Pending)
+                    imported.SetupStatus = SetupStatus.Finished;
                 System.Config = imported;
+                ConnectionSelection.ApplyCurrent();
                 ConfigRepository.Save(System.Config);
                 Service.NotificationManager.Success("Configuration imported from clipboard.");
             }
@@ -42,6 +45,7 @@ public abstract class ConfigPorter {
     public static void TryResetConfig()
     {
         System.Config = ConfigRepository.Reset();
+        ConnectionSelection.ApplyCurrent();
         ConfigRepository.Save(System.Config);
         Service.NotificationManager.Success("Configuration reset to default.");
     }
@@ -55,6 +59,13 @@ public abstract class ConfigPorter {
     }
 
     public static MeterSettings? TryImportMeterFromClipboard()
+    {
+        var imported = ReadMeterFromClipboard();
+        if (imported != null) Service.NotificationManager.Success("Meter settings imported.");
+        return imported;
+    }
+
+    internal static MeterSettings? ReadMeterFromClipboard()
     {
         var clipboard = ClipboardService.GetClipboardText();
 
@@ -75,7 +86,6 @@ public abstract class ConfigPorter {
             }
 
             imported.EnsureInitialized();
-            Service.NotificationManager.Success("Meter settings imported.");
             return imported;
         }
         catch

@@ -4,10 +4,13 @@ using NativeMeters.Models;
 
 namespace NativeMeters.Configuration;
 
+public enum SetupStatus { Default, Pending, Finished }
+
 public class SystemConfiguration
 {
     public const string FileName = "NativeMeters.json";
     public int ConfigVersion { get; set; } = 1;
+    public SetupStatus SetupStatus { get; set; }
     public GeneralSettings General { get; set; } = new();
     public ConnectionSettings ConnectionSettings { get; set; } = new();
     public InternalParserSettings InternalParser { get; set; } = new();
@@ -32,7 +35,7 @@ public class SystemConfiguration
         PartyListMeter.EnsureInitialized();
         Visibility ??= new VisibilitySettings();
 
-        if (Meters.Count == 0)
+        if (Meters.Count == 0 && SetupStatus == SetupStatus.Default)
         {
             var defaultMeter = new MeterSettings { Name = "DPS" };
             MeterPresets.ApplyDefaultStylish(defaultMeter);

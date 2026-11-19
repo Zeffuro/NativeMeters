@@ -21,6 +21,7 @@ public class MeterSettings
     public Vector2 Size { get; set; } = new(250, 300);
     public int Scale { get; set; } = 100;
 
+    public MeterLayout Layout { get; set; }
     public float RowHeight { get; set; } = 36.0f;
     public float RowSpacing { get; set; } = 0.0f;
     public bool ShowScrollbar { get; set; } = false;
@@ -61,6 +62,12 @@ public class MeterSettings
         foreach (var component in FooterComponents)
             component?.EnsureInitialized();
     }
+}
+
+public enum MeterLayout
+{
+    Vertical = 0,
+    Horizontal = 1
 }
 
 public class SelfRowOverrideSettings

@@ -37,13 +37,7 @@ public class WebSocketClient : IDisposable
             client = newClient;
             cancellationTokenSource = newCts;
 
-            await newClient.ConnectAsync(serverUri, newCts.Token);
-
-            var subscription = new SubscriptionRequest();
-            var subJson = JsonSerializer.Serialize(subscription);
-            var buffer = Encoding.UTF8.GetBytes(subJson);
-
-            await newClient.SendAsync(buffer, WebSocketMessageType.Text, true, newCts.Token);
+            await ConnectAndSubscribeAsync(newClient, serverUri, newCts.Token);
 
             OnConnected?.Invoke();
 
@@ -58,6 +52,13 @@ public class WebSocketClient : IDisposable
         {
             connectionLock.Release();
         }
+    }
+
+    internal static async Task ConnectAndSubscribeAsync(ClientWebSocket socket, Uri serverUri, CancellationToken token)
+    {
+        await socket.ConnectAsync(serverUri, token);
+        var buffer = JsonSerializer.SerializeToUtf8Bytes(new SubscriptionRequest());
+        await socket.SendAsync(buffer, WebSocketMessageType.Text, true, token);
     }
 
     private async Task ReceiveLoop(ClientWebSocket socket, CancellationToken token)

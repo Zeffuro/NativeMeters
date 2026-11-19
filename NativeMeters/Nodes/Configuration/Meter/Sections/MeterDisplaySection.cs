@@ -12,6 +12,7 @@ namespace NativeMeters.Nodes.Configuration.Meter.Sections;
 
 public sealed class MeterDisplaySection : MeterConfigSection
 {
+    private LabeledEnumDropdownNode<MeterLayout>? layoutDropdown;
     private LabeledDropdownNode? statDropdown;
     private LabeledNumericInputNode? maxRowsInput;
     private LabeledNumericInputNode? scaleInput;
@@ -64,6 +65,8 @@ public sealed class MeterDisplaySection : MeterConfigSection
         isLoading = true;
         try
         {
+            layoutDropdown!.SelectedOption = Settings.Layout == MeterLayout.Horizontal
+                ? MeterLayout.Horizontal : MeterLayout.Vertical;
             statDropdown!.SelectedOption = Settings.StatToTrack;
             maxRowsInput!.Value = Settings.MaxCombatants;
             scaleInput!.Value = Settings.Scale;
@@ -110,6 +113,20 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
     private void Initialize()
     {
+        layoutDropdown = new LabeledEnumDropdownNode<MeterLayout>
+        {
+            Size = new Vector2(Width, 28),
+            LabelText = "Layout:",
+            Options = Enum.GetValues<MeterLayout>().ToList(),
+            OnOptionSelected = value =>
+            {
+                if (isLoading || Settings.Layout == value) return;
+                Settings.Layout = value;
+                ApplyDisplayDependencyState();
+                System.OverlayManager.Setup();
+            },
+        };
+
         statDropdown = new LabeledDropdownNode
         {
             Size = new Vector2(Width, 28),
@@ -125,7 +142,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         maxRowsInput = new LabeledNumericInputNode
         {
             Size = new Vector2(Width, 28),
-            LabelText = "Max Rows: ",
+            LabelText = "Max Combatants:",
             Min = 1, Max = 40,
             OnValueUpdate = val =>
             {
@@ -466,6 +483,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
             },
         };
 
+        AddNode(layoutDropdown);
         AddNode(statDropdown);
         AddNode(maxRowsInput);
         AddNode(scaleInput);
@@ -528,6 +546,11 @@ public sealed class MeterDisplaySection : MeterConfigSection
         backgroundStyleDropdown!.IsEnabled = Settings.ShowWindowBackground;
         headerHeightInput.IsEnabled = Settings.HeaderEnabled;
         footerHeightInput.IsEnabled = Settings.FooterEnabled;
+        var horizontal = Settings.Layout == MeterLayout.Horizontal;
+        scrollbarToggle!.IsEnabled = !horizontal;
+        rowHeightInput!.LabelText = horizontal ? "Card Height:" : "Row Height:";
+        rowSpacingInput!.LabelText = horizontal ? "Card Spacing:" : "Row Spacing:";
+        showPinSelfToggle!.String = horizontal ? "Pin Self To First Card" : "Pin Self To Top";
     }
 
     private void ApplySelfOverrideState()

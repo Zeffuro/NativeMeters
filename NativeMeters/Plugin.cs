@@ -11,12 +11,14 @@ using KamiToolKit.BaseTypes;
 using NativeMeters.Addons;
 using NativeMeters.Clients;
 using NativeMeters.Commands;
+using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Color;
 using NativeMeters.Nodes.Configuration.Meter.Search;
 using NativeMeters.Nodes.Configuration.Meter.Tags;
+using NativeMeters.Nodes.Configuration.Setup;
 using NativeMeters.Services;
 using NativeMeters.Services.Internal;
 
@@ -25,6 +27,7 @@ namespace NativeMeters;
 public class Plugin : IAsyncDalamudPlugin
 {
     private bool hasHandledLogin;
+    private bool hasOfferedSetup;
     private bool isDisposed;
 
     [PluginService] private static IDalamudPluginInterface PluginInterface { get; set; } = null!;
@@ -72,6 +75,21 @@ public class Plugin : IAsyncDalamudPlugin
             Title = "NativeMeters Breakdown",
             Size = new Vector2(720, 560),
         };
+        System.SetupWizard = new SetupWizardAddon
+        {
+            InternalName = "NativeMeters_Setup",
+            Title = "NativeMeters Setup",
+            Size = new Vector2(SetupControls.DialogWidth, SetupControls.DialogHeight),
+            RememberClosePosition = false,
+        };
+        System.MeterPlacementAddon = new MeterPlacementAddon
+        {
+            InternalName = "NativeMeters_Place",
+            Title = "Place your meter",
+            Size = new Vector2(448, 152),
+            RememberClosePosition = false,
+            EnableContextMenu = false,
+        };
 
         Service.PluginInterface.UiBuilder.OpenMainUi += System.AddonConfigurationWindow.Toggle;
         Service.PluginInterface.UiBuilder.OpenConfigUi += System.AddonConfigurationWindow.Toggle;
@@ -104,6 +122,7 @@ public class Plugin : IAsyncDalamudPlugin
         System.MeterService.ProcessPendingMessages();
 
         if (System.Config.General.PreviewEnabled) System.TestMeterService.Tick();
+        System.OverlayManager.Tick();
     }
 
     private void OnLogin() {
@@ -126,7 +145,15 @@ public class Plugin : IAsyncDalamudPlugin
                 }
             }
             System.PartyListMeterManager.UpdateSettings();
-            System.AddonConfigurationWindow.DebugOpen();
+            if (!hasOfferedSetup && System.Config.SetupStatus == SetupStatus.Pending)
+            {
+                System.SetupWizard.OpenForSetup();
+                hasOfferedSetup = true;
+            }
+            else
+            {
+                System.AddonConfigurationWindow.DebugOpen();
+            }
         }
         catch (Exception exception) {
             hasHandledLogin = false;
@@ -142,6 +169,8 @@ public class Plugin : IAsyncDalamudPlugin
 
         try
         {
+            System.OverlayManager?.CancelPlacement();
+            System.SetupWizard.Close();
             System.MeterService?.ResetLocalData();
             System.InternalMeterService?.ResetLocalData();
             System.TestMeterService?.ResetLocalData();
@@ -190,6 +219,8 @@ public class Plugin : IAsyncDalamudPlugin
                 await DisposeNativeAddon(System.TagSearchAddon);
                 await DisposeNativeAddon(System.IconSearchAddon);
                 await DisposeNativeAddon(System.TextFlagsPickerAddon);
+                await DisposeNativeAddon(System.SetupWizard);
+                await DisposeNativeAddon(System.MeterPlacementAddon);
                 await DisposeNativeAddon(System.AddonConfigurationWindow);
                 await DisposeNativeAddon(System.AddonDetailedBreakdownWindow);
             }

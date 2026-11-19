@@ -29,6 +29,9 @@ public static class TagEngine
     }
 
     public static string Process(string input, object data)
+        => Process(input, data, null);
+
+    internal static string Process(string input, object? data, Func<ParsedTag, string?>? resolveOverride)
     {
         if (string.IsNullOrEmpty(input))
             return string.Empty;
@@ -39,12 +42,12 @@ public static class TagEngine
             return segments[0].LiteralText;
 
         if (segments.Count == 1 && !segments[0].IsLiteral)
-            return ResolveTag(segments[0], data);
+            return ResolveTag(segments[0], data, resolveOverride);
 
         var sb = new StringBuilder();
         foreach (var segment in segments)
         {
-            sb.Append(segment.IsLiteral ? segment.LiteralText : ResolveTag(segment, data));
+            sb.Append(segment.IsLiteral ? segment.LiteralText : ResolveTag(segment, data, resolveOverride));
         }
         return sb.ToString();
     }
@@ -101,8 +104,11 @@ public static class TagEngine
         return segments;
     }
 
-    private static string ResolveTag(ParsedTag tag, object data)
+    private static string ResolveTag(ParsedTag tag, object? data, Func<ParsedTag, string?>? resolveOverride)
     {
+        if (resolveOverride?.Invoke(tag) is { } result) return result;
+        if (data == null) return tag.OriginalText;
+
         var rawValue = PropertyAccessor.GetValue(tag.Key, data);
         return FormatTag(tag, rawValue, data);
     }

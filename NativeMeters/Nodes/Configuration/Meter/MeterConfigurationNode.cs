@@ -8,11 +8,11 @@ public class MeterConfigurationNode : EntryConfigurationNode<MeterSettings>
 {
     private readonly MeterDefinitionConfigurationNode activeNode;
 
-    public MeterConfigurationNode(Action<MeterSettings>? onNameChanged = null)
+    internal MeterConfigurationNode(MeterImportConfirmationAddon importConfirmation, Action<MeterSettings>? onNameChanged = null)
     {
         SelectAnItemTextNode.String = "Select a meter or create a new one.";
 
-        activeNode = new MeterDefinitionConfigurationNode(onNameChanged);
+        activeNode = new MeterDefinitionConfigurationNode(importConfirmation, onNameChanged);
         activeNode.AttachNode(ConfigurationContentNode);
     }
 

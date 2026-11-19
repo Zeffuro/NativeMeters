@@ -1,4 +1,6 @@
+using System;
 using System.Numerics;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
@@ -14,9 +16,13 @@ namespace NativeMeters.Rendering;
 
 public static class ComponentRenderer
 {
-    public static void Update(NodeBase node, ComponentSettings settings, float containerWidth, object data, MeterSettings? meterSettings = null, CombatantTagContext? tagContext = null)
+    public static void Update(NodeBase node, ComponentSettings settings, float containerWidth, object data,
+        MeterSettings? meterSettings = null, CombatantTagContext? tagContext = null,
+        Func<Func<Combatant, double>, double>? previewMaxStat = null,
+        Vector2? componentSize = null, Vector2? componentPosition = null)
     {
         node.IsVisible = true;
+        var size = componentSize ?? settings.Size;
 
         switch (node)
         {
@@ -27,9 +33,12 @@ public static class ComponentRenderer
                 textNode.FontType = data is Combatant fontTypeCombatant
                     ? ColorResolver.GetTextFontType(fontTypeCombatant, settings, meterSettings)
                     : settings.FontType;
-                textNode.TextFlags = data is Combatant flagsCombatant
+                var flags = data is Combatant flagsCombatant
                     ? ColorResolver.GetTextFlags(flagsCombatant, settings, meterSettings)
                     : settings.TextFlags;
+                textNode.TextFlags = componentSize.HasValue
+                    ? (flags & ~TextFlags.AutoAdjustNodeSize) | TextFlags.Ellipsis
+                    : flags;
                 textNode.TextColor = data is Combatant c ? c.GetColor(settings.ColorMode, settings, meterSettings) : settings.TextColor;
                 textNode.TextOutlineColor = data is Combatant outlineCombatant
                     ? ColorResolver.GetTextOutlineColor(outlineCombatant, settings, meterSettings)
@@ -41,8 +50,8 @@ public static class ComponentRenderer
                 textNode.ShowBackground = settings.ShowBackground;
                 textNode.String = TagEngine.ProcessCached(settings.DataSource, tagContext ?? data, textNode);
 
-                if (settings.Size.X > 0) node.Width = settings.Size.X;
-                if (settings.Size.Y > 0) node.Height = settings.Size.Y;
+                if (size.X > 0) node.Width = size.X;
+                if (size.Y > 0) node.Height = size.Y;
                 break;
 
             case AssetImageNode assetNode:
@@ -70,11 +79,11 @@ public static class ComponentRenderer
                 break;
 
             case IMeterProgressNode progressNode:
-                UpdateProgressNode(node, progressNode, settings, containerWidth, data, meterSettings);
+                UpdateProgressNode(node, progressNode, settings, size, containerWidth, data, meterSettings, previewMaxStat);
                 break;
 
             case ProgressNode progressNode:
-                UpdateProgressNode(progressNode, settings, containerWidth, data, meterSettings);
+                UpdateProgressNode(progressNode, settings, size, containerWidth, data, meterSettings, previewMaxStat);
                 break;
 
             case HeaderMenuButtonNode buttonNode:
@@ -91,13 +100,13 @@ public static class ComponentRenderer
                 break;
         }
 
-        if ((node is not BackgroundTextNode || settings.Size.X > 0) && node is not ProgressNode && node is not IMeterProgressNode)
+        if ((node is not BackgroundTextNode || size.X > 0) && node is not ProgressNode && node is not IMeterProgressNode)
         {
-            float componentWidth = settings.Size.X <= 0 ? containerWidth : settings.Size.X;
-            SetSize(node, settings.Size with { X = componentWidth });
+            float componentWidth = size.X <= 0 ? containerWidth : size.X;
+            SetSize(node, size with { X = componentWidth });
         }
 
-        node.Position = settings.Position;
+        node.Position = componentPosition ?? settings.Position;
     }
 
     private static void SetSize(NodeBase node, Vector2 size)
@@ -106,12 +115,13 @@ public static class ComponentRenderer
         if (node.Size != nativeSize) node.Size = size;
     }
 
-    private static void UpdateProgressNode(ProgressNode progressNode, ComponentSettings settings, float containerWidth, object data, MeterSettings? meterSettings)
+    private static void UpdateProgressNode(ProgressNode progressNode, ComponentSettings settings, Vector2 componentSize,
+        float containerWidth, object data, MeterSettings? meterSettings, Func<Func<Combatant, double>, double>? previewMaxStat)
     {
-        if (settings.Size.X > 0 || settings.Size.Y > 0)
+        if (componentSize.X > 0 || componentSize.Y > 0)
         {
-            float componentWidth = settings.Size.X <= 0 ? containerWidth : settings.Size.X;
-            var size = new Vector2(componentWidth, settings.Size.Y > 0 ? settings.Size.Y : progressNode.Height);
+            float componentWidth = componentSize.X <= 0 ? containerWidth : componentSize.X;
+            var size = new Vector2(componentWidth, componentSize.Y > 0 ? componentSize.Y : progressNode.Height);
             SetSize(progressNode, size);
         }
 
@@ -119,19 +129,21 @@ public static class ComponentRenderer
         {
             var statName = StatSelector.NormalizeStatSelector(settings.DataSource);
             var selector = StatSelector.GetStatSelector(statName);
-            double maxStat = System.ActiveMeterService.GetMaxCombatantStat(selector);
+            double maxStat = previewMaxStat?.Invoke(selector) ?? System.ActiveMeterService.GetMaxCombatantStat(selector);
             progressNode.Progress = ViewUtils.CalculateProgressRatio(selector(comb), maxStat > 0 ? maxStat : 1.0);
             progressNode.BarColor = comb.GetColor(settings.ColorMode, settings, meterSettings);
             progressNode.BackgroundColor = ColorResolver.GetBarBackgroundColor(comb, settings, meterSettings);
         }
     }
 
-    private static void UpdateProgressNode(NodeBase node, IMeterProgressNode progressNode, ComponentSettings settings, float containerWidth, object data, MeterSettings? meterSettings)
+    private static void UpdateProgressNode(NodeBase node, IMeterProgressNode progressNode, ComponentSettings settings,
+        Vector2 componentSize, float containerWidth, object data, MeterSettings? meterSettings,
+        Func<Func<Combatant, double>, double>? previewMaxStat)
     {
-        if (settings.Size.X > 0 || settings.Size.Y > 0)
+        if (componentSize.X > 0 || componentSize.Y > 0)
         {
-            float componentWidth = settings.Size.X <= 0 ? containerWidth : settings.Size.X;
-            var size = new Vector2(componentWidth, settings.Size.Y > 0 ? settings.Size.Y : node.Height);
+            float componentWidth = componentSize.X <= 0 ? containerWidth : componentSize.X;
+            var size = new Vector2(componentWidth, componentSize.Y > 0 ? componentSize.Y : node.Height);
             if (node.Size != size) node.Size = size;
         }
 
@@ -139,7 +151,7 @@ public static class ComponentRenderer
         {
             var statName = StatSelector.NormalizeStatSelector(settings.DataSource);
             var selector = StatSelector.GetStatSelector(statName);
-            double maxStat = System.ActiveMeterService.GetMaxCombatantStat(selector);
+            double maxStat = previewMaxStat?.Invoke(selector) ?? System.ActiveMeterService.GetMaxCombatantStat(selector);
             progressNode.Progress = ViewUtils.CalculateProgressRatio(selector(comb), maxStat > 0 ? maxStat : 1.0);
             progressNode.ColorTreatment = settings.ProgressBarColorTreatment;
             progressNode.FillRightToLeft = settings.ProgressBarFillRightToLeft;

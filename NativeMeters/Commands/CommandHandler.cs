@@ -22,6 +22,13 @@ public class CommandHandler : IDisposable
         subCommands = new Dictionary<string, SubCommand>(StringComparer.OrdinalIgnoreCase)
         {
             ["config"] = new(args => System.AddonConfigurationWindow.Toggle(), "Open the configuration window"),
+            ["setup"] = new(args =>
+            {
+                if (Service.ClientState.IsLoggedIn)
+                    System.SetupWizard.OpenForSetup();
+                else
+                    PrintChat("Log in on a character to open setup.");
+            }, "Open the setup wizard"),
             ["toggle"] = new(args => {
                 System.Config.General.IsEnabled = !System.Config.General.IsEnabled;
                 System.OverlayManager.Setup();

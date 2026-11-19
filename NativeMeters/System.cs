@@ -22,6 +22,8 @@ public static class System
     public static OverlayController OverlayController { get; set; } = null!;
     public static OverlayManager OverlayManager { get; set; } = null!;
     public static PartyListMeterManager PartyListMeterManager { get; set; } = null!;
+    internal static SetupWizardAddon SetupWizard { get; set; } = null!;
+    internal static MeterPlacementAddon MeterPlacementAddon { get; set; } = null!;
     public static TestMeterService TestMeterService { get; set; } = null!;
 
     public static TagSearchAddon TagSearchAddon { get; set; } = null!;
@@ -41,6 +43,8 @@ public static class System
         OverlayController = null!;
         OverlayManager = null!;
         PartyListMeterManager = null!;
+        SetupWizard = null!;
+        MeterPlacementAddon = null!;
         TestMeterService = null!;
         TagSearchAddon = null!;
         IconSearchAddon = null!;

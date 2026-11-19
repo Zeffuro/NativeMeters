@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
-using Dalamud.Game.ClientState.Keys;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
@@ -11,6 +10,7 @@ using NativeMeters.Configuration;
 using NativeMeters.Configuration.ImportExport;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Configuration.Presets;
+using NativeMeters.Extensions;
 using NativeMeters.Nodes.Configuration;
 using NativeMeters.Nodes.Configuration.Meter.Sections;
 using NativeMeters.Nodes.LayoutNodes;
@@ -28,19 +28,22 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
 
     private MeterSettings settings = new();
 
-    private string? currentMeterId;
     public static bool IsRefreshing { get; private set; } = false;
 
     private readonly VerticalListNode containerLayout;
     private readonly ResNode headerContainer;
     private readonly HorizontalListNode buttonsList;
     private readonly ScrollingNode<VerticalListNode> scrollingArea;
+    private readonly MeterImportConfirmationAddon importConfirmation;
+    private readonly Action<MeterSettings>? onNameChanged;
 
     private readonly List<MeterConfigSection> sections = [];
     private readonly Dictionary<MeterConfigSection, bool> sectionExpandedStates = [];
 
-    public MeterDefinitionConfigurationNode(Action<MeterSettings>? onNameChanged = null)
+    internal MeterDefinitionConfigurationNode(MeterImportConfirmationAddon importConfirmation, Action<MeterSettings>? onNameChanged = null)
     {
+        this.importConfirmation = importConfirmation;
+        this.onNameChanged = onNameChanged;
         containerLayout = new VerticalListNode
         {
             ItemSpacing = 4.0f,
@@ -84,7 +87,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
         {
             Width = 28, Height = 28,
             TexturePath = Path.Combine(Service.PluginInterface.AssemblyLocation.Directory?.FullName!, @"Assets\Icons\download.png"),
-            TextTooltip = "Import Meter from Clipboard (Overwrites current)\n(hold shift to confirm)",
+            TextTooltip = "Import Meter from Clipboard",
             OnClick = HandleImport
         });
 
@@ -185,8 +188,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
 
     public void SetMeter(MeterSettings meterSettings)
     {
-        if (currentMeterId == meterSettings.Id) return;
-        currentMeterId = meterSettings.Id;
+        if (ReferenceEquals(settings, meterSettings)) return;
         settings = meterSettings;
 
         IsRefreshing = true;
@@ -256,6 +258,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
     {
         if (settings == null) return;
 
+        System.OverlayManager.CancelPlacement(settings);
         MeterPresets.ApplyPreset(presetName, settings);
 
         ConfigRepository.Save(System.Config);
@@ -265,14 +268,25 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
 
     private void HandleImport()
     {
-        if (!Service.KeyState[VirtualKey.SHIFT]) return;
-        var newSettings = ConfigPorter.TryImportMeterFromClipboard();
-        if (newSettings == null) return;
+        var target = settings;
+        var config = System.Config;
+        if (importConfirmation.IsBusy || !config.Meters.Contains(target)) return;
 
-        MeterPresets.ApplySettings(newSettings, settings);
+        var imported = ConfigPorter.ReadMeterFromClipboard();
+        if (imported == null) return;
 
-        ConfigRepository.Save(System.Config);
-        System.OverlayManager.Setup();
-        RefreshAllSections();
+        importConfirmation.Request(target.Name, () =>
+        {
+            if (!ReferenceEquals(config, System.Config) || !ReferenceEquals(target, settings) || !config.Meters.Contains(target)) return;
+
+            System.OverlayManager.CancelPlacement(target);
+            var originalName = target.Name;
+            MeterPresets.ApplySettings(imported, target);
+            ConfigRepository.Save(config);
+            System.OverlayManager.Setup();
+            RefreshAllSections();
+            if (target.Name != originalName) onNameChanged?.Invoke(target);
+            Service.NotificationManager.Success("Meter settings imported.");
+        });
     }
 }

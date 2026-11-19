@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Threading.Tasks;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Interfaces;
@@ -27,6 +26,8 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
 
     private MeterSettings? MeterSettings => ItemData?.Settings ?? cachedSettings;
     private Combatant? Combatant => ItemData?.Combatant;
+
+    public Func<Func<Combatant, double>, double>? PreviewMaxStat { get; init; }
 
     public static float ItemHeight => HeightHint;
 
@@ -97,7 +98,7 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
                 ProgressBarType.EnemyCastLegacy => new LegacyEnemyCastProgressBarNode(),
                 _ => new ProgressBarToDoGaugeNode()
             },
-            MeterComponentType.Text => new BackgroundTextNode(),
+            MeterComponentType.Text => new BackgroundTextNode { ConstrainBackground = MeterSettings?.Layout == MeterLayout.Horizontal },
             MeterComponentType.Background => new SimpleNineGridNode {
                 TexturePath = "ui/uld/ToolTipS.tex",
                 TextureCoordinates = new Vector2(0.0f, 0.0f),
@@ -129,8 +130,23 @@ public sealed class MeterRowListItemNode : ListItemNode<CombatantRowData>, IList
     private void UpdateComponentData(NodeBase node, ComponentSettings settings)
     {
         if (Combatant == null || MeterSettings == null) return;
+        var sampleMaxStat = PreviewMaxStat ?? ItemData?.SampleMaxStat;
 
-        ComponentRenderer.Update(node, settings, Width, Combatant, MeterSettings, ItemData);
+        if (MeterSettings.Layout == MeterLayout.Horizontal)
+        {
+            if (!MeterRowBuilder.TryFitCardComponent(Size, settings, out var size, out var position))
+            {
+                node.IsVisible = false;
+                return;
+            }
+
+            ComponentRenderer.Update(node, settings, Width, Combatant, MeterSettings, ItemData, sampleMaxStat, size, position);
+        }
+        else
+        {
+            ComponentRenderer.Update(node, settings, Width, Combatant, MeterSettings, ItemData, sampleMaxStat);
+        }
+
         MeterComponentInteractions.ApplyClickthrough(node, MeterSettings.IsClickthrough);
     }
 

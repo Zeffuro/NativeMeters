@@ -106,6 +106,7 @@ public class CombatTracker
     public Dictionary<string, Combatant> GetCombatants()
     {
         var duration = encounterState.GetDuration();
+        var localActorId = Service.ObjectTable.LocalPlayer?.GameObjectId;
         var playerTrackers = trackers.Values
             .Where(tracker => tracker.IsPlayer || tracker.Name == "Limit Break")
             .ToList();
@@ -117,7 +118,9 @@ public class CombatTracker
             if (result.TryGetValue(tracker.Name, out var existing) && existing.Damage >= tracker.TotalDamage)
                 continue;
 
-            result[tracker.Name] = tracker.ToCombatant(duration, totalPartyDamage);
+            var combatant = tracker.ToCombatant(duration, totalPartyDamage);
+            combatant.IsLocalInternalActor = !tracker.HasNameAliases && (tracker.ActorId == localActorId || tracker.Name == "YOU");
+            result[tracker.Name] = combatant;
         }
 
         return result;
@@ -270,6 +273,7 @@ public class CombatTracker
         if (nameToActorId.TryGetValue(name, out var existingId) && trackers.TryGetValue(existingId, out tracker))
         {
             actorIdAliases[actorId] = existingId;
+            tracker.HasNameAliases = true;
 
             if (jobId != 0 && tracker.JobId != jobId)
                 tracker.JobId = jobId;

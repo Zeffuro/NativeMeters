@@ -15,6 +15,7 @@ public class CombatantTracker(ulong actorId, string name, uint jobId)
     public string Name { get; set; } = name;
     public uint JobId { get; set; } = jobId;
     public bool IsPlayer => JobId != 0;
+    internal bool HasNameAliases { get; set; }
 
     public long TotalDamage { get; set; }
     public long TotalHealing { get; set; }

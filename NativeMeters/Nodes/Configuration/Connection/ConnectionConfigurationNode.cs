@@ -203,8 +203,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
     private void OnConnectionTypeSelected(ConnectionType selected)
     {
-        var previousType = System.Config.ConnectionSettings.SelectedConnectionType;
-        System.Config.ConnectionSettings.SelectedConnectionType = selected;
+        ConnectionSelection.Apply(selected);
         ConfigRepository.Save(System.Config);
 
         warningButton.IsVisible = selected == ConnectionType.Internal;
@@ -212,24 +211,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         urlInputNode.IsVisible = selected == ConnectionType.WebSocket;
         urlResetButton.IsVisible = selected == ConnectionType.WebSocket;
 
-        if (previousType == ConnectionType.Internal)
-        {
-            System.InternalMeterService.Dispose();
-            System.InternalMeterService = new Services.Internal.InternalMeterService();
-        }
-
-        if (selected == ConnectionType.Internal || System.Config.General.EnableInternalParserForBreakdown)
-        {
-            System.InternalMeterService.Enable();
-        }
-
-        if (selected != ConnectionType.Internal)
-        {
-            System.MeterService.Reconnect();
-        }
-
         OnConnectionTypeChanged?.Invoke(selected);
-        System.OverlayManager.UpdateActiveService();
         RecalculateLayout();
     }
 
