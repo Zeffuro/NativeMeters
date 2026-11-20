@@ -1,4 +1,5 @@
 using Lumina.Excel.Sheets;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Tags.Formatting;
 
@@ -9,6 +10,6 @@ public class ClassJobFormatter : IValueFormatter
     public string Format(object value, string subKey, string format, int? precision)
     {
         var job = (ClassJob)value;
-        return precision == 3 ? job.Abbreviation.ToString() : job.NameEnglish.ToString();
+        return precision == 3 ? job.Abbreviation.ToString() : GameNames.JobName(job);
     }
 }

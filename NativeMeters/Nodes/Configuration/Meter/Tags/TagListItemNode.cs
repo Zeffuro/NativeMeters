@@ -4,6 +4,7 @@ using KamiToolKit.Classes;
 using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes;
 using NativeMeters.Tags;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Tags;
 
@@ -43,7 +44,7 @@ public class TagListItemNode : ListItemNode<TagInfo>, IListItemNode
         descTextNode.AttachNode(this);
 
         insertButton = new TextButtonNode {
-            String = "Insert",
+            String = Loc.Get("TagInsert"),
             Size = new Vector2(60, 24),
             OnClick = () => {
                 if (ItemData != null)
@@ -72,7 +73,7 @@ public class TagListItemNode : ListItemNode<TagInfo>, IListItemNode
     protected override void SetNodeData(TagInfo info)
     {
         tagTextNode.String = info.Tag;
-        exampleTextNode.String = $"ex: {info.Example}";
+        exampleTextNode.String = Loc.Format("TagExample", info.Example);
         descTextNode.String = info.Description;
     }
 }

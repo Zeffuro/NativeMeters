@@ -3,6 +3,7 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
+using NativeMeters.Localization;
 using NativeMeters.Nodes.Configuration.Dtr;
 using CheckboxNode = NativeMeters.Nodes.Input.SyncedCheckboxNode;
 
@@ -18,7 +19,7 @@ public sealed class GeneralScrollingAreaNode : ScrollingNode<VerticalListNode>
 
     public int TabBarNavIndex { get; set; } = 1;
 
-    public GeneralScrollingAreaNode()
+    public GeneralScrollingAreaNode(Action<string?> changeLanguage)
     {
         GeneralSettings config = System.Config.General;
 
@@ -27,7 +28,7 @@ public sealed class GeneralScrollingAreaNode : ScrollingNode<VerticalListNode>
         heading = new CategoryTextNode
         {
             TextFlags = TextFlags.Ellipsis,
-            String = "General Configuration",
+            String = Loc.Get("GeneralHeading"),
             Height = 18,
         };
         heading.Y = (ActionBarHeight - heading.Height) / 2.0f;
@@ -37,12 +38,12 @@ public sealed class GeneralScrollingAreaNode : ScrollingNode<VerticalListNode>
         ContentNode.FitContents = true;
 
         ContentNode.AddNode(
-        [new GeneralConfigurationNode(),
+        [new GeneralConfigurationNode(changeLanguage),
             new DtrConfigurationNode(),
             new CheckboxNode {
                 Size = new Vector2(300, 20),
                 IsVisible = true,
-                String = "Debug Mode",
+                String = Loc.Get("GeneralDebugMode"),
                 IsChecked = config.DebugEnabled,
                 OnClick = isChecked =>
                 {
@@ -56,6 +57,7 @@ public sealed class GeneralScrollingAreaNode : ScrollingNode<VerticalListNode>
 
     protected override void OnSizeChanged()
     {
+        using var layoutVisibility = new LayoutVisibilityScope(ContentNode);
         var previousScrollPosition = ScrollBarNode.ScrollPosition;
         ContentNode.FitWidth = true;
         base.OnSizeChanged();

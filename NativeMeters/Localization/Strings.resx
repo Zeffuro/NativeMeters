@@ -1,0 +1,2163 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="BreakdownAction" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="BreakdownActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="BreakdownAttack" xml:space="preserve">
+    <value>Attack</value>
+  </data>
+  <data name="BreakdownCritShort" xml:space="preserve">
+    <value>C%</value>
+  </data>
+  <data name="BreakdownDamage" xml:space="preserve">
+    <value>Damage</value>
+  </data>
+  <data name="BreakdownDamageStats" xml:space="preserve">
+    <value>DPS: {0}  Crit: {1:F0}%  DH: {2:F0}%  Up: {3:F0}%</value>
+  </data>
+  <data name="BreakdownDecimalPercent" xml:space="preserve">
+    <value>{0:F1}%</value>
+  </data>
+  <data name="BreakdownDirectShort" xml:space="preserve">
+    <value>DH%</value>
+  </data>
+  <data name="BreakdownEncounterTitle" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="BreakdownHealing" xml:space="preserve">
+    <value>Healing</value>
+  </data>
+  <data name="BreakdownHealingStats" xml:space="preserve">
+    <value>HPS: {0}  Crit: {1:F0}%  OH: {2:F0}%  Up: {3:F0}%</value>
+  </data>
+  <data name="BreakdownHits" xml:space="preserve">
+    <value>Hits</value>
+  </data>
+  <data name="BreakdownLive" xml:space="preserve">
+    <value>Live</value>
+  </data>
+  <data name="BreakdownLockOrder" xml:space="preserve">
+    <value>Lock current breakdown order</value>
+  </data>
+  <data name="BreakdownMax" xml:space="preserve">
+    <value>Max</value>
+  </data>
+  <data name="BreakdownNext" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="BreakdownNoData" xml:space="preserve">
+    <value>No Data</value>
+  </data>
+  <data name="BreakdownOverhealShort" xml:space="preserve">
+    <value>OH%</value>
+  </data>
+  <data name="BreakdownPercent" xml:space="preserve">
+    <value>{0}%</value>
+  </data>
+  <data name="BreakdownPrevious" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="BreakdownRaidDps" xml:space="preserve">
+    <value>{0} rDPS</value>
+  </data>
+  <data name="BreakdownRaidHps" xml:space="preserve">
+    <value>{0} rHPS</value>
+  </data>
+  <data name="BreakdownTotalDamage" xml:space="preserve">
+    <value>{0} Total</value>
+  </data>
+  <data name="BreakdownTotalHealing" xml:space="preserve">
+    <value>{0} Healed</value>
+  </data>
+  <data name="BreakdownUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="ClipboardCopied" xml:space="preserve">
+    <value>Encounter copied to clipboard!</value>
+  </data>
+  <data name="ClipboardCopyFailed" xml:space="preserve">
+    <value>Failed to copy encounter summary</value>
+  </data>
+  <data name="ClipboardDuration" xml:space="preserve">
+    <value>Duration: {0}</value>
+  </data>
+  <data name="ClipboardPlayer" xml:space="preserve">
+    <value>{0}. {1} ({2}) - {3:N0} DPS</value>
+  </data>
+  <data name="ClipboardTotals" xml:space="preserve">
+    <value>Deaths: {0} | Raid DPS: {1:N0}</value>
+  </data>
+  <data name="ColorsDps" xml:space="preserve">
+    <value>DPS</value>
+  </data>
+  <data name="ColorsHealers" xml:space="preserve">
+    <value>Healers</value>
+  </data>
+  <data name="ColorsJob" xml:space="preserve">
+    <value>Job Colors</value>
+  </data>
+  <data name="ColorsOther" xml:space="preserve">
+    <value>Other/Limit Break</value>
+  </data>
+  <data name="ColorsRole" xml:space="preserve">
+    <value>Role Colors</value>
+  </data>
+  <data name="ColorsTanks" xml:space="preserve">
+    <value>Tanks</value>
+  </data>
+  <data name="CommandCaptureFailed" xml:space="preserve">
+    <value>Capture failed: {0}</value>
+  </data>
+  <data name="CommandCaptureNotRunning" xml:space="preserve">
+    <value>No capture is running.</value>
+  </data>
+  <data name="CommandCaptureSaved" xml:space="preserve">
+    <value>Capture saved to {0}</value>
+  </data>
+  <data name="CommandCaptureStarted" xml:space="preserve">
+    <value>Capturing to {0}</value>
+  </data>
+  <data name="CommandCaptureUsage" xml:space="preserve">
+    <value>Use /ntm debug capture start or /ntm debug capture stop.</value>
+  </data>
+  <data name="CommandHelpHeading" xml:space="preserve">
+    <value>NativeMeters Help:</value>
+  </data>
+  <data name="CommandLoginRequired" xml:space="preserve">
+    <value>Log in on a character to open setup.</value>
+  </data>
+  <data name="CommandMainHelp" xml:space="preserve">
+    <value>Main command for NativeMeters. Use /ntm help for all options.</value>
+  </data>
+  <data name="CommandMetersDisabled" xml:space="preserve">
+    <value>Meters disabled.</value>
+  </data>
+  <data name="CommandMetersEnabled" xml:space="preserve">
+    <value>Meters enabled.</value>
+  </data>
+  <data name="CommandOpenBreakdown" xml:space="preserve">
+    <value>Open the detailed breakdown window</value>
+  </data>
+  <data name="CommandOpenConfig" xml:space="preserve">
+    <value>Open the configuration window</value>
+  </data>
+  <data name="CommandOpenSetup" xml:space="preserve">
+    <value>Open the setup wizard</value>
+  </data>
+  <data name="CommandResetDummies" xml:space="preserve">
+    <value>Reset enmity on all nearby striking dummies</value>
+  </data>
+  <data name="CommandShowHelp" xml:space="preserve">
+    <value>Show this help message</value>
+  </data>
+  <data name="CommandToggle" xml:space="preserve">
+    <value>Toggle the meter display on/off</value>
+  </data>
+  <data name="CommandUnknown" xml:space="preserve">
+    <value>Unknown command: {0}. Type '{1} help' for a list of commands.</value>
+  </data>
+  <data name="CommonAdd" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="CommonClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="CommonDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="CommonDuplicate" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
+  <data name="CommonNextOption" xml:space="preserve">
+    <value>Next option</value>
+  </data>
+  <data name="CommonNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="CommonPreviousOption" xml:space="preserve">
+    <value>Previous option</value>
+  </data>
+  <data name="CommonRemove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="CommonSearch" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="ComponentAdd" xml:space="preserve">
+    <value>Add Component</value>
+  </data>
+  <data name="ComponentAlignment" xml:space="preserve">
+    <value>Alignment:</value>
+  </data>
+  <data name="ComponentAsset" xml:space="preserve">
+    <value>Asset:</value>
+  </data>
+  <data name="ComponentBarBackground" xml:space="preserve">
+    <value>Bar Background Color:</value>
+  </data>
+  <data name="ComponentBarColor" xml:space="preserve">
+    <value>Bar Color:</value>
+  </data>
+  <data name="ComponentBarSizing" xml:space="preserve">
+    <value>Bar Sizing:</value>
+  </data>
+  <data name="ComponentBarTint" xml:space="preserve">
+    <value>Bar Tint:</value>
+  </data>
+  <data name="ComponentBarType" xml:space="preserve">
+    <value>Bar Type:</value>
+  </data>
+  <data name="ComponentButtonAction" xml:space="preserve">
+    <value>Button Action:</value>
+  </data>
+  <data name="ComponentColoring" xml:space="preserve">
+    <value>Coloring Mode:</value>
+  </data>
+  <data name="ComponentDisplayName" xml:space="preserve">
+    <value>Display Name:</value>
+  </data>
+  <data name="ComponentFillRtl" xml:space="preserve">
+    <value>Fill Right To Left</value>
+  </data>
+  <data name="ComponentFillStat" xml:space="preserve">
+    <value>Fill Stat:</value>
+  </data>
+  <data name="ComponentFont" xml:space="preserve">
+    <value>Font:</value>
+  </data>
+  <data name="ComponentFontSize" xml:space="preserve">
+    <value>Font Size:</value>
+  </data>
+  <data name="ComponentFormatString" xml:space="preserve">
+    <value>Format String:</value>
+  </data>
+  <data name="ComponentHeight" xml:space="preserve">
+    <value>Height:</value>
+  </data>
+  <data name="ComponentIconId" xml:space="preserve">
+    <value>Icon ID:</value>
+  </data>
+  <data name="ComponentIconStyle" xml:space="preserve">
+    <value>Icon Style:</value>
+  </data>
+  <data name="ComponentNew" xml:space="preserve">
+    <value>New {0}</value>
+  </data>
+  <data name="ComponentOutlineColor" xml:space="preserve">
+    <value>Outline Color</value>
+  </data>
+  <data name="ComponentPlateColor" xml:space="preserve">
+    <value>Plate Color:</value>
+  </data>
+  <data name="ComponentPositionX" xml:space="preserve">
+    <value>Pos X:</value>
+  </data>
+  <data name="ComponentPositionY" xml:space="preserve">
+    <value>Pos Y:</value>
+  </data>
+  <data name="ComponentStaticColor" xml:space="preserve">
+    <value>Static Color:</value>
+  </data>
+  <data name="ComponentStyle" xml:space="preserve">
+    <value>Style:</value>
+  </data>
+  <data name="ComponentTypography" xml:space="preserve">
+    <value>Typography</value>
+  </data>
+  <data name="ComponentVisuals" xml:space="preserve">
+    <value>Visuals</value>
+  </data>
+  <data name="ComponentWidth" xml:space="preserve">
+    <value>Width:</value>
+  </data>
+  <data name="ComponentZOrder" xml:space="preserve">
+    <value>Z-Order:</value>
+  </data>
+  <data name="ConnectionAutoReconnect" xml:space="preserve">
+    <value>Enable Auto-Reconnect</value>
+  </data>
+  <data name="ConnectionConnected" xml:space="preserve">
+    <value>Status: Connected</value>
+  </data>
+  <data name="ConnectionDisconnected" xml:space="preserve">
+    <value>Status: Disconnected</value>
+  </data>
+  <data name="ConnectionInterval" xml:space="preserve">
+    <value>Reconnect Interval</value>
+  </data>
+  <data name="ConnectionLogErrors" xml:space="preserve">
+    <value>Log connection errors to log</value>
+  </data>
+  <data name="ConnectionLogging" xml:space="preserve">
+    <value>Reconnection &amp; Logging</value>
+  </data>
+  <data name="ConnectionMergePets" xml:space="preserve">
+    <value>Combine Pets with Owner</value>
+  </data>
+  <data name="ConnectionMergePetsHelp" xml:space="preserve">
+    <value>When enabled, pet and summon damage is attributed to the owner.
+Disable to show pet damage as separate entries.</value>
+  </data>
+  <data name="ConnectionParseFilter" xml:space="preserve">
+    <value>Parse Filter</value>
+  </data>
+  <data name="ConnectionParserOptions" xml:space="preserve">
+    <value>Internal Parser Options</value>
+  </data>
+  <data name="ConnectionParserWarning" xml:space="preserve">
+    <value>Internal Parser (Experimental)
+
+• DoT/HoT damage is estimated, not simulated.
+  Expect ~5-10% variance vs ACT/IINACT.
+• DoT ticks are attributed by scanning active
+  statuses, multi-DoT party accuracy is approximate.
+For accurate parsing, use ACT/IINACT instead.</value>
+  </data>
+  <data name="ConnectionReconnect" xml:space="preserve">
+    <value>Reconnect</value>
+  </data>
+  <data name="ConnectionResetUrl" xml:space="preserve">
+    <value>Reset to default URL</value>
+  </data>
+  <data name="ConnectionSeparateCompanions" xml:space="preserve">
+    <value>Show Companions as Separate Entries</value>
+  </data>
+  <data name="ConnectionSeparateCompanionsHelp" xml:space="preserve">
+    <value>When enabled, damage from companions are shown as separate entries instead of being merged with the player.</value>
+  </data>
+  <data name="ConnectionSettings" xml:space="preserve">
+    <value>Server Connection Settings</value>
+  </data>
+  <data name="ConnectionTypeLabel" xml:space="preserve">
+    <value>Connection Type</value>
+  </data>
+  <data name="ConnectionUrl" xml:space="preserve">
+    <value>WebSocket URL</value>
+  </data>
+  <data name="ConnectionUseYou" xml:space="preserve">
+    <value>Use "YOU" instead of your character's name</value>
+  </data>
+  <data name="ConnectionUseYouHelp" xml:space="preserve">
+    <value>When enabled, your character is named "YOU" to match ACT behavior.</value>
+  </data>
+  <data name="DtrClickConfig" xml:space="preserve">
+    <value>Click to open config window</value>
+  </data>
+  <data name="DtrDisconnectedText" xml:space="preserve">
+    <value>Disconnect Text:</value>
+  </data>
+  <data name="DtrFormat" xml:space="preserve">
+    <value>Format String:</value>
+  </data>
+  <data name="DtrHeading" xml:space="preserve">
+    <value>Server Info Bar</value>
+  </data>
+  <data name="DtrInsertTag" xml:space="preserve">
+    <value>Insert Tag:</value>
+  </data>
+  <data name="DtrPersonalDps" xml:space="preserve">
+    <value>Show personal DPS</value>
+  </data>
+  <data name="DtrPersonalDpsHelp" xml:space="preserve">
+    <value>Use your own DPS instead of party DPS for the [dps] tag.</value>
+  </data>
+  <data name="DtrShowDisconnected" xml:space="preserve">
+    <value>Show when disconnected</value>
+  </data>
+  <data name="Enum_AlignmentType_Bottom" xml:space="preserve">
+    <value>Bottom</value>
+  </data>
+  <data name="Enum_AlignmentType_BottomLeft" xml:space="preserve">
+    <value>Bottom Left</value>
+  </data>
+  <data name="Enum_AlignmentType_BottomRight" xml:space="preserve">
+    <value>Bottom Right</value>
+  </data>
+  <data name="Enum_AlignmentType_Center" xml:space="preserve">
+    <value>Center</value>
+  </data>
+  <data name="Enum_AlignmentType_Left" xml:space="preserve">
+    <value>Left</value>
+  </data>
+  <data name="Enum_AlignmentType_Right" xml:space="preserve">
+    <value>Right</value>
+  </data>
+  <data name="Enum_AlignmentType_Top" xml:space="preserve">
+    <value>Top</value>
+  </data>
+  <data name="Enum_AlignmentType_TopLeft" xml:space="preserve">
+    <value>Top Left</value>
+  </data>
+  <data name="Enum_AlignmentType_TopRight" xml:space="preserve">
+    <value>Top Right</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Job" xml:space="preserve">
+    <value>Job</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Output" xml:space="preserve">
+    <value>DPS / HPS</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Enum_ColorMode_Job" xml:space="preserve">
+    <value>Job</value>
+  </data>
+  <data name="Enum_ColorMode_Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Enum_ColorMode_Static" xml:space="preserve">
+    <value>Static</value>
+  </data>
+  <data name="Enum_ConnectionType_IINACTIPC" xml:space="preserve">
+    <value>IINACT</value>
+  </data>
+  <data name="Enum_ConnectionType_Internal" xml:space="preserve">
+    <value>Internal Parser</value>
+  </data>
+  <data name="Enum_ConnectionType_WebSocket" xml:space="preserve">
+    <value>ACT (WebSocket)</value>
+  </data>
+  <data name="Enum_CustomMeterBarStyle_FullWidth" xml:space="preserve">
+    <value>Filled Bar</value>
+  </data>
+  <data name="Enum_CustomMeterBarStyle_None" xml:space="preserve">
+    <value>No Bar</value>
+  </data>
+  <data name="Enum_CustomMeterBarStyle_Underline" xml:space="preserve">
+    <value>Underline</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_BestHit" xml:space="preserve">
+    <value>Best Hit</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_CriticalDirectHitPercent" xml:space="preserve">
+    <value>Critical Direct Hit Rate</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_CriticalHitPercent" xml:space="preserve">
+    <value>Critical Hit Rate</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Damage" xml:space="preserve">
+    <value>Total Damage</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_DamagePercent" xml:space="preserve">
+    <value>Damage Share</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Deaths" xml:space="preserve">
+    <value>Deaths</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_DirectHitPercent" xml:space="preserve">
+    <value>Direct Hit Rate</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Dps" xml:space="preserve">
+    <value>DPS</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Hits" xml:space="preserve">
+    <value>Hits</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Hps" xml:space="preserve">
+    <value>HPS</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_PlayerName" xml:space="preserve">
+    <value>Player Name</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Rank" xml:space="preserve">
+    <value>Rank</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Swings" xml:space="preserve">
+    <value>Swings</value>
+  </data>
+  <data name="Enum_FontType_JupiterLarge" xml:space="preserve">
+    <value>Jupiter Large</value>
+  </data>
+  <data name="Enum_FontType_MiedingerMed" xml:space="preserve">
+    <value>Miedinger Medium</value>
+  </data>
+  <data name="Enum_JobIconType_Blue" xml:space="preserve">
+    <value>Blue</value>
+  </data>
+  <data name="Enum_JobIconType_Dark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="Enum_JobIconType_Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Enum_JobIconType_Framed" xml:space="preserve">
+    <value>Framed</value>
+  </data>
+  <data name="Enum_JobIconType_Gearset" xml:space="preserve">
+    <value>Gearset</value>
+  </data>
+  <data name="Enum_JobIconType_Glowing" xml:space="preserve">
+    <value>Glowing</value>
+  </data>
+  <data name="Enum_JobIconType_Gold" xml:space="preserve">
+    <value>Gold</value>
+  </data>
+  <data name="Enum_JobIconType_Green" xml:space="preserve">
+    <value>Green</value>
+  </data>
+  <data name="Enum_JobIconType_Light" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="Enum_JobIconType_Orange" xml:space="preserve">
+    <value>Orange</value>
+  </data>
+  <data name="Enum_JobIconType_Purple" xml:space="preserve">
+    <value>Purple</value>
+  </data>
+  <data name="Enum_JobIconType_Red" xml:space="preserve">
+    <value>Red</value>
+  </data>
+  <data name="Enum_MeterAsset_DutyClock" xml:space="preserve">
+    <value>Duty Clock</value>
+  </data>
+  <data name="Enum_MeterBackgroundStyle_Tooltip" xml:space="preserve">
+    <value>Tooltip (Original)</value>
+  </data>
+  <data name="Enum_MeterBackgroundStyle_Window" xml:space="preserve">
+    <value>Addon Window</value>
+  </data>
+  <data name="Enum_MeterBackgroundStyle_WindowFocused" xml:space="preserve">
+    <value>Addon Window (Bright Border)</value>
+  </data>
+  <data name="Enum_MeterButtonAction_ContextMenu" xml:space="preserve">
+    <value>Context Menu</value>
+  </data>
+  <data name="Enum_MeterButtonAction_CopyEncounterSummary" xml:space="preserve">
+    <value>Copy Encounter Summary</value>
+  </data>
+  <data name="Enum_MeterButtonAction_DetailedBreakdown" xml:space="preserve">
+    <value>Detailed Breakdown</value>
+  </data>
+  <data name="Enum_MeterButtonAction_ResetDummies" xml:space="preserve">
+    <value>Reset All Dummies</value>
+  </data>
+  <data name="Enum_MeterButtonAction_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Enum_MeterButtonAction_ToggleCollapse" xml:space="preserve">
+    <value>Collapse / Expand</value>
+  </data>
+  <data name="Enum_MeterComponentType_Asset" xml:space="preserve">
+    <value>Asset</value>
+  </data>
+  <data name="Enum_MeterComponentType_Background" xml:space="preserve">
+    <value>Background</value>
+  </data>
+  <data name="Enum_MeterComponentType_Icon" xml:space="preserve">
+    <value>Icon</value>
+  </data>
+  <data name="Enum_MeterComponentType_JobIcon" xml:space="preserve">
+    <value>Job Icon</value>
+  </data>
+  <data name="Enum_MeterComponentType_MenuButton" xml:space="preserve">
+    <value>Button</value>
+  </data>
+  <data name="Enum_MeterComponentType_ProgressBar" xml:space="preserve">
+    <value>Progress Bar</value>
+  </data>
+  <data name="Enum_MeterComponentType_Separator" xml:space="preserve">
+    <value>Separator</value>
+  </data>
+  <data name="Enum_MeterComponentType_Text" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="Enum_MeterLayout_Horizontal" xml:space="preserve">
+    <value>Horizontal</value>
+  </data>
+  <data name="Enum_MeterLayout_Vertical" xml:space="preserve">
+    <value>Vertical</value>
+  </data>
+  <data name="Enum_ParseFilter_Alliance" xml:space="preserve">
+    <value>Alliance (Alliance &amp; Pets)</value>
+  </data>
+  <data name="Enum_ParseFilter_None" xml:space="preserve">
+    <value>None (All Entities)</value>
+  </data>
+  <data name="Enum_ParseFilter_Party" xml:space="preserve">
+    <value>Party (Party &amp; Pets)</value>
+  </data>
+  <data name="Enum_ParseFilter_Self" xml:space="preserve">
+    <value>Self (You &amp; Pets)</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_HpBar" xml:space="preserve">
+    <value>HP Bar</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_MemberRow" xml:space="preserve">
+    <value>Member Row</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_MpBar" xml:space="preserve">
+    <value>MP Bar</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_NameAndBars" xml:space="preserve">
+    <value>Name/Bars</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_Auto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_Flat" xml:space="preserve">
+    <value>Flat Color</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_LegacyAdditive" xml:space="preserve">
+    <value>Legacy Additive</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_NativeTint" xml:space="preserve">
+    <value>Native Tint</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_StockColors" xml:space="preserve">
+    <value>Stock Colors</value>
+  </data>
+  <data name="Enum_ProgressBarSizing_PreserveEnds" xml:space="preserve">
+    <value>Preserve ends</value>
+  </data>
+  <data name="Enum_ProgressBarSizing_Stretch" xml:space="preserve">
+    <value>Stretch</value>
+  </data>
+  <data name="Enum_ProgressBarType_AetherGauge" xml:space="preserve">
+    <value>Aether Gauge</value>
+  </data>
+  <data name="Enum_ProgressBarType_BardArrow" xml:space="preserve">
+    <value>Bard Arrow</value>
+  </data>
+  <data name="Enum_ProgressBarType_Cast" xml:space="preserve">
+    <value>Cast</value>
+    <comment>The player cast bar art in FFXIV.</comment>
+  </data>
+  <data name="Enum_ProgressBarType_CastLegacy" xml:space="preserve">
+    <value>Cast (Legacy)</value>
+  </data>
+  <data name="Enum_ProgressBarType_CollectableNegotiation" xml:space="preserve">
+    <value>Collectable Negotiation</value>
+  </data>
+  <data name="Enum_ProgressBarType_ContentGauge" xml:space="preserve">
+    <value>Content Gauge</value>
+  </data>
+  <data name="Enum_ProgressBarType_CustomDeliveries" xml:space="preserve">
+    <value>Custom Deliveries</value>
+  </data>
+  <data name="Enum_ProgressBarType_EnemyCast" xml:space="preserve">
+    <value>Enemy Cast</value>
+  </data>
+  <data name="Enum_ProgressBarType_EnemyCastLegacy" xml:space="preserve">
+    <value>Enemy Cast (Legacy)</value>
+  </data>
+  <data name="Enum_ProgressBarType_GoldSaucerGauge" xml:space="preserve">
+    <value>Gold Saucer Gauge</value>
+  </data>
+  <data name="Enum_ProgressBarType_ItemInspection" xml:space="preserve">
+    <value>Item Inspection</value>
+  </data>
+  <data name="Enum_ProgressBarType_LimitBreak" xml:space="preserve">
+    <value>Limit Break</value>
+  </data>
+  <data name="Enum_ProgressBarType_PartyListHp" xml:space="preserve">
+    <value>Party List Gauge</value>
+  </data>
+  <data name="Enum_ProgressBarType_ToDo" xml:space="preserve">
+    <value>To Do</value>
+  </data>
+  <data name="Enum_ProgressBarType_ToDoLegacy" xml:space="preserve">
+    <value>ToDo (Legacy)</value>
+  </data>
+  <data name="Enum_SelfTextOverrideMode_AllText" xml:space="preserve">
+    <value>All Row Text</value>
+  </data>
+  <data name="Enum_SelfTextOverrideMode_NameOnly" xml:space="preserve">
+    <value>Name Only</value>
+  </data>
+  <data name="Enum_TextFlags_AutoAdjustNodeSize" xml:space="preserve">
+    <value>Auto Adjust Node Size</value>
+  </data>
+  <data name="Enum_TextFlags_Bold" xml:space="preserve">
+    <value>Bold</value>
+  </data>
+  <data name="Enum_TextFlags_Edge" xml:space="preserve">
+    <value>Edge</value>
+  </data>
+  <data name="Enum_TextFlags_Ellipsis" xml:space="preserve">
+    <value>Ellipsis</value>
+  </data>
+  <data name="Enum_TextFlags_Emboss" xml:space="preserve">
+    <value>Emboss</value>
+  </data>
+  <data name="Enum_TextFlags_FixedFontResolution" xml:space="preserve">
+    <value>Fixed Font Resolution</value>
+  </data>
+  <data name="Enum_TextFlags_FontCache" xml:space="preserve">
+    <value>Font Cache</value>
+  </data>
+  <data name="Enum_TextFlags_Glare" xml:space="preserve">
+    <value>Glare</value>
+  </data>
+  <data name="Enum_TextFlags_Italic" xml:space="preserve">
+    <value>Italic</value>
+  </data>
+  <data name="Enum_TextFlags_LinkData" xml:space="preserve">
+    <value>Link Data</value>
+  </data>
+  <data name="Enum_TextFlags_MultiLine" xml:space="preserve">
+    <value>Multi Line</value>
+  </data>
+  <data name="Enum_TextFlags_OverflowHidden" xml:space="preserve">
+    <value>Overflow Hidden</value>
+  </data>
+  <data name="Enum_TextFlags_WordWrap" xml:space="preserve">
+    <value>Word Wrap</value>
+  </data>
+  <data name="GeneralBreakdownParser" xml:space="preserve">
+    <value>Run internal parser for detailed breakdown (even when using ACT/IINACT)</value>
+  </data>
+  <data name="GeneralClearAct" xml:space="preserve">
+    <value>Clear ACT when clearing Meter</value>
+  </data>
+  <data name="GeneralClearMeter" xml:space="preserve">
+    <value>Clear Meter</value>
+  </data>
+  <data name="GeneralDebugMode" xml:space="preserve">
+    <value>Debug Mode</value>
+  </data>
+  <data name="GeneralEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="GeneralEndAct" xml:space="preserve">
+    <value>Force ACT to end encounter after combat</value>
+  </data>
+  <data name="GeneralEndActHelp" xml:space="preserve">
+    <value>I highly recommend enabling the "End ACT encounter after wipe/out of combat" option under Plugins -&gt; OverlayPlugin -&gt; Event Settings instead of using this.</value>
+  </data>
+  <data name="GeneralEndEncounter" xml:space="preserve">
+    <value>End Encounter</value>
+  </data>
+  <data name="GeneralExport" xml:space="preserve">
+    <value>Export Configuration</value>
+  </data>
+  <data name="GeneralHeading" xml:space="preserve">
+    <value>General Configuration</value>
+  </data>
+  <data name="GeneralHistoryEnabled" xml:space="preserve">
+    <value>Enable Encounter History</value>
+  </data>
+  <data name="GeneralHistorySize" xml:space="preserve">
+    <value>Max History Size</value>
+  </data>
+  <data name="GeneralImport" xml:space="preserve">
+    <value> Import Configuration
+(hold shift to confirm)</value>
+  </data>
+  <data name="GeneralLanguage" xml:space="preserve">
+    <value>Language:</value>
+  </data>
+  <data name="GeneralLanguageGame" xml:space="preserve">
+    <value>Use game language</value>
+  </data>
+  <data name="GeneralPreview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="GeneralPrivacy" xml:space="preserve">
+    <value>Privacy Mode</value>
+  </data>
+  <data name="GeneralPrivacyHelp" xml:space="preserve">
+    <value>Shows player jobs instead of names.</value>
+  </data>
+  <data name="GeneralReplaceYou" xml:space="preserve">
+    <value>Replace YOU with your name</value>
+  </data>
+  <data name="GeneralReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="GeneralResetHelp" xml:space="preserve">
+    <value>   Reset configuration
+(hold button to confirm)</value>
+  </data>
+  <data name="GeneralSwitchLive" xml:space="preserve">
+    <value>Auto-switch to live when new fight starts</value>
+  </data>
+  <data name="HudDisconnected" xml:space="preserve">
+    <value>Not connected to ACT/IINACT</value>
+  </data>
+  <data name="HudEncounterDetails" xml:space="preserve">
+    <value>Encounter: {0}
+Duration: {1}
+Raid DPS: {2:N0}
+Deaths: {3}</value>
+  </data>
+  <data name="HudIdle" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="HudLimitBreak" xml:space="preserve">
+    <value>Limit Break</value>
+  </data>
+  <data name="HudLock" xml:space="preserve">
+    <value>Lock</value>
+  </data>
+  <data name="HudLockHelp" xml:space="preserve">
+    <value>Lock position and size</value>
+  </data>
+  <data name="HudNoEncounter" xml:space="preserve">
+    <value>No Encounter</value>
+  </data>
+  <data name="HudOpenConfig" xml:space="preserve">
+    <value>Click to open config</value>
+  </data>
+  <data name="IconIdLabel" xml:space="preserve">
+    <value>Icon ID: {0}</value>
+  </data>
+  <data name="JobName_1" xml:space="preserve">
+    <value>Gladiator</value>
+  </data>
+  <data name="JobName_19" xml:space="preserve">
+    <value>Paladin</value>
+  </data>
+  <data name="JobName_2" xml:space="preserve">
+    <value>Pugilist</value>
+  </data>
+  <data name="JobName_20" xml:space="preserve">
+    <value>Monk</value>
+  </data>
+  <data name="JobName_21" xml:space="preserve">
+    <value>Warrior</value>
+  </data>
+  <data name="JobName_22" xml:space="preserve">
+    <value>Dragoon</value>
+  </data>
+  <data name="JobName_23" xml:space="preserve">
+    <value>Bard</value>
+  </data>
+  <data name="JobName_24" xml:space="preserve">
+    <value>White Mage</value>
+  </data>
+  <data name="JobName_25" xml:space="preserve">
+    <value>Black Mage</value>
+  </data>
+  <data name="JobName_26" xml:space="preserve">
+    <value>Arcanist</value>
+  </data>
+  <data name="JobName_27" xml:space="preserve">
+    <value>Summoner</value>
+  </data>
+  <data name="JobName_28" xml:space="preserve">
+    <value>Scholar</value>
+  </data>
+  <data name="JobName_29" xml:space="preserve">
+    <value>Rogue</value>
+  </data>
+  <data name="JobName_3" xml:space="preserve">
+    <value>Marauder</value>
+  </data>
+  <data name="JobName_30" xml:space="preserve">
+    <value>Ninja</value>
+  </data>
+  <data name="JobName_31" xml:space="preserve">
+    <value>Machinist</value>
+  </data>
+  <data name="JobName_32" xml:space="preserve">
+    <value>Dark Knight</value>
+  </data>
+  <data name="JobName_33" xml:space="preserve">
+    <value>Astrologian</value>
+  </data>
+  <data name="JobName_34" xml:space="preserve">
+    <value>Samurai</value>
+  </data>
+  <data name="JobName_35" xml:space="preserve">
+    <value>Red Mage</value>
+  </data>
+  <data name="JobName_36" xml:space="preserve">
+    <value>Blue Mage</value>
+  </data>
+  <data name="JobName_37" xml:space="preserve">
+    <value>Gunbreaker</value>
+  </data>
+  <data name="JobName_38" xml:space="preserve">
+    <value>Dancer</value>
+  </data>
+  <data name="JobName_39" xml:space="preserve">
+    <value>Reaper</value>
+  </data>
+  <data name="JobName_4" xml:space="preserve">
+    <value>Lancer</value>
+  </data>
+  <data name="JobName_40" xml:space="preserve">
+    <value>Sage</value>
+  </data>
+  <data name="JobName_41" xml:space="preserve">
+    <value>Viper</value>
+  </data>
+  <data name="JobName_42" xml:space="preserve">
+    <value>Pictomancer</value>
+  </data>
+  <data name="JobName_43" xml:space="preserve">
+    <value>Beastmaster</value>
+  </data>
+  <data name="JobName_5" xml:space="preserve">
+    <value>Archer</value>
+  </data>
+  <data name="JobName_6" xml:space="preserve">
+    <value>Conjurer</value>
+  </data>
+  <data name="JobName_7" xml:space="preserve">
+    <value>Thaumaturge</value>
+  </data>
+  <data name="MenuClearHistory" xml:space="preserve">
+    <value>Clear History</value>
+  </data>
+  <data name="MenuClearMeter" xml:space="preserve">
+    <value>Clear Meter</value>
+  </data>
+  <data name="MenuCollapse" xml:space="preserve">
+    <value>Collapse</value>
+  </data>
+  <data name="MenuCopyClipboard" xml:space="preserve">
+    <value>Copy to Clipboard</value>
+  </data>
+  <data name="MenuEndEncounter" xml:space="preserve">
+    <value>End Encounter</value>
+  </data>
+  <data name="MenuExpand" xml:space="preserve">
+    <value>Expand</value>
+  </data>
+  <data name="MenuLive" xml:space="preserve">
+    <value>Live (Current)</value>
+  </data>
+  <data name="MenuLocked" xml:space="preserve">
+    <value>Locked</value>
+  </data>
+  <data name="MenuPreviousEncounters" xml:space="preserve">
+    <value>Previous Encounters…</value>
+  </data>
+  <data name="MenuPrivacy" xml:space="preserve">
+    <value>Privacy Mode</value>
+  </data>
+  <data name="MenuSortBy" xml:space="preserve">
+    <value>Sort By…</value>
+  </data>
+  <data name="MenuUnknownEncounter" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="MeterAdd" xml:space="preserve">
+    <value>Add Meter</value>
+  </data>
+  <data name="MeterBackground" xml:space="preserve">
+    <value>Show Background</value>
+  </data>
+  <data name="MeterBackgroundColor" xml:space="preserve">
+    <value>Background Color:</value>
+  </data>
+  <data name="MeterBackgroundStyle" xml:space="preserve">
+    <value>Background Style:</value>
+  </data>
+  <data name="MeterCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="MeterCardHeight" xml:space="preserve">
+    <value>Card Height:</value>
+  </data>
+  <data name="MeterCardSpacing" xml:space="preserve">
+    <value>Card Spacing:</value>
+  </data>
+  <data name="MeterClickthrough" xml:space="preserve">
+    <value>Clickthrough</value>
+  </data>
+  <data name="MeterDisabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="MeterDisplaySettings" xml:space="preserve">
+    <value>Display Settings</value>
+  </data>
+  <data name="MeterEnableFooter" xml:space="preserve">
+    <value>Enable Footer</value>
+  </data>
+  <data name="MeterEnableHeader" xml:space="preserve">
+    <value>Enable Header</value>
+  </data>
+  <data name="MeterEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="MeterExportTooltip" xml:space="preserve">
+    <value>Export Meter to Clipboard</value>
+  </data>
+  <data name="MeterFooterComponents" xml:space="preserve">
+    <value>Footer Components</value>
+  </data>
+  <data name="MeterFooterSpace" xml:space="preserve">
+    <value>Footer Space:</value>
+  </data>
+  <data name="MeterGeneralSettings" xml:space="preserve">
+    <value>General Settings</value>
+  </data>
+  <data name="MeterHeaderComponents" xml:space="preserve">
+    <value>Header Components</value>
+  </data>
+  <data name="MeterHeaderSpace" xml:space="preserve">
+    <value>Header Space:</value>
+  </data>
+  <data name="MeterHeading" xml:space="preserve">
+    <value>Meter Configuration</value>
+  </data>
+  <data name="MeterHighlightSelf" xml:space="preserve">
+    <value>Highlight Self</value>
+  </data>
+  <data name="MeterHighlightSelfTooltip" xml:space="preserve">
+    <value>Apply meter-specific colors to your own row.</value>
+  </data>
+  <data name="MeterImportClipboard" xml:space="preserve">
+    <value>Import from Clipboard</value>
+  </data>
+  <data name="MeterImportTooltip" xml:space="preserve">
+    <value>Import Meter from Clipboard</value>
+  </data>
+  <data name="MeterKeepSelfTooltip" xml:space="preserve">
+    <value>Collapse to your own row, keeping your expanded window size for reopening.</value>
+  </data>
+  <data name="MeterKeepSelfVisible" xml:space="preserve">
+    <value>Keep Self Visible When Collapsed</value>
+  </data>
+  <data name="MeterLayout" xml:space="preserve">
+    <value>Layout:</value>
+  </data>
+  <data name="MeterLockPositionSize" xml:space="preserve">
+    <value>Lock Position/Size</value>
+  </data>
+  <data name="MeterMaxCombatants" xml:space="preserve">
+    <value>Max Combatants:</value>
+  </data>
+  <data name="MeterName" xml:space="preserve">
+    <value>Meter Name:</value>
+  </data>
+  <data name="MeterNew" xml:space="preserve">
+    <value>New Meter {0}</value>
+  </data>
+  <data name="MeterNoneFound" xml:space="preserve">
+    <value>No meters found.</value>
+  </data>
+  <data name="MeterOverrideSelfBarColor" xml:space="preserve">
+    <value>Override Self Bar Color</value>
+  </data>
+  <data name="MeterOverrideSelfOutline" xml:space="preserve">
+    <value>Override Self Outline Color</value>
+  </data>
+  <data name="MeterOverrideSelfTextColor" xml:space="preserve">
+    <value>Override Self Text Color</value>
+  </data>
+  <data name="MeterOverrideSelfTextStyle" xml:space="preserve">
+    <value>Override Self Text Style</value>
+  </data>
+  <data name="MeterPinSelf" xml:space="preserve">
+    <value>Pin Self To Top</value>
+  </data>
+  <data name="MeterPinSelfCard" xml:space="preserve">
+    <value>Pin Self To First Card</value>
+  </data>
+  <data name="MeterReplace" xml:space="preserve">
+    <value>Replace Meter</value>
+  </data>
+  <data name="MeterReplacePrompt" xml:space="preserve">
+    <value>Replace this meter's settings with the clipboard contents?</value>
+  </data>
+  <data name="MeterRowComponents" xml:space="preserve">
+    <value>Row Components (Combatants)</value>
+  </data>
+  <data name="MeterRowHeight" xml:space="preserve">
+    <value>Row Height:</value>
+  </data>
+  <data name="MeterRowSpacing" xml:space="preserve">
+    <value>Row Spacing:</value>
+  </data>
+  <data name="MeterScale" xml:space="preserve">
+    <value>Scale %:</value>
+  </data>
+  <data name="MeterScrollbar" xml:space="preserve">
+    <value>Show Scrollbar</value>
+  </data>
+  <data name="MeterSelectOrCreate" xml:space="preserve">
+    <value>Select a meter or create a new one.</value>
+  </data>
+  <data name="MeterSelfBarColor" xml:space="preserve">
+    <value>Self Bar Color:</value>
+  </data>
+  <data name="MeterSelfOutlineColor" xml:space="preserve">
+    <value>Self Outline Color:</value>
+  </data>
+  <data name="MeterSelfTextColor" xml:space="preserve">
+    <value>Self Text Color:</value>
+  </data>
+  <data name="MeterSelfTextFont" xml:space="preserve">
+    <value>Self Text Font:</value>
+  </data>
+  <data name="MeterSelfTextSize" xml:space="preserve">
+    <value>Self Text Size:</value>
+  </data>
+  <data name="MeterSelfTextStyle" xml:space="preserve">
+    <value>Self Text Style:</value>
+  </data>
+  <data name="MeterSelfTextTarget" xml:space="preserve">
+    <value>Self Text Target:</value>
+  </data>
+  <data name="MeterSelfTextTargetTooltip" xml:space="preserve">
+    <value>Uses the Self Text Target setting above.</value>
+  </data>
+  <data name="MeterShowLimitBreak" xml:space="preserve">
+    <value>Show Limit Break</value>
+  </data>
+  <data name="MeterShowNonPlayers" xml:space="preserve">
+    <value>Show Non Player Combatants</value>
+  </data>
+  <data name="MeterSortBy" xml:space="preserve">
+    <value>Sort By:</value>
+  </data>
+  <data name="MeterUnnamed" xml:space="preserve">
+    <value>Unnamed Meter</value>
+  </data>
+  <data name="NotifyClipboardEmpty" xml:space="preserve">
+    <value>Clipboard is empty.</value>
+  </data>
+  <data name="NotifyClipboardMeterInvalid" xml:space="preserve">
+    <value>Invalid meter data in clipboard.</value>
+  </data>
+  <data name="NotifyClipboardParseFailed" xml:space="preserve">
+    <value>Clipboard data could not be parsed.</value>
+  </data>
+  <data name="NotifyConfigClipboardInvalid" xml:space="preserve">
+    <value>Clipboard is empty or invalid for import.</value>
+  </data>
+  <data name="NotifyConfigExported" xml:space="preserve">
+    <value>Configuration exported to clipboard.</value>
+  </data>
+  <data name="NotifyConfigImportFailed" xml:space="preserve">
+    <value>Clipboard data was invalid or could not be imported.</value>
+  </data>
+  <data name="NotifyConfigImported" xml:space="preserve">
+    <value>Configuration imported from clipboard.</value>
+  </data>
+  <data name="NotifyConfigReset" xml:space="preserve">
+    <value>Configuration reset to default.</value>
+  </data>
+  <data name="NotifyConnected" xml:space="preserve">
+    <value>Connected to {0}.</value>
+  </data>
+  <data name="NotifyInternalParserEnabled" xml:space="preserve">
+    <value>Internal parser enabled (experimental).</value>
+  </data>
+  <data name="NotifyMeterExported" xml:space="preserve">
+    <value>Meter '{0}' exported to clipboard.</value>
+  </data>
+  <data name="NotifyMeterImported" xml:space="preserve">
+    <value>Meter settings imported.</value>
+  </data>
+  <data name="PartyListAlignment" xml:space="preserve">
+    <value>Alignment:</value>
+  </data>
+  <data name="PartyListAnchor" xml:space="preserve">
+    <value>Anchor:</value>
+  </data>
+  <data name="PartyListBarBackground" xml:space="preserve">
+    <value>Bar Background: </value>
+  </data>
+  <data name="PartyListBarColor" xml:space="preserve">
+    <value>Bar Color: </value>
+  </data>
+  <data name="PartyListBarColorMode" xml:space="preserve">
+    <value>Bar Color Mode:</value>
+  </data>
+  <data name="PartyListBarSizing" xml:space="preserve">
+    <value>Bar Sizing:</value>
+  </data>
+  <data name="PartyListBarTint" xml:space="preserve">
+    <value>Bar Tint:</value>
+  </data>
+  <data name="PartyListBarType" xml:space="preserve">
+    <value>Bar Type:</value>
+  </data>
+  <data name="PartyListEnableHelp" xml:space="preserve">
+    <value>Shows lightweight NativeMeters text on each party-list row.</value>
+  </data>
+  <data name="PartyListFillLeft" xml:space="preserve">
+    <value>Fill Right To Left</value>
+  </data>
+  <data name="PartyListFillStat" xml:space="preserve">
+    <value>Fill Stat:</value>
+  </data>
+  <data name="PartyListFont" xml:space="preserve">
+    <value>Font:</value>
+  </data>
+  <data name="PartyListFontSize" xml:space="preserve">
+    <value>Font Size:</value>
+  </data>
+  <data name="PartyListFormat" xml:space="preserve">
+    <value>Format:</value>
+  </data>
+  <data name="PartyListHeight" xml:space="preserve">
+    <value>Height:</value>
+  </data>
+  <data name="PartyListHideEmpty" xml:space="preserve">
+    <value>Hide Without Combat Data</value>
+  </data>
+  <data name="PartyListHighlightTop" xml:space="preserve">
+    <value>Highlight Top Member</value>
+  </data>
+  <data name="PartyListHighlightTopHelp" xml:space="preserve">
+    <value>Applies a separate member text format and color to the highest party member for the selected stat.</value>
+  </data>
+  <data name="PartyListMemberBar" xml:space="preserve">
+    <value>Member Bar</value>
+  </data>
+  <data name="PartyListMemberStyle" xml:space="preserve">
+    <value>Member Text Style</value>
+  </data>
+  <data name="PartyListMemberText" xml:space="preserve">
+    <value>Member Text</value>
+  </data>
+  <data name="PartyListMeter" xml:space="preserve">
+    <value>Party List Meter</value>
+  </data>
+  <data name="PartyListOutline" xml:space="preserve">
+    <value>Outline Color: </value>
+  </data>
+  <data name="PartyListPosX" xml:space="preserve">
+    <value>X:</value>
+  </data>
+  <data name="PartyListPosY" xml:space="preserve">
+    <value>Y:</value>
+  </data>
+  <data name="PartyListPosition" xml:space="preserve">
+    <value>Position:</value>
+  </data>
+  <data name="PartyListRaidAlignment" xml:space="preserve">
+    <value>Raid Alignment:</value>
+  </data>
+  <data name="PartyListRaidColor" xml:space="preserve">
+    <value>Raid Text Color: </value>
+  </data>
+  <data name="PartyListRaidDps" xml:space="preserve">
+    <value>Raid DPS</value>
+  </data>
+  <data name="PartyListRaidFont" xml:space="preserve">
+    <value>Raid Font:</value>
+  </data>
+  <data name="PartyListRaidFontSize" xml:space="preserve">
+    <value>Raid Font Size:</value>
+  </data>
+  <data name="PartyListRaidFormat" xml:space="preserve">
+    <value>Raid Format:</value>
+  </data>
+  <data name="PartyListRaidHelp" xml:space="preserve">
+    <value>Shows encounter-wide DPS next to the party-list header.</value>
+  </data>
+  <data name="PartyListRaidOutline" xml:space="preserve">
+    <value>Raid Outline Color: </value>
+  </data>
+  <data name="PartyListRaidStyle" xml:space="preserve">
+    <value>Raid Text Style:</value>
+  </data>
+  <data name="PartyListResetHelp" xml:space="preserve">
+    <value>Reset Party List settings
+(hold button to confirm)</value>
+  </data>
+  <data name="PartyListShowBars" xml:space="preserve">
+    <value>Show Member Bars</value>
+  </data>
+  <data name="PartyListShowBarsHelp" xml:space="preserve">
+    <value>Shows the selected stat as a bar on each party-list row.</value>
+  </data>
+  <data name="PartyListShowMembers" xml:space="preserve">
+    <value>Show Party Members</value>
+  </data>
+  <data name="PartyListShowRaid" xml:space="preserve">
+    <value>Show Raid DPS</value>
+  </data>
+  <data name="PartyListShowSelf" xml:space="preserve">
+    <value>Show Self</value>
+  </data>
+  <data name="PartyListSize" xml:space="preserve">
+    <value>Size:</value>
+  </data>
+  <data name="PartyListTextColor" xml:space="preserve">
+    <value>Text Color: </value>
+  </data>
+  <data name="PartyListTextStyle" xml:space="preserve">
+    <value>Text Style:</value>
+  </data>
+  <data name="PartyListTopColor" xml:space="preserve">
+    <value>Top Text Color: </value>
+  </data>
+  <data name="PartyListTopFormat" xml:space="preserve">
+    <value>Top Format:</value>
+  </data>
+  <data name="PartyListTopMember" xml:space="preserve">
+    <value>Top Member</value>
+  </data>
+  <data name="PartyListTopStat" xml:space="preserve">
+    <value>Top Stat:</value>
+  </data>
+  <data name="PartyListWidth" xml:space="preserve">
+    <value>Width:</value>
+  </data>
+  <data name="PickerClear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="PickerTextFlagsHelp" xml:space="preserve">
+    <value>Text flags use the game’s UI. Some options behave differently depending on the font.</value>
+  </data>
+  <data name="PlacementLock" xml:space="preserve">
+    <value>Lock and finish</value>
+  </data>
+  <data name="PlacementMovable" xml:space="preserve">
+    <value>Keep movable</value>
+  </data>
+  <data name="PlacementMove" xml:space="preserve">
+    <value>Drag the meter to move it. Drag a corner to resize.</value>
+  </data>
+  <data name="PlacementSample" xml:space="preserve">
+    <value>The meter shows sample data when no fight is selected.</value>
+  </data>
+  <data name="PlacementSampleTitle" xml:space="preserve">
+    <value>Placement sample</value>
+  </data>
+  <data name="PlacementSkip" xml:space="preserve">
+    <value>Skip</value>
+  </data>
+  <data name="PresetBestHitStrip" xml:space="preserve">
+    <value>Best Hit Strip</value>
+  </data>
+  <data name="PresetCombatTable" xml:space="preserve">
+    <value>Combat Table</value>
+  </data>
+  <data name="PresetCompactTiles" xml:space="preserve">
+    <value>Compact Tiles</value>
+  </data>
+  <data name="PresetCompactUnderline" xml:space="preserve">
+    <value>Compact Underline</value>
+  </data>
+  <data name="PresetDefaultStylish" xml:space="preserve">
+    <value>Default Stylish</value>
+  </data>
+  <data name="PresetFooterDeaths" xml:space="preserve">
+    <value>Deaths: {0}</value>
+  </data>
+  <data name="PresetFooterPartyDps" xml:space="preserve">
+    <value>Party DPS: {0}</value>
+  </data>
+  <data name="PresetFooterRaidDps" xml:space="preserve">
+    <value>Raid DPS: {0}</value>
+  </data>
+  <data name="PresetPartyCards" xml:space="preserve">
+    <value>Party Cards</value>
+  </data>
+  <data name="PreviewBoss" xml:space="preserve">
+    <value>Sample Boss</value>
+  </data>
+  <data name="PreviewZone" xml:space="preserve">
+    <value>Sample Zone</value>
+  </data>
+  <data name="SetupAboveBar" xml:space="preserve">
+    <value>Above bar</value>
+  </data>
+  <data name="SetupActGuide" xml:space="preserve">
+    <value>ACT setup guide</value>
+  </data>
+  <data name="SetupActIntro" xml:space="preserve">
+    <value>Uses ACT on your PC. Pick this if you already run ACT for FFLogs.</value>
+  </data>
+  <data name="SetupActServer" xml:space="preserve">
+    <value>In ACT, open Plugins &gt; OverlayPlugin WSServer.</value>
+  </data>
+  <data name="SetupActStart" xml:space="preserve">
+    <value>On Stream/Local overlay, click Start. Keep ACT running while you play.</value>
+  </data>
+  <data name="SetupActUnavailable" xml:space="preserve">
+    <value>Couldn't connect to ACT</value>
+  </data>
+  <data name="SetupAddMeter" xml:space="preserve">
+    <value>Add a standalone meter</value>
+  </data>
+  <data name="SetupAddMeterHelp" xml:space="preserve">
+    <value>A separate window you can move around your HUD.</value>
+  </data>
+  <data name="SetupAppearance" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="SetupBack" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="SetupBackground" xml:space="preserve">
+    <value>Background</value>
+  </data>
+  <data name="SetupBarColor" xml:space="preserve">
+    <value>Bar color</value>
+  </data>
+  <data name="SetupBarFill" xml:space="preserve">
+    <value>Bar fill</value>
+  </data>
+  <data name="SetupBarSizing" xml:space="preserve">
+    <value>Bar sizing</value>
+  </data>
+  <data name="SetupBarStyle" xml:space="preserve">
+    <value>Bar style</value>
+  </data>
+  <data name="SetupBarTint" xml:space="preserve">
+    <value>Bar tint</value>
+  </data>
+  <data name="SetupBarType" xml:space="preserve">
+    <value>Bar type</value>
+  </data>
+  <data name="SetupCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="SetupCheckConnection" xml:space="preserve">
+    <value>Check connection</value>
+  </data>
+  <data name="SetupChecking" xml:space="preserve">
+    <value>Checking connection…</value>
+  </data>
+  <data name="SetupChooseColumn" xml:space="preserve">
+    <value>Pick at least one column.</value>
+  </data>
+  <data name="SetupChooseDisplay" xml:space="preserve">
+    <value>Where should DPS show up?</value>
+  </data>
+  <data name="SetupChooseParser" xml:space="preserve">
+    <value>Choose a parser</value>
+  </data>
+  <data name="SetupClickthrough" xml:space="preserve">
+    <value>Clickthrough</value>
+  </data>
+  <data name="SetupClickthroughHelp" xml:space="preserve">
+    <value>Clicks pass through the meter. Its menu button still works.</value>
+  </data>
+  <data name="SetupColumns" xml:space="preserve">
+    <value>Columns</value>
+  </data>
+  <data name="SetupConnected" xml:space="preserve">
+    <value>Connected</value>
+  </data>
+  <data name="SetupContinueOffline" xml:space="preserve">
+    <value>Continue without a connection</value>
+  </data>
+  <data name="SetupCustomize" xml:space="preserve">
+    <value>Build your own</value>
+  </data>
+  <data name="SetupDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="SetupEditMeter" xml:space="preserve">
+    <value>Set up your meter</value>
+  </data>
+  <data name="SetupExtras" xml:space="preserve">
+    <value>A few extras</value>
+  </data>
+  <data name="SetupFinish" xml:space="preserve">
+    <value>Finish</value>
+  </data>
+  <data name="SetupFooter" xml:space="preserve">
+    <value>Footer</value>
+  </data>
+  <data name="SetupFooterHelp" xml:space="preserve">
+    <value>Show deaths and party DPS below the meter.</value>
+  </data>
+  <data name="SetupIconStyle" xml:space="preserve">
+    <value>Icon Style</value>
+  </data>
+  <data name="SetupIinactChecking" xml:space="preserve">
+    <value>Checking IINACT…</value>
+  </data>
+  <data name="SetupIinactDisabled" xml:space="preserve">
+    <value>IINACT is installed. Enable it in Dalamud.</value>
+  </data>
+  <data name="SetupIinactEnabled" xml:space="preserve">
+    <value>IINACT is enabled in Dalamud.</value>
+  </data>
+  <data name="SetupIinactInstall" xml:space="preserve">
+    <value>Install IINACT</value>
+  </data>
+  <data name="SetupIinactIntro" xml:space="preserve">
+    <value>Runs inside the game and saves logs you can upload to FFLogs.</value>
+  </data>
+  <data name="SetupIinactLoaded" xml:space="preserve">
+    <value>IINACT is loaded. Check its settings.</value>
+  </data>
+  <data name="SetupIinactMissing" xml:space="preserve">
+    <value>IINACT isn't installed.</value>
+  </data>
+  <data name="SetupIinactNotReady" xml:space="preserve">
+    <value>IINACT isn't ready</value>
+  </data>
+  <data name="SetupIinactReady" xml:space="preserve">
+    <value>IINACT is ready</value>
+  </data>
+  <data name="SetupInsideBar" xml:space="preserve">
+    <value>Inside bar</value>
+  </data>
+  <data name="SetupInternalParser" xml:space="preserve">
+    <value>Internal Parser</value>
+  </data>
+  <data name="SetupInvalidUrl" xml:space="preserve">
+    <value>Enter a ws:// or wss:// URL</value>
+  </data>
+  <data name="SetupLocalDifferences" xml:space="preserve">
+    <value>Some numbers can differ from ACT or IINACT.</value>
+  </data>
+  <data name="SetupLocalIntro" xml:space="preserve">
+    <value>Use the built-in parser to see your stats in game.</value>
+  </data>
+  <data name="SetupLocalNoLogs" xml:space="preserve">
+    <value>It doesn't save logs for FFLogs.</value>
+  </data>
+  <data name="SetupNext" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="SetupNextChoice" xml:space="preserve">
+    <value>Next: {0}</value>
+  </data>
+  <data name="SetupOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="SetupOn" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="SetupPartyListDps" xml:space="preserve">
+    <value>Show DPS on the party list</value>
+  </data>
+  <data name="SetupPersonalDps" xml:space="preserve">
+    <value>Show personal DPS</value>
+  </data>
+  <data name="SetupPersonalDpsHelp" xml:space="preserve">
+    <value>Show your DPS in the server info bar. Leave this off for party DPS.</value>
+  </data>
+  <data name="SetupPlayerColor" xml:space="preserve">
+    <value>Player color</value>
+  </data>
+  <data name="SetupPlayerColorHelp" xml:space="preserve">
+    <value>Color player names by job, role, or a fixed color.</value>
+  </data>
+  <data name="SetupPlayerLayout" xml:space="preserve">
+    <value>Player layout</value>
+  </data>
+  <data name="SetupPreset" xml:space="preserve">
+    <value>Preset</value>
+  </data>
+  <data name="SetupPresetDefault" xml:space="preserve">
+    <value>Preset default</value>
+  </data>
+  <data name="SetupPreviousChoice" xml:space="preserve">
+    <value>Previous: {0}</value>
+  </data>
+  <data name="SetupPrivacy" xml:space="preserve">
+    <value>Privacy mode (show jobs instead of names)</value>
+  </data>
+  <data name="SetupReplaceYou" xml:space="preserve">
+    <value>Replace YOU with your name</value>
+  </data>
+  <data name="SetupSampleFight" xml:space="preserve">
+    <value>Sample fight</value>
+  </data>
+  <data name="SetupSaved" xml:space="preserve">
+    <value>NativeMeters setup saved. Use /ntm setup to open it again.</value>
+  </data>
+  <data name="SetupServerDps" xml:space="preserve">
+    <value>Show DPS on the server info bar</value>
+  </data>
+  <data name="SetupSettingsHelp" xml:space="preserve">
+    <value>You can change these settings any time with /ntm.</value>
+  </data>
+  <data name="SetupSkip" xml:space="preserve">
+    <value>Skip setup</value>
+  </data>
+  <data name="SetupSortBy" xml:space="preserve">
+    <value>Sort by</value>
+  </data>
+  <data name="SetupStandalone" xml:space="preserve">
+    <value>Standalone meter</value>
+  </data>
+  <data name="SetupStrikingDummy" xml:space="preserve">
+    <value>Striking Dummy</value>
+  </data>
+  <data name="SetupTextPosition" xml:space="preserve">
+    <value>Text position</value>
+  </data>
+  <data name="SetupTryDummy" xml:space="preserve">
+    <value>Hit a striking dummy to try the meter.</value>
+  </data>
+  <data name="SetupUnchecked" xml:space="preserve">
+    <value>Connection unchecked</value>
+  </data>
+  <data name="SetupUnlockHelp" xml:space="preserve">
+    <value>To move it, unlock it in Meters, then lock it again when you're done.</value>
+  </data>
+  <data name="SetupUsePreset" xml:space="preserve">
+    <value>Use a preset</value>
+  </data>
+  <data name="SetupWebSocket" xml:space="preserve">
+    <value>WebSocket URL</value>
+  </data>
+  <data name="StatActiveDps" xml:space="preserve">
+    <value>Active DPS</value>
+  </data>
+  <data name="StatCriticalHitRate" xml:space="preserve">
+    <value>Crit. hit %</value>
+  </data>
+  <data name="StatDamageShare" xml:space="preserve">
+    <value>Damage share</value>
+  </data>
+  <data name="StatDeaths" xml:space="preserve">
+    <value>Deaths</value>
+  </data>
+  <data name="StatDirectHitRate" xml:space="preserve">
+    <value>Direct hit %</value>
+  </data>
+  <data name="StatEncounterDps" xml:space="preserve">
+    <value>Encounter DPS</value>
+  </data>
+  <data name="StatEncounterHps" xml:space="preserve">
+    <value>Encounter HPS</value>
+  </data>
+  <data name="TabColors" xml:space="preserve">
+    <value>Colors</value>
+  </data>
+  <data name="TabConnection" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="TabGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="TabMeters" xml:space="preserve">
+    <value>Meters</value>
+  </data>
+  <data name="TabPartyList" xml:space="preserve">
+    <value>Party List</value>
+  </data>
+  <data name="TabVisibility" xml:space="preserve">
+    <value>Visibility</value>
+  </data>
+  <data name="TagCategoryCombatant" xml:space="preserve">
+    <value>6. Raw Data (Combatant)</value>
+  </data>
+  <data name="TagCategoryCommon" xml:space="preserve">
+    <value>1. Common</value>
+  </data>
+  <data name="TagCategoryCustom" xml:space="preserve">
+    <value>5. Custom</value>
+  </data>
+  <data name="TagCategoryDamage" xml:space="preserve">
+    <value>2. Damage</value>
+  </data>
+  <data name="TagCategoryDefense" xml:space="preserve">
+    <value>4. Defense</value>
+  </data>
+  <data name="TagCategoryEncounter" xml:space="preserve">
+    <value>7. Raw Data (Encounter)</value>
+  </data>
+  <data name="TagCategoryHealing" xml:space="preserve">
+    <value>3. Healing</value>
+  </data>
+  <data name="TagDescAbsorb" xml:space="preserve">
+    <value>Total HP absorbed</value>
+  </data>
+  <data name="TagDescActiveDps" xml:space="preserve">
+    <value>Damage per second while actively attacking</value>
+  </data>
+  <data name="TagDescBlockPct" xml:space="preserve">
+    <value>Percentage of attacks blocked</value>
+  </data>
+  <data name="TagDescCount" xml:space="preserve">
+    <value>Number of combatants in this meter</value>
+  </data>
+  <data name="TagDescCritDirectPct" xml:space="preserve">
+    <value>Percentage of hits that are both critical and direct</value>
+  </data>
+  <data name="TagDescCritHealPct" xml:space="preserve">
+    <value>Critical heal percentage</value>
+  </data>
+  <data name="TagDescCritPct" xml:space="preserve">
+    <value>Critical hit percentage</value>
+  </data>
+  <data name="TagDescDamagePct" xml:space="preserve">
+    <value>Player's share of raid damage (rows only)</value>
+  </data>
+  <data name="TagDescDamageTaken" xml:space="preserve">
+    <value>Total damage received</value>
+  </data>
+  <data name="TagDescDamageTotal" xml:space="preserve">
+    <value>Total damage dealt in millions</value>
+  </data>
+  <data name="TagDescDeaths" xml:space="preserve">
+    <value>Number of times defeated</value>
+  </data>
+  <data name="TagDescDirectPct" xml:space="preserve">
+    <value>Direct hit percentage</value>
+  </data>
+  <data name="TagDescDuration" xml:space="preserve">
+    <value>Combat time (mm:ss)</value>
+  </data>
+  <data name="TagDescEncounterDps" xml:space="preserve">
+    <value>Damage per second across the entire encounter</value>
+  </data>
+  <data name="TagDescEncounterDpsCompact" xml:space="preserve">
+    <value>Encounter DPS with compact units</value>
+  </data>
+  <data name="TagDescEncounterDpsKilo" xml:space="preserve">
+    <value>Encounter DPS in thousands</value>
+  </data>
+  <data name="TagDescEncounterHps" xml:space="preserve">
+    <value>Healing per second across the entire encounter</value>
+  </data>
+  <data name="TagDescEncounterHpsKilo" xml:space="preserve">
+    <value>Encounter HPS in thousands</value>
+  </data>
+  <data name="TagDescFirstName" xml:space="preserve">
+    <value>First name only</value>
+  </data>
+  <data name="TagDescFocusHp" xml:space="preserve">
+    <value>Focus target's remaining HP percentage</value>
+  </data>
+  <data name="TagDescFocusName" xml:space="preserve">
+    <value>Name of your focus target</value>
+  </data>
+  <data name="TagDescFullName" xml:space="preserve">
+    <value>Player name in a row, encounter name in a header</value>
+  </data>
+  <data name="TagDescHealedPct" xml:space="preserve">
+    <value>Player's share of raid healing (rows only)</value>
+  </data>
+  <data name="TagDescHealedTotal" xml:space="preserve">
+    <value>Total healing output</value>
+  </data>
+  <data name="TagDescHealsTaken" xml:space="preserve">
+    <value>Total healing received</value>
+  </data>
+  <data name="TagDescHits" xml:space="preserve">
+    <value>Total number of successful hits</value>
+  </data>
+  <data name="TagDescInitials" xml:space="preserve">
+    <value>Initials of the first and last name</value>
+  </data>
+  <data name="TagDescJobAbbr" xml:space="preserve">
+    <value>Job abbreviation</value>
+  </data>
+  <data name="TagDescJobName" xml:space="preserve">
+    <value>Full job name</value>
+  </data>
+  <data name="TagDescLastName" xml:space="preserve">
+    <value>Last name only</value>
+  </data>
+  <data name="TagDescMaxHealFull" xml:space="preserve">
+    <value>Action name and amount of the strongest heal</value>
+  </data>
+  <data name="TagDescMaxHealSkill" xml:space="preserve">
+    <value>Name of the action with the strongest heal</value>
+  </data>
+  <data name="TagDescMaxHealValue" xml:space="preserve">
+    <value>Amount of the strongest heal</value>
+  </data>
+  <data name="TagDescMaxHitFull" xml:space="preserve">
+    <value>Action name and damage of the strongest hit</value>
+  </data>
+  <data name="TagDescMaxHitSkill" xml:space="preserve">
+    <value>Name of the action with the strongest hit</value>
+  </data>
+  <data name="TagDescMaxHitValue" xml:space="preserve">
+    <value>Damage of the strongest hit</value>
+  </data>
+  <data name="TagDescMisses" xml:space="preserve">
+    <value>Total number of missed attacks</value>
+  </data>
+  <data name="TagDescOverheal" xml:space="preserve">
+    <value>Total healing that exceeded max HP</value>
+  </data>
+  <data name="TagDescOverhealPct" xml:space="preserve">
+    <value>Percentage of healing that exceeded max HP</value>
+  </data>
+  <data name="TagDescParryPct" xml:space="preserve">
+    <value>Percentage of attacks parried</value>
+  </data>
+  <data name="TagDescRank" xml:space="preserve">
+    <value>Position in this meter</value>
+  </data>
+  <data name="TagDescRankCount" xml:space="preserve">
+    <value>Position out of the total</value>
+  </data>
+  <data name="TagDescRecentDps" xml:space="preserve">
+    <value>DPS over the last {0} seconds</value>
+  </data>
+  <data name="TagDescShield" xml:space="preserve">
+    <value>Total shields applied</value>
+  </data>
+  <data name="TagDescSwings" xml:space="preserve">
+    <value>Total number of attack attempts</value>
+  </data>
+  <data name="TagDescTargetHp" xml:space="preserve">
+    <value>Current target's remaining HP percentage</value>
+  </data>
+  <data name="TagDescTargetName" xml:space="preserve">
+    <value>Name of your current target</value>
+  </data>
+  <data name="TagDescZone" xml:space="preserve">
+    <value>Current zone or instance</value>
+  </data>
+  <data name="TagExample" xml:space="preserve">
+    <value>ex: {0}</value>
+  </data>
+  <data name="TagExampleCure" xml:space="preserve">
+    <value>Cure III</value>
+  </data>
+  <data name="TagExampleDummy" xml:space="preserve">
+    <value>Striking Dummy</value>
+  </data>
+  <data name="TagExampleGoblet" xml:space="preserve">
+    <value>The Goblet</value>
+  </data>
+  <data name="TagExampleMidare" xml:space="preserve">
+    <value>Midare Setsugekka</value>
+  </data>
+  <data name="TagExampleName" xml:space="preserve">
+    <value>John Doe / Boss Name</value>
+  </data>
+  <data name="TagExampleWarrior" xml:space="preserve">
+    <value>Warrior</value>
+  </data>
+  <data name="TagFormatHelpBasic" xml:space="preserve">
+    <value>Format syntax: [tag_part:modifier.precision]
+- :r = Raw (no commas)
+- :c = Compact units
+- :k/:m = Kilo/Mega units
+- .N = Decimals
+Example: [dps:c.1] -&gt; 12.3K</value>
+  </data>
+  <data name="TagFormatHelpComponent" xml:space="preserve">
+    <value>Format syntax: [tag_part:modifier.precision]
+- :r = Raw (no commas)
+- :c = Compact units
+- :k/:m = Kilo/Mega units
+- .N = Decimals or text length
+- _first/_last = Name parts
+- _skill/_val = Action name/value of the strongest hit
+
+Example: [name_first.1].:[dps:c.1] -&gt; J.:12.3K</value>
+  </data>
+  <data name="TagInsert" xml:space="preserve">
+    <value>Insert</value>
+  </data>
+  <data name="TagLabel_-- Insert Tag --" xml:space="preserve">
+    <value>-- Insert Tag --</value>
+  </data>
+  <data name="TagLabel_Crit %" xml:space="preserve">
+    <value>Crit %</value>
+  </data>
+  <data name="TagLabel_DH %" xml:space="preserve">
+    <value>DH %</value>
+  </data>
+  <data name="TagLabel_DPS" xml:space="preserve">
+    <value>DPS</value>
+  </data>
+  <data name="TagLabel_DPS: Compact" xml:space="preserve">
+    <value>DPS: Compact</value>
+  </data>
+  <data name="TagLabel_DPS: Kilo" xml:space="preserve">
+    <value>DPS: Kilo</value>
+  </data>
+  <data name="TagLabel_DPS: Raw (No Comma)" xml:space="preserve">
+    <value>DPS: Raw (No Comma)</value>
+  </data>
+  <data name="TagLabel_Dmg: Percent" xml:space="preserve">
+    <value>Dmg: Percent</value>
+  </data>
+  <data name="TagLabel_Dmg: Total" xml:space="preserve">
+    <value>Dmg: Total</value>
+  </data>
+  <data name="TagLabel_Enc: DPS Compact" xml:space="preserve">
+    <value>Enc: DPS Compact</value>
+  </data>
+  <data name="TagLabel_Enc: Duration" xml:space="preserve">
+    <value>Enc: Duration</value>
+  </data>
+  <data name="TagLabel_Enc: Zone" xml:space="preserve">
+    <value>Enc: Zone</value>
+  </data>
+  <data name="TagLabel_Heal: %" xml:space="preserve">
+    <value>Heal: %</value>
+  </data>
+  <data name="TagLabel_Heal: Overheal %" xml:space="preserve">
+    <value>Heal: Overheal %</value>
+  </data>
+  <data name="TagLabel_Job: Abbr" xml:space="preserve">
+    <value>Job: Abbr</value>
+  </data>
+  <data name="TagLabel_MaxHit: Full" xml:space="preserve">
+    <value>MaxHit: Full</value>
+  </data>
+  <data name="TagLabel_MaxHit: Skill Only" xml:space="preserve">
+    <value>MaxHit: Skill Only</value>
+  </data>
+  <data name="TagLabel_MaxHit: Val Only" xml:space="preserve">
+    <value>MaxHit: Val Only</value>
+  </data>
+  <data name="TagLabel_Name: First" xml:space="preserve">
+    <value>Name: First</value>
+  </data>
+  <data name="TagLabel_Name: Full" xml:space="preserve">
+    <value>Name: Full</value>
+  </data>
+  <data name="TagLabel_Name: Initial" xml:space="preserve">
+    <value>Name: Initial</value>
+  </data>
+  <data name="TagLabel_Rank" xml:space="preserve">
+    <value>Rank</value>
+  </data>
+  <data name="TagLabel_Rank / Count" xml:space="preserve">
+    <value>Rank / Count</value>
+  </data>
+  <data name="TagNameAbsorb" xml:space="preserve">
+    <value>Absorb Heal</value>
+  </data>
+  <data name="TagNameActiveDps" xml:space="preserve">
+    <value>Active DPS</value>
+  </data>
+  <data name="TagNameBlockPct" xml:space="preserve">
+    <value>Block %</value>
+  </data>
+  <data name="TagNameCount" xml:space="preserve">
+    <value>Combatant Count</value>
+  </data>
+  <data name="TagNameCritDirectPct" xml:space="preserve">
+    <value>Crit Direct Hit %</value>
+  </data>
+  <data name="TagNameCritHealPct" xml:space="preserve">
+    <value>Crit Heal %</value>
+  </data>
+  <data name="TagNameCritPct" xml:space="preserve">
+    <value>Crit %</value>
+  </data>
+  <data name="TagNameDamagePct" xml:space="preserve">
+    <value>Damage %</value>
+  </data>
+  <data name="TagNameDamageTaken" xml:space="preserve">
+    <value>Damage Taken</value>
+  </data>
+  <data name="TagNameDamageTotal" xml:space="preserve">
+    <value>Damage Total</value>
+  </data>
+  <data name="TagNameDeaths" xml:space="preserve">
+    <value>Deaths</value>
+  </data>
+  <data name="TagNameDirectPct" xml:space="preserve">
+    <value>Direct Hit %</value>
+  </data>
+  <data name="TagNameDuration" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="TagNameEncounterDps" xml:space="preserve">
+    <value>Encounter DPS</value>
+  </data>
+  <data name="TagNameEncounterDpsCompact" xml:space="preserve">
+    <value>Encounter DPS (Compact)</value>
+  </data>
+  <data name="TagNameEncounterDpsKilo" xml:space="preserve">
+    <value>Encounter DPS (Kilo)</value>
+  </data>
+  <data name="TagNameEncounterHps" xml:space="preserve">
+    <value>Encounter HPS</value>
+  </data>
+  <data name="TagNameEncounterHpsKilo" xml:space="preserve">
+    <value>Encounter HPS (Kilo)</value>
+  </data>
+  <data name="TagNameFirstName" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="TagNameFocusHp" xml:space="preserve">
+    <value>Focus Target HP %</value>
+  </data>
+  <data name="TagNameFocusName" xml:space="preserve">
+    <value>Focus Target Name</value>
+  </data>
+  <data name="TagNameFullName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TagNameHealedPct" xml:space="preserve">
+    <value>Healed %</value>
+  </data>
+  <data name="TagNameHealedTotal" xml:space="preserve">
+    <value>Healed Total</value>
+  </data>
+  <data name="TagNameHealsTaken" xml:space="preserve">
+    <value>Heals Taken</value>
+  </data>
+  <data name="TagNameHits" xml:space="preserve">
+    <value>Hits</value>
+  </data>
+  <data name="TagNameInitials" xml:space="preserve">
+    <value>Initials</value>
+  </data>
+  <data name="TagNameJobAbbr" xml:space="preserve">
+    <value>Job Abbreviation</value>
+  </data>
+  <data name="TagNameJobName" xml:space="preserve">
+    <value>Job Name</value>
+  </data>
+  <data name="TagNameLastName" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="TagNameMaxHealFull" xml:space="preserve">
+    <value>Max Heal: Full</value>
+  </data>
+  <data name="TagNameMaxHealSkill" xml:space="preserve">
+    <value>Max Heal: Skill</value>
+  </data>
+  <data name="TagNameMaxHealValue" xml:space="preserve">
+    <value>Max Heal: Value</value>
+  </data>
+  <data name="TagNameMaxHitFull" xml:space="preserve">
+    <value>Max Hit: Full</value>
+  </data>
+  <data name="TagNameMaxHitSkill" xml:space="preserve">
+    <value>Max Hit: Skill</value>
+  </data>
+  <data name="TagNameMaxHitValue" xml:space="preserve">
+    <value>Max Hit: Value</value>
+  </data>
+  <data name="TagNameMisses" xml:space="preserve">
+    <value>Misses</value>
+  </data>
+  <data name="TagNameOverheal" xml:space="preserve">
+    <value>Overheal Total</value>
+  </data>
+  <data name="TagNameOverhealPct" xml:space="preserve">
+    <value>Overheal %</value>
+  </data>
+  <data name="TagNameParryPct" xml:space="preserve">
+    <value>Parry %</value>
+  </data>
+  <data name="TagNameRank" xml:space="preserve">
+    <value>Rank</value>
+  </data>
+  <data name="TagNameRankCount" xml:space="preserve">
+    <value>Rank / Count</value>
+  </data>
+  <data name="TagNameRecentDps" xml:space="preserve">
+    <value>Last {0}s DPS</value>
+  </data>
+  <data name="TagNameShield" xml:space="preserve">
+    <value>Damage Shield</value>
+  </data>
+  <data name="TagNameSwings" xml:space="preserve">
+    <value>Swings</value>
+  </data>
+  <data name="TagNameTargetHp" xml:space="preserve">
+    <value>Target HP %</value>
+  </data>
+  <data name="TagNameTargetName" xml:space="preserve">
+    <value>Target Name</value>
+  </data>
+  <data name="TagNameZone" xml:space="preserve">
+    <value>Zone Name</value>
+  </data>
+  <data name="TagRawProperty" xml:space="preserve">
+    <value>Raw property: {0}</value>
+  </data>
+  <data name="VisibilityAlwaysConditions" xml:space="preserve">
+    <value>Always Show Conditions</value>
+  </data>
+  <data name="VisibilityAlwaysDrawn" xml:space="preserve">
+    <value>Always show when weapon is drawn</value>
+  </data>
+  <data name="VisibilityAlwaysDuty" xml:space="preserve">
+    <value>Always show when in duty</value>
+  </data>
+  <data name="VisibilityAlwaysParty" xml:space="preserve">
+    <value>Always show while in a party</value>
+  </data>
+  <data name="VisibilityAlwaysPvp" xml:space="preserve">
+    <value>Always show while in PvP</value>
+  </data>
+  <data name="VisibilityAlwaysTarget" xml:space="preserve">
+    <value>Always show while target exists</value>
+  </data>
+  <data name="VisibilityCrafting" xml:space="preserve">
+    <value>Hide when crafting</value>
+  </data>
+  <data name="VisibilityCutscene" xml:space="preserve">
+    <value>Hide in cutscene / quest event</value>
+  </data>
+  <data name="VisibilityFullHp" xml:space="preserve">
+    <value>Hide while at full HP</value>
+  </data>
+  <data name="VisibilityGathering" xml:space="preserve">
+    <value>Hide when gathering</value>
+  </data>
+  <data name="VisibilityGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="VisibilityGoldSaucer" xml:space="preserve">
+    <value>Hide in Gold Saucer</value>
+  </data>
+  <data name="VisibilityHideConditions" xml:space="preserve">
+    <value>Hide Conditions</value>
+  </data>
+  <data name="VisibilityInCombat" xml:space="preserve">
+    <value>Hide in combat</value>
+  </data>
+  <data name="VisibilityInDuty" xml:space="preserve">
+    <value>Hide when in duty</value>
+  </data>
+  <data name="VisibilityOutOfCombat" xml:space="preserve">
+    <value>Hide outside of combat</value>
+  </data>
+  <data name="VisibilityPerforming" xml:space="preserve">
+    <value>Hide while performing</value>
+  </data>
+  <data name="VisibilityPvp" xml:space="preserve">
+    <value>Hide in PvP</value>
+  </data>
+  <data name="VisibilityPvpHelp" xml:space="preserve">
+    <value>Overrides Always Show conditions.</value>
+  </data>
+  <data name="VisibilitySanctuary" xml:space="preserve">
+    <value>Hide in Sanctuary</value>
+  </data>
+  <data name="VisibilityWithHud" xml:space="preserve">
+    <value>Hide with Native UI</value>
+  </data>
+  <data name="WindowBreakdown" xml:space="preserve">
+    <value>NativeMeters Breakdown</value>
+  </data>
+  <data name="WindowColorPicker" xml:space="preserve">
+    <value>Pick a color</value>
+  </data>
+  <data name="WindowConfiguration" xml:space="preserve">
+    <value>NativeMeters Config</value>
+  </data>
+  <data name="WindowIconPicker" xml:space="preserve">
+    <value>Select Icon</value>
+  </data>
+  <data name="WindowImportMeter" xml:space="preserve">
+    <value>Import Meter</value>
+  </data>
+  <data name="WindowPlacement" xml:space="preserve">
+    <value>Place your meter</value>
+  </data>
+  <data name="WindowSetup" xml:space="preserve">
+    <value>NativeMeters Setup</value>
+  </data>
+  <data name="WindowTagPicker" xml:space="preserve">
+    <value>Search Tags</value>
+  </data>
+  <data name="WindowTextFlags" xml:space="preserve">
+    <value>Text Flags</value>
+  </data>
+</root>

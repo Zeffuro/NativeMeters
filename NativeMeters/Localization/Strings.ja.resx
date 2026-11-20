@@ -1,0 +1,2162 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="BreakdownAction" xml:space="preserve">
+    <value>アクション</value>
+  </data>
+  <data name="BreakdownActive" xml:space="preserve">
+    <value>稼働</value>
+  </data>
+  <data name="BreakdownAttack" xml:space="preserve">
+    <value>攻撃</value>
+  </data>
+  <data name="BreakdownCritShort" xml:space="preserve">
+    <value>クリ%</value>
+  </data>
+  <data name="BreakdownDamage" xml:space="preserve">
+    <value>ダメージ</value>
+  </data>
+  <data name="BreakdownDamageStats" xml:space="preserve">
+    <value>DPS {0}  クリ {1:F0}%  DH {2:F0}%  稼働 {3:F0}%</value>
+  </data>
+  <data name="BreakdownDecimalPercent" xml:space="preserve">
+    <value>{0:F1}%</value>
+  </data>
+  <data name="BreakdownDirectShort" xml:space="preserve">
+    <value>DH%</value>
+  </data>
+  <data name="BreakdownEncounterTitle" xml:space="preserve">
+    <value>{0}（{1}）</value>
+  </data>
+  <data name="BreakdownHealing" xml:space="preserve">
+    <value>回復量</value>
+  </data>
+  <data name="BreakdownHealingStats" xml:space="preserve">
+    <value>HPS {0}  クリ {1:F0}%  OH {2:F0}%  稼働 {3:F0}%</value>
+  </data>
+  <data name="BreakdownHits" xml:space="preserve">
+    <value>命中数</value>
+  </data>
+  <data name="BreakdownLive" xml:space="preserve">
+    <value>現在の戦闘</value>
+  </data>
+  <data name="BreakdownLockOrder" xml:space="preserve">
+    <value>現在の表示順を固定</value>
+  </data>
+  <data name="BreakdownMax" xml:space="preserve">
+    <value>最大</value>
+  </data>
+  <data name="BreakdownNext" xml:space="preserve">
+    <value>次へ</value>
+  </data>
+  <data name="BreakdownNoData" xml:space="preserve">
+    <value>データなし</value>
+  </data>
+  <data name="BreakdownOverhealShort" xml:space="preserve">
+    <value>OH%</value>
+  </data>
+  <data name="BreakdownPercent" xml:space="preserve">
+    <value>{0}%</value>
+  </data>
+  <data name="BreakdownPrevious" xml:space="preserve">
+    <value>前へ</value>
+  </data>
+  <data name="BreakdownRaidDps" xml:space="preserve">
+    <value>パーティDPS {0}</value>
+  </data>
+  <data name="BreakdownRaidHps" xml:space="preserve">
+    <value>パーティHPS {0}</value>
+  </data>
+  <data name="BreakdownTotalDamage" xml:space="preserve">
+    <value>総ダメージ {0}</value>
+  </data>
+  <data name="BreakdownTotalHealing" xml:space="preserve">
+    <value>総回復量 {0}</value>
+  </data>
+  <data name="BreakdownUnknown" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="ClipboardCopied" xml:space="preserve">
+    <value>戦闘結果をクリップボードにコピーしました。</value>
+  </data>
+  <data name="ClipboardCopyFailed" xml:space="preserve">
+    <value>戦闘結果をコピーできませんでした。</value>
+  </data>
+  <data name="ClipboardDuration" xml:space="preserve">
+    <value>戦闘時間：{0}</value>
+  </data>
+  <data name="ClipboardPlayer" xml:space="preserve">
+    <value>{0}位　{1}（{2}） DPS {3:N0}</value>
+  </data>
+  <data name="ClipboardTotals" xml:space="preserve">
+    <value>戦闘不能：{0}回 | パーティDPS：{1:N0}</value>
+  </data>
+  <data name="ColorsDps" xml:space="preserve">
+    <value>DPS</value>
+  </data>
+  <data name="ColorsHealers" xml:space="preserve">
+    <value>ヒーラー</value>
+  </data>
+  <data name="ColorsJob" xml:space="preserve">
+    <value>ジョブ別の色</value>
+  </data>
+  <data name="ColorsOther" xml:space="preserve">
+    <value>その他／リミットブレイク</value>
+  </data>
+  <data name="ColorsRole" xml:space="preserve">
+    <value>ロール別の色</value>
+  </data>
+  <data name="ColorsTanks" xml:space="preserve">
+    <value>タンク</value>
+  </data>
+  <data name="CommandCaptureFailed" xml:space="preserve">
+    <value>記録に失敗しました: {0}</value>
+  </data>
+  <data name="CommandCaptureNotRunning" xml:space="preserve">
+    <value>記録は実行されていません。</value>
+  </data>
+  <data name="CommandCaptureSaved" xml:space="preserve">
+    <value>{0} に記録を保存しました。</value>
+  </data>
+  <data name="CommandCaptureStarted" xml:space="preserve">
+    <value>{0} に記録しています。</value>
+  </data>
+  <data name="CommandCaptureUsage" xml:space="preserve">
+    <value>/ntm debug capture start または /ntm debug capture stop を使ってください。</value>
+  </data>
+  <data name="CommandHelpHeading" xml:space="preserve">
+    <value>NativeMeters ヘルプ:</value>
+  </data>
+  <data name="CommandLoginRequired" xml:space="preserve">
+    <value>キャラクターでログインしてからセットアップを開いてください。</value>
+  </data>
+  <data name="CommandMainHelp" xml:space="preserve">
+    <value>NativeMetersのメインコマンドです。すべてのオプションは /ntm help で確認できます。</value>
+  </data>
+  <data name="CommandMetersDisabled" xml:space="preserve">
+    <value>メーターを無効にしました。</value>
+  </data>
+  <data name="CommandMetersEnabled" xml:space="preserve">
+    <value>メーターを有効にしました。</value>
+  </data>
+  <data name="CommandOpenBreakdown" xml:space="preserve">
+    <value>詳細分析ウィンドウを開く</value>
+  </data>
+  <data name="CommandOpenConfig" xml:space="preserve">
+    <value>設定ウィンドウを開く</value>
+  </data>
+  <data name="CommandOpenSetup" xml:space="preserve">
+    <value>セットアップウィザードを開く</value>
+  </data>
+  <data name="CommandResetDummies" xml:space="preserve">
+    <value>周囲の木人すべての敵視をリセット</value>
+  </data>
+  <data name="CommandShowHelp" xml:space="preserve">
+    <value>このヘルプを表示</value>
+  </data>
+  <data name="CommandToggle" xml:space="preserve">
+    <value>メーターの表示を切り替える</value>
+  </data>
+  <data name="CommandUnknown" xml:space="preserve">
+    <value>不明なコマンド: {0}。コマンド一覧は「{1} help」で確認できます。</value>
+  </data>
+  <data name="CommonAdd" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="CommonClose" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="CommonDelete" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="CommonDuplicate" xml:space="preserve">
+    <value>複製</value>
+  </data>
+  <data name="CommonNextOption" xml:space="preserve">
+    <value>次の項目</value>
+  </data>
+  <data name="CommonNone" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="CommonPreviousOption" xml:space="preserve">
+    <value>前の項目</value>
+  </data>
+  <data name="CommonRemove" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="CommonSearch" xml:space="preserve">
+    <value>検索</value>
+  </data>
+  <data name="ComponentAdd" xml:space="preserve">
+    <value>要素を追加</value>
+  </data>
+  <data name="ComponentAlignment" xml:space="preserve">
+    <value>文字揃え:</value>
+  </data>
+  <data name="ComponentAsset" xml:space="preserve">
+    <value>素材:</value>
+  </data>
+  <data name="ComponentBarBackground" xml:space="preserve">
+    <value>バーの背景色:</value>
+  </data>
+  <data name="ComponentBarColor" xml:space="preserve">
+    <value>バーの色:</value>
+  </data>
+  <data name="ComponentBarSizing" xml:space="preserve">
+    <value>バーのサイズ調整:</value>
+  </data>
+  <data name="ComponentBarTint" xml:space="preserve">
+    <value>バーの着色:</value>
+  </data>
+  <data name="ComponentBarType" xml:space="preserve">
+    <value>バーの種類:</value>
+  </data>
+  <data name="ComponentButtonAction" xml:space="preserve">
+    <value>ボタンの動作:</value>
+  </data>
+  <data name="ComponentColoring" xml:space="preserve">
+    <value>色分け:</value>
+  </data>
+  <data name="ComponentDisplayName" xml:space="preserve">
+    <value>表示名:</value>
+  </data>
+  <data name="ComponentFillRtl" xml:space="preserve">
+    <value>右から左に伸ばす</value>
+  </data>
+  <data name="ComponentFillStat" xml:space="preserve">
+    <value>バーに表示する値:</value>
+  </data>
+  <data name="ComponentFont" xml:space="preserve">
+    <value>フォント:</value>
+  </data>
+  <data name="ComponentFontSize" xml:space="preserve">
+    <value>文字サイズ:</value>
+  </data>
+  <data name="ComponentFormatString" xml:space="preserve">
+    <value>表示形式:</value>
+  </data>
+  <data name="ComponentHeight" xml:space="preserve">
+    <value>高さ:</value>
+  </data>
+  <data name="ComponentIconId" xml:space="preserve">
+    <value>アイコンID:</value>
+  </data>
+  <data name="ComponentIconStyle" xml:space="preserve">
+    <value>アイコンのスタイル:</value>
+  </data>
+  <data name="ComponentNew" xml:space="preserve">
+    <value>新規: {0}</value>
+  </data>
+  <data name="ComponentOutlineColor" xml:space="preserve">
+    <value>縁取り色</value>
+  </data>
+  <data name="ComponentPlateColor" xml:space="preserve">
+    <value>プレートの色:</value>
+  </data>
+  <data name="ComponentPositionX" xml:space="preserve">
+    <value>X位置:</value>
+  </data>
+  <data name="ComponentPositionY" xml:space="preserve">
+    <value>Y位置:</value>
+  </data>
+  <data name="ComponentStaticColor" xml:space="preserve">
+    <value>固定色:</value>
+  </data>
+  <data name="ComponentStyle" xml:space="preserve">
+    <value>スタイル:</value>
+  </data>
+  <data name="ComponentTypography" xml:space="preserve">
+    <value>テキスト</value>
+  </data>
+  <data name="ComponentVisuals" xml:space="preserve">
+    <value>外観</value>
+  </data>
+  <data name="ComponentWidth" xml:space="preserve">
+    <value>幅:</value>
+  </data>
+  <data name="ComponentZOrder" xml:space="preserve">
+    <value>重なり順:</value>
+  </data>
+  <data name="ConnectionAutoReconnect" xml:space="preserve">
+    <value>自動再接続する</value>
+  </data>
+  <data name="ConnectionConnected" xml:space="preserve">
+    <value>状態：接続中</value>
+  </data>
+  <data name="ConnectionDisconnected" xml:space="preserve">
+    <value>状態：未接続</value>
+  </data>
+  <data name="ConnectionInterval" xml:space="preserve">
+    <value>再接続の間隔</value>
+  </data>
+  <data name="ConnectionLogErrors" xml:space="preserve">
+    <value>接続エラーをログに記録</value>
+  </data>
+  <data name="ConnectionLogging" xml:space="preserve">
+    <value>再接続とログ</value>
+  </data>
+  <data name="ConnectionMergePets" xml:space="preserve">
+    <value>ペットを主人に合算</value>
+  </data>
+  <data name="ConnectionMergePetsHelp" xml:space="preserve">
+    <value>ペットや召喚獣のダメージを主人に合算します。
+無効にすると個別に表示します。</value>
+  </data>
+  <data name="ConnectionParseFilter" xml:space="preserve">
+    <value>解析対象</value>
+  </data>
+  <data name="ConnectionParserOptions" xml:space="preserve">
+    <value>内蔵パーサー設定</value>
+  </data>
+  <data name="ConnectionParserWarning" xml:space="preserve">
+    <value>内蔵パーサー（試験機能）
+
+• 継続ダメージ・継続回復は推定値です。
+  ACT/IINACTとの差は約5～10%です。
+• 継続ダメージの発生元は付与中のステータスから推定します。
+  パーティ内で複数のDoTが重なると誤差が生じます。
+正確な計測にはACT/IINACTを使用してください。</value>
+  </data>
+  <data name="ConnectionReconnect" xml:space="preserve">
+    <value>再接続</value>
+  </data>
+  <data name="ConnectionResetUrl" xml:space="preserve">
+    <value>既定のURLに戻す</value>
+  </data>
+  <data name="ConnectionSeparateCompanions" xml:space="preserve">
+    <value>バディの記録を個別に表示</value>
+  </data>
+  <data name="ConnectionSeparateCompanionsHelp" xml:space="preserve">
+    <value>バディのダメージをプレイヤーに合算せず、個別に表示します。</value>
+  </data>
+  <data name="ConnectionSettings" xml:space="preserve">
+    <value>サーバー接続設定</value>
+  </data>
+  <data name="ConnectionTypeLabel" xml:space="preserve">
+    <value>接続方式</value>
+  </data>
+  <data name="ConnectionUrl" xml:space="preserve">
+    <value>WebSocketのURL</value>
+  </data>
+  <data name="ConnectionUseYou" xml:space="preserve">
+    <value>自分の名前を「YOU」と表示</value>
+  </data>
+  <data name="ConnectionUseYouHelp" xml:space="preserve">
+    <value>ACTと同じように、自分のキャラクター名を「YOU」として記録します。</value>
+  </data>
+  <data name="DtrClickConfig" xml:space="preserve">
+    <value>クリックで設定を開く</value>
+  </data>
+  <data name="DtrDisconnectedText" xml:space="preserve">
+    <value>未接続時の表示：</value>
+  </data>
+  <data name="DtrFormat" xml:space="preserve">
+    <value>表示形式：</value>
+  </data>
+  <data name="DtrHeading" xml:space="preserve">
+    <value>基本情報</value>
+  </data>
+  <data name="DtrInsertTag" xml:space="preserve">
+    <value>タグの挿入：</value>
+  </data>
+  <data name="DtrPersonalDps" xml:space="preserve">
+    <value>自分のDPSを表示</value>
+  </data>
+  <data name="DtrPersonalDpsHelp" xml:space="preserve">
+    <value>[dps]タグにパーティ全体ではなく自分のDPSを表示します。</value>
+  </data>
+  <data name="DtrShowDisconnected" xml:space="preserve">
+    <value>未接続時も表示</value>
+  </data>
+  <data name="Enum_AlignmentType_Bottom" xml:space="preserve">
+    <value>下</value>
+  </data>
+  <data name="Enum_AlignmentType_BottomLeft" xml:space="preserve">
+    <value>左下</value>
+  </data>
+  <data name="Enum_AlignmentType_BottomRight" xml:space="preserve">
+    <value>右下</value>
+  </data>
+  <data name="Enum_AlignmentType_Center" xml:space="preserve">
+    <value>中央</value>
+  </data>
+  <data name="Enum_AlignmentType_Left" xml:space="preserve">
+    <value>左</value>
+  </data>
+  <data name="Enum_AlignmentType_Right" xml:space="preserve">
+    <value>右</value>
+  </data>
+  <data name="Enum_AlignmentType_Top" xml:space="preserve">
+    <value>上</value>
+  </data>
+  <data name="Enum_AlignmentType_TopLeft" xml:space="preserve">
+    <value>左上</value>
+  </data>
+  <data name="Enum_AlignmentType_TopRight" xml:space="preserve">
+    <value>右上</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Job" xml:space="preserve">
+    <value>ジョブ</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Name" xml:space="preserve">
+    <value>名前</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Output" xml:space="preserve">
+    <value>DPS / HPS</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Role" xml:space="preserve">
+    <value>ロール</value>
+  </data>
+  <data name="Enum_ColorMode_Job" xml:space="preserve">
+    <value>ジョブ</value>
+  </data>
+  <data name="Enum_ColorMode_Role" xml:space="preserve">
+    <value>ロール</value>
+  </data>
+  <data name="Enum_ColorMode_Static" xml:space="preserve">
+    <value>固定色</value>
+  </data>
+  <data name="Enum_ConnectionType_IINACTIPC" xml:space="preserve">
+    <value>IINACT</value>
+  </data>
+  <data name="Enum_ConnectionType_Internal" xml:space="preserve">
+    <value>内蔵パーサー</value>
+  </data>
+  <data name="Enum_ConnectionType_WebSocket" xml:space="preserve">
+    <value>ACT（WebSocket）</value>
+  </data>
+  <data name="Enum_CustomMeterBarStyle_FullWidth" xml:space="preserve">
+    <value>塗りつぶしバー</value>
+  </data>
+  <data name="Enum_CustomMeterBarStyle_None" xml:space="preserve">
+    <value>バーなし</value>
+  </data>
+  <data name="Enum_CustomMeterBarStyle_Underline" xml:space="preserve">
+    <value>下線</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_BestHit" xml:space="preserve">
+    <value>最大ダメージ</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_CriticalDirectHitPercent" xml:space="preserve">
+    <value>クリティカルダイレクトヒット率</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_CriticalHitPercent" xml:space="preserve">
+    <value>クリティカル率</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Damage" xml:space="preserve">
+    <value>総与ダメージ</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_DamagePercent" xml:space="preserve">
+    <value>与ダメージ割合</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Deaths" xml:space="preserve">
+    <value>戦闘不能回数</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_DirectHitPercent" xml:space="preserve">
+    <value>ダイレクトヒット率</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Dps" xml:space="preserve">
+    <value>DPS</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Hits" xml:space="preserve">
+    <value>命中回数</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Hps" xml:space="preserve">
+    <value>HPS</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_PlayerName" xml:space="preserve">
+    <value>プレイヤー名</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Rank" xml:space="preserve">
+    <value>順位</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Swings" xml:space="preserve">
+    <value>攻撃回数</value>
+  </data>
+  <data name="Enum_FontType_JupiterLarge" xml:space="preserve">
+    <value>Jupiter Large</value>
+  </data>
+  <data name="Enum_FontType_MiedingerMed" xml:space="preserve">
+    <value>Miedinger Medium</value>
+  </data>
+  <data name="Enum_JobIconType_Blue" xml:space="preserve">
+    <value>青</value>
+  </data>
+  <data name="Enum_JobIconType_Dark" xml:space="preserve">
+    <value>暗色</value>
+  </data>
+  <data name="Enum_JobIconType_Default" xml:space="preserve">
+    <value>標準</value>
+  </data>
+  <data name="Enum_JobIconType_Framed" xml:space="preserve">
+    <value>枠付き</value>
+  </data>
+  <data name="Enum_JobIconType_Gearset" xml:space="preserve">
+    <value>ギアセット</value>
+  </data>
+  <data name="Enum_JobIconType_Glowing" xml:space="preserve">
+    <value>発光</value>
+  </data>
+  <data name="Enum_JobIconType_Gold" xml:space="preserve">
+    <value>金</value>
+  </data>
+  <data name="Enum_JobIconType_Green" xml:space="preserve">
+    <value>緑</value>
+  </data>
+  <data name="Enum_JobIconType_Light" xml:space="preserve">
+    <value>明色</value>
+  </data>
+  <data name="Enum_JobIconType_Orange" xml:space="preserve">
+    <value>橙</value>
+  </data>
+  <data name="Enum_JobIconType_Purple" xml:space="preserve">
+    <value>紫</value>
+  </data>
+  <data name="Enum_JobIconType_Red" xml:space="preserve">
+    <value>赤</value>
+  </data>
+  <data name="Enum_MeterAsset_DutyClock" xml:space="preserve">
+    <value>コンテンツタイマー</value>
+  </data>
+  <data name="Enum_MeterBackgroundStyle_Tooltip" xml:space="preserve">
+    <value>ツールチップ（標準）</value>
+  </data>
+  <data name="Enum_MeterBackgroundStyle_Window" xml:space="preserve">
+    <value>ウィンドウ</value>
+  </data>
+  <data name="Enum_MeterBackgroundStyle_WindowFocused" xml:space="preserve">
+    <value>ウィンドウ（明るい枠）</value>
+  </data>
+  <data name="Enum_MeterButtonAction_ContextMenu" xml:space="preserve">
+    <value>コンテキストメニュー</value>
+  </data>
+  <data name="Enum_MeterButtonAction_CopyEncounterSummary" xml:space="preserve">
+    <value>戦闘概要をコピー</value>
+  </data>
+  <data name="Enum_MeterButtonAction_DetailedBreakdown" xml:space="preserve">
+    <value>詳細分析</value>
+  </data>
+  <data name="Enum_MeterButtonAction_ResetDummies" xml:space="preserve">
+    <value>すべての木人をリセット</value>
+  </data>
+  <data name="Enum_MeterButtonAction_Settings" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Enum_MeterButtonAction_ToggleCollapse" xml:space="preserve">
+    <value>折りたたむ・展開する</value>
+  </data>
+  <data name="Enum_MeterComponentType_Asset" xml:space="preserve">
+    <value>素材</value>
+  </data>
+  <data name="Enum_MeterComponentType_Background" xml:space="preserve">
+    <value>背景</value>
+  </data>
+  <data name="Enum_MeterComponentType_Icon" xml:space="preserve">
+    <value>アイコン</value>
+  </data>
+  <data name="Enum_MeterComponentType_JobIcon" xml:space="preserve">
+    <value>ジョブアイコン</value>
+  </data>
+  <data name="Enum_MeterComponentType_MenuButton" xml:space="preserve">
+    <value>ボタン</value>
+  </data>
+  <data name="Enum_MeterComponentType_ProgressBar" xml:space="preserve">
+    <value>プログレスバー</value>
+  </data>
+  <data name="Enum_MeterComponentType_Separator" xml:space="preserve">
+    <value>区切り線</value>
+  </data>
+  <data name="Enum_MeterComponentType_Text" xml:space="preserve">
+    <value>テキスト</value>
+  </data>
+  <data name="Enum_MeterLayout_Horizontal" xml:space="preserve">
+    <value>横</value>
+  </data>
+  <data name="Enum_MeterLayout_Vertical" xml:space="preserve">
+    <value>縦</value>
+  </data>
+  <data name="Enum_ParseFilter_Alliance" xml:space="preserve">
+    <value>アライアンス（ペットを含む）</value>
+  </data>
+  <data name="Enum_ParseFilter_None" xml:space="preserve">
+    <value>なし（すべて）</value>
+  </data>
+  <data name="Enum_ParseFilter_Party" xml:space="preserve">
+    <value>パーティ（ペットを含む）</value>
+  </data>
+  <data name="Enum_ParseFilter_Self" xml:space="preserve">
+    <value>自分（ペットを含む）</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_HpBar" xml:space="preserve">
+    <value>HPゲージ</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_MemberRow" xml:space="preserve">
+    <value>メンバー行</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_MpBar" xml:space="preserve">
+    <value>MPゲージ</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_NameAndBars" xml:space="preserve">
+    <value>名前／ゲージ</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_Auto" xml:space="preserve">
+    <value>自動</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_Flat" xml:space="preserve">
+    <value>単色</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_LegacyAdditive" xml:space="preserve">
+    <value>加算（旧式）</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_NativeTint" xml:space="preserve">
+    <value>標準の色合い</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_StockColors" xml:space="preserve">
+    <value>元の配色</value>
+  </data>
+  <data name="Enum_ProgressBarSizing_PreserveEnds" xml:space="preserve">
+    <value>両端の形を維持</value>
+  </data>
+  <data name="Enum_ProgressBarSizing_Stretch" xml:space="preserve">
+    <value>引き伸ばす</value>
+  </data>
+  <data name="Enum_ProgressBarType_AetherGauge" xml:space="preserve">
+    <value>エーテルゲージ</value>
+  </data>
+  <data name="Enum_ProgressBarType_BardArrow" xml:space="preserve">
+    <value>吟遊詩人の矢</value>
+  </data>
+  <data name="Enum_ProgressBarType_Cast" xml:space="preserve">
+    <value>詠唱</value>
+  </data>
+  <data name="Enum_ProgressBarType_CastLegacy" xml:space="preserve">
+    <value>詠唱（旧式）</value>
+  </data>
+  <data name="Enum_ProgressBarType_CollectableNegotiation" xml:space="preserve">
+    <value>収集品の交渉</value>
+  </data>
+  <data name="Enum_ProgressBarType_ContentGauge" xml:space="preserve">
+    <value>コンテンツゲージ</value>
+  </data>
+  <data name="Enum_ProgressBarType_CustomDeliveries" xml:space="preserve">
+    <value>お得意様取引</value>
+  </data>
+  <data name="Enum_ProgressBarType_EnemyCast" xml:space="preserve">
+    <value>敵の詠唱</value>
+  </data>
+  <data name="Enum_ProgressBarType_EnemyCastLegacy" xml:space="preserve">
+    <value>敵の詠唱（旧式）</value>
+  </data>
+  <data name="Enum_ProgressBarType_GoldSaucerGauge" xml:space="preserve">
+    <value>ゴールドソーサーゲージ</value>
+  </data>
+  <data name="Enum_ProgressBarType_ItemInspection" xml:space="preserve">
+    <value>アイテム鑑定</value>
+  </data>
+  <data name="Enum_ProgressBarType_LimitBreak" xml:space="preserve">
+    <value>リミットブレイク</value>
+  </data>
+  <data name="Enum_ProgressBarType_PartyListHp" xml:space="preserve">
+    <value>パーティリストゲージ</value>
+  </data>
+  <data name="Enum_ProgressBarType_ToDo" xml:space="preserve">
+    <value>目的リスト</value>
+  </data>
+  <data name="Enum_ProgressBarType_ToDoLegacy" xml:space="preserve">
+    <value>目的リスト（旧式）</value>
+  </data>
+  <data name="Enum_SelfTextOverrideMode_AllText" xml:space="preserve">
+    <value>行のテキストすべて</value>
+  </data>
+  <data name="Enum_SelfTextOverrideMode_NameOnly" xml:space="preserve">
+    <value>名前のみ</value>
+  </data>
+  <data name="Enum_TextFlags_AutoAdjustNodeSize" xml:space="preserve">
+    <value>テキストに合わせて自動調整</value>
+  </data>
+  <data name="Enum_TextFlags_Bold" xml:space="preserve">
+    <value>太字</value>
+  </data>
+  <data name="Enum_TextFlags_Edge" xml:space="preserve">
+    <value>縁取り</value>
+  </data>
+  <data name="Enum_TextFlags_Ellipsis" xml:space="preserve">
+    <value>省略記号</value>
+  </data>
+  <data name="Enum_TextFlags_Emboss" xml:space="preserve">
+    <value>浮き彫り</value>
+  </data>
+  <data name="Enum_TextFlags_FixedFontResolution" xml:space="preserve">
+    <value>フォント解像度を固定</value>
+  </data>
+  <data name="Enum_TextFlags_FontCache" xml:space="preserve">
+    <value>フォントキャッシュ</value>
+  </data>
+  <data name="Enum_TextFlags_Glare" xml:space="preserve">
+    <value>発光</value>
+  </data>
+  <data name="Enum_TextFlags_Italic" xml:space="preserve">
+    <value>斜体</value>
+  </data>
+  <data name="Enum_TextFlags_LinkData" xml:space="preserve">
+    <value>リンクデータ</value>
+  </data>
+  <data name="Enum_TextFlags_MultiLine" xml:space="preserve">
+    <value>複数行</value>
+  </data>
+  <data name="Enum_TextFlags_OverflowHidden" xml:space="preserve">
+    <value>はみ出しを隠す</value>
+  </data>
+  <data name="Enum_TextFlags_WordWrap" xml:space="preserve">
+    <value>単語の折り返し</value>
+  </data>
+  <data name="GeneralBreakdownParser" xml:space="preserve">
+    <value>ACT/IINACT使用時も内蔵解析で詳細を表示</value>
+  </data>
+  <data name="GeneralClearAct" xml:space="preserve">
+    <value>メーターのクリア時にACTもクリア</value>
+  </data>
+  <data name="GeneralClearMeter" xml:space="preserve">
+    <value>メーターをクリア</value>
+  </data>
+  <data name="GeneralDebugMode" xml:space="preserve">
+    <value>デバッグモード</value>
+  </data>
+  <data name="GeneralEnabled" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="GeneralEndAct" xml:space="preserve">
+    <value>戦闘後にACTの計測を強制終了</value>
+  </data>
+  <data name="GeneralEndActHelp" xml:space="preserve">
+    <value>この機能の代わりに、Plugins → OverlayPlugin → Event Settings の「End ACT encounter after wipe/out of combat」を有効にすることを推奨します。</value>
+  </data>
+  <data name="GeneralEndEncounter" xml:space="preserve">
+    <value>計測終了</value>
+  </data>
+  <data name="GeneralExport" xml:space="preserve">
+    <value>設定をエクスポート</value>
+  </data>
+  <data name="GeneralHeading" xml:space="preserve">
+    <value>一般設定</value>
+  </data>
+  <data name="GeneralHistoryEnabled" xml:space="preserve">
+    <value>戦闘履歴を保存</value>
+  </data>
+  <data name="GeneralHistorySize" xml:space="preserve">
+    <value>履歴の最大件数</value>
+  </data>
+  <data name="GeneralImport" xml:space="preserve">
+    <value>設定をインポート
+（Shiftを押しながらクリックで確定）</value>
+  </data>
+  <data name="GeneralLanguage" xml:space="preserve">
+    <value>表示言語:</value>
+  </data>
+  <data name="GeneralLanguageGame" xml:space="preserve">
+    <value>ゲームの言語を使う</value>
+  </data>
+  <data name="GeneralPreview" xml:space="preserve">
+    <value>プレビュー</value>
+  </data>
+  <data name="GeneralPrivacy" xml:space="preserve">
+    <value>プライバシーモード</value>
+  </data>
+  <data name="GeneralPrivacyHelp" xml:space="preserve">
+    <value>プレイヤー名の代わりにジョブ名を表示します。</value>
+  </data>
+  <data name="GeneralReplaceYou" xml:space="preserve">
+    <value>YOUを自分の名前で表示</value>
+  </data>
+  <data name="GeneralReset" xml:space="preserve">
+    <value>リセット</value>
+  </data>
+  <data name="GeneralResetHelp" xml:space="preserve">
+    <value>設定をリセット
+（長押しで確定）</value>
+  </data>
+  <data name="GeneralSwitchLive" xml:space="preserve">
+    <value>戦闘開始時に現在の戦闘へ切り替える</value>
+  </data>
+  <data name="HudDisconnected" xml:space="preserve">
+    <value>ACT / IINACTに接続していません</value>
+  </data>
+  <data name="HudEncounterDetails" xml:space="preserve">
+    <value>戦闘：{0}
+戦闘時間：{1}
+パーティDPS：{2:N0}
+戦闘不能：{3}回</value>
+  </data>
+  <data name="HudIdle" xml:space="preserve">
+    <value>待機中</value>
+  </data>
+  <data name="HudLimitBreak" xml:space="preserve">
+    <value>リミットブレイク</value>
+  </data>
+  <data name="HudLock" xml:space="preserve">
+    <value>固定</value>
+  </data>
+  <data name="HudLockHelp" xml:space="preserve">
+    <value>位置とサイズを固定</value>
+  </data>
+  <data name="HudNoEncounter" xml:space="preserve">
+    <value>戦闘なし</value>
+  </data>
+  <data name="HudOpenConfig" xml:space="preserve">
+    <value>クリックで設定を開く</value>
+  </data>
+  <data name="IconIdLabel" xml:space="preserve">
+    <value>アイコンID: {0}</value>
+  </data>
+  <data name="JobName_1" xml:space="preserve">
+    <value>剣術士</value>
+  </data>
+  <data name="JobName_19" xml:space="preserve">
+    <value>ナイト</value>
+  </data>
+  <data name="JobName_2" xml:space="preserve">
+    <value>格闘士</value>
+  </data>
+  <data name="JobName_20" xml:space="preserve">
+    <value>モンク</value>
+  </data>
+  <data name="JobName_21" xml:space="preserve">
+    <value>戦士</value>
+  </data>
+  <data name="JobName_22" xml:space="preserve">
+    <value>竜騎士</value>
+  </data>
+  <data name="JobName_23" xml:space="preserve">
+    <value>吟遊詩人</value>
+  </data>
+  <data name="JobName_24" xml:space="preserve">
+    <value>白魔道士</value>
+  </data>
+  <data name="JobName_25" xml:space="preserve">
+    <value>黒魔道士</value>
+  </data>
+  <data name="JobName_26" xml:space="preserve">
+    <value>巴術士</value>
+  </data>
+  <data name="JobName_27" xml:space="preserve">
+    <value>召喚士</value>
+  </data>
+  <data name="JobName_28" xml:space="preserve">
+    <value>学者</value>
+  </data>
+  <data name="JobName_29" xml:space="preserve">
+    <value>双剣士</value>
+  </data>
+  <data name="JobName_3" xml:space="preserve">
+    <value>斧術士</value>
+  </data>
+  <data name="JobName_30" xml:space="preserve">
+    <value>忍者</value>
+  </data>
+  <data name="JobName_31" xml:space="preserve">
+    <value>機工士</value>
+  </data>
+  <data name="JobName_32" xml:space="preserve">
+    <value>暗黒騎士</value>
+  </data>
+  <data name="JobName_33" xml:space="preserve">
+    <value>占星術師</value>
+  </data>
+  <data name="JobName_34" xml:space="preserve">
+    <value>侍</value>
+  </data>
+  <data name="JobName_35" xml:space="preserve">
+    <value>赤魔道士</value>
+  </data>
+  <data name="JobName_36" xml:space="preserve">
+    <value>青魔道士</value>
+  </data>
+  <data name="JobName_37" xml:space="preserve">
+    <value>ガンブレイカー</value>
+  </data>
+  <data name="JobName_38" xml:space="preserve">
+    <value>踊り子</value>
+  </data>
+  <data name="JobName_39" xml:space="preserve">
+    <value>リーパー</value>
+  </data>
+  <data name="JobName_4" xml:space="preserve">
+    <value>槍術士</value>
+  </data>
+  <data name="JobName_40" xml:space="preserve">
+    <value>賢者</value>
+  </data>
+  <data name="JobName_41" xml:space="preserve">
+    <value>ヴァイパー</value>
+  </data>
+  <data name="JobName_42" xml:space="preserve">
+    <value>ピクトマンサー</value>
+  </data>
+  <data name="JobName_43" xml:space="preserve">
+    <value>魔獣使い</value>
+  </data>
+  <data name="JobName_5" xml:space="preserve">
+    <value>弓術士</value>
+  </data>
+  <data name="JobName_6" xml:space="preserve">
+    <value>幻術士</value>
+  </data>
+  <data name="JobName_7" xml:space="preserve">
+    <value>呪術士</value>
+  </data>
+  <data name="MenuClearHistory" xml:space="preserve">
+    <value>履歴をクリア</value>
+  </data>
+  <data name="MenuClearMeter" xml:space="preserve">
+    <value>メーターをクリア</value>
+  </data>
+  <data name="MenuCollapse" xml:space="preserve">
+    <value>折りたたむ</value>
+  </data>
+  <data name="MenuCopyClipboard" xml:space="preserve">
+    <value>クリップボードにコピー</value>
+  </data>
+  <data name="MenuEndEncounter" xml:space="preserve">
+    <value>戦闘を終了</value>
+  </data>
+  <data name="MenuExpand" xml:space="preserve">
+    <value>展開</value>
+  </data>
+  <data name="MenuLive" xml:space="preserve">
+    <value>ライブ（現在）</value>
+  </data>
+  <data name="MenuLocked" xml:space="preserve">
+    <value>固定</value>
+  </data>
+  <data name="MenuPreviousEncounters" xml:space="preserve">
+    <value>過去の戦闘…</value>
+  </data>
+  <data name="MenuPrivacy" xml:space="preserve">
+    <value>プライバシーモード</value>
+  </data>
+  <data name="MenuSortBy" xml:space="preserve">
+    <value>並び順…</value>
+  </data>
+  <data name="MenuUnknownEncounter" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="MeterAdd" xml:space="preserve">
+    <value>メーターを追加</value>
+  </data>
+  <data name="MeterBackground" xml:space="preserve">
+    <value>背景を表示</value>
+  </data>
+  <data name="MeterBackgroundColor" xml:space="preserve">
+    <value>背景色:</value>
+  </data>
+  <data name="MeterBackgroundStyle" xml:space="preserve">
+    <value>背景のスタイル:</value>
+  </data>
+  <data name="MeterCancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="MeterCardHeight" xml:space="preserve">
+    <value>カードの高さ:</value>
+  </data>
+  <data name="MeterCardSpacing" xml:space="preserve">
+    <value>カードの間隔:</value>
+  </data>
+  <data name="MeterClickthrough" xml:space="preserve">
+    <value>クリックを透過</value>
+  </data>
+  <data name="MeterDisabled" xml:space="preserve">
+    <value>無効</value>
+  </data>
+  <data name="MeterDisplaySettings" xml:space="preserve">
+    <value>表示設定</value>
+  </data>
+  <data name="MeterEnableFooter" xml:space="preserve">
+    <value>フッターを表示</value>
+  </data>
+  <data name="MeterEnableHeader" xml:space="preserve">
+    <value>ヘッダーを表示</value>
+  </data>
+  <data name="MeterEnabled" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="MeterExportTooltip" xml:space="preserve">
+    <value>メーターをクリップボードにエクスポート</value>
+  </data>
+  <data name="MeterFooterComponents" xml:space="preserve">
+    <value>フッターの要素</value>
+  </data>
+  <data name="MeterFooterSpace" xml:space="preserve">
+    <value>フッターの高さ:</value>
+  </data>
+  <data name="MeterGeneralSettings" xml:space="preserve">
+    <value>一般設定</value>
+  </data>
+  <data name="MeterHeaderComponents" xml:space="preserve">
+    <value>ヘッダーの要素</value>
+  </data>
+  <data name="MeterHeaderSpace" xml:space="preserve">
+    <value>ヘッダーの高さ:</value>
+  </data>
+  <data name="MeterHeading" xml:space="preserve">
+    <value>メーター設定</value>
+  </data>
+  <data name="MeterHighlightSelf" xml:space="preserve">
+    <value>自分を強調</value>
+  </data>
+  <data name="MeterHighlightSelfTooltip" xml:space="preserve">
+    <value>このメーター専用の色を自分の行に適用します。</value>
+  </data>
+  <data name="MeterImportClipboard" xml:space="preserve">
+    <value>クリップボードからインポート</value>
+  </data>
+  <data name="MeterImportTooltip" xml:space="preserve">
+    <value>メーターをクリップボードからインポート</value>
+  </data>
+  <data name="MeterKeepSelfTooltip" xml:space="preserve">
+    <value>自分の行だけを表示します。展開すると元のウィンドウサイズに戻ります。</value>
+  </data>
+  <data name="MeterKeepSelfVisible" xml:space="preserve">
+    <value>折りたたみ時も自分を表示</value>
+  </data>
+  <data name="MeterLayout" xml:space="preserve">
+    <value>レイアウト:</value>
+  </data>
+  <data name="MeterLockPositionSize" xml:space="preserve">
+    <value>位置とサイズを固定</value>
+  </data>
+  <data name="MeterMaxCombatants" xml:space="preserve">
+    <value>最大表示人数:</value>
+  </data>
+  <data name="MeterName" xml:space="preserve">
+    <value>メーター名:</value>
+  </data>
+  <data name="MeterNew" xml:space="preserve">
+    <value>新規メーター {0}</value>
+  </data>
+  <data name="MeterNoneFound" xml:space="preserve">
+    <value>メーターが見つかりません。</value>
+  </data>
+  <data name="MeterOverrideSelfBarColor" xml:space="preserve">
+    <value>自分のバー色を上書き</value>
+  </data>
+  <data name="MeterOverrideSelfOutline" xml:space="preserve">
+    <value>自分の縁取り色を上書き</value>
+  </data>
+  <data name="MeterOverrideSelfTextColor" xml:space="preserve">
+    <value>自分の文字色を上書き</value>
+  </data>
+  <data name="MeterOverrideSelfTextStyle" xml:space="preserve">
+    <value>自分の文字スタイルを上書き</value>
+  </data>
+  <data name="MeterPinSelf" xml:space="preserve">
+    <value>自分を先頭に固定</value>
+  </data>
+  <data name="MeterPinSelfCard" xml:space="preserve">
+    <value>自分を最初のカードに固定</value>
+  </data>
+  <data name="MeterReplace" xml:space="preserve">
+    <value>メーターを置き換え</value>
+  </data>
+  <data name="MeterReplacePrompt" xml:space="preserve">
+    <value>このメーターの設定をクリップボードの内容で置き換えますか？</value>
+  </data>
+  <data name="MeterRowComponents" xml:space="preserve">
+    <value>行の要素（戦闘参加者）</value>
+  </data>
+  <data name="MeterRowHeight" xml:space="preserve">
+    <value>行の高さ:</value>
+  </data>
+  <data name="MeterRowSpacing" xml:space="preserve">
+    <value>行の間隔:</value>
+  </data>
+  <data name="MeterScale" xml:space="preserve">
+    <value>拡大率（%）:</value>
+  </data>
+  <data name="MeterScrollbar" xml:space="preserve">
+    <value>スクロールバーを表示</value>
+  </data>
+  <data name="MeterSelectOrCreate" xml:space="preserve">
+    <value>メーターを選択するか、新規作成してください。</value>
+  </data>
+  <data name="MeterSelfBarColor" xml:space="preserve">
+    <value>自分のバー色:</value>
+  </data>
+  <data name="MeterSelfOutlineColor" xml:space="preserve">
+    <value>自分の縁取り色:</value>
+  </data>
+  <data name="MeterSelfTextColor" xml:space="preserve">
+    <value>自分の文字色:</value>
+  </data>
+  <data name="MeterSelfTextFont" xml:space="preserve">
+    <value>自分のフォント:</value>
+  </data>
+  <data name="MeterSelfTextSize" xml:space="preserve">
+    <value>自分の文字サイズ:</value>
+  </data>
+  <data name="MeterSelfTextStyle" xml:space="preserve">
+    <value>自分の文字スタイル:</value>
+  </data>
+  <data name="MeterSelfTextTarget" xml:space="preserve">
+    <value>色を変更する自分のテキスト:</value>
+  </data>
+  <data name="MeterSelfTextTargetTooltip" xml:space="preserve">
+    <value>上のテキスト対象設定を使用します。</value>
+  </data>
+  <data name="MeterShowLimitBreak" xml:space="preserve">
+    <value>リミットブレイクを表示</value>
+  </data>
+  <data name="MeterShowNonPlayers" xml:space="preserve">
+    <value>プレイヤー以外の戦闘参加者を表示</value>
+  </data>
+  <data name="MeterSortBy" xml:space="preserve">
+    <value>並び順:</value>
+  </data>
+  <data name="MeterUnnamed" xml:space="preserve">
+    <value>名称未設定のメーター</value>
+  </data>
+  <data name="NotifyClipboardEmpty" xml:space="preserve">
+    <value>クリップボードが空です。</value>
+  </data>
+  <data name="NotifyClipboardMeterInvalid" xml:space="preserve">
+    <value>クリップボードのメーターデータが無効です。</value>
+  </data>
+  <data name="NotifyClipboardParseFailed" xml:space="preserve">
+    <value>クリップボードのデータを読み取れませんでした。</value>
+  </data>
+  <data name="NotifyConfigClipboardInvalid" xml:space="preserve">
+    <value>クリップボードが空か、インポートできるデータがありません。</value>
+  </data>
+  <data name="NotifyConfigExported" xml:space="preserve">
+    <value>設定をクリップボードにエクスポートしました。</value>
+  </data>
+  <data name="NotifyConfigImportFailed" xml:space="preserve">
+    <value>クリップボードのデータが無効か、インポートできませんでした。</value>
+  </data>
+  <data name="NotifyConfigImported" xml:space="preserve">
+    <value>クリップボードから設定をインポートしました。</value>
+  </data>
+  <data name="NotifyConfigReset" xml:space="preserve">
+    <value>設定を初期値に戻しました。</value>
+  </data>
+  <data name="NotifyConnected" xml:space="preserve">
+    <value>{0} に接続しました。</value>
+  </data>
+  <data name="NotifyInternalParserEnabled" xml:space="preserve">
+    <value>内蔵パーサー（実験的機能）を有効にしました。</value>
+  </data>
+  <data name="NotifyMeterExported" xml:space="preserve">
+    <value>メーター「{0}」をクリップボードにエクスポートしました。</value>
+  </data>
+  <data name="NotifyMeterImported" xml:space="preserve">
+    <value>メーターの設定をインポートしました。</value>
+  </data>
+  <data name="PartyListAlignment" xml:space="preserve">
+    <value>文字揃え：</value>
+  </data>
+  <data name="PartyListAnchor" xml:space="preserve">
+    <value>基準位置：</value>
+  </data>
+  <data name="PartyListBarBackground" xml:space="preserve">
+    <value>バーの背景色：</value>
+  </data>
+  <data name="PartyListBarColor" xml:space="preserve">
+    <value>バーの色：</value>
+  </data>
+  <data name="PartyListBarColorMode" xml:space="preserve">
+    <value>バーの配色：</value>
+  </data>
+  <data name="PartyListBarSizing" xml:space="preserve">
+    <value>バーの伸縮：</value>
+  </data>
+  <data name="PartyListBarTint" xml:space="preserve">
+    <value>バーの着色：</value>
+  </data>
+  <data name="PartyListBarType" xml:space="preserve">
+    <value>バーの種類：</value>
+  </data>
+  <data name="PartyListEnableHelp" xml:space="preserve">
+    <value>パーティリストの各行にNativeMetersの数値を表示します。</value>
+  </data>
+  <data name="PartyListFillLeft" xml:space="preserve">
+    <value>右から左に伸ばす</value>
+  </data>
+  <data name="PartyListFillStat" xml:space="preserve">
+    <value>バーに使う値：</value>
+  </data>
+  <data name="PartyListFont" xml:space="preserve">
+    <value>フォント：</value>
+  </data>
+  <data name="PartyListFontSize" xml:space="preserve">
+    <value>文字サイズ：</value>
+  </data>
+  <data name="PartyListFormat" xml:space="preserve">
+    <value>表示形式：</value>
+  </data>
+  <data name="PartyListHeight" xml:space="preserve">
+    <value>高さ：</value>
+  </data>
+  <data name="PartyListHideEmpty" xml:space="preserve">
+    <value>戦闘データがない場合は非表示</value>
+  </data>
+  <data name="PartyListHighlightTop" xml:space="preserve">
+    <value>1位のメンバーを強調</value>
+  </data>
+  <data name="PartyListHighlightTopHelp" xml:space="preserve">
+    <value>選んだ項目で1位のメンバーに、専用の表示形式と文字色を適用します。</value>
+  </data>
+  <data name="PartyListMemberBar" xml:space="preserve">
+    <value>メンバーのバー</value>
+  </data>
+  <data name="PartyListMemberStyle" xml:space="preserve">
+    <value>メンバーの文字装飾</value>
+  </data>
+  <data name="PartyListMemberText" xml:space="preserve">
+    <value>メンバーの表示テキスト</value>
+  </data>
+  <data name="PartyListMeter" xml:space="preserve">
+    <value>パーティリストのメーター</value>
+  </data>
+  <data name="PartyListOutline" xml:space="preserve">
+    <value>縁取り色：</value>
+  </data>
+  <data name="PartyListPosX" xml:space="preserve">
+    <value>X：</value>
+  </data>
+  <data name="PartyListPosY" xml:space="preserve">
+    <value>Y：</value>
+  </data>
+  <data name="PartyListPosition" xml:space="preserve">
+    <value>位置：</value>
+  </data>
+  <data name="PartyListRaidAlignment" xml:space="preserve">
+    <value>全体DPSの文字揃え：</value>
+  </data>
+  <data name="PartyListRaidColor" xml:space="preserve">
+    <value>全体DPSの文字色：</value>
+  </data>
+  <data name="PartyListRaidDps" xml:space="preserve">
+    <value>全体DPS</value>
+  </data>
+  <data name="PartyListRaidFont" xml:space="preserve">
+    <value>全体DPSのフォント：</value>
+  </data>
+  <data name="PartyListRaidFontSize" xml:space="preserve">
+    <value>全体DPSの文字サイズ：</value>
+  </data>
+  <data name="PartyListRaidFormat" xml:space="preserve">
+    <value>全体DPSの表示形式：</value>
+  </data>
+  <data name="PartyListRaidHelp" xml:space="preserve">
+    <value>パーティリストの見出しの横に、戦闘全体の合計DPSを表示します。</value>
+  </data>
+  <data name="PartyListRaidOutline" xml:space="preserve">
+    <value>全体DPSの縁取り色：</value>
+  </data>
+  <data name="PartyListRaidStyle" xml:space="preserve">
+    <value>全体DPSの文字装飾：</value>
+  </data>
+  <data name="PartyListResetHelp" xml:space="preserve">
+    <value>パーティリストの設定をリセット
+（長押しで確定）</value>
+  </data>
+  <data name="PartyListShowBars" xml:space="preserve">
+    <value>メンバーのバーを表示</value>
+  </data>
+  <data name="PartyListShowBarsHelp" xml:space="preserve">
+    <value>選んだ項目の値を、パーティリストの各行にバーで表示します。</value>
+  </data>
+  <data name="PartyListShowMembers" xml:space="preserve">
+    <value>パーティメンバーに表示</value>
+  </data>
+  <data name="PartyListShowRaid" xml:space="preserve">
+    <value>全体DPSを表示</value>
+  </data>
+  <data name="PartyListShowSelf" xml:space="preserve">
+    <value>自分に表示</value>
+  </data>
+  <data name="PartyListSize" xml:space="preserve">
+    <value>サイズ：</value>
+  </data>
+  <data name="PartyListTextColor" xml:space="preserve">
+    <value>文字色：</value>
+  </data>
+  <data name="PartyListTextStyle" xml:space="preserve">
+    <value>文字装飾：</value>
+  </data>
+  <data name="PartyListTopColor" xml:space="preserve">
+    <value>1位の文字色：</value>
+  </data>
+  <data name="PartyListTopFormat" xml:space="preserve">
+    <value>1位の表示形式：</value>
+  </data>
+  <data name="PartyListTopMember" xml:space="preserve">
+    <value>1位のメンバー</value>
+  </data>
+  <data name="PartyListTopStat" xml:space="preserve">
+    <value>順位の基準：</value>
+  </data>
+  <data name="PartyListWidth" xml:space="preserve">
+    <value>幅：</value>
+  </data>
+  <data name="PickerClear" xml:space="preserve">
+    <value>クリア</value>
+  </data>
+  <data name="PickerTextFlagsHelp" xml:space="preserve">
+    <value>テキストフラグはゲームのUI機能です。フォントによって動作が異なる項目があります。</value>
+  </data>
+  <data name="PlacementLock" xml:space="preserve">
+    <value>固定して完了</value>
+  </data>
+  <data name="PlacementMovable" xml:space="preserve">
+    <value>固定しない</value>
+  </data>
+  <data name="PlacementMove" xml:space="preserve">
+    <value>ドラッグでメーターを移動し、角をドラッグしてサイズを変更できます。</value>
+  </data>
+  <data name="PlacementSample" xml:space="preserve">
+    <value>戦闘を選んでいない場合はサンプルデータが表示されます。</value>
+  </data>
+  <data name="PlacementSampleTitle" xml:space="preserve">
+    <value>配置用サンプル</value>
+  </data>
+  <data name="PlacementSkip" xml:space="preserve">
+    <value>スキップ</value>
+  </data>
+  <data name="PresetBestHitStrip" xml:space="preserve">
+    <value>最大ダメージ帯</value>
+  </data>
+  <data name="PresetCombatTable" xml:space="preserve">
+    <value>戦闘データ表</value>
+  </data>
+  <data name="PresetCompactTiles" xml:space="preserve">
+    <value>コンパクトタイル</value>
+  </data>
+  <data name="PresetCompactUnderline" xml:space="preserve">
+    <value>コンパクト下線</value>
+  </data>
+  <data name="PresetDefaultStylish" xml:space="preserve">
+    <value>スタイリッシュ（標準）</value>
+  </data>
+  <data name="PresetFooterDeaths" xml:space="preserve">
+    <value>戦闘不能: {0}</value>
+  </data>
+  <data name="PresetFooterPartyDps" xml:space="preserve">
+    <value>パーティDPS: {0}</value>
+  </data>
+  <data name="PresetFooterRaidDps" xml:space="preserve">
+    <value>レイドDPS: {0}</value>
+  </data>
+  <data name="PresetPartyCards" xml:space="preserve">
+    <value>パーティカード</value>
+  </data>
+  <data name="PreviewBoss" xml:space="preserve">
+    <value>サンプルボス</value>
+  </data>
+  <data name="PreviewZone" xml:space="preserve">
+    <value>サンプルエリア</value>
+  </data>
+  <data name="SetupAboveBar" xml:space="preserve">
+    <value>バーの上</value>
+  </data>
+  <data name="SetupActGuide" xml:space="preserve">
+    <value>ACT設定ガイド</value>
+  </data>
+  <data name="SetupActIntro" xml:space="preserve">
+    <value>PC上のACTを使用します。すでにFFLogs用にACTを使っている場合はこちらを選んでください。</value>
+  </data>
+  <data name="SetupActServer" xml:space="preserve">
+    <value>ACTで「Plugins」→「OverlayPlugin WSServer」を開いてください。</value>
+  </data>
+  <data name="SetupActStart" xml:space="preserve">
+    <value>「Stream/Local overlay」で「Start」を押し、プレイ中はACTを起動したままにしてください。</value>
+  </data>
+  <data name="SetupActUnavailable" xml:space="preserve">
+    <value>ACTに接続できませんでした</value>
+  </data>
+  <data name="SetupAddMeter" xml:space="preserve">
+    <value>独立したメーターを追加</value>
+  </data>
+  <data name="SetupAddMeterHelp" xml:space="preserve">
+    <value>HUD上で自由に移動できる独立したウィンドウです。</value>
+  </data>
+  <data name="SetupAppearance" xml:space="preserve">
+    <value>外観</value>
+  </data>
+  <data name="SetupBack" xml:space="preserve">
+    <value>戻る</value>
+  </data>
+  <data name="SetupBackground" xml:space="preserve">
+    <value>背景</value>
+  </data>
+  <data name="SetupBarColor" xml:space="preserve">
+    <value>バーの色</value>
+  </data>
+  <data name="SetupBarFill" xml:space="preserve">
+    <value>バーの基準値</value>
+  </data>
+  <data name="SetupBarSizing" xml:space="preserve">
+    <value>バーの伸縮</value>
+  </data>
+  <data name="SetupBarStyle" xml:space="preserve">
+    <value>バーの表示</value>
+  </data>
+  <data name="SetupBarTint" xml:space="preserve">
+    <value>バーの色調</value>
+  </data>
+  <data name="SetupBarType" xml:space="preserve">
+    <value>バーの種類</value>
+  </data>
+  <data name="SetupCancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="SetupCheckConnection" xml:space="preserve">
+    <value>接続を確認</value>
+  </data>
+  <data name="SetupChecking" xml:space="preserve">
+    <value>接続を確認中…</value>
+  </data>
+  <data name="SetupChooseColumn" xml:space="preserve">
+    <value>表示項目を1つ以上選んでください。</value>
+  </data>
+  <data name="SetupChooseDisplay" xml:space="preserve">
+    <value>DPSをどこに表示しますか？</value>
+  </data>
+  <data name="SetupChooseParser" xml:space="preserve">
+    <value>解析方法を選択</value>
+  </data>
+  <data name="SetupClickthrough" xml:space="preserve">
+    <value>クリックを透過</value>
+  </data>
+  <data name="SetupClickthroughHelp" xml:space="preserve">
+    <value>クリックがメーターを通過します。メニューボタンは操作できます。</value>
+  </data>
+  <data name="SetupColumns" xml:space="preserve">
+    <value>表示項目</value>
+  </data>
+  <data name="SetupConnected" xml:space="preserve">
+    <value>接続済み</value>
+  </data>
+  <data name="SetupContinueOffline" xml:space="preserve">
+    <value>接続せずに続行</value>
+  </data>
+  <data name="SetupCustomize" xml:space="preserve">
+    <value>自分で作成</value>
+  </data>
+  <data name="SetupDefault" xml:space="preserve">
+    <value>既定値</value>
+  </data>
+  <data name="SetupEditMeter" xml:space="preserve">
+    <value>メーターの設定</value>
+  </data>
+  <data name="SetupExtras" xml:space="preserve">
+    <value>その他の設定</value>
+  </data>
+  <data name="SetupFinish" xml:space="preserve">
+    <value>完了</value>
+  </data>
+  <data name="SetupFooter" xml:space="preserve">
+    <value>フッター</value>
+  </data>
+  <data name="SetupFooterHelp" xml:space="preserve">
+    <value>メーターの下に戦闘不能回数とパーティDPSを表示します。</value>
+  </data>
+  <data name="SetupIconStyle" xml:space="preserve">
+    <value>アイコンの種類</value>
+  </data>
+  <data name="SetupIinactChecking" xml:space="preserve">
+    <value>IINACTを確認中…</value>
+  </data>
+  <data name="SetupIinactDisabled" xml:space="preserve">
+    <value>IINACTはインストール済みです。Dalamudで有効にしてください。</value>
+  </data>
+  <data name="SetupIinactEnabled" xml:space="preserve">
+    <value>IINACTはDalamudで有効です。</value>
+  </data>
+  <data name="SetupIinactInstall" xml:space="preserve">
+    <value>IINACTをインストール</value>
+  </data>
+  <data name="SetupIinactIntro" xml:space="preserve">
+    <value>ゲーム内で動作し、FFLogsにアップロードできるログを保存します。</value>
+  </data>
+  <data name="SetupIinactLoaded" xml:space="preserve">
+    <value>IINACTは読み込み済みです。設定を確認してください。</value>
+  </data>
+  <data name="SetupIinactMissing" xml:space="preserve">
+    <value>IINACTはインストールされていません。</value>
+  </data>
+  <data name="SetupIinactNotReady" xml:space="preserve">
+    <value>IINACTは準備できていません</value>
+  </data>
+  <data name="SetupIinactReady" xml:space="preserve">
+    <value>IINACTは使用可能です</value>
+  </data>
+  <data name="SetupInsideBar" xml:space="preserve">
+    <value>バーの中</value>
+  </data>
+  <data name="SetupInternalParser" xml:space="preserve">
+    <value>内蔵パーサー</value>
+  </data>
+  <data name="SetupInvalidUrl" xml:space="preserve">
+    <value>ws:// または wss:// のURLを入力</value>
+  </data>
+  <data name="SetupLocalDifferences" xml:space="preserve">
+    <value>一部の数値はACTやIINACTと異なる場合があります。</value>
+  </data>
+  <data name="SetupLocalIntro" xml:space="preserve">
+    <value>内蔵パーサーでゲーム内の戦闘統計を表示します。</value>
+  </data>
+  <data name="SetupLocalNoLogs" xml:space="preserve">
+    <value>FFLogs用のログは保存されません。</value>
+  </data>
+  <data name="SetupNext" xml:space="preserve">
+    <value>次へ</value>
+  </data>
+  <data name="SetupNextChoice" xml:space="preserve">
+    <value>{0}：次の候補</value>
+  </data>
+  <data name="SetupOff" xml:space="preserve">
+    <value>オフ</value>
+  </data>
+  <data name="SetupOn" xml:space="preserve">
+    <value>オン</value>
+  </data>
+  <data name="SetupPartyListDps" xml:space="preserve">
+    <value>パーティリストにDPSを表示</value>
+  </data>
+  <data name="SetupPersonalDps" xml:space="preserve">
+    <value>自分のDPSを表示</value>
+  </data>
+  <data name="SetupPersonalDpsHelp" xml:space="preserve">
+    <value>基本情報に自分のDPSを表示します。オフにするとパーティ全体のDPSを表示します。</value>
+  </data>
+  <data name="SetupPlayerColor" xml:space="preserve">
+    <value>名前の色</value>
+  </data>
+  <data name="SetupPlayerColorHelp" xml:space="preserve">
+    <value>プレイヤー名の色をジョブ別、ロール別、または単色にします。</value>
+  </data>
+  <data name="SetupPlayerLayout" xml:space="preserve">
+    <value>プレイヤーの配置</value>
+  </data>
+  <data name="SetupPreset" xml:space="preserve">
+    <value>プリセット</value>
+  </data>
+  <data name="SetupPresetDefault" xml:space="preserve">
+    <value>プリセットの既定値</value>
+  </data>
+  <data name="SetupPreviousChoice" xml:space="preserve">
+    <value>{0}：前の候補</value>
+  </data>
+  <data name="SetupPrivacy" xml:space="preserve">
+    <value>プライバシーモード（名前をジョブ名で表示）</value>
+  </data>
+  <data name="SetupReplaceYou" xml:space="preserve">
+    <value>「YOU」を自分の名前に置き換える</value>
+  </data>
+  <data name="SetupSampleFight" xml:space="preserve">
+    <value>戦闘サンプル</value>
+  </data>
+  <data name="SetupSaved" xml:space="preserve">
+    <value>NativeMetersの設定を保存しました。/ntm setup で再度開けます。</value>
+  </data>
+  <data name="SetupServerDps" xml:space="preserve">
+    <value>基本情報にDPSを表示</value>
+  </data>
+  <data name="SetupSettingsHelp" xml:space="preserve">
+    <value>/ntm でいつでも設定を変更できます。</value>
+  </data>
+  <data name="SetupSkip" xml:space="preserve">
+    <value>設定をスキップ</value>
+  </data>
+  <data name="SetupSortBy" xml:space="preserve">
+    <value>並べ替え</value>
+  </data>
+  <data name="SetupStandalone" xml:space="preserve">
+    <value>独立メーター</value>
+  </data>
+  <data name="SetupStrikingDummy" xml:space="preserve">
+    <value>木人</value>
+  </data>
+  <data name="SetupTextPosition" xml:space="preserve">
+    <value>テキストの位置</value>
+  </data>
+  <data name="SetupTryDummy" xml:space="preserve">
+    <value>木人を攻撃してメーターの動作を確認できます。</value>
+  </data>
+  <data name="SetupUnchecked" xml:space="preserve">
+    <value>接続未確認</value>
+  </data>
+  <data name="SetupUnlockHelp" xml:space="preserve">
+    <value>移動するにはメーター設定で固定を解除し、移動後に再び固定してください。</value>
+  </data>
+  <data name="SetupUsePreset" xml:space="preserve">
+    <value>プリセットを使う</value>
+  </data>
+  <data name="SetupWebSocket" xml:space="preserve">
+    <value>WebSocket URL</value>
+  </data>
+  <data name="StatActiveDps" xml:space="preserve">
+    <value>攻撃中DPS</value>
+  </data>
+  <data name="StatCriticalHitRate" xml:space="preserve">
+    <value>クリティカル率</value>
+  </data>
+  <data name="StatDamageShare" xml:space="preserve">
+    <value>与ダメージ割合</value>
+  </data>
+  <data name="StatDeaths" xml:space="preserve">
+    <value>戦闘不能回数</value>
+  </data>
+  <data name="StatDirectHitRate" xml:space="preserve">
+    <value>ダイレクトヒット率</value>
+  </data>
+  <data name="StatEncounterDps" xml:space="preserve">
+    <value>戦闘全体DPS</value>
+  </data>
+  <data name="StatEncounterHps" xml:space="preserve">
+    <value>戦闘全体HPS</value>
+  </data>
+  <data name="TabColors" xml:space="preserve">
+    <value>色</value>
+  </data>
+  <data name="TabConnection" xml:space="preserve">
+    <value>接続</value>
+  </data>
+  <data name="TabGeneral" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="TabMeters" xml:space="preserve">
+    <value>メーター</value>
+  </data>
+  <data name="TabPartyList" xml:space="preserve">
+    <value>パーティリスト</value>
+  </data>
+  <data name="TabVisibility" xml:space="preserve">
+    <value>表示条件</value>
+  </data>
+  <data name="TagCategoryCombatant" xml:space="preserve">
+    <value>6. 生データ（戦闘参加者）</value>
+  </data>
+  <data name="TagCategoryCommon" xml:space="preserve">
+    <value>1. 基本</value>
+  </data>
+  <data name="TagCategoryCustom" xml:space="preserve">
+    <value>5. カスタム</value>
+  </data>
+  <data name="TagCategoryDamage" xml:space="preserve">
+    <value>2. ダメージ</value>
+  </data>
+  <data name="TagCategoryDefense" xml:space="preserve">
+    <value>4. 防御</value>
+  </data>
+  <data name="TagCategoryEncounter" xml:space="preserve">
+    <value>7. 生データ（戦闘）</value>
+  </data>
+  <data name="TagCategoryHealing" xml:space="preserve">
+    <value>3. 回復</value>
+  </data>
+  <data name="TagDescAbsorb" xml:space="preserve">
+    <value>吸収したHPの合計</value>
+  </data>
+  <data name="TagDescActiveDps" xml:space="preserve">
+    <value>攻撃していた時間で計算した秒間ダメージ</value>
+  </data>
+  <data name="TagDescBlockPct" xml:space="preserve">
+    <value>盾でブロックした攻撃の割合</value>
+  </data>
+  <data name="TagDescCount" xml:space="preserve">
+    <value>このメーターの戦闘参加人数</value>
+  </data>
+  <data name="TagDescCritDirectPct" xml:space="preserve">
+    <value>クリティカルとダイレクトヒットが同時に発生した割合</value>
+  </data>
+  <data name="TagDescCritHealPct" xml:space="preserve">
+    <value>回復時のクリティカル発生率</value>
+  </data>
+  <data name="TagDescCritPct" xml:space="preserve">
+    <value>クリティカルヒットの発生率</value>
+  </data>
+  <data name="TagDescDamagePct" xml:space="preserve">
+    <value>全体の与ダメージに占めるプレイヤーの割合（各行のみ）</value>
+  </data>
+  <data name="TagDescDamageTaken" xml:space="preserve">
+    <value>受けたダメージの合計</value>
+  </data>
+  <data name="TagDescDamageTotal" xml:space="preserve">
+    <value>総与ダメージを百万単位で表示</value>
+  </data>
+  <data name="TagDescDeaths" xml:space="preserve">
+    <value>戦闘不能になった回数</value>
+  </data>
+  <data name="TagDescDirectPct" xml:space="preserve">
+    <value>ダイレクトヒットの発生率</value>
+  </data>
+  <data name="TagDescDuration" xml:space="preserve">
+    <value>戦闘時間（分:秒）</value>
+  </data>
+  <data name="TagDescEncounterDps" xml:space="preserve">
+    <value>戦闘の全経過時間で計算した秒間ダメージ</value>
+  </data>
+  <data name="TagDescEncounterDpsCompact" xml:space="preserve">
+    <value>戦闘全体の秒間ダメージを自動単位で表示</value>
+  </data>
+  <data name="TagDescEncounterDpsKilo" xml:space="preserve">
+    <value>戦闘全体の秒間ダメージを千単位で表示</value>
+  </data>
+  <data name="TagDescEncounterHps" xml:space="preserve">
+    <value>戦闘の全経過時間で計算した秒間回復量</value>
+  </data>
+  <data name="TagDescEncounterHpsKilo" xml:space="preserve">
+    <value>戦闘全体の秒間回復量を千単位で表示</value>
+  </data>
+  <data name="TagDescFirstName" xml:space="preserve">
+    <value>ファーストネームのみ</value>
+  </data>
+  <data name="TagDescFocusHp" xml:space="preserve">
+    <value>フォーカスターゲットの残りHP割合</value>
+  </data>
+  <data name="TagDescFocusName" xml:space="preserve">
+    <value>フォーカスターゲットの名前</value>
+  </data>
+  <data name="TagDescFullName" xml:space="preserve">
+    <value>各行ではプレイヤー名、見出しでは戦闘名を表示</value>
+  </data>
+  <data name="TagDescHealedPct" xml:space="preserve">
+    <value>全体の回復量に占めるプレイヤーの割合（各行のみ）</value>
+  </data>
+  <data name="TagDescHealedTotal" xml:space="preserve">
+    <value>与えた回復量の合計</value>
+  </data>
+  <data name="TagDescHealsTaken" xml:space="preserve">
+    <value>受けた回復量の合計</value>
+  </data>
+  <data name="TagDescHits" xml:space="preserve">
+    <value>命中した攻撃の回数</value>
+  </data>
+  <data name="TagDescInitials" xml:space="preserve">
+    <value>姓と名の頭文字</value>
+  </data>
+  <data name="TagDescJobAbbr" xml:space="preserve">
+    <value>ジョブの略称</value>
+  </data>
+  <data name="TagDescJobName" xml:space="preserve">
+    <value>ジョブの正式名</value>
+  </data>
+  <data name="TagDescLastName" xml:space="preserve">
+    <value>ファミリーネームのみ</value>
+  </data>
+  <data name="TagDescMaxHealFull" xml:space="preserve">
+    <value>最大回復のアクション名と回復量</value>
+  </data>
+  <data name="TagDescMaxHealSkill" xml:space="preserve">
+    <value>最大回復を記録したアクション名</value>
+  </data>
+  <data name="TagDescMaxHealValue" xml:space="preserve">
+    <value>1回で与えた最大回復量</value>
+  </data>
+  <data name="TagDescMaxHitFull" xml:space="preserve">
+    <value>最大ダメージのアクション名とダメージ量</value>
+  </data>
+  <data name="TagDescMaxHitSkill" xml:space="preserve">
+    <value>最大ダメージを与えたアクション名</value>
+  </data>
+  <data name="TagDescMaxHitValue" xml:space="preserve">
+    <value>1回で与えた最大ダメージ</value>
+  </data>
+  <data name="TagDescMisses" xml:space="preserve">
+    <value>命中しなかった攻撃の回数</value>
+  </data>
+  <data name="TagDescOverheal" xml:space="preserve">
+    <value>最大HPを超えた回復量の合計</value>
+  </data>
+  <data name="TagDescOverhealPct" xml:space="preserve">
+    <value>回復量のうち最大HPを超えた割合</value>
+  </data>
+  <data name="TagDescParryPct" xml:space="preserve">
+    <value>受け流した攻撃の割合</value>
+  </data>
+  <data name="TagDescRank" xml:space="preserve">
+    <value>このメーターでの順位</value>
+  </data>
+  <data name="TagDescRankCount" xml:space="preserve">
+    <value>順位と総人数</value>
+  </data>
+  <data name="TagDescRecentDps" xml:space="preserve">
+    <value>直近{0}秒間の秒間ダメージ</value>
+  </data>
+  <data name="TagDescShield" xml:space="preserve">
+    <value>付与したバリア量の合計</value>
+  </data>
+  <data name="TagDescSwings" xml:space="preserve">
+    <value>命中・ミスを含む攻撃回数</value>
+  </data>
+  <data name="TagDescTargetHp" xml:space="preserve">
+    <value>現在のターゲットの残りHP割合</value>
+  </data>
+  <data name="TagDescTargetName" xml:space="preserve">
+    <value>現在のターゲットの名前</value>
+  </data>
+  <data name="TagDescZone" xml:space="preserve">
+    <value>現在のエリア・コンテンツ名</value>
+  </data>
+  <data name="TagExample" xml:space="preserve">
+    <value>例: {0}</value>
+  </data>
+  <data name="TagExampleCure" xml:space="preserve">
+    <value>ケアルガ</value>
+  </data>
+  <data name="TagExampleDummy" xml:space="preserve">
+    <value>木人</value>
+  </data>
+  <data name="TagExampleGoblet" xml:space="preserve">
+    <value>ゴブレットビュート</value>
+  </data>
+  <data name="TagExampleMidare" xml:space="preserve">
+    <value>乱れ雪月花</value>
+  </data>
+  <data name="TagExampleName" xml:space="preserve">
+    <value>John Doe／ボス名</value>
+  </data>
+  <data name="TagExampleWarrior" xml:space="preserve">
+    <value>戦士</value>
+  </data>
+  <data name="TagFormatHelpBasic" xml:space="preserve">
+    <value>書式： [tag_part:modifier.precision]
+- :r = 桁区切りなし
+- :c = 自動で単位を短縮
+- :k/:m = 千／百万単位
+- .N = 小数点以下の桁数
+例： [dps:c.1] -&gt; 12.3K</value>
+  </data>
+  <data name="TagFormatHelpComponent" xml:space="preserve">
+    <value>書式： [tag_part:modifier.precision]
+- :r = 桁区切りなし
+- :c = 自動で単位を短縮
+- :k/:m = 千／百万単位
+- .N = 小数点以下の桁数または文字数
+- _first/_last = 名／姓
+- _skill/_val = 最大ダメージのアクション名／数値
+
+例： [name_first.1].:[dps:c.1] -&gt; J.:12.3K</value>
+  </data>
+  <data name="TagInsert" xml:space="preserve">
+    <value>挿入</value>
+  </data>
+  <data name="TagLabel_-- Insert Tag --" xml:space="preserve">
+    <value>-- タグを挿入 --</value>
+  </data>
+  <data name="TagLabel_Crit %" xml:space="preserve">
+    <value>クリティカル率</value>
+  </data>
+  <data name="TagLabel_DH %" xml:space="preserve">
+    <value>ダイレクトヒット率</value>
+  </data>
+  <data name="TagLabel_DPS" xml:space="preserve">
+    <value>DPS</value>
+  </data>
+  <data name="TagLabel_DPS: Compact" xml:space="preserve">
+    <value>DPS：自動単位</value>
+  </data>
+  <data name="TagLabel_DPS: Kilo" xml:space="preserve">
+    <value>DPS：千単位</value>
+  </data>
+  <data name="TagLabel_DPS: Raw (No Comma)" xml:space="preserve">
+    <value>DPS：桁区切りなし</value>
+  </data>
+  <data name="TagLabel_Dmg: Percent" xml:space="preserve">
+    <value>ダメージ：割合</value>
+  </data>
+  <data name="TagLabel_Dmg: Total" xml:space="preserve">
+    <value>ダメージ：合計</value>
+  </data>
+  <data name="TagLabel_Enc: DPS Compact" xml:space="preserve">
+    <value>戦闘：DPS（自動単位）</value>
+  </data>
+  <data name="TagLabel_Enc: Duration" xml:space="preserve">
+    <value>戦闘：時間</value>
+  </data>
+  <data name="TagLabel_Enc: Zone" xml:space="preserve">
+    <value>戦闘：エリア</value>
+  </data>
+  <data name="TagLabel_Heal: %" xml:space="preserve">
+    <value>回復：割合</value>
+  </data>
+  <data name="TagLabel_Heal: Overheal %" xml:space="preserve">
+    <value>回復：オーバーヒール率</value>
+  </data>
+  <data name="TagLabel_Job: Abbr" xml:space="preserve">
+    <value>ジョブ：略称</value>
+  </data>
+  <data name="TagLabel_MaxHit: Full" xml:space="preserve">
+    <value>最大ダメージ：全体</value>
+  </data>
+  <data name="TagLabel_MaxHit: Skill Only" xml:space="preserve">
+    <value>最大ダメージ：アクション名のみ</value>
+  </data>
+  <data name="TagLabel_MaxHit: Val Only" xml:space="preserve">
+    <value>最大ダメージ：数値のみ</value>
+  </data>
+  <data name="TagLabel_Name: First" xml:space="preserve">
+    <value>名前：ファーストネーム</value>
+  </data>
+  <data name="TagLabel_Name: Full" xml:space="preserve">
+    <value>名前：フルネーム</value>
+  </data>
+  <data name="TagLabel_Name: Initial" xml:space="preserve">
+    <value>名前：頭文字</value>
+  </data>
+  <data name="TagLabel_Rank" xml:space="preserve">
+    <value>順位</value>
+  </data>
+  <data name="TagLabel_Rank / Count" xml:space="preserve">
+    <value>順位／人数</value>
+  </data>
+  <data name="TagNameAbsorb" xml:space="preserve">
+    <value>HP吸収</value>
+  </data>
+  <data name="TagNameActiveDps" xml:space="preserve">
+    <value>アクティブDPS</value>
+  </data>
+  <data name="TagNameBlockPct" xml:space="preserve">
+    <value>ブロック率</value>
+  </data>
+  <data name="TagNameCount" xml:space="preserve">
+    <value>参加人数</value>
+  </data>
+  <data name="TagNameCritDirectPct" xml:space="preserve">
+    <value>クリティカル＆ダイレクトヒット率</value>
+  </data>
+  <data name="TagNameCritHealPct" xml:space="preserve">
+    <value>クリティカル回復率</value>
+  </data>
+  <data name="TagNameCritPct" xml:space="preserve">
+    <value>クリティカル率</value>
+  </data>
+  <data name="TagNameDamagePct" xml:space="preserve">
+    <value>与ダメージ割合</value>
+  </data>
+  <data name="TagNameDamageTaken" xml:space="preserve">
+    <value>被ダメージ</value>
+  </data>
+  <data name="TagNameDamageTotal" xml:space="preserve">
+    <value>総与ダメージ</value>
+  </data>
+  <data name="TagNameDeaths" xml:space="preserve">
+    <value>戦闘不能回数</value>
+  </data>
+  <data name="TagNameDirectPct" xml:space="preserve">
+    <value>ダイレクトヒット率</value>
+  </data>
+  <data name="TagNameDuration" xml:space="preserve">
+    <value>戦闘時間</value>
+  </data>
+  <data name="TagNameEncounterDps" xml:space="preserve">
+    <value>戦闘時間あたりのDPS</value>
+  </data>
+  <data name="TagNameEncounterDpsCompact" xml:space="preserve">
+    <value>戦闘DPS（自動単位）</value>
+  </data>
+  <data name="TagNameEncounterDpsKilo" xml:space="preserve">
+    <value>戦闘DPS（千単位）</value>
+  </data>
+  <data name="TagNameEncounterHps" xml:space="preserve">
+    <value>戦闘時間あたりのHPS</value>
+  </data>
+  <data name="TagNameEncounterHpsKilo" xml:space="preserve">
+    <value>戦闘HPS（千単位）</value>
+  </data>
+  <data name="TagNameFirstName" xml:space="preserve">
+    <value>ファーストネーム</value>
+  </data>
+  <data name="TagNameFocusHp" xml:space="preserve">
+    <value>フォーカスターゲットのHP割合</value>
+  </data>
+  <data name="TagNameFocusName" xml:space="preserve">
+    <value>フォーカスターゲット名</value>
+  </data>
+  <data name="TagNameFullName" xml:space="preserve">
+    <value>名前</value>
+  </data>
+  <data name="TagNameHealedPct" xml:space="preserve">
+    <value>回復量の割合</value>
+  </data>
+  <data name="TagNameHealedTotal" xml:space="preserve">
+    <value>総回復量</value>
+  </data>
+  <data name="TagNameHealsTaken" xml:space="preserve">
+    <value>被回復量</value>
+  </data>
+  <data name="TagNameHits" xml:space="preserve">
+    <value>命中回数</value>
+  </data>
+  <data name="TagNameInitials" xml:space="preserve">
+    <value>イニシャル</value>
+  </data>
+  <data name="TagNameJobAbbr" xml:space="preserve">
+    <value>ジョブ略称</value>
+  </data>
+  <data name="TagNameJobName" xml:space="preserve">
+    <value>ジョブ名</value>
+  </data>
+  <data name="TagNameLastName" xml:space="preserve">
+    <value>ファミリーネーム</value>
+  </data>
+  <data name="TagNameMaxHealFull" xml:space="preserve">
+    <value>最大回復：全体</value>
+  </data>
+  <data name="TagNameMaxHealSkill" xml:space="preserve">
+    <value>最大回復：アクション</value>
+  </data>
+  <data name="TagNameMaxHealValue" xml:space="preserve">
+    <value>最大回復：数値</value>
+  </data>
+  <data name="TagNameMaxHitFull" xml:space="preserve">
+    <value>最大ダメージ：全体</value>
+  </data>
+  <data name="TagNameMaxHitSkill" xml:space="preserve">
+    <value>最大ダメージ：アクション</value>
+  </data>
+  <data name="TagNameMaxHitValue" xml:space="preserve">
+    <value>最大ダメージ：数値</value>
+  </data>
+  <data name="TagNameMisses" xml:space="preserve">
+    <value>ミス回数</value>
+  </data>
+  <data name="TagNameOverheal" xml:space="preserve">
+    <value>総オーバーヒール量</value>
+  </data>
+  <data name="TagNameOverhealPct" xml:space="preserve">
+    <value>オーバーヒール率</value>
+  </data>
+  <data name="TagNameParryPct" xml:space="preserve">
+    <value>受け流し率</value>
+  </data>
+  <data name="TagNameRank" xml:space="preserve">
+    <value>順位</value>
+  </data>
+  <data name="TagNameRankCount" xml:space="preserve">
+    <value>順位／人数</value>
+  </data>
+  <data name="TagNameRecentDps" xml:space="preserve">
+    <value>直近{0}秒のDPS</value>
+  </data>
+  <data name="TagNameShield" xml:space="preserve">
+    <value>バリア量</value>
+  </data>
+  <data name="TagNameSwings" xml:space="preserve">
+    <value>攻撃回数</value>
+  </data>
+  <data name="TagNameTargetHp" xml:space="preserve">
+    <value>ターゲットのHP割合</value>
+  </data>
+  <data name="TagNameTargetName" xml:space="preserve">
+    <value>ターゲット名</value>
+  </data>
+  <data name="TagNameZone" xml:space="preserve">
+    <value>エリア名</value>
+  </data>
+  <data name="TagRawProperty" xml:space="preserve">
+    <value>生データのプロパティ：{0}</value>
+  </data>
+  <data name="VisibilityAlwaysConditions" xml:space="preserve">
+    <value>常に表示する条件</value>
+  </data>
+  <data name="VisibilityAlwaysDrawn" xml:space="preserve">
+    <value>抜刀中は常に表示</value>
+  </data>
+  <data name="VisibilityAlwaysDuty" xml:space="preserve">
+    <value>コンテンツ中は常に表示</value>
+  </data>
+  <data name="VisibilityAlwaysParty" xml:space="preserve">
+    <value>パーティ参加中は常に表示</value>
+  </data>
+  <data name="VisibilityAlwaysPvp" xml:space="preserve">
+    <value>PvP中は常に表示</value>
+  </data>
+  <data name="VisibilityAlwaysTarget" xml:space="preserve">
+    <value>ターゲット選択中は常に表示</value>
+  </data>
+  <data name="VisibilityCrafting" xml:space="preserve">
+    <value>製作中は非表示</value>
+  </data>
+  <data name="VisibilityCutscene" xml:space="preserve">
+    <value>カットシーン・クエストイベント中は非表示</value>
+  </data>
+  <data name="VisibilityFullHp" xml:space="preserve">
+    <value>HP満タン時に非表示</value>
+  </data>
+  <data name="VisibilityGathering" xml:space="preserve">
+    <value>採集中は非表示</value>
+  </data>
+  <data name="VisibilityGeneral" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="VisibilityGoldSaucer" xml:space="preserve">
+    <value>ゴールドソーサーで非表示</value>
+  </data>
+  <data name="VisibilityHideConditions" xml:space="preserve">
+    <value>非表示にする条件</value>
+  </data>
+  <data name="VisibilityInCombat" xml:space="preserve">
+    <value>戦闘中は非表示</value>
+  </data>
+  <data name="VisibilityInDuty" xml:space="preserve">
+    <value>コンテンツ中は非表示</value>
+  </data>
+  <data name="VisibilityOutOfCombat" xml:space="preserve">
+    <value>非戦闘時に非表示</value>
+  </data>
+  <data name="VisibilityPerforming" xml:space="preserve">
+    <value>楽器演奏中は非表示</value>
+  </data>
+  <data name="VisibilityPvp" xml:space="preserve">
+    <value>PvP中は非表示</value>
+  </data>
+  <data name="VisibilityPvpHelp" xml:space="preserve">
+    <value>「常に表示する条件」より優先されます。</value>
+  </data>
+  <data name="VisibilitySanctuary" xml:space="preserve">
+    <value>レストエリアで非表示</value>
+  </data>
+  <data name="VisibilityWithHud" xml:space="preserve">
+    <value>ゲームのUIと一緒に非表示</value>
+  </data>
+  <data name="WindowBreakdown" xml:space="preserve">
+    <value>NativeMeters詳細分析</value>
+  </data>
+  <data name="WindowColorPicker" xml:space="preserve">
+    <value>色を選択</value>
+  </data>
+  <data name="WindowConfiguration" xml:space="preserve">
+    <value>NativeMeters設定</value>
+  </data>
+  <data name="WindowIconPicker" xml:space="preserve">
+    <value>アイコンを選択</value>
+  </data>
+  <data name="WindowImportMeter" xml:space="preserve">
+    <value>メーターのインポート</value>
+  </data>
+  <data name="WindowPlacement" xml:space="preserve">
+    <value>メーターの配置</value>
+  </data>
+  <data name="WindowSetup" xml:space="preserve">
+    <value>NativeMetersセットアップ</value>
+  </data>
+  <data name="WindowTagPicker" xml:space="preserve">
+    <value>タグ検索</value>
+  </data>
+  <data name="WindowTextFlags" xml:space="preserve">
+    <value>テキストフラグ</value>
+  </data>
+</root>

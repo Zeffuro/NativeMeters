@@ -1,6 +1,7 @@
 using System;
 using KamiToolKit.Components.ConfigurationNodes;
 using NativeMeters.Configuration;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
@@ -10,7 +11,7 @@ public class MeterConfigurationNode : EntryConfigurationNode<MeterSettings>
 
     internal MeterConfigurationNode(MeterImportConfirmationAddon importConfirmation, Action<MeterSettings>? onNameChanged = null)
     {
-        SelectAnItemTextNode.String = "Select a meter or create a new one.";
+        SelectAnItemTextNode.String = Loc.Get("MeterSelectOrCreate");
 
         activeNode = new MeterDefinitionConfigurationNode(importConfirmation, onNameChanged);
         activeNode.AttachNode(ConfigurationContentNode);

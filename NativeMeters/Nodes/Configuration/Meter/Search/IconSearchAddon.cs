@@ -3,6 +3,7 @@ using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Components.Search;
 using Lumina.Text.ReadOnly;
+using NativeMeters.Localization;
 using NativeMeters.Services;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Search;
@@ -16,6 +17,7 @@ public class IconSearchAddon : AbstractSearchAddon<uint, IconListItemNode>
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
         base.OnSetup(addon, atkValueSpan);
+        this.SetLocalizedTitle("WindowIconPicker");
 
         IconRegistry.Initialize(Service.DataManager);
         TryPopulateIcons();

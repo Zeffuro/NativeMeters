@@ -5,8 +5,8 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using Lumina.Data.Parsing.Uld;
 using NativeMeters.Nodes.Input;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Addons;
 
@@ -18,13 +18,8 @@ public sealed class TextFlagsPickerAddon : NativeAddon
     private const float RowSpacing = 2.0f;
     private const float ButtonSpacing = 8.0f;
     private const float HelpButtonSize = 22.0f;
-    private const string HelpTooltip =
-        "Text flags are game/UI flags, so each option is not guaranteed to behave exactly as expected.\n"
-        + "Some flags may behave differently depending on the selected font.";
-
     private readonly List<TextFlagCheckboxEntry> flagEntries = [];
 
-    private VerticalListNode? layoutNode;
     private TextFlags value;
     private Action<TextFlags>? onValueChanged;
     private bool isLoading;
@@ -46,6 +41,7 @@ public sealed class TextFlagsPickerAddon : NativeAddon
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
         base.OnSetup(addon, atkValueSpan);
+        this.SetLocalizedTitle("WindowTextFlags");
 
         AddNode(new CircleButtonNode
         {
@@ -53,15 +49,16 @@ public sealed class TextFlagsPickerAddon : NativeAddon
             Size = new Vector2(HelpButtonSize),
             X = (int)Math.Round(Size.X - HelpButtonSize * 2.5),
             Y = HelpButtonSize / 2,
-            TextTooltip = HelpTooltip,
+            TextTooltip = Loc.Get("PickerTextFlagsHelp"),
         });
 
         flagEntries.Clear();
 
-        layoutNode = new VerticalListNode
+        var layoutNode = new VerticalListNode
         {
             Position = ContentStartPosition,
             Size = ContentSize,
+            FitContents = true,
             FitWidth = true,
             ItemSpacing = RowSpacing,
         };
@@ -81,6 +78,9 @@ public sealed class TextFlagsPickerAddon : NativeAddon
 
         layoutNode.AddNode(new ResNode { Height = ButtonSpacing });
         layoutNode.AddNode(CreateButtonRow());
+
+        var windowPadding = Size.Y - ContentSize.Y;
+        SetWindowSize(Size.X, windowPadding + layoutNode.Height);
         layoutNode.AttachNode(this);
 
         RefreshCheckboxes();
@@ -90,7 +90,6 @@ public sealed class TextFlagsPickerAddon : NativeAddon
     protected override unsafe void OnFinalize(AtkUnitBase* addon)
     {
         flagEntries.Clear();
-        layoutNode = null;
         onValueChanged = null;
 
         base.OnFinalize(addon);
@@ -106,17 +105,16 @@ public sealed class TextFlagsPickerAddon : NativeAddon
             [
                 new TextButtonNode
                 {
-                    Width = ButtonWidth,
-                    String = "Clear",
+                    Size = new Vector2(ButtonWidth, ButtonHeight),
+                    String = Loc.Get("PickerClear"),
                     OnClick = Clear,
                     NavIndex = 20,
                     NavRight = 21,
                 },
                 new TextButtonNode
                 {
-                    Width = ButtonWidth,
-                    TextId = 2, // Close
-                    SheetType = NodeData.SheetType.Addon,
+                    Size = new Vector2(ButtonWidth, ButtonHeight),
+                    String = Loc.Get("CommonClose"),
                     OnClick = Close,
                     NavIndex = 21,
                     NavLeft = 20,

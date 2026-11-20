@@ -3,10 +3,10 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
+using NativeMeters.Localization;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Input;
 using NativeMeters.Tags;
-using CheckboxNode = NativeMeters.Nodes.Input.SyncedCheckboxNode;
 
 namespace NativeMeters.Nodes.Configuration.Dtr;
 
@@ -28,14 +28,14 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
         AddNode(new CategoryTextNode
         {
             TextFlags = TextFlags.Ellipsis,
-            String = "Server Info Bar",
+            String = Loc.Get("DtrHeading"),
             Height = 18,
         });
 
-        var enableCheckbox = new CheckboxNode
+        var enableCheckbox = new CheckboxRowNode
         {
             Height = 20,
-            String = "Enabled",
+            String = Loc.Get("GeneralEnabled"),
             IsChecked = settings.Enabled,
             OnClick = isChecked =>
             {
@@ -45,11 +45,11 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
             }
         };
         AddNode(1, enableCheckbox);
-        AddNode(1, new CheckboxNode
+        AddNode(1, new CheckboxRowNode
         {
             Height = 20,
-            String = "Show personal DPS",
-            TextTooltip = "Use your own DPS instead of party DPS for the [dps] tag.",
+            String = Loc.Get("DtrPersonalDps"),
+            TextTooltip = Loc.Get("DtrPersonalDpsHelp"),
             IsChecked = settings.UsePersonalDps,
             OnClick = isChecked =>
             {
@@ -68,7 +68,7 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
 
         formatInput = new LabeledTextInputNode
         {
-            LabelText = "Format String:",
+            LabelText = Loc.Get("DtrFormat"),
             Size = new Vector2(400, RowHeight),
             Text = settings.FormatString,
             Placeholder = "[dps:k.1] DPS",
@@ -92,8 +92,9 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
 
         tagDropdown = new LabeledDropdownNode
         {
-            LabelText = "Insert Tag:",
+            LabelText = Loc.Get("DtrInsertTag"),
             Size = new Vector2(400, 28),
+            GetOptionLabel = Loc.TagLabel,
             Options = TagDefinitions.GetLabels(),
             MaxListOptions = 10,
             SelectedOption = TagDefinitions.DefaultDropdownLabel,
@@ -114,10 +115,10 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
         AddNode(new ResNode { Height = 10 });
 
         AddNode(1, [
-            new CheckboxNode
+            new CheckboxRowNode
             {
                 Height = 20,
-                String = "Show when disconnected",
+                String = Loc.Get("DtrShowDisconnected"),
                 IsChecked = settings.ShowWhenDisconnected,
                 OnClick = isChecked =>
                 {
@@ -127,7 +128,7 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
             },
             new LabeledTextInputNode
             {
-                LabelText = "Disconnect Text:",
+                LabelText = Loc.Get("DtrDisconnectedText"),
                 Size = new Vector2(400, 28),
                 Text = settings.DisconnectedText,
                 OnInputComplete = text =>
@@ -140,10 +141,10 @@ public sealed class DtrConfigurationNode : TabbedVerticalListNode
 
         AddNode(new ResNode { Height = 10 });
 
-        AddNode(1, new CheckboxNode
+        AddNode(1, new CheckboxRowNode
         {
             Height = 20,
-            String = "Click to open config window",
+            String = Loc.Get("DtrClickConfig"),
             IsChecked = settings.ClickToOpenConfig,
             OnClick = isChecked =>
             {

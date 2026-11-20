@@ -3,6 +3,7 @@ using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Nodes.Input;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Sections;
 
@@ -47,7 +48,7 @@ public sealed class MeterGeneralSection : MeterConfigSection
         nameInput = new LabeledTextInputNode
         {
             Size = new Vector2(Width, 28),
-            LabelText = "Meter Name: ",
+            LabelText = Loc.Get("MeterName"),
             OnInputComplete = val =>
             {
                 if (isLoading) return;
@@ -64,7 +65,7 @@ public sealed class MeterGeneralSection : MeterConfigSection
         enabledCheckbox = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Enabled",
+            String = Loc.Get("MeterEnabled"),
             OnClick = val =>
             {
                 if (isLoading) return;
@@ -77,7 +78,7 @@ public sealed class MeterGeneralSection : MeterConfigSection
         lockedCheckbox = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Lock Position/Size",
+            String = Loc.Get("MeterLockPositionSize"),
             OnClick = val =>
             {
                 if (isLoading) return;
@@ -89,7 +90,7 @@ public sealed class MeterGeneralSection : MeterConfigSection
         clickthroughCheckbox = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Clickthrough",
+            String = Loc.Get("MeterClickthrough"),
             OnClick = val =>
             {
                 if (isLoading) return;

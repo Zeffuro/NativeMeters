@@ -8,6 +8,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Data.Stats;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 using NativeMeters.Rendering;
 using NativeMeters.Services;
@@ -152,8 +153,8 @@ public static class MeterPresets
 
     public static List<ComponentSettings> GetDefaultFooterComponents() =>
     [
-        Text("Deaths Label", "Deaths: [deaths]", StylishLeft, 2, 94, 20),
-        Text("Raid DPS Label", "Raid DPS: [dps]", 110, 2, StylishRight - 110, 20, 14, AlignmentType.Right),
+        Text("Deaths Label", Loc.Format("PresetFooterDeaths", "[deaths]"), StylishLeft, 2, 94, 20),
+        Text("Raid DPS Label", Loc.Format("PresetFooterRaidDps", "[dps]"), 110, 2, StylishRight - 110, 20, 14, AlignmentType.Right),
     ];
 
     public static List<ComponentSettings> GetDefaultStylishComponents()

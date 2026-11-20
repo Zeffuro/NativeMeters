@@ -2,6 +2,7 @@ using Dalamud.Bindings.ImGui;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Extensions;
 using NativeMeters.Services;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Configuration.ImportExport;
 
@@ -19,18 +20,19 @@ public abstract class ConfigPorter {
                 if (imported.SetupStatus == SetupStatus.Pending)
                     imported.SetupStatus = SetupStatus.Finished;
                 System.Config = imported;
+                Loc.SetLanguage(imported.General.UiLanguage);
                 ConnectionSelection.ApplyCurrent();
                 ConfigRepository.Save(System.Config);
-                Service.NotificationManager.Success("Configuration imported from clipboard.");
+                Service.NotificationManager.Success(Loc.Get("NotifyConfigImported"));
             }
             else
             {
-                Service.NotificationManager.Error("Clipboard data was invalid or could not be imported.");
+                Service.NotificationManager.Error(Loc.Get("NotifyConfigImportFailed"));
             }
         }
         else
         {
-            Service.NotificationManager.Warning("Clipboard is empty or invalid for import.");
+            Service.NotificationManager.Warning(Loc.Get("NotifyConfigClipboardInvalid"));
         }
     }
 
@@ -39,15 +41,16 @@ public abstract class ConfigPorter {
     {
         var exportString = ConfigSerializer.SerializeConfig(config);
         ClipboardService.SetClipboardText(exportString);
-        Service.NotificationManager.Success("Configuration exported to clipboard.");
+        Service.NotificationManager.Success(Loc.Get("NotifyConfigExported"));
     }
 
     public static void TryResetConfig()
     {
         System.Config = ConfigRepository.Reset();
+        Loc.SetLanguage(System.Config.General.UiLanguage);
         ConnectionSelection.ApplyCurrent();
         ConfigRepository.Save(System.Config);
-        Service.NotificationManager.Success("Configuration reset to default.");
+        Service.NotificationManager.Success(Loc.Get("NotifyConfigReset"));
     }
 
     public static void TryExportMeterToClipboard(MeterSettings meter)
@@ -55,13 +58,13 @@ public abstract class ConfigPorter {
         var exportString = ConfigSerializer.SerializeCompressed(meter);
 
         ClipboardService.SetClipboardText(exportString);
-        Service.NotificationManager.Success($"Meter '{meter.Name}' exported to clipboard.");
+        Service.NotificationManager.Success(Loc.Format("NotifyMeterExported", meter.Name));
     }
 
     public static MeterSettings? TryImportMeterFromClipboard()
     {
         var imported = ReadMeterFromClipboard();
-        if (imported != null) Service.NotificationManager.Success("Meter settings imported.");
+        if (imported != null) Service.NotificationManager.Success(Loc.Get("NotifyMeterImported"));
         return imported;
     }
 
@@ -71,7 +74,7 @@ public abstract class ConfigPorter {
 
         if (string.IsNullOrWhiteSpace(clipboard))
         {
-            Service.NotificationManager.Warning("Clipboard is empty.");
+            Service.NotificationManager.Warning(Loc.Get("NotifyClipboardEmpty"));
             return null;
         }
 
@@ -81,7 +84,7 @@ public abstract class ConfigPorter {
 
             if (imported == null)
             {
-                Service.NotificationManager.Error("Clipboard data could not be parsed.");
+                Service.NotificationManager.Error(Loc.Get("NotifyClipboardParseFailed"));
                 return null;
             }
 
@@ -90,7 +93,7 @@ public abstract class ConfigPorter {
         }
         catch
         {
-            Service.NotificationManager.Error("Invalid meter data in clipboard.");
+            Service.NotificationManager.Error(Loc.Get("NotifyClipboardMeterInvalid"));
             return null;
         }
     }

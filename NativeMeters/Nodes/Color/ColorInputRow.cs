@@ -6,6 +6,8 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addons;
 using KamiToolKit.Nodes;
+using NativeMeters.Nodes.Configuration;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Color;
 
@@ -49,6 +51,15 @@ public class ColorInputRow : HorizontalListNode
 
         colorPreview.AttachNode(this);
         labelTextNode.AttachNode(this);
+    }
+
+    protected override void OnSizeChanged()
+    {
+        base.OnSizeChanged();
+        var previewSize = Math.Min(Height, 28.0f);
+        ConfigurationLayout.SetSize(colorPreview, new Vector2(previewSize));
+        labelTextNode.X = previewSize;
+        labelTextNode.Height = Height;
     }
 
     public override bool IsVisible
@@ -115,9 +126,11 @@ public class ColorInputRow : HorizontalListNode
     private static void InitializeColorPicker() {
         if (_sharedColorPickerAddon is not null) return;
 
+        var (title, subtitle) = Loc.GetWindowHeader("WindowColorPicker");
         _sharedColorPickerAddon = new ColorPickerAddon {
             InternalName = "ColorPicker_NativeMeters",
-            Title = "Pick a color",
+            Title = title,
+            Subtitle = subtitle is null ? null : subtitle,
         };
     }
 

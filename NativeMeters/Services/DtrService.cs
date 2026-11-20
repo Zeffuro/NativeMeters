@@ -5,6 +5,7 @@ using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
 using NativeMeters.Configuration;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 using NativeMeters.Tags;
 
@@ -65,7 +66,7 @@ public class DtrService : IDisposable
             if (Settings.ShowWhenDisconnected)
             {
                 dtrEntry.Text = new SeStringBuilder().AddText(Settings.DisconnectedText).Build();
-                dtrEntry.Tooltip = "Not connected to ACT/IINACT";
+                dtrEntry.Tooltip = Loc.Get("HudDisconnected");
                 dtrEntry.Shown = true;
             }
             else
@@ -84,7 +85,7 @@ public class DtrService : IDisposable
     {
         var meterService = System.ActiveMeterService;
         if (!meterService.HasCombatData())
-            return new SeStringBuilder().AddText("Idle").Build();
+            return new SeStringBuilder().AddText(Loc.Get("HudIdle")).Build();
 
         var usePersonalDps = Settings.UsePersonalDps;
         var combatant = meterService.GetCombatant("YOU");
@@ -150,10 +151,8 @@ public class DtrService : IDisposable
         var encounter = System.ActiveMeterService.GetEncounter();
         if (encounter != null)
         {
-            builder.AddText($"\nEncounter: {encounter.Title}");
-            builder.AddText($"\nDuration: {encounter.Duration:mm\\:ss}");
-            builder.AddText($"\nRaid DPS: {encounter.ENCDPS:N0}");
-            builder.AddText($"\nDeaths: {encounter.Deaths}");
+            builder.AddText("\n" + Loc.Format("HudEncounterDetails", encounter.Title,
+                encounter.Duration.ToString(@"mm\:ss"), encounter.ENCDPS, encounter.Deaths));
 
             if (System.ActiveMeterService.HasCombatData())
             {
@@ -170,7 +169,8 @@ public class DtrService : IDisposable
                             continue;
 
                         var name = c.Job.RowId != 0 ? c.Job.Abbreviation.ToString() : null;
-                        if (string.IsNullOrEmpty(name)) name = c.Name;
+                        if (string.IsNullOrEmpty(name))
+                            name = c.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase) ? Loc.Get("HudLimitBreak") : c.Name;
 
                         builder.AddText($"\n{name,-4} {c.ENCDPS:N0}");
                     }
@@ -179,7 +179,7 @@ public class DtrService : IDisposable
         }
 
         if (Settings.ClickToOpenConfig)
-            builder.AddUiForeground("\n\nClick to open config", 48);
+            builder.AddUiForeground("\n\n" + Loc.Get("HudOpenConfig"), 48);
 
         return builder.Build();
     }

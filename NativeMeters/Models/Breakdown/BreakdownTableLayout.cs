@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Models.Breakdown;
 
@@ -10,16 +11,16 @@ public class BreakdownTableLayout
 
     public List<BreakdownColumn> Columns { get; set; } =
     [
-        new("Action", "Action", 0, true, ColumnAlignment.Left),
-        new("Hits", "Hits", 36),
-        new("Crit", "C%", 40),
-        new("DH", "DH%", 40),
+        new("Action", Loc.Get("BreakdownAction"), 0, true, ColumnAlignment.Left),
+        new("Hits", Loc.Get("BreakdownHits"), 36),
+        new("Crit", Loc.Get("BreakdownCritShort"), 40),
+        new("DH", Loc.Get("BreakdownDirectShort"), 40),
         new("Pct", "%", 46),
-        new("Total", "Damage", 64),
+        new("Total", Loc.Get("BreakdownDamage"), 64),
         new("PerSec", "DPS", 48),
-        new("Max", "Max", 54),
-        new("Active", "Active", 42),
-        new("Overheal", "OH%", 45),
+        new("Max", Loc.Get("BreakdownMax"), 54),
+        new("Active", Loc.Get("BreakdownActive"), 42),
+        new("Overheal", Loc.Get("BreakdownOverhealShort"), 45),
     ];
 
     public IReadOnlyList<BreakdownColumn> VisibleColumns

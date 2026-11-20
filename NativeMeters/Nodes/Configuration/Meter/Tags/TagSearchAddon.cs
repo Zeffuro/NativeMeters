@@ -4,6 +4,7 @@ using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Components.Search;
 using Lumina.Text.ReadOnly;
+using NativeMeters.Localization;
 using NativeMeters.Tags;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Tags;
@@ -22,6 +23,7 @@ public class TagSearchAddon : AbstractSearchAddon<TagInfo, TagListItemNode>
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
         base.OnSetup(addon, atkValueSpan);
+        this.SetLocalizedTitle("WindowTagPicker");
         OptionsList = SortTags(TagRegistry.GetAllTags());
     }
 

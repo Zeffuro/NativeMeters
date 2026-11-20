@@ -3,6 +3,7 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using static NativeMeters.Nodes.Configuration.Setup.SetupControls;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
@@ -19,7 +20,7 @@ internal sealed class MeterImportConfirmationAddon(NativeAddon owner) : NativeAd
     {
         if (IsBusy || !owner.IsOpen) return;
 
-        var meterName = string.IsNullOrWhiteSpace(name) ? "Unnamed meter" : name.Replace('\r', ' ').Replace('\n', ' ');
+        var meterName = string.IsNullOrWhiteSpace(name) ? Loc.Get("MeterUnnamed") : name.Replace('\r', ' ').Replace('\n', ' ');
         request = new RequestData(meterName, onConfirm);
         try
         {
@@ -35,9 +36,10 @@ internal sealed class MeterImportConfirmationAddon(NativeAddon owner) : NativeAd
     {
         if (request is not { } pending) return;
 
+        this.SetLocalizedTitle("WindowImportMeter");
         var start = ContentStartPosition + new Vector2(8, 8);
         var width = ContentSize.X - 16;
-        var description = Line("Replace this meter's settings with the clipboard contents?");
+        var description = Line(Loc.Get("MeterReplacePrompt"));
         description.Position = start;
         description.Width = width;
         description.AttachNode(this);
@@ -48,7 +50,7 @@ internal sealed class MeterImportConfirmationAddon(NativeAddon owner) : NativeAd
         name.AttachNode(this);
 
         var buttonY = ContentStartPosition.Y + ContentSize.Y - 32;
-        var cancel = FooterButton("Cancel", 1, ButtonWidth, () =>
+        var cancel = FooterButton(Loc.Get("MeterCancel"), 1, ButtonWidth, () =>
         {
             if (ReferenceEquals(request, pending)) Cancel();
         });
@@ -56,7 +58,7 @@ internal sealed class MeterImportConfirmationAddon(NativeAddon owner) : NativeAd
         cancel.NavRight = 2;
         cancel.AttachNode(this);
 
-        var replace = FooterButton("Replace Meter", 2, ButtonWidth, () => Confirm(pending));
+        var replace = FooterButton(Loc.Get("MeterReplace"), 2, ButtonWidth, () => Confirm(pending));
         replace.Position = new Vector2(start.X + width - ButtonWidth, buttonY);
         replace.NavLeft = 1;
         replace.AttachNode(this);

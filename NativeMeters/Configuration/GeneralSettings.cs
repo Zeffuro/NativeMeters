@@ -6,6 +6,7 @@ namespace NativeMeters.Configuration;
 
 public class GeneralSettings
 {
+    public string? UiLanguage { get; set; }
     public bool DebugEnabled { get; set; } = false;
     public bool IsEnabled { get; set; } = true;
     public bool PreviewEnabled { get; set; }

@@ -6,6 +6,7 @@ using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Configuration.Meter.Panels;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
@@ -80,14 +81,14 @@ public sealed class ComponentSettingsNode : CollapsingHeaderNode, ILayoutListNod
 
         var deleteButton = new TextButtonNode()
         {
-            String = "Delete",
+            String = Loc.Get("CommonDelete"),
             Size = new Vector2(100, 24),
             OnClick = () => OnDeleted?.Invoke()
         };
 
         var duplicateButton = new TextButtonNode()
         {
-            String = "Duplicate",
+            String = Loc.Get("CommonDuplicate"),
             Size = new Vector2(100, 24),
             OnClick = () =>
             {

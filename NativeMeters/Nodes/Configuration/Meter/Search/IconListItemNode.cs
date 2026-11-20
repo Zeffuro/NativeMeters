@@ -3,6 +3,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Search;
 
@@ -40,6 +41,6 @@ public class IconListItemNode : ListItemNode<uint>, IListItemNode
     protected override void SetNodeData(uint iconId)
     {
         iconNode.IconId = iconId;
-        idTextNode.String = $"Icon ID: {iconId}";
+        idTextNode.String = Loc.Format("IconIdLabel", iconId);
     }
 }

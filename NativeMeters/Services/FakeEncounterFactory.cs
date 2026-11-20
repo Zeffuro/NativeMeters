@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NativeMeters.Data.Stats;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 
 namespace NativeMeters.Services;
@@ -19,8 +20,8 @@ public static class FakeEncounterFactory
             // Metadata
             N = "Test Encounter",
             T = "Boss",
-            Title = "Fake Boss",
-            CurrentZoneName = "Fake Zone",
+            Title = Loc.Get("PreviewBoss"),
+            CurrentZoneName = Loc.Get("PreviewZone"),
 
             Duration = Aggregator.AvgTimeSpan(list, c => c.Duration),
             DURATION = Aggregator.Avg(list, c => c.DURATION),

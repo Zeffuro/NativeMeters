@@ -3,6 +3,7 @@ using Dalamud.Game.ClientState.Keys;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
+using NativeMeters.Localization;
 using NativeMeters.Configuration.ImportExport;
 using NativeMeters.Services;
 
@@ -24,7 +25,7 @@ public sealed class ImportExportResetNode : HorizontalListNode
             Height = 30,
             Width = 30,
             IsVisible = true,
-            TextTooltip = " Import Configuration\n(hold shift to confirm)",
+            TextTooltip = Loc.Get("GeneralImport"),
             TexturePath = Path.Combine(Service.PluginInterface.AssemblyLocation.Directory?.FullName!, @"Assets\Icons\download.png"),
             OnClick = ImportConfig
         });
@@ -34,7 +35,7 @@ public sealed class ImportExportResetNode : HorizontalListNode
             Height = 30,
             Width = 30,
             IsVisible = true,
-            TextTooltip = "Export Configuration",
+            TextTooltip = Loc.Get("GeneralExport"),
             TexturePath = Path.Combine(Service.PluginInterface.AssemblyLocation.Directory?.FullName!, @"Assets\Icons\upload.png"),
             OnClick = ExportConfig
         });
@@ -44,9 +45,9 @@ public sealed class ImportExportResetNode : HorizontalListNode
             Y = 0,
             Height = 32,
             Width = 100,
-            String = "Reset",
+            String = Loc.Get("GeneralReset"),
             TextNode = { TextColor = ColorHelper.GetColor(50) },
-            TextTooltip = "   Reset configuration\n(hold button to confirm)",
+            TextTooltip = Loc.Get("GeneralResetHelp"),
             OnClick = ResetConfig
         });
     }

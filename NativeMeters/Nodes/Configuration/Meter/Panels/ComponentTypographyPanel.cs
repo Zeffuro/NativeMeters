@@ -5,6 +5,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Nodes.Input;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Panels;
 
@@ -31,14 +32,15 @@ public sealed class ComponentTypographyPanel : VerticalListNode
 
         headerLabel = new LabelTextNode
         {
-            String = "Typography",
+            String = Loc.Get("ComponentTypography"),
             Size = new Vector2(Width, 20),
             TextColor = new Vector4(0.7f, 0.7f, 1f, 1f)
         };
 
         fontTypeEnumDropdown = new ComponentEnumDropdownRowNode<FontType>
         {
-            LabelText = "Font:",
+            ShowStepButtons = true,
+            LabelText = Loc.Get("ComponentFont"),
             Size = new Vector2(Width, 28),
             Options = Enum.GetValues<FontType>().ToList(),
             OnOptionSelected = val =>
@@ -50,7 +52,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
 
         textFlagsInput = new LabeledTextFlagsInputNode
         {
-            LabelText = "Style:",
+            LabelText = Loc.Get("ComponentStyle"),
             LabelWidth = 128.0f,
             ControlSpacing = 0.0f,
             MaximumControlWidth = float.PositiveInfinity,
@@ -63,7 +65,8 @@ public sealed class ComponentTypographyPanel : VerticalListNode
 
         alignmentEnumDropdown = new ComponentEnumDropdownRowNode<AlignmentType>
         {
-            LabelText = "Alignment:",
+            ShowStepButtons = true,
+            LabelText = Loc.Get("ComponentAlignment"),
             Size = new Vector2(Width, 28),
             Options = Enum.GetValues<AlignmentType>().ToList(),
             OnOptionSelected = val =>
@@ -75,7 +78,7 @@ public sealed class ComponentTypographyPanel : VerticalListNode
 
         fontSizeInput = new ComponentNumericInputRowNode
         {
-            LabelText = "Size:",
+            LabelText = Loc.Get("ComponentFontSize"),
             Size = new Vector2(Width, 28),
             Min = 6,
             Max = 72,

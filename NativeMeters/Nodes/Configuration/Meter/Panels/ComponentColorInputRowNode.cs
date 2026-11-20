@@ -1,48 +1,18 @@
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using AetherBags.Nodes.Color;
-using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Nodes;
 using NativeMeters.Nodes.Color;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Panels;
 
-internal sealed class ComponentColorInputRowNode : ResNode, IConfigurationNavigationNode
+internal sealed class ComponentColorInputRowNode : ComponentEditorRowNode<ColorPreviewButtonNode>
 {
     private const float PreviewSize = 28.0f;
-    private const float LabelOffset = PreviewSize + 4.0f;
 
-    private readonly ColorPreviewButtonNode colorPreview;
-    private readonly LabelTextNode labelTextNode;
-
-    public ComponentColorInputRowNode()
+    public ComponentColorInputRowNode() : base(new ColorPreviewButtonNode())
     {
-        colorPreview = new ColorPreviewButtonNode
-        {
-            Size = new Vector2(PreviewSize),
-            OnClick = OpenColorPicker,
-        };
-        colorPreview.AttachNode(this);
-
-        labelTextNode = new LabelTextNode
-        {
-            TextFlags = TextFlags.Ellipsis,
-        };
-        labelTextNode.AttachNode(this);
-
-        Height = 28.0f;
-    }
-
-    public override bool IsVisible
-    {
-        get => base.IsVisible;
-        set
-        {
-            base.IsVisible = value;
-            colorPreview.IsVisible = value;
-            labelTextNode.IsVisible = value;
-        }
+        ControlNode.OnClick = OpenColorPicker;
+        MaximumControlWidth = PreviewSize;
     }
 
     public string Label
@@ -51,7 +21,7 @@ internal sealed class ComponentColorInputRowNode : ResNode, IConfigurationNaviga
         set
         {
             field = value;
-            labelTextNode.String = value;
+            LabelText = value;
         }
     } = string.Empty;
 
@@ -61,7 +31,7 @@ internal sealed class ComponentColorInputRowNode : ResNode, IConfigurationNaviga
         set
         {
             field = value;
-            colorPreview.Color = value;
+            ControlNode.Color = value;
         }
     }
 
@@ -70,20 +40,13 @@ internal sealed class ComponentColorInputRowNode : ResNode, IConfigurationNaviga
     public Action<Vector4>? OnColorCanceled { get; set; }
     public Action<Vector4>? OnColorPreviewed { get; set; }
 
-    public IEnumerable<ConfigurationNavigationTarget> GetNavigationTargets()
+    protected override void LayoutRow(float labelWidth, float controlX, float controlWidth)
     {
-        yield return ConfigurationNavigationTarget.From(colorPreview);
-    }
-
-    protected override void OnSizeChanged()
-    {
-        base.OnSizeChanged();
-
-        colorPreview.Position = Vector2.Zero;
-        ConfigurationLayout.SetSize(colorPreview, new Vector2(Math.Min(PreviewSize, Height)));
-
-        labelTextNode.Position = new Vector2(LabelOffset, 0.0f);
-        ConfigurationLayout.SetSize(labelTextNode, new Vector2(Math.Max(0.0f, Width - LabelOffset), Height));
+        var previewSize = Math.Min(controlWidth, Height);
+        LabelNode.Position = Vector2.Zero;
+        ConfigurationLayout.SetSize(LabelNode, new Vector2(labelWidth, Height));
+        ControlNode.Position = new Vector2(controlX, (Height - previewSize) / 2);
+        ConfigurationLayout.SetSize(ControlNode, new Vector2(previewSize));
     }
 
     private void OpenColorPicker()

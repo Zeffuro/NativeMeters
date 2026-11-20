@@ -5,6 +5,7 @@ using System.Text;
 using Dalamud.Game.Command;
 using NativeMeters.Services;
 using NativeMeters.Utilities;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Commands;
 
@@ -21,30 +22,30 @@ public class CommandHandler : IDisposable
     {
         subCommands = new Dictionary<string, SubCommand>(StringComparer.OrdinalIgnoreCase)
         {
-            ["config"] = new(args => System.AddonConfigurationWindow.Toggle(), "Open the configuration window"),
+            ["config"] = new(args => System.AddonConfigurationWindow.Toggle(), Loc.Get("CommandOpenConfig")),
             ["setup"] = new(args =>
             {
                 if (Service.ClientState.IsLoggedIn)
                     System.SetupWizard.OpenForSetup();
                 else
-                    PrintChat("Log in on a character to open setup.");
-            }, "Open the setup wizard"),
+                    PrintChat(Loc.Get("CommandLoginRequired"));
+            }, Loc.Get("CommandOpenSetup")),
             ["toggle"] = new(args => {
                 System.Config.General.IsEnabled = !System.Config.General.IsEnabled;
                 System.OverlayManager.Setup();
                 System.PartyListMeterManager?.UpdateSettings();
-                PrintChat($"Meters {(System.Config.General.IsEnabled ? "enabled" : "disabled")}.");
-            }, "Toggle the meter display on/off"),
-            ["breakdown"] = new(args => System.AddonDetailedBreakdownWindow.Toggle(), "Open the detailed breakdown window"),
-            ["resetenmity"] = new(args => EnmityUtilities.ResetAllStrikingDummies(), "Resets enmity on all nearby Striking Dummies"),
-            ["help"] = new(args => PrintHelp(), "Show this help message"),
+                PrintChat(Loc.Get(System.Config.General.IsEnabled ? "CommandMetersEnabled" : "CommandMetersDisabled"));
+            }, Loc.Get("CommandToggle")),
+            ["breakdown"] = new(args => System.AddonDetailedBreakdownWindow.Toggle(), Loc.Get("CommandOpenBreakdown")),
+            ["resetenmity"] = new(args => EnmityUtilities.ResetAllStrikingDummies(), Loc.Get("CommandResetDummies")),
+            ["help"] = new(args => PrintHelp(), Loc.Get("CommandShowHelp")),
         };
 
         var commandInfo = new CommandInfo(OnCommand)
         {
             DisplayOrder = 1,
             ShowInHelp = true,
-            HelpMessage = "Main command for NativeMeters. Use '/ntm help' for all options."
+            HelpMessage = Loc.Get("CommandMainHelp")
         };
 
         Service.CommandManager.AddHandler(MainCommand, commandInfo);
@@ -70,7 +71,7 @@ public class CommandHandler : IDisposable
             if (debugArgs.Length == 2 && debugArgs[0].Equals("capture", StringComparison.OrdinalIgnoreCase))
                 Capture(debugArgs[1]);
             else
-                PrintChat("Use /ntm debug capture start or /ntm debug capture stop.");
+                PrintChat(Loc.Get("CommandCaptureUsage"));
             return;
         }
 
@@ -80,7 +81,7 @@ public class CommandHandler : IDisposable
         }
         else
         {
-            PrintChat($"Unknown command: {subCommandName}. Type '{command} help' for a list of commands.");
+            PrintChat(Loc.Format("CommandUnknown", subCommandName, command));
         }
     }
 
@@ -91,28 +92,28 @@ public class CommandHandler : IDisposable
             switch (args.Trim().ToLowerInvariant())
             {
                 case "start":
-                    PrintChat($"Capturing to {System.InternalMeterService.StartCapture()}");
+                    PrintChat(Loc.Format("CommandCaptureStarted", System.InternalMeterService.StartCapture()));
                     break;
                 case "stop":
                     var path = System.InternalMeterService.StopCapture();
-                    PrintChat(path == null ? "No capture is running." : $"Capture saved to {path}");
+                    PrintChat(path == null ? Loc.Get("CommandCaptureNotRunning") : Loc.Format("CommandCaptureSaved", path));
                     break;
                 default:
-                    PrintChat("Use /ntm debug capture start or /ntm debug capture stop.");
+                    PrintChat(Loc.Get("CommandCaptureUsage"));
                     break;
             }
         }
         catch (Exception ex)
         {
             Service.Logger.Error(ex, "Parser capture failed.");
-            PrintChat($"Capture failed: {ex.Message}");
+            PrintChat(Loc.Format("CommandCaptureFailed", ex.Message));
         }
     }
 
     private void PrintHelp()
     {
-        var sb = new StringBuilder("NativeMeters Help:\n");
-        sb.AppendLine($"{ShortCommand} → Open configuration");
+        var sb = new StringBuilder().AppendLine(Loc.Get("CommandHelpHeading"));
+        sb.AppendLine($"{ShortCommand} → {Loc.Get("CommandOpenConfig")}");
 
         foreach (var kvp in subCommands.OrderBy(x => x.Key))
         {

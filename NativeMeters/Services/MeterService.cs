@@ -9,6 +9,7 @@ using NativeMeters.Configuration;
 using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Services.Connections;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Services;
 
@@ -157,7 +158,7 @@ public class MeterService : MeterServiceBase, IDisposable
     private void ShowConnectionNotification()
     {
         var service = System.Config.ConnectionSettings.SelectedConnectionType == ConnectionType.WebSocket ? "ACT" : "IINACT";
-        Service.NotificationManager.Success($"Connected to {service}.");
+        Service.NotificationManager.Success(Loc.Format("NotifyConnected", service));
     }
 
     public override bool IsConnected => activeConnection?.IsConnected ?? false;

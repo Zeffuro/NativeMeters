@@ -1,47 +1,20 @@
 using System;
-using System.Collections.Generic;
 using KamiToolKit.Nodes;
 
 namespace NativeMeters.Nodes.Input;
 
-public class LabeledDropdownNode : LabeledControlRowNode<StringDropDownNode>
+public class LabeledDropdownNode : LabeledDropdownRowNode<string, StringDropDownNode>
 {
-    public LabeledDropdownNode() : base(new StringDropDownNode { Options = new List<string>() }) { }
+    public LabeledDropdownNode() : base(new StringDropDownNode { Options = [] }) { }
 
-    public Action<string>? OnOptionSelected {
-        get => ControlNode.OnOptionSelected;
-        set => ControlNode.OnOptionSelected = value;
+    public Func<string, string> GetOptionLabel
+    {
+        init => ControlNode.GetLabelFunction = option => value(option);
     }
 
-    public string? SelectedOption {
+    public string? SelectedOption
+    {
         get => ControlNode.SelectedOption;
         set => ControlNode.SelectedOption = value;
-    }
-
-    public int MaxListOptions
-    {
-        get => ControlNode.MaxListOptions;
-        set => ControlNode.MaxListOptions = value;
-    }
-
-    public bool IsEnabled
-    {
-        get => ControlNode.IsEnabled;
-        set
-        {
-            ControlNode.IsEnabled = value;
-            Alpha = value ? 1.0f : 0.45f;
-        }
-    }
-
-    public required List<string> Options
-    {
-        get => ControlNode.Options!;
-        set => ControlNode.Options = value;
-    }
-
-    protected override void OnVisibilityChanged(bool isVisible)
-    {
-        if (!isVisible) ControlNode.Collapse(playSoundEffect: false);
     }
 }

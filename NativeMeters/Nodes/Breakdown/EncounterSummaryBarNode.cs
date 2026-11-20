@@ -3,6 +3,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Simplified;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 using NativeMeters.Models.Breakdown;
 using NativeMeters.Tags.Formatting;
@@ -65,7 +66,7 @@ public sealed class EncounterSummaryBarNode : SimpleComponentNode
     {
         if (encounter == null)
         {
-            primaryValueText.String = "No Data";
+            primaryValueText.String = Loc.Get("BreakdownNoData");
             secondaryValueText.String = "";
             durationText.String = "";
             return;
@@ -74,12 +75,12 @@ public sealed class EncounterSummaryBarNode : SimpleComponentNode
         switch (tab)
         {
             case BreakdownTab.Damage:
-                primaryValueText.String = $"{Formatter.Format(encounter.Damage, "", "m", 2)} Total";
-                secondaryValueText.String = $"{Formatter.Format(encounter.ENCDPS, "", "", 0)} rDPS";
+                primaryValueText.String = Loc.Format("BreakdownTotalDamage", Formatter.Format(encounter.Damage, "", "m", 2));
+                secondaryValueText.String = Loc.Format("BreakdownRaidDps", Formatter.Format(encounter.ENCDPS, "", "", 0));
                 break;
             case BreakdownTab.Healing:
-                primaryValueText.String = $"{Formatter.Format(encounter.Healed, "", "m", 2)} Healed";
-                secondaryValueText.String = $"{Formatter.Format(encounter.ENCHPS, "", "", 0)} rHPS";
+                primaryValueText.String = Loc.Format("BreakdownTotalHealing", Formatter.Format(encounter.Healed, "", "m", 2));
+                secondaryValueText.String = Loc.Format("BreakdownRaidHps", Formatter.Format(encounter.ENCHPS, "", "", 0));
                 break;
         }
 

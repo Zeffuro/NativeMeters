@@ -8,6 +8,7 @@ using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Simplified;
 using NativeMeters.Configuration;
 using NativeMeters.Extensions;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 using NativeMeters.Models.Breakdown;
 using NativeMeters.Services;
@@ -164,18 +165,16 @@ public sealed class BreakdownPlayerSectionNode : LayoutListNode
                     ? combatant.ActiveTime.Value.TotalSeconds / encounterDuration * 100.0 : 0;
                 var critPct = combatant.Swings > 0 ? combatant.Crithits * 100.0 / combatant.Swings : 0;
                 var dhPct = combatant.Hits > 0 ? combatant.DirectHitCount * 100.0 / combatant.Hits : 0;
-                primaryStatText.String = $"DPS: {Formatter.Format(combatant.ENCDPS, "", "", 0)}  "
-                                         + $"Crit: {critPct:F0}%  DH: {dhPct:F0}%  "
-                                         + $"Up: {uptimePct:F0}%";
+                primaryStatText.String = Loc.Format("BreakdownDamageStats",
+                    Formatter.Format(combatant.ENCDPS, "", "", 0), critPct, dhPct, uptimePct);
                 break;
             case BreakdownTab.Healing:
                 var healUp = combatant.ActiveTime.HasValue && encounterDuration > 0
                     ? combatant.ActiveTime.Value.TotalSeconds / encounterDuration * 100.0 : 0;
                 var critHealPct = combatant.Heals > 0 ? combatant.Critheals * 100.0 / combatant.Heals : 0;
                 var ohPct = combatant.Healed > 0 ? combatant.OverHeal * 100.0 / combatant.Healed : 0;
-                primaryStatText.String = $"HPS: {Formatter.Format(combatant.ENCHPS, "", "", 0)}  "
-                                         + $"Crit: {critHealPct:F0}%  OH: {ohPct:F0}%  "
-                                         + $"Up: {healUp:F0}%";
+                primaryStatText.String = Loc.Format("BreakdownHealingStats",
+                    Formatter.Format(combatant.ENCHPS, "", "", 0), critHealPct, ohPct, healUp);
                 break;
         }
 
@@ -187,14 +186,16 @@ public sealed class BreakdownPlayerSectionNode : LayoutListNode
     public static string GetCombatantKey(Combatant combatant)
         => $"{combatant.Name}|{combatant.Job.RowId}";
 
-    public static string GetDisplayName(Combatant combatant)
+    public static string GetDisplayName(Combatant combatant) => GetDisplayName(combatant, localized: true);
+
+    internal static string GetDisplayName(Combatant combatant, bool localized)
     {
         if (combatant.Name.Equals("Limit Break", StringComparison.OrdinalIgnoreCase))
-            return combatant.Name;
+            return localized ? Loc.Get("HudLimitBreak") : combatant.Name;
 
         if (System.Config.General.PrivacyMode)
         {
-            var jobName = combatant.Job.NameEnglish.ToString();
+            var jobName = localized ? GameNames.JobName(combatant.Job) : combatant.Job.NameEnglish.ToString();
             if (string.IsNullOrEmpty(jobName)) jobName = combatant.Name;
             return combatant.PrivacyIndex.HasValue ? $"{jobName} {combatant.PrivacyIndex.Value}" : jobName;
         }

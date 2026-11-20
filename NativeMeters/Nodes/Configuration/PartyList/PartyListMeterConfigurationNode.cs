@@ -6,6 +6,7 @@ using KamiToolKit.BaseTypes;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
+using NativeMeters.Localization;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Data.Stats;
@@ -18,10 +19,11 @@ namespace NativeMeters.Nodes.Configuration.PartyList;
 internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalListNode
 {
     private const float CategoryHeight = 16.0f;
-    private const float CheckboxHeight = 28.0f;
-    private const float ControlHeight = 28.0f;
-    private const float FormatButtonSize = 24.0f;
-    private const float ResetButtonHeight = 28.0f;
+    private const float CheckboxHeight = 20.0f;
+    private const float ControlHeight = 24.0f;
+    private const float FormatRowHeight = 28.0f;
+    private const float FormatButtonSize = 20.0f;
+    private const float ResetButtonHeight = 24.0f;
 
     private readonly PartyListMeterSettings config = System.Config.PartyListMeter;
 
@@ -86,7 +88,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         AddNode(new CategoryTextNode
         {
             Height = CategoryHeight,
-            String = "Party List Meter",
+            String = Loc.Get("PartyListMeter"),
         });
 
         BuildGeneralControls();
@@ -105,9 +107,9 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
-            String = "Enabled",
+            String = Loc.Get("GeneralEnabled"),
             IsChecked = config.Enabled,
-            TextTooltip = "Shows lightweight NativeMeters text on each party-list row.",
+            TextTooltip = Loc.Get("PartyListEnableHelp"),
             OnClick = isChecked =>
             {
                 config.Enabled = isChecked;
@@ -120,10 +122,10 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         {
             Size = new Vector2(92, ResetButtonHeight),
             IsVisible = true,
-            String = "Reset",
+            String = Loc.Get("GeneralReset"),
             TextNode = { TextColor = ColorHelper.GetColor(50) },
             UnlockAfterClick = true,
-            TextTooltip = "Reset Party List settings\n(hold button to confirm)",
+            TextTooltip = Loc.Get("PartyListResetHelp"),
             OnClick = ResetPartyListSettings,
         };
     }
@@ -134,7 +136,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
-            String = "Show Self",
+            String = Loc.Get("PartyListShowSelf"),
             IsChecked = config.ShowSelf,
             OnClick = isChecked =>
             {
@@ -147,7 +149,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
-            String = "Show Party Members",
+            String = Loc.Get("PartyListShowMembers"),
             IsChecked = config.ShowPartyMembers,
             OnClick = isChecked =>
             {
@@ -160,7 +162,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
-            String = "Hide Without Combat Data",
+            String = Loc.Get("PartyListHideEmpty"),
             IsChecked = config.HideWhenNoCombatData,
             OnClick = isChecked =>
             {
@@ -171,14 +173,14 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
 
         formatRow = new HorizontalListNode
         {
-            Size = new Vector2(420, ControlHeight),
+            Size = new Vector2(420, FormatRowHeight),
             ItemSpacing = 2.0f,
         };
 
         formatInput = new LabeledTextInputNode
         {
-            Size = new Vector2(360, ControlHeight),
-            LabelText = "Format:",
+            Size = new Vector2(360, FormatRowHeight),
+            LabelText = Loc.Get("PartyListFormat"),
             Text = config.MemberFormat,
             Placeholder = "[dps:c.1]",
             OnInputComplete = value =>
@@ -194,8 +196,9 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
 
         anchorDropdown = new LabeledEnumDropdownNode<PartyListMeterAnchor>
         {
+            ShowStepButtons = true,
             Size = new Vector2(360, ControlHeight),
-            LabelText = "Anchor:",
+            LabelText = Loc.Get("PartyListAnchor"),
             Options = Enum.GetValues<PartyListMeterAnchor>().ToList(),
             SelectedOption = config.Anchor,
             OnOptionSelected = value =>
@@ -205,19 +208,20 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             },
         };
 
-        memberOffsetRow = CreatePairedInputRow("Position:");
-        memberSizeRow = CreatePairedInputRow("Size:");
-        offsetXInput = CreateCompactNumericInput("X:", config.OffsetX, -500, 500, value => config.OffsetX = value);
-        offsetYInput = CreateCompactNumericInput("Y:", config.OffsetY, -500, 500, value => config.OffsetY = value);
-        widthInput = CreateCompactNumericInput("Width:", config.Width, 1, 500, value => config.Width = value);
-        heightInput = CreateCompactNumericInput("Height:", config.Height, 1, 100, value => config.Height = value);
+        memberOffsetRow = CreatePairedInputRow(Loc.Get("PartyListPosition"));
+        memberSizeRow = CreatePairedInputRow(Loc.Get("PartyListSize"));
+        offsetXInput = CreateCompactNumericInput(Loc.Get("PartyListPosX"), config.OffsetX, -500, 500, value => config.OffsetX = value);
+        offsetYInput = CreateCompactNumericInput(Loc.Get("PartyListPosY"), config.OffsetY, -500, 500, value => config.OffsetY = value);
+        widthInput = CreateCompactNumericInput(Loc.Get("PartyListWidth"), config.Width, 1, 500, value => config.Width = value);
+        heightInput = CreateCompactNumericInput(Loc.Get("PartyListHeight"), config.Height, 1, 100, value => config.Height = value);
         memberOffsetRow.AddInputPair(offsetXInput, offsetYInput);
         memberSizeRow.AddInputPair(widthInput, heightInput);
 
         memberAlignmentDropdown = new LabeledEnumDropdownNode<AlignmentType>
         {
+            ShowStepButtons = true,
             Size = new Vector2(360, ControlHeight),
-            LabelText = "Alignment:",
+            LabelText = Loc.Get("PartyListAlignment"),
             Options = Enum.GetValues<AlignmentType>().ToList(),
             SelectedOption = config.MemberAlignment,
             OnOptionSelected = value =>
@@ -234,9 +238,9 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
-            String = "Highlight Top Member",
+            String = Loc.Get("PartyListHighlightTop"),
             IsChecked = config.HighlightTopMember,
-            TextTooltip = "Applies a separate member text format and color to the highest party member for the selected stat.",
+            TextTooltip = Loc.Get("PartyListHighlightTopHelp"),
             OnClick = isChecked =>
             {
                 config.HighlightTopMember = isChecked;
@@ -247,8 +251,10 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
 
         topMemberStatDropdown = new LabeledDropdownNode
         {
+            ShowStepButtons = true,
             Size = new Vector2(360, ControlHeight),
-            LabelText = "Top Stat:",
+            LabelText = Loc.Get("PartyListTopStat"),
+            GetOptionLabel = Loc.StatLabel,
             Options = StatSelector.GetAvailableStatSelectors(),
             SelectedOption = config.TopMemberStat,
             OnOptionSelected = value =>
@@ -260,14 +266,14 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
 
         topMemberFormatRow = new HorizontalListNode
         {
-            Size = new Vector2(420, ControlHeight),
+            Size = new Vector2(420, FormatRowHeight),
             ItemSpacing = 2.0f,
         };
 
         topMemberFormatInput = new LabeledTextInputNode
         {
-            Size = new Vector2(360, ControlHeight),
-            LabelText = "Top Format:",
+            Size = new Vector2(360, FormatRowHeight),
+            LabelText = Loc.Get("PartyListTopFormat"),
             Text = config.TopMemberFormat,
             Placeholder = "[dps:c.1]",
             OnInputComplete = value =>
@@ -283,7 +289,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
 
         topMemberTextColorInput = new ColorInputRow
         {
-            Label = "Top Text Color: ",
+            Label = Loc.Get("PartyListTopColor"),
             Size = new Vector2(Width, ControlHeight),
             DefaultColor = new PartyListMeterSettings().TopMemberTextColor,
             CurrentColor = config.TopMemberTextColor,
@@ -311,9 +317,9 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
-            String = "Show Raid DPS",
+            String = Loc.Get("PartyListShowRaid"),
             IsChecked = config.ShowRaidDps,
-            TextTooltip = "Shows encounter-wide DPS next to the party-list header.",
+            TextTooltip = Loc.Get("PartyListRaidHelp"),
             OnClick = isChecked =>
             {
                 config.ShowRaidDps = isChecked;
@@ -324,14 +330,14 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
 
         raidFormatRow = new HorizontalListNode
         {
-            Size = new Vector2(420, ControlHeight),
+            Size = new Vector2(420, FormatRowHeight),
             ItemSpacing = 2.0f,
         };
 
         raidFormatInput = new LabeledTextInputNode
         {
-            Size = new Vector2(360, ControlHeight),
-            LabelText = "Raid Format:",
+            Size = new Vector2(360, FormatRowHeight),
+            LabelText = Loc.Get("PartyListRaidFormat"),
             Text = config.RaidDpsFormat,
             Placeholder = "[encdps:c.1]",
             OnInputComplete = value =>
@@ -345,19 +351,20 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         raidBrowseTagButton = CreateTagBrowserButton(() => OpenTagPicker(raidFormatInput));
         raidFormatRow.AddNode(new NodeBase[] { raidFormatInput, raidFormatHelpButton, raidBrowseTagButton });
 
-        raidOffsetRow = CreatePairedInputRow("Position:");
-        raidSizeRow = CreatePairedInputRow("Size:");
-        raidOffsetXInput = CreateCompactNumericInput("X:", config.RaidOffsetX, -500, 500, value => config.RaidOffsetX = value);
-        raidOffsetYInput = CreateCompactNumericInput("Y:", config.RaidOffsetY, -500, 500, value => config.RaidOffsetY = value);
-        raidWidthInput = CreateCompactNumericInput("Width:", config.RaidWidth, 1, 500, value => config.RaidWidth = value);
-        raidHeightInput = CreateCompactNumericInput("Height:", config.RaidHeight, 1, 100, value => config.RaidHeight = value);
+        raidOffsetRow = CreatePairedInputRow(Loc.Get("PartyListPosition"));
+        raidSizeRow = CreatePairedInputRow(Loc.Get("PartyListSize"));
+        raidOffsetXInput = CreateCompactNumericInput(Loc.Get("PartyListPosX"), config.RaidOffsetX, -500, 500, value => config.RaidOffsetX = value);
+        raidOffsetYInput = CreateCompactNumericInput(Loc.Get("PartyListPosY"), config.RaidOffsetY, -500, 500, value => config.RaidOffsetY = value);
+        raidWidthInput = CreateCompactNumericInput(Loc.Get("PartyListWidth"), config.RaidWidth, 1, 500, value => config.RaidWidth = value);
+        raidHeightInput = CreateCompactNumericInput(Loc.Get("PartyListHeight"), config.RaidHeight, 1, 100, value => config.RaidHeight = value);
         raidOffsetRow.AddInputPair(raidOffsetXInput, raidOffsetYInput);
         raidSizeRow.AddInputPair(raidWidthInput, raidHeightInput);
 
         raidAlignmentDropdown = new LabeledEnumDropdownNode<AlignmentType>
         {
+            ShowStepButtons = true,
             Size = new Vector2(360, ControlHeight),
-            LabelText = "Raid Alignment:",
+            LabelText = Loc.Get("PartyListRaidAlignment"),
             Options = Enum.GetValues<AlignmentType>().ToList(),
             SelectedOption = config.RaidAlignment,
             OnOptionSelected = value =>
@@ -367,12 +374,13 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             },
         };
 
-        raidFontSizeInput = CreateNumericInput("Raid Font Size:", (int)config.RaidFontSize, 6, 72, value => config.RaidFontSize = (uint)value);
+        raidFontSizeInput = CreateNumericInput(Loc.Get("PartyListRaidFontSize"), (int)config.RaidFontSize, 6, 72, value => config.RaidFontSize = (uint)value);
 
         raidFontTypeDropdown = new LabeledEnumDropdownNode<FontType>
         {
+            ShowStepButtons = true,
             Size = new Vector2(360, ControlHeight),
-            LabelText = "Raid Font:",
+            LabelText = Loc.Get("PartyListRaidFont"),
             Options = Enum.GetValues<FontType>().ToList(),
             SelectedOption = config.RaidFontType,
             OnOptionSelected = value =>
@@ -385,7 +393,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         raidTextFlagsInput = new LabeledTextFlagsInputNode
         {
             Width = 360,
-            LabelText = "Raid Text Style:",
+            LabelText = Loc.Get("PartyListRaidStyle"),
             OnValueChanged = value =>
             {
                 config.RaidTextFlags = value;
@@ -395,7 +403,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
 
         raidTextColorInput = new ColorInputRow
         {
-            Label = "Raid Text Color: ",
+            Label = Loc.Get("PartyListRaidColor"),
             Size = new Vector2(Width, ControlHeight),
             DefaultColor = new PartyListMeterSettings().RaidTextColor,
             CurrentColor = config.RaidTextColor,
@@ -418,7 +426,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
 
         raidOutlineColorInput = new ColorInputRow
         {
-            Label = "Raid Outline Color: ",
+            Label = Loc.Get("PartyListRaidOutline"),
             Size = new Vector2(Width, ControlHeight),
             DefaultColor = new PartyListMeterSettings().RaidTextOutlineColor,
             CurrentColor = config.RaidTextOutlineColor,
@@ -442,12 +450,13 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
 
     private void BuildMemberTextStyleControls()
     {
-        fontSizeInput = CreateNumericInput("Font Size:", (int)config.FontSize, 6, 72, value => config.FontSize = (uint)value);
+        fontSizeInput = CreateNumericInput(Loc.Get("PartyListFontSize"), (int)config.FontSize, 6, 72, value => config.FontSize = (uint)value);
 
         fontTypeDropdown = new LabeledEnumDropdownNode<FontType>
         {
+            ShowStepButtons = true,
             Size = new Vector2(360, ControlHeight),
-            LabelText = "Font:",
+            LabelText = Loc.Get("PartyListFont"),
             Options = Enum.GetValues<FontType>().ToList(),
             SelectedOption = config.FontType,
             OnOptionSelected = value =>
@@ -460,7 +469,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         textFlagsInput = new LabeledTextFlagsInputNode
         {
             Width = 360,
-            LabelText = "Text Style:",
+            LabelText = Loc.Get("PartyListTextStyle"),
             OnValueChanged = value =>
             {
                 config.TextFlags = value;
@@ -470,7 +479,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
 
         textColorInput = new ColorInputRow
         {
-            Label = "Text Color: ",
+            Label = Loc.Get("PartyListTextColor"),
             Size = new Vector2(Width, ControlHeight),
             DefaultColor = new PartyListMeterSettings().TextColor,
             CurrentColor = config.TextColor,
@@ -493,7 +502,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
 
         outlineColorInput = new ColorInputRow
         {
-            Label = "Outline Color: ",
+            Label = Loc.Get("PartyListOutline"),
             Size = new Vector2(Width, ControlHeight),
             DefaultColor = new PartyListMeterSettings().TextOutlineColor,
             CurrentColor = config.TextOutlineColor,
@@ -529,10 +538,12 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             resetRow,
         });
 
+        AddNode(new ResNode { Height = 10 });
+
         AddNode(new CategoryTextNode
         {
             Height = CategoryHeight,
-            String = "Member Text",
+            String = Loc.Get("PartyListMemberText"),
         });
         AddNode(1, new NodeBase[]
         {
@@ -549,7 +560,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         AddNode(new CategoryTextNode
         {
             Height = CategoryHeight,
-            String = "Top Member",
+            String = Loc.Get("PartyListTopMember"),
         });
         AddNode(1, new NodeBase[]
         {
@@ -562,7 +573,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         AddNode(new CategoryTextNode
         {
             Height = CategoryHeight,
-            String = "Member Bar",
+            String = Loc.Get("PartyListMemberBar"),
         });
         AddNode(1, new NodeBase[]
         {
@@ -572,7 +583,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             new ResNode { Height = 4 },
             barFillStatDropdown,
             barFillRightToLeftToggle,
-            new ResNode { Height = 4 },
+            new ResNode { Height = 12 },
             barColorModeDropdown,
             barColorTreatmentDropdown,
             barColorInput,
@@ -585,7 +596,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         AddNode(new CategoryTextNode
         {
             Height = CategoryHeight,
-            String = "Raid DPS",
+            String = Loc.Get("PartyListRaidDps"),
         });
         AddNode(1, new NodeBase[]
         {
@@ -604,7 +615,7 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         AddNode(new CategoryTextNode
         {
             Height = CategoryHeight,
-            String = "Member Text Style",
+            String = Loc.Get("PartyListMemberStyle"),
         });
         AddNode(1, new NodeBase[]
         {

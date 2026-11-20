@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using Dalamud.Utility;
 using KamiToolKit;
 using KamiToolKit.BaseTypes;
 using NativeMeters.Addons;
@@ -14,6 +13,7 @@ using NativeMeters.Commands;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Extensions;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Color;
 using NativeMeters.Nodes.Configuration.Meter.Search;
@@ -37,7 +37,9 @@ public class Plugin : IAsyncDalamudPlugin
         cancellationToken.ThrowIfCancellationRequested();
 
         PluginInterface.Create<Service>();
+        Loc.Initialize(Service.ClientState.ClientLanguage.ToString());
         System.Config = ConfigRepository.LoadOrDefault();
+        Loc.SetLanguage(System.Config.General.UiLanguage);
         ConfigRepository.Save(System.Config);
         ConfigBackup.DoConfigBackup(Service.PluginInterface);
 
@@ -52,11 +54,20 @@ public class Plugin : IAsyncDalamudPlugin
 
         System.DtrService = new DtrService();
 
-        System.TagSearchAddon = new TagSearchAddon { Title = "Search Tags", InternalName = "NativeMeters_TagPicker", Size = new Vector2(480, 600) };
-        System.IconSearchAddon = new IconSearchAddon { Title = "Select Icon", InternalName = "NativeMeters_IconPicker" };
+        System.TagSearchAddon = new TagSearchAddon
+        {
+            InternalName = "NativeMeters_TagPicker",
+            Title = Loc.GetWindowHeader("WindowTagPicker").Title,
+            Size = new Vector2(480, 600),
+        };
+        System.IconSearchAddon = new IconSearchAddon
+        {
+            InternalName = "NativeMeters_IconPicker",
+            Title = Loc.GetWindowHeader("WindowIconPicker").Title,
+        };
         System.TextFlagsPickerAddon = new TextFlagsPickerAddon
         {
-            Title = "Text Flags",
+            Title = Loc.GetWindowHeader("WindowTextFlags").Title,
             InternalName = "NativeMeters_TextFlags",
             Size = new Vector2(240.0f, 340.0f),
             RememberClosePosition = false,
@@ -65,28 +76,27 @@ public class Plugin : IAsyncDalamudPlugin
         System.AddonConfigurationWindow = new AddonConfigurationWindow
         {
             InternalName = "NativeMeters_Config",
-            Title = "NativeMeters Config",
+            Title = Loc.GetWindowHeader("WindowConfiguration").Title,
             Size = new Vector2(800, 600),
         };
 
         System.AddonDetailedBreakdownWindow = new AddonDetailedBreakdownWindow
         {
             InternalName = "NativeMeters_Breakdown",
-            Title = "NativeMeters Breakdown",
+            Title = Loc.GetWindowHeader("WindowBreakdown").Title,
             Size = new Vector2(720, 560),
         };
         System.SetupWizard = new SetupWizardAddon
         {
             InternalName = "NativeMeters_Setup",
-            Title = "NativeMeters Setup",
+            Title = Loc.GetWindowHeader("WindowSetup").Title,
             Size = new Vector2(SetupControls.DialogWidth, SetupControls.DialogHeight),
             RememberClosePosition = false,
         };
         System.MeterPlacementAddon = new MeterPlacementAddon
         {
             InternalName = "NativeMeters_Place",
-            Title = "Place your meter",
-            Size = new Vector2(448, 152),
+            Title = Loc.GetWindowHeader("WindowPlacement").Title,
             RememberClosePosition = false,
             EnableContextMenu = false,
         };
@@ -186,6 +196,7 @@ public class Plugin : IAsyncDalamudPlugin
     {
         if (isDisposed) return;
         isDisposed = true;
+        System.AddonConfigurationWindow?.CancelLanguageReopen();
 
         try
         {
@@ -215,14 +226,8 @@ public class Plugin : IAsyncDalamudPlugin
 
             if (!Service.Framework.IsFrameworkUnloading)
             {
-                await ColorInputRow.DisposeSharedColorPicker();
-                await DisposeNativeAddon(System.TagSearchAddon);
-                await DisposeNativeAddon(System.IconSearchAddon);
-                await DisposeNativeAddon(System.TextFlagsPickerAddon);
-                await DisposeNativeAddon(System.SetupWizard);
-                await DisposeNativeAddon(System.MeterPlacementAddon);
-                await DisposeNativeAddon(System.AddonConfigurationWindow);
-                await DisposeNativeAddon(System.AddonDetailedBreakdownWindow);
+                // KTK waits for native window closure only on its asynchronous disposal path.
+                await Task.Run(DisposeWindowsAsync);
             }
 
             await Service.Framework.RunOnFrameworkThreadIfNeeded(() => System.OverlayController?.Dispose());
@@ -243,17 +248,18 @@ public class Plugin : IAsyncDalamudPlugin
         }
     }
 
-    private static async ValueTask DisposeNativeAddon(NativeAddon? addon)
+    private static async Task DisposeWindowsAsync()
     {
-        if (addon is null)
-            return;
-
-        if (ThreadSafety.IsMainThread)
-        {
-            addon.Dispose();
-            return;
-        }
-
-        await addon.DisposeAsync();
+        await ColorInputRow.DisposeSharedColorPicker();
+        await DisposeNativeAddon(System.TagSearchAddon);
+        await DisposeNativeAddon(System.IconSearchAddon);
+        await DisposeNativeAddon(System.TextFlagsPickerAddon);
+        await DisposeNativeAddon(System.SetupWizard);
+        await DisposeNativeAddon(System.MeterPlacementAddon);
+        await DisposeNativeAddon(System.AddonConfigurationWindow);
+        await DisposeNativeAddon(System.AddonDetailedBreakdownWindow);
     }
+
+    private static ValueTask DisposeNativeAddon(NativeAddon? addon)
+        => addon?.DisposeAsync() ?? ValueTask.CompletedTask;
 }

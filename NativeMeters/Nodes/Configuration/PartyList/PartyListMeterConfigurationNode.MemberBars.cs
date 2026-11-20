@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using KamiToolKit.Nodes;
+using NativeMeters.Localization;
 using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
 using NativeMeters.Nodes.Color;
@@ -33,9 +34,9 @@ internal sealed partial class PartyListMeterConfigurationNode
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
-            String = "Show Member Bars",
+            String = Loc.Get("PartyListShowBars"),
             IsChecked = config.ShowMemberBars,
-            TextTooltip = "Shows the selected stat as a bar on each party-list row.",
+            TextTooltip = Loc.Get("PartyListShowBarsHelp"),
             OnClick = isChecked =>
             {
                 config.ShowMemberBars = isChecked;
@@ -44,19 +45,20 @@ internal sealed partial class PartyListMeterConfigurationNode
             },
         };
 
-        barOffsetRow = CreatePairedInputRow("Position:");
-        barSizeRow = CreatePairedInputRow("Size:");
-        barOffsetXInput = CreateCompactNumericInput("X:", config.BarOffsetX, -500, 500, value => config.BarOffsetX = value);
-        barOffsetYInput = CreateCompactNumericInput("Y:", config.BarOffsetY, -500, 500, value => config.BarOffsetY = value);
-        barWidthInput = CreateCompactNumericInput("Width:", config.BarWidth, 1, 500, value => config.BarWidth = value);
-        barHeightInput = CreateCompactNumericInput("Height:", config.BarHeight, 1, 100, value => config.BarHeight = value);
+        barOffsetRow = CreatePairedInputRow(Loc.Get("PartyListPosition"));
+        barSizeRow = CreatePairedInputRow(Loc.Get("PartyListSize"));
+        barOffsetXInput = CreateCompactNumericInput(Loc.Get("PartyListPosX"), config.BarOffsetX, -500, 500, value => config.BarOffsetX = value);
+        barOffsetYInput = CreateCompactNumericInput(Loc.Get("PartyListPosY"), config.BarOffsetY, -500, 500, value => config.BarOffsetY = value);
+        barWidthInput = CreateCompactNumericInput(Loc.Get("PartyListWidth"), config.BarWidth, 1, 500, value => config.BarWidth = value);
+        barHeightInput = CreateCompactNumericInput(Loc.Get("PartyListHeight"), config.BarHeight, 1, 100, value => config.BarHeight = value);
         barOffsetRow.AddInputPair(barOffsetXInput, barOffsetYInput);
         barSizeRow.AddInputPair(barWidthInput, barHeightInput);
 
         barTypeDropdown = new LabeledEnumDropdownNode<ProgressBarType>
         {
+            ShowStepButtons = true,
             Size = new Vector2(360, ControlHeight),
-            LabelText = "Bar Type:",
+            LabelText = Loc.Get("PartyListBarType"),
             Options = ProgressBarTypeOptions.Ordered(),
             SelectedOption = config.BarType,
             OnOptionSelected = value =>
@@ -69,8 +71,9 @@ internal sealed partial class PartyListMeterConfigurationNode
 
         barSizingDropdown = new LabeledEnumDropdownNode<ProgressBarSizing>
         {
+            ShowStepButtons = true,
             Size = new Vector2(360, ControlHeight),
-            LabelText = "Bar Sizing:",
+            LabelText = Loc.Get("PartyListBarSizing"),
             Options = Enum.GetValues<ProgressBarSizing>().ToList(),
             SelectedOption = config.BarSizing,
             OnOptionSelected = value =>
@@ -82,8 +85,10 @@ internal sealed partial class PartyListMeterConfigurationNode
 
         barFillStatDropdown = new LabeledDropdownNode
         {
+            ShowStepButtons = true,
             Size = new Vector2(360, ControlHeight),
-            LabelText = "Fill Stat:",
+            LabelText = Loc.Get("PartyListFillStat"),
+            GetOptionLabel = Loc.StatLabel,
             Options = StatSelector.GetAvailableStatSelectors(),
             SelectedOption = config.BarFillStat,
             OnOptionSelected = value =>
@@ -97,7 +102,7 @@ internal sealed partial class PartyListMeterConfigurationNode
         {
             Size = new Vector2(360.0f, CheckboxHeight),
             IsVisible = true,
-            String = "Fill Right To Left",
+            String = Loc.Get("PartyListFillLeft"),
             IsChecked = config.BarFillRightToLeft,
             OnClick = isChecked =>
             {
@@ -108,8 +113,9 @@ internal sealed partial class PartyListMeterConfigurationNode
 
         barColorModeDropdown = new LabeledEnumDropdownNode<ColorMode>
         {
+            ShowStepButtons = true,
             Size = new Vector2(360, ControlHeight),
-            LabelText = "Bar Color Mode:",
+            LabelText = Loc.Get("PartyListBarColorMode"),
             Options = Enum.GetValues<ColorMode>().ToList(),
             SelectedOption = config.BarColorMode,
             OnOptionSelected = value =>
@@ -122,8 +128,9 @@ internal sealed partial class PartyListMeterConfigurationNode
 
         barColorTreatmentDropdown = new LabeledEnumDropdownNode<ProgressBarColorTreatment>
         {
+            ShowStepButtons = true,
             Size = new Vector2(360, ControlHeight),
-            LabelText = "Bar Tint:",
+            LabelText = Loc.Get("PartyListBarTint"),
             Options = Enum.GetValues<ProgressBarColorTreatment>().ToList(),
             SelectedOption = config.BarColorTreatment,
             OnOptionSelected = value =>
@@ -135,7 +142,7 @@ internal sealed partial class PartyListMeterConfigurationNode
 
         barColorInput = new ColorInputRow
         {
-            Label = "Bar Color: ",
+            Label = Loc.Get("PartyListBarColor"),
             Size = new Vector2(Width, ControlHeight),
             DefaultColor = new PartyListMeterSettings().BarColor,
             CurrentColor = config.BarColor,
@@ -158,7 +165,7 @@ internal sealed partial class PartyListMeterConfigurationNode
 
         barBackgroundColorInput = new ColorInputRow
         {
-            Label = "Bar Background: ",
+            Label = Loc.Get("PartyListBarBackground"),
             Size = new Vector2(Width, ControlHeight),
             DefaultColor = new PartyListMeterSettings().BarBackgroundColor,
             CurrentColor = config.BarBackgroundColor,

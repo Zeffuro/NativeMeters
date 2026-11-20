@@ -6,6 +6,7 @@ using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Extensions;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Configuration;
 using NativeMeters.Nodes.Configuration.Setup;
@@ -48,6 +49,7 @@ internal sealed class SetupWizardAddon : NativeAddon
 
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> values)
     {
+        this.SetLocalizedTitle("WindowSetup");
         ResetDraft(System.Config);
         BuildWindow();
         ShowPage(Step.Connection);
@@ -77,9 +79,9 @@ internal sealed class SetupWizardAddon : NativeAddon
         heading.Size = new Vector2(width, HeadingHeight);
         heading.AttachNode(this);
 
-        cancel = AddButton(firstSetup ? "Skip setup" : "Cancel", 1, start.X, Cancel);
-        back = AddButton("Back", 2, start.X + width - ButtonWidth * 2 - FooterButtonGap, Back);
-        next = AddButton("Next", 3, start.X + width - ButtonWidth, Next);
+        cancel = AddButton(firstSetup ? Loc.Get("SetupSkip") : Loc.Get("SetupCancel"), 1, start.X, Cancel);
+        back = AddButton(Loc.Get("SetupBack"), 2, start.X + width - ButtonWidth * 2 - FooterButtonGap, Back);
+        next = AddButton(Loc.Get("SetupNext"), 3, start.X + width - ButtonWidth, Next);
 
         TextButtonNode AddButton(string text, int navIndex, float x, Action click)
         {
@@ -138,21 +140,21 @@ internal sealed class SetupWizardAddon : NativeAddon
         var previewWidth = width - page.TabSize * 2 - page.ItemSpacing;
         var format = settings.DtrSettings.FormatString;
         var dtrPreview = SetupHudPreview.ServerInfo(sample, format, personalDps, previewWidth);
-        var personalCheck = Check("Show personal DPS", personalDps, value =>
+        var personalCheck = Check(Loc.Get("SetupPersonalDps"), personalDps, value =>
         {
             personalDps = value;
             dtrPreview.String = SetupHudPreview.FormatServerInfo(sample, format, value);
         });
-        personalCheck.TextTooltip = "Show your DPS in the server info bar. Leave this off for party DPS.";
+        personalCheck.TextTooltip = Loc.Get("SetupPersonalDpsHelp");
         personalCheck.IsVisible = dtr;
         dtrPreview.IsVisible = dtr;
 
-        page.AddNode(1, Check("Add a standalone meter", addMeter, value => addMeter = value));
-        page.AddNode(2, Line("A separate window you can move around your HUD."));
+        page.AddNode(1, Check(Loc.Get("SetupAddMeter"), addMeter, value => addMeter = value));
+        page.AddNode(2, Line(Loc.Get("SetupAddMeterHelp")));
         page.AddDummy(5);
-        page.AddNode(1, Check("Show DPS on the party list", partyList, value => partyList = value));
+        page.AddNode(1, Check(Loc.Get("SetupPartyListDps"), partyList, value => partyList = value));
         page.AddDummy(5);
-        page.AddNode(1, Check("Show DPS on the server info bar", dtr, value =>
+        page.AddNode(1, Check(Loc.Get("SetupServerDps"), dtr, value =>
         {
             dtr = value;
             personalCheck.IsVisible = value;
@@ -168,23 +170,23 @@ internal sealed class SetupWizardAddon : NativeAddon
     {
         var page = Page(width);
         page.AddNode(1, [
-            Check("Replace YOU with your name", replaceYou, value => replaceYou = value),
-            Check("Privacy mode (show jobs instead of names)", privacy, value => privacy = value),
+            Check(Loc.Get("SetupReplaceYou"), replaceYou, value => replaceYou = value),
+            Check(Loc.Get("SetupPrivacy"), privacy, value => privacy = value),
         ]);
         page.AddDummy(10);
 
         meterExtras = Page(width);
-        meterExtras.AddNode(Section("Standalone meter"));
-        var clickthroughCheck = Check("Clickthrough", clickthrough, value => clickthrough = value);
-        clickthroughCheck.TextTooltip = "Clicks pass through the meter. Its menu button still works.";
+        meterExtras.AddNode(Section(Loc.Get("SetupStandalone")));
+        var clickthroughCheck = Check(Loc.Get("SetupClickthrough"), clickthrough, value => clickthrough = value);
+        clickthroughCheck.TextTooltip = Loc.Get("SetupClickthroughHelp");
         meterExtras.AddNode(1, clickthroughCheck);
         meterExtras.AddDummy(6);
         meterExtras.AddNode(1, [
-            Line("Hit a striking dummy to try the meter."),
-            Line("To move it, unlock it in Meters, then lock it again when you're done."),
+            Line(Loc.Get("SetupTryDummy")),
+            Line(Loc.Get("SetupUnlockHelp")),
         ]);
         page.AddNode(meterExtras);
-        noMeterHelp = Line("You can change these settings any time with /ntm.");
+        noMeterHelp = Line(Loc.Get("SetupSettingsHelp"));
         page.AddNode(1, noMeterHelp);
         return page;
     }
@@ -200,17 +202,17 @@ internal sealed class SetupWizardAddon : NativeAddon
 
         heading.String = step switch
         {
-            Step.Connection => "Choose a parser",
-            Step.Display => "Where should DPS show up?",
-            Step.Meter => "Set up your meter",
-            _ => "A few extras",
+            Step.Connection => Loc.Get("SetupChooseParser"),
+            Step.Display => Loc.Get("SetupChooseDisplay"),
+            Step.Meter => Loc.Get("SetupEditMeter"),
+            _ => Loc.Get("SetupExtras"),
         };
         back.IsVisible = step != Step.Connection;
         cancel.NavRight = back.IsVisible ? 2 : 3;
         back.NavLeft = 1;
         back.NavRight = 3;
         next.NavLeft = back.IsVisible ? 2 : 1;
-        next.String = step == Step.Options ? "Finish" : "Next";
+        next.String = step == Step.Options ? Loc.Get("SetupFinish") : Loc.Get("SetupNext");
 
         if (step == Step.Options)
         {
@@ -291,7 +293,7 @@ internal sealed class SetupWizardAddon : NativeAddon
         System.OverlayManager.Setup();
         System.PartyListMeterManager.UpdateSettings();
         System.DtrService.UpdateBar();
-        Service.NotificationManager.Success("NativeMeters setup saved. Use /ntm setup to open it again.");
+        Service.NotificationManager.Success(Loc.Get("SetupSaved"));
     }
 
     private void Cancel()

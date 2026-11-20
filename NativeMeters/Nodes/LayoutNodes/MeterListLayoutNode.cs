@@ -9,6 +9,7 @@ using KamiToolKit.Nodes;
 using KamiToolKit.UiOverlay;
 using NativeMeters.Configuration;
 using NativeMeters.Extensions;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 using NativeMeters.Rendering;
 using NativeMeters.Services;
@@ -422,8 +423,8 @@ public sealed class MeterListLayoutNode : OverlayNode
         {
             lockButton = new TextButtonNode
             {
-                String = "Lock",
-                TextTooltip = "Lock position and size",
+                String = Loc.Get("HudLock"),
+                TextTooltip = Loc.Get("HudLockHelp"),
                 Size = LockButtonSize,
                 OnClick = () =>
                 {

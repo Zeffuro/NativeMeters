@@ -6,6 +6,7 @@ using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Data.Stats;
 using NativeMeters.Extensions;
+using NativeMeters.Localization;
 using NativeMeters.Services;
 using NativeMeters.Utilities;
 using ContextMenu = KamiToolKit.ContextMenu.ContextMenu;
@@ -38,13 +39,13 @@ public static class MeterContextMenu
 
         menu.Clear();
 
-        string collapseLabel = meterSettings.IsCollapsed ? "▼ Expand" : "▲ Collapse";
+        var collapseLabel = meterSettings.IsCollapsed ? "▼ " + Loc.Get("MenuExpand") : "▲ " + Loc.Get("MenuCollapse");
         menu.AddItem(collapseLabel, () =>
         {
             meterSettings.IsCollapsed = !meterSettings.IsCollapsed;
         });
 
-        string lockLabel = meterSettings.IsLocked ? "✓ Locked" : "Locked";
+        var lockLabel = CheckedLabel(Loc.Get("MenuLocked"), meterSettings.IsLocked);
         menu.AddItem(lockLabel, () =>
         {
             if (!System.Config.Meters.Contains(meterSettings)) return;
@@ -52,14 +53,14 @@ public static class MeterContextMenu
             ConfigRepository.Save(System.Config);
         });
 
-        string clickthroughLabel = meterSettings.IsClickthrough ? "✓ Clickthrough" : "Clickthrough";
+        var clickthroughLabel = CheckedLabel(Loc.Get("MeterClickthrough"), meterSettings.IsClickthrough);
         menu.AddItem(clickthroughLabel, () =>
         {
             meterSettings.IsClickthrough = !meterSettings.IsClickthrough;
             System.OverlayManager.Setup();
         });
 
-        string privacyLabel = System.Config.General.PrivacyMode ? "✓ Privacy Mode" : "Privacy Mode";
+        var privacyLabel = CheckedLabel(Loc.Get("MenuPrivacy"), System.Config.General.PrivacyMode);
         menu.AddItem(privacyLabel, () =>
         {
             System.Config.General.PrivacyMode = !System.Config.General.PrivacyMode;
@@ -72,12 +73,12 @@ public static class MeterContextMenu
 
             var historySubMenu = new ContextMenuSubItem
             {
-                Name = "Previous Encounters...",
+                Name = Loc.Get("MenuPreviousEncounters"),
                 OnClick = () => { }
             };
 
             bool isLive = !System.ActiveMeterService.IsViewingHistory;
-            historySubMenu.AddItem(isLive ? "✓ Live (Current)" : "Live (Current)", () =>
+            historySubMenu.AddItem(CheckedLabel(Loc.Get("MenuLive"), isLive), () =>
             {
                 System.ActiveMeterService.SelectLiveEncounter();
             });
@@ -90,7 +91,7 @@ public static class MeterContextMenu
                                   System.ActiveMeterService.SelectedHistoryIndex == capturedIndex;
 
                 var enc = encounter.Encounter;
-                var title = enc?.Title ?? "Unknown";
+                var title = enc?.Title ?? Loc.Get("MenuUnknownEncounter");
                 var dur = enc?.Duration.ToString(@"mm\:ss") ?? "0:00";
                 var rdps = enc != null ? $"{enc.ENCDPS:N0}" : "0";
 
@@ -109,7 +110,7 @@ public static class MeterContextMenu
 
         var sortSubMenu = new ContextMenuSubItem
         {
-            Name = "Sort By...",
+            Name = Loc.Get("MenuSortBy"),
             OnClick = () => { }
         };
 
@@ -117,7 +118,7 @@ public static class MeterContextMenu
         foreach (var stat in sortOptions)
         {
             bool isSelected = meterSettings.StatToTrack == stat;
-            sortSubMenu.AddItem(isSelected ? $"✓ {stat}" : $"  {stat}", () =>
+            sortSubMenu.AddItem(CheckedLabel(Loc.StatLabel(stat), isSelected), () =>
             {
                 meterSettings.StatToTrack = stat;
             });
@@ -127,18 +128,18 @@ public static class MeterContextMenu
 
         menu.AddItem(Separator);
 
-        menu.AddItem("Copy to Clipboard", ClipboardService.CopyEncounterSummary);
+        menu.AddItem(Loc.Get("MenuCopyClipboard"), ClipboardService.CopyEncounterSummary);
 
         menu.AddItem(Separator);
 
-        menu.AddItem("Reset all dummies", EnmityUtilities.ResetAllStrikingDummies);
+        menu.AddItem(Loc.EnumLabel(MeterButtonAction.ResetDummies), EnmityUtilities.ResetAllStrikingDummies);
 
-        menu.AddItem("End Encounter", () => System.MeterService.EndEncounter());
-        menu.AddItem("Clear Meter", () => System.MeterService.ClearMeter());
+        menu.AddItem(Loc.Get("MenuEndEncounter"), () => System.MeterService.EndEncounter());
+        menu.AddItem(Loc.Get("MenuClearMeter"), () => System.MeterService.ClearMeter());
 
         if (history.Count > 0)
         {
-            menu.AddItem("Clear History", () =>
+            menu.AddItem(Loc.Get("MenuClearHistory"), () =>
             {
                 System.MeterService.ClearHistory();
             });
@@ -146,10 +147,12 @@ public static class MeterContextMenu
 
         menu.AddItem(Separator);
 
-        menu.AddItem("Detailed Breakdown", () => System.AddonDetailedBreakdownWindow.Toggle());
+        menu.AddItem(Loc.EnumLabel(MeterButtonAction.DetailedBreakdown), () => System.AddonDetailedBreakdownWindow.Toggle());
 
-        menu.AddItem("Settings", () => System.AddonConfigurationWindow.Toggle());
+        menu.AddItem(Loc.EnumLabel(MeterButtonAction.Settings), () => System.AddonConfigurationWindow.Toggle());
 
         menu.Open();
     }
+
+    private static string CheckedLabel(string label, bool selected) => selected ? "✓ " + label : label;
 }

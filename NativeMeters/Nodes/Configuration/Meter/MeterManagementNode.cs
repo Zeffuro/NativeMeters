@@ -6,12 +6,12 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Simplified;
-using Lumina.Data.Parsing.Uld;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.LayoutNodes;
 using NativeMeters.Services;
 using Lumina.Text.ReadOnly;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
@@ -63,8 +63,7 @@ public class MeterManagementNode : SimpleComponentNode
         searchInputNode = new TextInputNode
         {
             Height = SearchHeight,
-            PlaceholderStringId = 325,
-            SheetType = NodeData.SheetType.Addon,
+            PlaceholderString = Loc.Get("CommonSearch"),
             OnInputReceived = OnSearchInputReceived,
             NavIndex = 6,
             NavDown = 7,
@@ -83,7 +82,7 @@ public class MeterManagementNode : SimpleComponentNode
             NavDown = 100,
             NavRight = 150,
         };
-        selectionListNode.NoResultsTextNode.String = "No meters found.";
+        selectionListNode.NoResultsTextNode.String = Loc.Get("MeterNoneFound");
 
         buttonRow = new HorizontalFlexNode
         {
@@ -94,8 +93,7 @@ public class MeterManagementNode : SimpleComponentNode
             [
                 addButtonNode = new TextButtonNode
                 {
-                    TextId = 302, // Add
-                    SheetType = NodeData.SheetType.Addon,
+                    String = Loc.Get("CommonAdd"),
                     OnClick = () => addMeterDialog.Open(),
                     NavIndex = 100,
                     NavUp = 7,
@@ -104,8 +102,7 @@ public class MeterManagementNode : SimpleComponentNode
                 },
                 removeButtonNode = new TextButtonNode
                 {
-                    TextId = 85, // Remove
-                    SheetType = NodeData.SheetType.Addon,
+                    String = Loc.Get("CommonRemove"),
                     OnClick = OnRemoveSelectedMeter,
                     IsEnabled = false,
                     NavIndex = 101,
@@ -147,12 +144,6 @@ public class MeterManagementNode : SimpleComponentNode
         layoutContainer.AttachNode(this);
 
         ApplyNavigation();
-    }
-
-    public void ApplyResolvedText()
-    {
-        var searchPlaceholder = searchInputNode.PlaceholderTextNode.String.ToString();
-        searchInputNode.PlaceholderString = string.IsNullOrEmpty(searchPlaceholder) ? "Search" : searchPlaceholder;
     }
 
     public void RecalculateLayout()
@@ -213,7 +204,7 @@ public class MeterManagementNode : SimpleComponentNode
     {
         if (string.IsNullOrWhiteSpace(newMeter.Name))
         {
-            newMeter.Name = $"New Meter {System.Config.Meters.Count + 1}";
+            newMeter.Name = Loc.Format("MeterNew", System.Config.Meters.Count + 1);
         }
 
         newMeter.IsLocked = false;

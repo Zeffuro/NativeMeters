@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using KamiToolKit.Nodes;
+using NativeMeters.Localization;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Nodes.Input;
@@ -23,7 +24,7 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
         AddNode(new CategoryTextNode
         {
             Height = 18,
-            String = "Internal Parser Options",
+            String = Loc.Get("ConnectionParserOptions"),
         });
 
         AddTab(1);
@@ -33,7 +34,7 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
             {
                 Size = new Vector2(RowWidth, 28),
                 LabelWidth = LabelWidth,
-                LabelText = "Parse Filter",
+                LabelText = Loc.Get("ConnectionParseFilter"),
                 Options = Enum.GetValues<ParseFilter>().ToList(),
                 SelectedOption = config.ParseFilter,
                 OnOptionSelected = option =>
@@ -45,10 +46,9 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
             new CheckboxNode
             {
                 Size = new Vector2(RowWidth, 20),
-                String = "Combine Pets with Owner",
+                String = Loc.Get("ConnectionMergePets"),
                 IsChecked = config.MergePetDamage,
-                TextTooltip = "When enabled, pet and summon damage is attributed to the owner.\n"
-                              + "Disable to show pet damage as separate entries.",
+                TextTooltip = Loc.Get("ConnectionMergePetsHelp"),
                 OnClick = isChecked =>
                 {
                     config.MergePetDamage = isChecked;
@@ -58,9 +58,9 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
             new CheckboxNode
             {
                 Size = new Vector2(RowWidth, 20),
-                String = "Use \"YOU\" instead of your character's name",
+                String = Loc.Get("ConnectionUseYou"),
                 IsChecked = config.UseYouForLocalPlayer,
-                TextTooltip = "When enabled, your character is named \"YOU\" to match ACT behavior.",
+                TextTooltip = Loc.Get("ConnectionUseYouHelp"),
                 OnClick = isChecked =>
                 {
                     config.UseYouForLocalPlayer = isChecked;
@@ -70,9 +70,9 @@ internal sealed class InternalParserConfigurationNode : TabbedVerticalListNode
             new CheckboxNode
             {
                 Size = new Vector2(RowWidth, 20),
-                String = "Show Companions as Separate Entries",
+                String = Loc.Get("ConnectionSeparateCompanions"),
                 IsChecked = config.ShowCompanions,
-                TextTooltip = "When enabled, damage from companions are shown as separate entries instead of being merged with the player.",
+                TextTooltip = Loc.Get("ConnectionSeparateCompanionsHelp"),
                 OnClick = isChecked =>
                 {
                     config.ShowCompanions = isChecked;

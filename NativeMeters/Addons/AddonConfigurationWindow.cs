@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
-using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using Lumina.Data.Parsing.Uld;
 using NativeMeters.Configuration.Persistence;
+using NativeMeters.Localization;
 using NativeMeters.Nodes.Configuration.Connection;
 using NativeMeters.Nodes.Configuration.General;
 using NativeMeters.Nodes.Configuration.Meter;
@@ -25,7 +24,7 @@ public class AddonConfigurationWindow : NativeAddon
     private readonly AddMeterDialogAddon addMeterDialog = new()
     {
         InternalName = "NativeMetersAddMeter",
-        Title = "Add Meter",
+        Title = Loc.GetWindowHeader("MeterAdd").Title,
         Size = new Vector2(DialogWidth, DialogHeight),
         RememberClosePosition = false,
     };
@@ -40,13 +39,16 @@ public class AddonConfigurationWindow : NativeAddon
     private VisibilityScrollingAreaNode visibilityScrollingAreaNode = null!;
 
     private readonly List<NodeBase> tabContent = new();
+    private volatile bool isDisposing;
+    private bool reopenForLanguageChange;
+    private float languageChangeScrollPosition;
 
     public AddonConfigurationWindow()
     {
         meterImportConfirmation = new MeterImportConfirmationAddon(this)
         {
             InternalName = "NativeMetersImportConfirm",
-            Title = "Import Meter",
+            Title = Loc.GetWindowHeader("WindowImportMeter").Title,
             Size = new Vector2(456, 134),
             RememberClosePosition = false,
             EnableContextMenu = false,
@@ -56,7 +58,11 @@ public class AddonConfigurationWindow : NativeAddon
 
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
-        System.OverlayManager?.CancelPlacement();
+        var isLanguageReopen = reopenForLanguageChange;
+        reopenForLanguageChange = false;
+        if (!isLanguageReopen) System.OverlayManager?.CancelPlacement();
+
+        this.SetLocalizedTitle("WindowConfiguration");
         var tabContentY = ContentStartPosition.Y + 40;
         var tabContentHeight = ContentSize.Y - 40;
 
@@ -72,7 +78,7 @@ public class AddonConfigurationWindow : NativeAddon
         };
         tabBarNode.AttachNode(this);
 
-        generalScrollingAreaNode = new GeneralScrollingAreaNode
+        generalScrollingAreaNode = new GeneralScrollingAreaNode(ChangeLanguage)
         {
             Position = ContentStartPosition with { Y = tabContentY },
             Size = ContentSize with { Y = tabContentHeight },
@@ -127,23 +133,68 @@ public class AddonConfigurationWindow : NativeAddon
         tabContent.Add(colorConfigurationNode);
         tabContent.Add(visibilityScrollingAreaNode);
 
-        tabBarNode.AddTab(new TabBarEntry
-        {
-            TextId = 662, // General
-            SheetType = NodeData.SheetType.Addon,
-            OnClick = () => SwitchTab(0)
-        });
-        tabBarNode.AddTab("Connection", () => SwitchTab(1));
-        tabBarNode.AddTab("Party List", () => SwitchTab(2));
-        tabBarNode.AddTab("Meters", () => SwitchTab(3));
-        tabBarNode.AddTab("Colors", () => SwitchTab(4));
-        tabBarNode.AddTab("Visibility", () => SwitchTab(5));
+        tabBarNode.AddTab(Loc.Get("TabGeneral"), () => SwitchTab(0));
+        tabBarNode.AddTab(Loc.Get("TabConnection"), () => SwitchTab(1));
+        tabBarNode.AddTab(Loc.Get("TabPartyList"), () => SwitchTab(2));
+        tabBarNode.AddTab(Loc.Get("TabMeters"), () => SwitchTab(3));
+        tabBarNode.AddTab(Loc.Get("TabColors"), () => SwitchTab(4));
+        tabBarNode.AddTab(Loc.Get("TabVisibility"), () => SwitchTab(5));
 
         base.OnSetup(addon, atkValueSpan);
 
+        if (isLanguageReopen)
+        {
+            var scrollBar = generalScrollingAreaNode.ScrollBarNode;
+            scrollBar.ScrollPosition = Math.Clamp(languageChangeScrollPosition, 0, scrollBar.ScrollMaxPosition);
+        }
+
         addon->UldManager.SetupTextRecursive();
-        meterManagementNode.ApplyResolvedText();
     }
+
+    private void ChangeLanguage(string? language)
+    {
+        // The dropdown still uses its native nodes after invoking this callback.
+        _ = Service.Framework.RunOnTick(() =>
+        {
+            if (!CanReopen() || Loc.LanguageOverride == language) return;
+
+            Loc.SetLanguage(language);
+            System.Config.General.UiLanguage = Loc.LanguageOverride;
+            ConfigRepository.Save(System.Config);
+
+            if (!IsOpen || reopenForLanguageChange) return;
+
+            languageChangeScrollPosition = generalScrollingAreaNode.ScrollBarNode.ScrollPosition;
+            reopenForLanguageChange = true;
+            Close();
+        }, delayTicks: 1);
+    }
+
+    private bool CanReopen()
+        => !isDisposing && ReferenceEquals(System.AddonConfigurationWindow, this)
+            && Service.Framework is { IsFrameworkUnloading: false };
+
+    private unsafe void ReopenAfterLanguageChange(int ticksRemaining)
+    {
+        if (!reopenForLanguageChange || !CanReopen()) return;
+
+        if (InternalAddon is null)
+        {
+            Open();
+            if (InternalAddon is null) reopenForLanguageChange = false;
+        }
+        else if (ticksRemaining > 0)
+        {
+            _ = Service.Framework.RunOnTick(() => ReopenAfterLanguageChange(ticksRemaining - 1), delayTicks: 1);
+        }
+        else
+        {
+            reopenForLanguageChange = false;
+            Service.Logger.Warning("The settings window did not finish closing after the language changed.");
+        }
+    }
+
+    internal void CancelLanguageReopen() => isDisposing = true;
 
     private void SwitchTab(int index)
     {
@@ -188,6 +239,15 @@ public class AddonConfigurationWindow : NativeAddon
     protected override unsafe void OnFinalize(AtkUnitBase* addon)
     {
         meterImportConfirmation.Cancel();
+        addMeterDialog.OnMeterCreated = null;
+
+        if (reopenForLanguageChange && CanReopen())
+        {
+            base.OnFinalize(addon);
+            _ = Service.Framework.RunOnTick(() => ReopenAfterLanguageChange(60), delayTicks: 1);
+            return;
+        }
+
         var config = System.Config;
         if (config is not null)
         {
@@ -199,8 +259,6 @@ public class AddonConfigurationWindow : NativeAddon
             System.OverlayManager?.UpdateActiveService();
             System.PartyListMeterManager?.UpdateSettings();
         }
-
-        addMeterDialog.OnMeterCreated = null;
 
         if (config is not null)
         {
@@ -220,6 +278,7 @@ public class AddonConfigurationWindow : NativeAddon
 
     public override void Dispose()
     {
+        CancelLanguageReopen();
         meterImportConfirmation.Dispose();
         addMeterDialog.Close();
         System.TextFlagsPickerAddon?.Close();
@@ -230,6 +289,7 @@ public class AddonConfigurationWindow : NativeAddon
 
     public override async ValueTask DisposeAsync()
     {
+        CancelLanguageReopen();
         if (ThreadSafety.IsMainThread)
         {
             Dispose();

@@ -1,0 +1,2162 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="BreakdownAction" xml:space="preserve">
+    <value>기술</value>
+  </data>
+  <data name="BreakdownActive" xml:space="preserve">
+    <value>활동</value>
+  </data>
+  <data name="BreakdownAttack" xml:space="preserve">
+    <value>공격</value>
+  </data>
+  <data name="BreakdownCritShort" xml:space="preserve">
+    <value>극대%</value>
+  </data>
+  <data name="BreakdownDamage" xml:space="preserve">
+    <value>피해량</value>
+  </data>
+  <data name="BreakdownDamageStats" xml:space="preserve">
+    <value>DPS {0}  극대 {1:F0}%  직격 {2:F0}%  가동 {3:F0}%</value>
+  </data>
+  <data name="BreakdownDecimalPercent" xml:space="preserve">
+    <value>{0:F1}%</value>
+  </data>
+  <data name="BreakdownDirectShort" xml:space="preserve">
+    <value>직격%</value>
+  </data>
+  <data name="BreakdownEncounterTitle" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="BreakdownHealing" xml:space="preserve">
+    <value>치유량</value>
+  </data>
+  <data name="BreakdownHealingStats" xml:space="preserve">
+    <value>HPS {0}  극대 {1:F0}%  초과 치유 {2:F0}%  가동 {3:F0}%</value>
+  </data>
+  <data name="BreakdownHits" xml:space="preserve">
+    <value>명중</value>
+  </data>
+  <data name="BreakdownLive" xml:space="preserve">
+    <value>실시간</value>
+  </data>
+  <data name="BreakdownLockOrder" xml:space="preserve">
+    <value>현재 표시 순서 고정</value>
+  </data>
+  <data name="BreakdownMax" xml:space="preserve">
+    <value>최대</value>
+  </data>
+  <data name="BreakdownNext" xml:space="preserve">
+    <value>다음</value>
+  </data>
+  <data name="BreakdownNoData" xml:space="preserve">
+    <value>데이터 없음</value>
+  </data>
+  <data name="BreakdownOverhealShort" xml:space="preserve">
+    <value>초과%</value>
+  </data>
+  <data name="BreakdownPercent" xml:space="preserve">
+    <value>{0}%</value>
+  </data>
+  <data name="BreakdownPrevious" xml:space="preserve">
+    <value>이전</value>
+  </data>
+  <data name="BreakdownRaidDps" xml:space="preserve">
+    <value>파티 DPS {0}</value>
+  </data>
+  <data name="BreakdownRaidHps" xml:space="preserve">
+    <value>파티 HPS {0}</value>
+  </data>
+  <data name="BreakdownTotalDamage" xml:space="preserve">
+    <value>총 피해 {0}</value>
+  </data>
+  <data name="BreakdownTotalHealing" xml:space="preserve">
+    <value>총 치유 {0}</value>
+  </data>
+  <data name="BreakdownUnknown" xml:space="preserve">
+    <value>알 수 없음</value>
+  </data>
+  <data name="ClipboardCopied" xml:space="preserve">
+    <value>전투 요약을 클립보드에 복사했습니다.</value>
+  </data>
+  <data name="ClipboardCopyFailed" xml:space="preserve">
+    <value>전투 요약을 복사하지 못했습니다.</value>
+  </data>
+  <data name="ClipboardDuration" xml:space="preserve">
+    <value>전투 시간: {0}</value>
+  </data>
+  <data name="ClipboardPlayer" xml:space="preserve">
+    <value>{0}위 {1} ({2}) - DPS {3:N0}</value>
+  </data>
+  <data name="ClipboardTotals" xml:space="preserve">
+    <value>전투불능: {0}회 | 파티 DPS: {1:N0}</value>
+  </data>
+  <data name="ColorsDps" xml:space="preserve">
+    <value>공격 역할</value>
+  </data>
+  <data name="ColorsHealers" xml:space="preserve">
+    <value>회복 역할</value>
+  </data>
+  <data name="ColorsJob" xml:space="preserve">
+    <value>잡별 색상</value>
+  </data>
+  <data name="ColorsOther" xml:space="preserve">
+    <value>기타 / 리미트 브레이크</value>
+  </data>
+  <data name="ColorsRole" xml:space="preserve">
+    <value>역할별 색상</value>
+  </data>
+  <data name="ColorsTanks" xml:space="preserve">
+    <value>방어 역할</value>
+  </data>
+  <data name="CommandCaptureFailed" xml:space="preserve">
+    <value>기록에 실패했습니다: {0}</value>
+  </data>
+  <data name="CommandCaptureNotRunning" xml:space="preserve">
+    <value>진행 중인 기록이 없습니다.</value>
+  </data>
+  <data name="CommandCaptureSaved" xml:space="preserve">
+    <value>기록을 {0}에 저장했습니다.</value>
+  </data>
+  <data name="CommandCaptureStarted" xml:space="preserve">
+    <value>{0}에 기록 중입니다.</value>
+  </data>
+  <data name="CommandCaptureUsage" xml:space="preserve">
+    <value>/ntm debug capture start 또는 /ntm debug capture stop을 사용하세요.</value>
+  </data>
+  <data name="CommandHelpHeading" xml:space="preserve">
+    <value>NativeMeters 도움말:</value>
+  </data>
+  <data name="CommandLoginRequired" xml:space="preserve">
+    <value>설정을 열려면 캐릭터로 로그인하세요.</value>
+  </data>
+  <data name="CommandMainHelp" xml:space="preserve">
+    <value>NativeMeters의 기본 명령어입니다. /ntm help로 모든 옵션을 확인할 수 있습니다.</value>
+  </data>
+  <data name="CommandMetersDisabled" xml:space="preserve">
+    <value>미터를 비활성화했습니다.</value>
+  </data>
+  <data name="CommandMetersEnabled" xml:space="preserve">
+    <value>미터를 활성화했습니다.</value>
+  </data>
+  <data name="CommandOpenBreakdown" xml:space="preserve">
+    <value>상세 분석 창 열기</value>
+  </data>
+  <data name="CommandOpenConfig" xml:space="preserve">
+    <value>설정 창 열기</value>
+  </data>
+  <data name="CommandOpenSetup" xml:space="preserve">
+    <value>설정 마법사 열기</value>
+  </data>
+  <data name="CommandResetDummies" xml:space="preserve">
+    <value>주변 나무인형의 적개심 초기화</value>
+  </data>
+  <data name="CommandShowHelp" xml:space="preserve">
+    <value>이 도움말 표시</value>
+  </data>
+  <data name="CommandToggle" xml:space="preserve">
+    <value>미터 표시 전환</value>
+  </data>
+  <data name="CommandUnknown" xml:space="preserve">
+    <value>알 수 없는 명령어: {0}. 명령어 목록은 '{1} help'를 입력하세요.</value>
+  </data>
+  <data name="CommonAdd" xml:space="preserve">
+    <value>추가</value>
+  </data>
+  <data name="CommonClose" xml:space="preserve">
+    <value>닫기</value>
+  </data>
+  <data name="CommonDelete" xml:space="preserve">
+    <value>삭제</value>
+  </data>
+  <data name="CommonDuplicate" xml:space="preserve">
+    <value>복제</value>
+  </data>
+  <data name="CommonNextOption" xml:space="preserve">
+    <value>다음 항목</value>
+  </data>
+  <data name="CommonNone" xml:space="preserve">
+    <value>없음</value>
+  </data>
+  <data name="CommonPreviousOption" xml:space="preserve">
+    <value>이전 항목</value>
+  </data>
+  <data name="CommonRemove" xml:space="preserve">
+    <value>제거</value>
+  </data>
+  <data name="CommonSearch" xml:space="preserve">
+    <value>검색</value>
+  </data>
+  <data name="ComponentAdd" xml:space="preserve">
+    <value>요소 추가</value>
+  </data>
+  <data name="ComponentAlignment" xml:space="preserve">
+    <value>정렬:</value>
+  </data>
+  <data name="ComponentAsset" xml:space="preserve">
+    <value>그래픽 리소스:</value>
+  </data>
+  <data name="ComponentBarBackground" xml:space="preserve">
+    <value>막대 배경 색상:</value>
+  </data>
+  <data name="ComponentBarColor" xml:space="preserve">
+    <value>막대 색상:</value>
+  </data>
+  <data name="ComponentBarSizing" xml:space="preserve">
+    <value>막대 크기 조절:</value>
+  </data>
+  <data name="ComponentBarTint" xml:space="preserve">
+    <value>막대 색조:</value>
+  </data>
+  <data name="ComponentBarType" xml:space="preserve">
+    <value>막대 유형:</value>
+  </data>
+  <data name="ComponentButtonAction" xml:space="preserve">
+    <value>버튼 동작:</value>
+  </data>
+  <data name="ComponentColoring" xml:space="preserve">
+    <value>색상 모드:</value>
+  </data>
+  <data name="ComponentDisplayName" xml:space="preserve">
+    <value>표시 이름:</value>
+  </data>
+  <data name="ComponentFillRtl" xml:space="preserve">
+    <value>오른쪽에서 왼쪽으로 채우기</value>
+  </data>
+  <data name="ComponentFillStat" xml:space="preserve">
+    <value>막대 표시 수치:</value>
+  </data>
+  <data name="ComponentFont" xml:space="preserve">
+    <value>글꼴:</value>
+  </data>
+  <data name="ComponentFontSize" xml:space="preserve">
+    <value>글꼴 크기:</value>
+  </data>
+  <data name="ComponentFormatString" xml:space="preserve">
+    <value>표시 형식:</value>
+  </data>
+  <data name="ComponentHeight" xml:space="preserve">
+    <value>높이:</value>
+  </data>
+  <data name="ComponentIconId" xml:space="preserve">
+    <value>아이콘 ID:</value>
+  </data>
+  <data name="ComponentIconStyle" xml:space="preserve">
+    <value>아이콘 스타일:</value>
+  </data>
+  <data name="ComponentNew" xml:space="preserve">
+    <value>새 요소: {0}</value>
+  </data>
+  <data name="ComponentOutlineColor" xml:space="preserve">
+    <value>외곽선 색상</value>
+  </data>
+  <data name="ComponentPlateColor" xml:space="preserve">
+    <value>판 색상:</value>
+  </data>
+  <data name="ComponentPositionX" xml:space="preserve">
+    <value>X 위치:</value>
+  </data>
+  <data name="ComponentPositionY" xml:space="preserve">
+    <value>Y 위치:</value>
+  </data>
+  <data name="ComponentStaticColor" xml:space="preserve">
+    <value>고정 색상:</value>
+  </data>
+  <data name="ComponentStyle" xml:space="preserve">
+    <value>스타일:</value>
+  </data>
+  <data name="ComponentTypography" xml:space="preserve">
+    <value>텍스트</value>
+  </data>
+  <data name="ComponentVisuals" xml:space="preserve">
+    <value>외형</value>
+  </data>
+  <data name="ComponentWidth" xml:space="preserve">
+    <value>너비:</value>
+  </data>
+  <data name="ComponentZOrder" xml:space="preserve">
+    <value>겹침 순서:</value>
+  </data>
+  <data name="ConnectionAutoReconnect" xml:space="preserve">
+    <value>자동 재연결</value>
+  </data>
+  <data name="ConnectionConnected" xml:space="preserve">
+    <value>상태: 연결됨</value>
+  </data>
+  <data name="ConnectionDisconnected" xml:space="preserve">
+    <value>상태: 연결 끊김</value>
+  </data>
+  <data name="ConnectionInterval" xml:space="preserve">
+    <value>재연결 간격</value>
+  </data>
+  <data name="ConnectionLogErrors" xml:space="preserve">
+    <value>연결 오류 기록</value>
+  </data>
+  <data name="ConnectionLogging" xml:space="preserve">
+    <value>재연결 및 로그</value>
+  </data>
+  <data name="ConnectionMergePets" xml:space="preserve">
+    <value>소환수 피해량을 주인과 합산</value>
+  </data>
+  <data name="ConnectionMergePetsHelp" xml:space="preserve">
+    <value>소환수의 피해량을 주인에게 합산합니다.
+끄면 각각 별도 항목으로 표시합니다.</value>
+  </data>
+  <data name="ConnectionParseFilter" xml:space="preserve">
+    <value>분석 대상</value>
+  </data>
+  <data name="ConnectionParserOptions" xml:space="preserve">
+    <value>내장 분석기 설정</value>
+  </data>
+  <data name="ConnectionParserWarning" xml:space="preserve">
+    <value>내장 분석기(실험 기능)
+
+• 지속 피해와 지속 회복량은 추정치입니다.
+  ACT/IINACT와 약 5~10% 차이가 날 수 있습니다.
+• 지속 피해의 출처는 활성 상태 효과로 추정합니다.
+  파티에서 여러 지속 피해가 겹치면 오차가 생깁니다.
+정확한 측정에는 ACT/IINACT를 사용하세요.</value>
+  </data>
+  <data name="ConnectionReconnect" xml:space="preserve">
+    <value>다시 연결</value>
+  </data>
+  <data name="ConnectionResetUrl" xml:space="preserve">
+    <value>기본 주소로 복원</value>
+  </data>
+  <data name="ConnectionSeparateCompanions" xml:space="preserve">
+    <value>버디를 별도 항목으로 표시</value>
+  </data>
+  <data name="ConnectionSeparateCompanionsHelp" xml:space="preserve">
+    <value>버디의 피해량을 플레이어와 합산하지 않고 별도로 표시합니다.</value>
+  </data>
+  <data name="ConnectionSettings" xml:space="preserve">
+    <value>서버 연결 설정</value>
+  </data>
+  <data name="ConnectionTypeLabel" xml:space="preserve">
+    <value>연결 방식</value>
+  </data>
+  <data name="ConnectionUrl" xml:space="preserve">
+    <value>WebSocket 주소</value>
+  </data>
+  <data name="ConnectionUseYou" xml:space="preserve">
+    <value>내 캐릭터 이름을 ‘YOU’로 표시</value>
+  </data>
+  <data name="ConnectionUseYouHelp" xml:space="preserve">
+    <value>ACT와 동일하게 내 캐릭터 이름을 ‘YOU’로 기록합니다.</value>
+  </data>
+  <data name="DtrClickConfig" xml:space="preserve">
+    <value>클릭하여 설정 열기</value>
+  </data>
+  <data name="DtrDisconnectedText" xml:space="preserve">
+    <value>연결 해제 문구:</value>
+  </data>
+  <data name="DtrFormat" xml:space="preserve">
+    <value>표시 형식:</value>
+  </data>
+  <data name="DtrHeading" xml:space="preserve">
+    <value>기본 정보</value>
+  </data>
+  <data name="DtrInsertTag" xml:space="preserve">
+    <value>태그 삽입:</value>
+  </data>
+  <data name="DtrPersonalDps" xml:space="preserve">
+    <value>내 DPS 표시</value>
+  </data>
+  <data name="DtrPersonalDpsHelp" xml:space="preserve">
+    <value>[dps] 태그에 파티 전체 대신 내 DPS를 표시합니다.</value>
+  </data>
+  <data name="DtrShowDisconnected" xml:space="preserve">
+    <value>연결이 끊겨도 표시</value>
+  </data>
+  <data name="Enum_AlignmentType_Bottom" xml:space="preserve">
+    <value>아래</value>
+  </data>
+  <data name="Enum_AlignmentType_BottomLeft" xml:space="preserve">
+    <value>왼쪽 아래</value>
+  </data>
+  <data name="Enum_AlignmentType_BottomRight" xml:space="preserve">
+    <value>오른쪽 아래</value>
+  </data>
+  <data name="Enum_AlignmentType_Center" xml:space="preserve">
+    <value>가운데</value>
+  </data>
+  <data name="Enum_AlignmentType_Left" xml:space="preserve">
+    <value>왼쪽</value>
+  </data>
+  <data name="Enum_AlignmentType_Right" xml:space="preserve">
+    <value>오른쪽</value>
+  </data>
+  <data name="Enum_AlignmentType_Top" xml:space="preserve">
+    <value>위</value>
+  </data>
+  <data name="Enum_AlignmentType_TopLeft" xml:space="preserve">
+    <value>왼쪽 위</value>
+  </data>
+  <data name="Enum_AlignmentType_TopRight" xml:space="preserve">
+    <value>오른쪽 위</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Job" xml:space="preserve">
+    <value>잡</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Name" xml:space="preserve">
+    <value>이름</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Output" xml:space="preserve">
+    <value>DPS / HPS</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Role" xml:space="preserve">
+    <value>역할</value>
+  </data>
+  <data name="Enum_ColorMode_Job" xml:space="preserve">
+    <value>잡</value>
+  </data>
+  <data name="Enum_ColorMode_Role" xml:space="preserve">
+    <value>역할</value>
+  </data>
+  <data name="Enum_ColorMode_Static" xml:space="preserve">
+    <value>고정</value>
+  </data>
+  <data name="Enum_ConnectionType_IINACTIPC" xml:space="preserve">
+    <value>IINACT</value>
+  </data>
+  <data name="Enum_ConnectionType_Internal" xml:space="preserve">
+    <value>내장 파서</value>
+  </data>
+  <data name="Enum_ConnectionType_WebSocket" xml:space="preserve">
+    <value>ACT (WebSocket)</value>
+  </data>
+  <data name="Enum_CustomMeterBarStyle_FullWidth" xml:space="preserve">
+    <value>채움 막대</value>
+  </data>
+  <data name="Enum_CustomMeterBarStyle_None" xml:space="preserve">
+    <value>막대 없음</value>
+  </data>
+  <data name="Enum_CustomMeterBarStyle_Underline" xml:space="preserve">
+    <value>밑줄</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_BestHit" xml:space="preserve">
+    <value>최고 피해</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_CriticalDirectHitPercent" xml:space="preserve">
+    <value>극직격률</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_CriticalHitPercent" xml:space="preserve">
+    <value>극대화율</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Damage" xml:space="preserve">
+    <value>총 피해량</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_DamagePercent" xml:space="preserve">
+    <value>피해량 비중</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Deaths" xml:space="preserve">
+    <value>전투 불능 횟수</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_DirectHitPercent" xml:space="preserve">
+    <value>직격률</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Dps" xml:space="preserve">
+    <value>DPS</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Hits" xml:space="preserve">
+    <value>적중 횟수</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Hps" xml:space="preserve">
+    <value>HPS</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_PlayerName" xml:space="preserve">
+    <value>플레이어 이름</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Rank" xml:space="preserve">
+    <value>순위</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Swings" xml:space="preserve">
+    <value>공격 횟수</value>
+  </data>
+  <data name="Enum_FontType_JupiterLarge" xml:space="preserve">
+    <value>Jupiter (크게)</value>
+  </data>
+  <data name="Enum_FontType_MiedingerMed" xml:space="preserve">
+    <value>Miedinger Medium</value>
+  </data>
+  <data name="Enum_JobIconType_Blue" xml:space="preserve">
+    <value>파란색</value>
+  </data>
+  <data name="Enum_JobIconType_Dark" xml:space="preserve">
+    <value>어둡게</value>
+  </data>
+  <data name="Enum_JobIconType_Default" xml:space="preserve">
+    <value>기본</value>
+  </data>
+  <data name="Enum_JobIconType_Framed" xml:space="preserve">
+    <value>테두리</value>
+  </data>
+  <data name="Enum_JobIconType_Gearset" xml:space="preserve">
+    <value>장비 세트</value>
+  </data>
+  <data name="Enum_JobIconType_Glowing" xml:space="preserve">
+    <value>발광</value>
+  </data>
+  <data name="Enum_JobIconType_Gold" xml:space="preserve">
+    <value>금색</value>
+  </data>
+  <data name="Enum_JobIconType_Green" xml:space="preserve">
+    <value>초록색</value>
+  </data>
+  <data name="Enum_JobIconType_Light" xml:space="preserve">
+    <value>밝게</value>
+  </data>
+  <data name="Enum_JobIconType_Orange" xml:space="preserve">
+    <value>주황색</value>
+  </data>
+  <data name="Enum_JobIconType_Purple" xml:space="preserve">
+    <value>보라색</value>
+  </data>
+  <data name="Enum_JobIconType_Red" xml:space="preserve">
+    <value>빨간색</value>
+  </data>
+  <data name="Enum_MeterAsset_DutyClock" xml:space="preserve">
+    <value>임무 타이머</value>
+  </data>
+  <data name="Enum_MeterBackgroundStyle_Tooltip" xml:space="preserve">
+    <value>툴팁 (기본)</value>
+  </data>
+  <data name="Enum_MeterBackgroundStyle_Window" xml:space="preserve">
+    <value>창</value>
+  </data>
+  <data name="Enum_MeterBackgroundStyle_WindowFocused" xml:space="preserve">
+    <value>창 (밝은 테두리)</value>
+  </data>
+  <data name="Enum_MeterButtonAction_ContextMenu" xml:space="preserve">
+    <value>상황에 맞는 메뉴</value>
+  </data>
+  <data name="Enum_MeterButtonAction_CopyEncounterSummary" xml:space="preserve">
+    <value>전투 요약 복사</value>
+  </data>
+  <data name="Enum_MeterButtonAction_DetailedBreakdown" xml:space="preserve">
+    <value>상세 분석</value>
+  </data>
+  <data name="Enum_MeterButtonAction_ResetDummies" xml:space="preserve">
+    <value>모든 나무인형 초기화</value>
+  </data>
+  <data name="Enum_MeterButtonAction_Settings" xml:space="preserve">
+    <value>설정</value>
+  </data>
+  <data name="Enum_MeterButtonAction_ToggleCollapse" xml:space="preserve">
+    <value>접기 / 펼치기</value>
+  </data>
+  <data name="Enum_MeterComponentType_Asset" xml:space="preserve">
+    <value>그래픽 리소스</value>
+  </data>
+  <data name="Enum_MeterComponentType_Background" xml:space="preserve">
+    <value>배경</value>
+  </data>
+  <data name="Enum_MeterComponentType_Icon" xml:space="preserve">
+    <value>아이콘</value>
+  </data>
+  <data name="Enum_MeterComponentType_JobIcon" xml:space="preserve">
+    <value>잡 아이콘</value>
+  </data>
+  <data name="Enum_MeterComponentType_MenuButton" xml:space="preserve">
+    <value>버튼</value>
+  </data>
+  <data name="Enum_MeterComponentType_ProgressBar" xml:space="preserve">
+    <value>진행 막대</value>
+  </data>
+  <data name="Enum_MeterComponentType_Separator" xml:space="preserve">
+    <value>구분선</value>
+  </data>
+  <data name="Enum_MeterComponentType_Text" xml:space="preserve">
+    <value>텍스트</value>
+  </data>
+  <data name="Enum_MeterLayout_Horizontal" xml:space="preserve">
+    <value>가로</value>
+  </data>
+  <data name="Enum_MeterLayout_Vertical" xml:space="preserve">
+    <value>세로</value>
+  </data>
+  <data name="Enum_ParseFilter_Alliance" xml:space="preserve">
+    <value>연합 (소환수 포함)</value>
+  </data>
+  <data name="Enum_ParseFilter_None" xml:space="preserve">
+    <value>없음 (모든 개체)</value>
+  </data>
+  <data name="Enum_ParseFilter_Party" xml:space="preserve">
+    <value>파티 (소환수 포함)</value>
+  </data>
+  <data name="Enum_ParseFilter_Self" xml:space="preserve">
+    <value>자신 (소환수 포함)</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_HpBar" xml:space="preserve">
+    <value>HP 막대</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_MemberRow" xml:space="preserve">
+    <value>파티원 행</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_MpBar" xml:space="preserve">
+    <value>MP 막대</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_NameAndBars" xml:space="preserve">
+    <value>이름/막대</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_Auto" xml:space="preserve">
+    <value>자동</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_Flat" xml:space="preserve">
+    <value>단색</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_LegacyAdditive" xml:space="preserve">
+    <value>가산 (이전 방식)</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_NativeTint" xml:space="preserve">
+    <value>기본 색조</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_StockColors" xml:space="preserve">
+    <value>원본 색상</value>
+  </data>
+  <data name="Enum_ProgressBarSizing_PreserveEnds" xml:space="preserve">
+    <value>양 끝 모양 유지</value>
+  </data>
+  <data name="Enum_ProgressBarSizing_Stretch" xml:space="preserve">
+    <value>늘이기</value>
+  </data>
+  <data name="Enum_ProgressBarType_AetherGauge" xml:space="preserve">
+    <value>에테르 게이지</value>
+  </data>
+  <data name="Enum_ProgressBarType_BardArrow" xml:space="preserve">
+    <value>음유시인 화살</value>
+  </data>
+  <data name="Enum_ProgressBarType_Cast" xml:space="preserve">
+    <value>시전</value>
+  </data>
+  <data name="Enum_ProgressBarType_CastLegacy" xml:space="preserve">
+    <value>시전 (이전 방식)</value>
+  </data>
+  <data name="Enum_ProgressBarType_CollectableNegotiation" xml:space="preserve">
+    <value>수집품 교섭</value>
+  </data>
+  <data name="Enum_ProgressBarType_ContentGauge" xml:space="preserve">
+    <value>콘텐츠 게이지</value>
+  </data>
+  <data name="Enum_ProgressBarType_CustomDeliveries" xml:space="preserve">
+    <value>단골 거래</value>
+  </data>
+  <data name="Enum_ProgressBarType_EnemyCast" xml:space="preserve">
+    <value>적 시전</value>
+  </data>
+  <data name="Enum_ProgressBarType_EnemyCastLegacy" xml:space="preserve">
+    <value>적 시전 (이전 방식)</value>
+  </data>
+  <data name="Enum_ProgressBarType_GoldSaucerGauge" xml:space="preserve">
+    <value>골드 소서 게이지</value>
+  </data>
+  <data name="Enum_ProgressBarType_ItemInspection" xml:space="preserve">
+    <value>아이템 감정</value>
+  </data>
+  <data name="Enum_ProgressBarType_LimitBreak" xml:space="preserve">
+    <value>리미트 브레이크</value>
+  </data>
+  <data name="Enum_ProgressBarType_PartyListHp" xml:space="preserve">
+    <value>파티 목록 게이지</value>
+  </data>
+  <data name="Enum_ProgressBarType_ToDo" xml:space="preserve">
+    <value>임무 목록</value>
+  </data>
+  <data name="Enum_ProgressBarType_ToDoLegacy" xml:space="preserve">
+    <value>임무 목록 (이전 방식)</value>
+  </data>
+  <data name="Enum_SelfTextOverrideMode_AllText" xml:space="preserve">
+    <value>행의 모든 텍스트</value>
+  </data>
+  <data name="Enum_SelfTextOverrideMode_NameOnly" xml:space="preserve">
+    <value>이름만</value>
+  </data>
+  <data name="Enum_TextFlags_AutoAdjustNodeSize" xml:space="preserve">
+    <value>텍스트에 크기 자동 맞춤</value>
+  </data>
+  <data name="Enum_TextFlags_Bold" xml:space="preserve">
+    <value>굵게</value>
+  </data>
+  <data name="Enum_TextFlags_Edge" xml:space="preserve">
+    <value>외곽선</value>
+  </data>
+  <data name="Enum_TextFlags_Ellipsis" xml:space="preserve">
+    <value>말줄임표</value>
+  </data>
+  <data name="Enum_TextFlags_Emboss" xml:space="preserve">
+    <value>양각</value>
+  </data>
+  <data name="Enum_TextFlags_FixedFontResolution" xml:space="preserve">
+    <value>글꼴 해상도 고정</value>
+  </data>
+  <data name="Enum_TextFlags_FontCache" xml:space="preserve">
+    <value>글꼴 캐시</value>
+  </data>
+  <data name="Enum_TextFlags_Glare" xml:space="preserve">
+    <value>광택</value>
+  </data>
+  <data name="Enum_TextFlags_Italic" xml:space="preserve">
+    <value>기울임꼴</value>
+  </data>
+  <data name="Enum_TextFlags_LinkData" xml:space="preserve">
+    <value>링크 데이터</value>
+  </data>
+  <data name="Enum_TextFlags_MultiLine" xml:space="preserve">
+    <value>여러 줄</value>
+  </data>
+  <data name="Enum_TextFlags_OverflowHidden" xml:space="preserve">
+    <value>넘친 내용 숨기기</value>
+  </data>
+  <data name="Enum_TextFlags_WordWrap" xml:space="preserve">
+    <value>단어 줄바꿈</value>
+  </data>
+  <data name="GeneralBreakdownParser" xml:space="preserve">
+    <value>ACT/IINACT 사용 시에도 상세 내역에 내장 분석기 사용</value>
+  </data>
+  <data name="GeneralClearAct" xml:space="preserve">
+    <value>미터기 초기화 시 ACT도 초기화</value>
+  </data>
+  <data name="GeneralClearMeter" xml:space="preserve">
+    <value>미터기 초기화</value>
+  </data>
+  <data name="GeneralDebugMode" xml:space="preserve">
+    <value>디버그 모드</value>
+  </data>
+  <data name="GeneralEnabled" xml:space="preserve">
+    <value>활성화</value>
+  </data>
+  <data name="GeneralEndAct" xml:space="preserve">
+    <value>전투 종료 후 ACT 측정 강제 종료</value>
+  </data>
+  <data name="GeneralEndActHelp" xml:space="preserve">
+    <value>이 기능 대신 Plugins → OverlayPlugin → Event Settings에서 ‘End ACT encounter after wipe/out of combat’를 켜는 것을 권장합니다.</value>
+  </data>
+  <data name="GeneralEndEncounter" xml:space="preserve">
+    <value>전투 측정 종료</value>
+  </data>
+  <data name="GeneralExport" xml:space="preserve">
+    <value>설정 내보내기</value>
+  </data>
+  <data name="GeneralHeading" xml:space="preserve">
+    <value>일반 설정</value>
+  </data>
+  <data name="GeneralHistoryEnabled" xml:space="preserve">
+    <value>전투 기록 저장</value>
+  </data>
+  <data name="GeneralHistorySize" xml:space="preserve">
+    <value>최대 전투 기록 수</value>
+  </data>
+  <data name="GeneralImport" xml:space="preserve">
+    <value>설정 가져오기
+(Shift를 누른 채 클릭하면 확인)</value>
+  </data>
+  <data name="GeneralLanguage" xml:space="preserve">
+    <value>표시 언어:</value>
+  </data>
+  <data name="GeneralLanguageGame" xml:space="preserve">
+    <value>게임 언어 사용</value>
+  </data>
+  <data name="GeneralPreview" xml:space="preserve">
+    <value>미리보기</value>
+  </data>
+  <data name="GeneralPrivacy" xml:space="preserve">
+    <value>개인정보 보호 모드</value>
+  </data>
+  <data name="GeneralPrivacyHelp" xml:space="preserve">
+    <value>플레이어 이름 대신 잡 이름을 표시합니다.</value>
+  </data>
+  <data name="GeneralReplaceYou" xml:space="preserve">
+    <value>YOU를 내 이름으로 표시</value>
+  </data>
+  <data name="GeneralReset" xml:space="preserve">
+    <value>초기화</value>
+  </data>
+  <data name="GeneralResetHelp" xml:space="preserve">
+    <value>설정 초기화
+(버튼을 길게 눌러 확인)</value>
+  </data>
+  <data name="GeneralSwitchLive" xml:space="preserve">
+    <value>새 전투 시작 시 실시간 보기로 전환</value>
+  </data>
+  <data name="HudDisconnected" xml:space="preserve">
+    <value>ACT/IINACT에 연결되지 않았습니다</value>
+  </data>
+  <data name="HudEncounterDetails" xml:space="preserve">
+    <value>전투: {0}
+전투 시간: {1}
+파티 DPS: {2:N0}
+전투불능: {3}회</value>
+  </data>
+  <data name="HudIdle" xml:space="preserve">
+    <value>대기 중</value>
+  </data>
+  <data name="HudLimitBreak" xml:space="preserve">
+    <value>리미트 브레이크</value>
+  </data>
+  <data name="HudLock" xml:space="preserve">
+    <value>고정</value>
+  </data>
+  <data name="HudLockHelp" xml:space="preserve">
+    <value>위치와 크기 고정</value>
+  </data>
+  <data name="HudNoEncounter" xml:space="preserve">
+    <value>전투 없음</value>
+  </data>
+  <data name="HudOpenConfig" xml:space="preserve">
+    <value>클릭하여 설정 열기</value>
+  </data>
+  <data name="IconIdLabel" xml:space="preserve">
+    <value>아이콘 ID: {0}</value>
+  </data>
+  <data name="JobName_1" xml:space="preserve">
+    <value>검술사</value>
+  </data>
+  <data name="JobName_19" xml:space="preserve">
+    <value>나이트</value>
+  </data>
+  <data name="JobName_2" xml:space="preserve">
+    <value>격투사</value>
+  </data>
+  <data name="JobName_20" xml:space="preserve">
+    <value>몽크</value>
+  </data>
+  <data name="JobName_21" xml:space="preserve">
+    <value>전사</value>
+  </data>
+  <data name="JobName_22" xml:space="preserve">
+    <value>용기사</value>
+  </data>
+  <data name="JobName_23" xml:space="preserve">
+    <value>음유시인</value>
+  </data>
+  <data name="JobName_24" xml:space="preserve">
+    <value>백마도사</value>
+  </data>
+  <data name="JobName_25" xml:space="preserve">
+    <value>흑마도사</value>
+  </data>
+  <data name="JobName_26" xml:space="preserve">
+    <value>비술사</value>
+  </data>
+  <data name="JobName_27" xml:space="preserve">
+    <value>소환사</value>
+  </data>
+  <data name="JobName_28" xml:space="preserve">
+    <value>학자</value>
+  </data>
+  <data name="JobName_29" xml:space="preserve">
+    <value>쌍검사</value>
+  </data>
+  <data name="JobName_3" xml:space="preserve">
+    <value>도끼술사</value>
+  </data>
+  <data name="JobName_30" xml:space="preserve">
+    <value>닌자</value>
+  </data>
+  <data name="JobName_31" xml:space="preserve">
+    <value>기공사</value>
+  </data>
+  <data name="JobName_32" xml:space="preserve">
+    <value>암흑기사</value>
+  </data>
+  <data name="JobName_33" xml:space="preserve">
+    <value>점성술사</value>
+  </data>
+  <data name="JobName_34" xml:space="preserve">
+    <value>사무라이</value>
+  </data>
+  <data name="JobName_35" xml:space="preserve">
+    <value>적마도사</value>
+  </data>
+  <data name="JobName_36" xml:space="preserve">
+    <value>청마도사</value>
+  </data>
+  <data name="JobName_37" xml:space="preserve">
+    <value>건브레이커</value>
+  </data>
+  <data name="JobName_38" xml:space="preserve">
+    <value>무도가</value>
+  </data>
+  <data name="JobName_39" xml:space="preserve">
+    <value>리퍼</value>
+  </data>
+  <data name="JobName_4" xml:space="preserve">
+    <value>창술사</value>
+  </data>
+  <data name="JobName_40" xml:space="preserve">
+    <value>현자</value>
+  </data>
+  <data name="JobName_41" xml:space="preserve">
+    <value>바이퍼</value>
+  </data>
+  <data name="JobName_42" xml:space="preserve">
+    <value>픽토맨서</value>
+  </data>
+  <data name="JobName_43" xml:space="preserve">
+    <value>마수조련사</value>
+  </data>
+  <data name="JobName_5" xml:space="preserve">
+    <value>궁술사</value>
+  </data>
+  <data name="JobName_6" xml:space="preserve">
+    <value>환술사</value>
+  </data>
+  <data name="JobName_7" xml:space="preserve">
+    <value>주술사</value>
+  </data>
+  <data name="MenuClearHistory" xml:space="preserve">
+    <value>기록 비우기</value>
+  </data>
+  <data name="MenuClearMeter" xml:space="preserve">
+    <value>미터 비우기</value>
+  </data>
+  <data name="MenuCollapse" xml:space="preserve">
+    <value>접기</value>
+  </data>
+  <data name="MenuCopyClipboard" xml:space="preserve">
+    <value>클립보드에 복사</value>
+  </data>
+  <data name="MenuEndEncounter" xml:space="preserve">
+    <value>전투 종료</value>
+  </data>
+  <data name="MenuExpand" xml:space="preserve">
+    <value>펼치기</value>
+  </data>
+  <data name="MenuLive" xml:space="preserve">
+    <value>실시간 (현재)</value>
+  </data>
+  <data name="MenuLocked" xml:space="preserve">
+    <value>잠금</value>
+  </data>
+  <data name="MenuPreviousEncounters" xml:space="preserve">
+    <value>이전 전투…</value>
+  </data>
+  <data name="MenuPrivacy" xml:space="preserve">
+    <value>개인정보 보호 모드</value>
+  </data>
+  <data name="MenuSortBy" xml:space="preserve">
+    <value>정렬 기준…</value>
+  </data>
+  <data name="MenuUnknownEncounter" xml:space="preserve">
+    <value>알 수 없음</value>
+  </data>
+  <data name="MeterAdd" xml:space="preserve">
+    <value>미터 추가</value>
+  </data>
+  <data name="MeterBackground" xml:space="preserve">
+    <value>배경 표시</value>
+  </data>
+  <data name="MeterBackgroundColor" xml:space="preserve">
+    <value>배경 색상:</value>
+  </data>
+  <data name="MeterBackgroundStyle" xml:space="preserve">
+    <value>배경 스타일:</value>
+  </data>
+  <data name="MeterCancel" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="MeterCardHeight" xml:space="preserve">
+    <value>카드 높이:</value>
+  </data>
+  <data name="MeterCardSpacing" xml:space="preserve">
+    <value>카드 간격:</value>
+  </data>
+  <data name="MeterClickthrough" xml:space="preserve">
+    <value>클릭 통과</value>
+  </data>
+  <data name="MeterDisabled" xml:space="preserve">
+    <value>비활성화</value>
+  </data>
+  <data name="MeterDisplaySettings" xml:space="preserve">
+    <value>표시 설정</value>
+  </data>
+  <data name="MeterEnableFooter" xml:space="preserve">
+    <value>바닥글 표시</value>
+  </data>
+  <data name="MeterEnableHeader" xml:space="preserve">
+    <value>머리글 표시</value>
+  </data>
+  <data name="MeterEnabled" xml:space="preserve">
+    <value>활성화</value>
+  </data>
+  <data name="MeterExportTooltip" xml:space="preserve">
+    <value>미터를 클립보드에 내보내기</value>
+  </data>
+  <data name="MeterFooterComponents" xml:space="preserve">
+    <value>바닥글 요소</value>
+  </data>
+  <data name="MeterFooterSpace" xml:space="preserve">
+    <value>바닥글 높이:</value>
+  </data>
+  <data name="MeterGeneralSettings" xml:space="preserve">
+    <value>일반 설정</value>
+  </data>
+  <data name="MeterHeaderComponents" xml:space="preserve">
+    <value>머리글 요소</value>
+  </data>
+  <data name="MeterHeaderSpace" xml:space="preserve">
+    <value>머리글 높이:</value>
+  </data>
+  <data name="MeterHeading" xml:space="preserve">
+    <value>미터 설정</value>
+  </data>
+  <data name="MeterHighlightSelf" xml:space="preserve">
+    <value>내 행 강조</value>
+  </data>
+  <data name="MeterHighlightSelfTooltip" xml:space="preserve">
+    <value>이 미터에서만 내 행에 별도 색상을 적용합니다.</value>
+  </data>
+  <data name="MeterImportClipboard" xml:space="preserve">
+    <value>클립보드에서 가져오기</value>
+  </data>
+  <data name="MeterImportTooltip" xml:space="preserve">
+    <value>클립보드에서 미터 가져오기</value>
+  </data>
+  <data name="MeterKeepSelfTooltip" xml:space="preserve">
+    <value>내 행만 남기고 접습니다. 다시 펼치면 이전 창 크기로 돌아갑니다.</value>
+  </data>
+  <data name="MeterKeepSelfVisible" xml:space="preserve">
+    <value>접었을 때도 내 행 표시</value>
+  </data>
+  <data name="MeterLayout" xml:space="preserve">
+    <value>배치:</value>
+  </data>
+  <data name="MeterLockPositionSize" xml:space="preserve">
+    <value>위치/크기 잠금</value>
+  </data>
+  <data name="MeterMaxCombatants" xml:space="preserve">
+    <value>최대 전투 참여자 수:</value>
+  </data>
+  <data name="MeterName" xml:space="preserve">
+    <value>미터 이름:</value>
+  </data>
+  <data name="MeterNew" xml:space="preserve">
+    <value>새 미터 {0}</value>
+  </data>
+  <data name="MeterNoneFound" xml:space="preserve">
+    <value>미터를 찾을 수 없습니다.</value>
+  </data>
+  <data name="MeterOverrideSelfBarColor" xml:space="preserve">
+    <value>내 막대 색상 재설정</value>
+  </data>
+  <data name="MeterOverrideSelfOutline" xml:space="preserve">
+    <value>내 외곽선 색상 재설정</value>
+  </data>
+  <data name="MeterOverrideSelfTextColor" xml:space="preserve">
+    <value>내 텍스트 색상 재설정</value>
+  </data>
+  <data name="MeterOverrideSelfTextStyle" xml:space="preserve">
+    <value>내 텍스트 스타일 재설정</value>
+  </data>
+  <data name="MeterPinSelf" xml:space="preserve">
+    <value>내 행을 맨 위에 고정</value>
+  </data>
+  <data name="MeterPinSelfCard" xml:space="preserve">
+    <value>내 카드를 첫 번째에 고정</value>
+  </data>
+  <data name="MeterReplace" xml:space="preserve">
+    <value>미터 교체</value>
+  </data>
+  <data name="MeterReplacePrompt" xml:space="preserve">
+    <value>이 미터의 설정을 클립보드 내용으로 바꿀까요?</value>
+  </data>
+  <data name="MeterRowComponents" xml:space="preserve">
+    <value>행 요소 (전투 참여자)</value>
+  </data>
+  <data name="MeterRowHeight" xml:space="preserve">
+    <value>행 높이:</value>
+  </data>
+  <data name="MeterRowSpacing" xml:space="preserve">
+    <value>행 간격:</value>
+  </data>
+  <data name="MeterScale" xml:space="preserve">
+    <value>배율 (%):</value>
+  </data>
+  <data name="MeterScrollbar" xml:space="preserve">
+    <value>스크롤바 표시</value>
+  </data>
+  <data name="MeterSelectOrCreate" xml:space="preserve">
+    <value>미터를 선택하거나 새로 만드세요.</value>
+  </data>
+  <data name="MeterSelfBarColor" xml:space="preserve">
+    <value>내 막대 색상:</value>
+  </data>
+  <data name="MeterSelfOutlineColor" xml:space="preserve">
+    <value>내 외곽선 색상:</value>
+  </data>
+  <data name="MeterSelfTextColor" xml:space="preserve">
+    <value>내 텍스트 색상:</value>
+  </data>
+  <data name="MeterSelfTextFont" xml:space="preserve">
+    <value>내 텍스트 글꼴:</value>
+  </data>
+  <data name="MeterSelfTextSize" xml:space="preserve">
+    <value>내 텍스트 크기:</value>
+  </data>
+  <data name="MeterSelfTextStyle" xml:space="preserve">
+    <value>내 텍스트 스타일:</value>
+  </data>
+  <data name="MeterSelfTextTarget" xml:space="preserve">
+    <value>내 텍스트 적용 대상:</value>
+  </data>
+  <data name="MeterSelfTextTargetTooltip" xml:space="preserve">
+    <value>위에서 선택한 텍스트 대상을 사용합니다.</value>
+  </data>
+  <data name="MeterShowLimitBreak" xml:space="preserve">
+    <value>리미트 브레이크 표시</value>
+  </data>
+  <data name="MeterShowNonPlayers" xml:space="preserve">
+    <value>플레이어가 아닌 전투 참여자 표시</value>
+  </data>
+  <data name="MeterSortBy" xml:space="preserve">
+    <value>정렬 기준:</value>
+  </data>
+  <data name="MeterUnnamed" xml:space="preserve">
+    <value>이름 없는 미터</value>
+  </data>
+  <data name="NotifyClipboardEmpty" xml:space="preserve">
+    <value>클립보드가 비어 있습니다.</value>
+  </data>
+  <data name="NotifyClipboardMeterInvalid" xml:space="preserve">
+    <value>클립보드의 미터 데이터가 올바르지 않습니다.</value>
+  </data>
+  <data name="NotifyClipboardParseFailed" xml:space="preserve">
+    <value>클립보드 데이터를 읽을 수 없습니다.</value>
+  </data>
+  <data name="NotifyConfigClipboardInvalid" xml:space="preserve">
+    <value>클립보드가 비어 있거나 가져올 수 없는 데이터입니다.</value>
+  </data>
+  <data name="NotifyConfigExported" xml:space="preserve">
+    <value>설정을 클립보드에 내보냈습니다.</value>
+  </data>
+  <data name="NotifyConfigImportFailed" xml:space="preserve">
+    <value>클립보드 데이터가 올바르지 않거나 가져올 수 없습니다.</value>
+  </data>
+  <data name="NotifyConfigImported" xml:space="preserve">
+    <value>클립보드에서 설정을 가져왔습니다.</value>
+  </data>
+  <data name="NotifyConfigReset" xml:space="preserve">
+    <value>설정을 기본값으로 되돌렸습니다.</value>
+  </data>
+  <data name="NotifyConnected" xml:space="preserve">
+    <value>{0}에 연결했습니다.</value>
+  </data>
+  <data name="NotifyInternalParserEnabled" xml:space="preserve">
+    <value>내장 파서(실험 기능)를 활성화했습니다.</value>
+  </data>
+  <data name="NotifyMeterExported" xml:space="preserve">
+    <value>미터 '{0}'를 클립보드에 내보냈습니다.</value>
+  </data>
+  <data name="NotifyMeterImported" xml:space="preserve">
+    <value>미터 설정을 가져왔습니다.</value>
+  </data>
+  <data name="PartyListAlignment" xml:space="preserve">
+    <value>정렬:</value>
+  </data>
+  <data name="PartyListAnchor" xml:space="preserve">
+    <value>기준점:</value>
+  </data>
+  <data name="PartyListBarBackground" xml:space="preserve">
+    <value>막대 배경색:</value>
+  </data>
+  <data name="PartyListBarColor" xml:space="preserve">
+    <value>막대 색상:</value>
+  </data>
+  <data name="PartyListBarColorMode" xml:space="preserve">
+    <value>막대 색상 모드:</value>
+  </data>
+  <data name="PartyListBarSizing" xml:space="preserve">
+    <value>막대 크기 조절:</value>
+  </data>
+  <data name="PartyListBarTint" xml:space="preserve">
+    <value>막대 색조:</value>
+  </data>
+  <data name="PartyListBarType" xml:space="preserve">
+    <value>막대 종류:</value>
+  </data>
+  <data name="PartyListEnableHelp" xml:space="preserve">
+    <value>파티 목록의 각 줄에 NativeMeters 수치를 표시합니다.</value>
+  </data>
+  <data name="PartyListFillLeft" xml:space="preserve">
+    <value>오른쪽에서 왼쪽으로 채우기</value>
+  </data>
+  <data name="PartyListFillStat" xml:space="preserve">
+    <value>막대 표시 지표:</value>
+  </data>
+  <data name="PartyListFont" xml:space="preserve">
+    <value>글꼴:</value>
+  </data>
+  <data name="PartyListFontSize" xml:space="preserve">
+    <value>글자 크기:</value>
+  </data>
+  <data name="PartyListFormat" xml:space="preserve">
+    <value>표시 형식:</value>
+  </data>
+  <data name="PartyListHeight" xml:space="preserve">
+    <value>높이:</value>
+  </data>
+  <data name="PartyListHideEmpty" xml:space="preserve">
+    <value>전투 데이터가 없으면 숨기기</value>
+  </data>
+  <data name="PartyListHighlightTop" xml:space="preserve">
+    <value>1위 파티원 강조</value>
+  </data>
+  <data name="PartyListHighlightTopHelp" xml:space="preserve">
+    <value>선택한 지표에서 1위인 파티원에게 별도의 표시 형식과 글자색을 적용합니다.</value>
+  </data>
+  <data name="PartyListMemberBar" xml:space="preserve">
+    <value>파티원 막대</value>
+  </data>
+  <data name="PartyListMemberStyle" xml:space="preserve">
+    <value>파티원 글자 스타일</value>
+  </data>
+  <data name="PartyListMemberText" xml:space="preserve">
+    <value>파티원 텍스트</value>
+  </data>
+  <data name="PartyListMeter" xml:space="preserve">
+    <value>파티 목록 미터기</value>
+  </data>
+  <data name="PartyListOutline" xml:space="preserve">
+    <value>글자 테두리색:</value>
+  </data>
+  <data name="PartyListPosX" xml:space="preserve">
+    <value>X:</value>
+  </data>
+  <data name="PartyListPosY" xml:space="preserve">
+    <value>Y:</value>
+  </data>
+  <data name="PartyListPosition" xml:space="preserve">
+    <value>위치:</value>
+  </data>
+  <data name="PartyListRaidAlignment" xml:space="preserve">
+    <value>공격대 정렬:</value>
+  </data>
+  <data name="PartyListRaidColor" xml:space="preserve">
+    <value>공격대 글자색:</value>
+  </data>
+  <data name="PartyListRaidDps" xml:space="preserve">
+    <value>공격대 DPS</value>
+  </data>
+  <data name="PartyListRaidFont" xml:space="preserve">
+    <value>공격대 글꼴:</value>
+  </data>
+  <data name="PartyListRaidFontSize" xml:space="preserve">
+    <value>공격대 글자 크기:</value>
+  </data>
+  <data name="PartyListRaidFormat" xml:space="preserve">
+    <value>공격대 표시 형식:</value>
+  </data>
+  <data name="PartyListRaidHelp" xml:space="preserve">
+    <value>파티 목록 제목 옆에 전투 참가자 전체의 DPS를 표시합니다.</value>
+  </data>
+  <data name="PartyListRaidOutline" xml:space="preserve">
+    <value>공격대 글자 테두리색:</value>
+  </data>
+  <data name="PartyListRaidStyle" xml:space="preserve">
+    <value>공격대 글자 스타일:</value>
+  </data>
+  <data name="PartyListResetHelp" xml:space="preserve">
+    <value>파티 목록 설정 초기화
+(버튼을 길게 눌러 확인)</value>
+  </data>
+  <data name="PartyListShowBars" xml:space="preserve">
+    <value>파티원 막대 표시</value>
+  </data>
+  <data name="PartyListShowBarsHelp" xml:space="preserve">
+    <value>파티 목록의 각 줄에 선택한 지표를 막대로 표시합니다.</value>
+  </data>
+  <data name="PartyListShowMembers" xml:space="preserve">
+    <value>파티원 항목 표시</value>
+  </data>
+  <data name="PartyListShowRaid" xml:space="preserve">
+    <value>공격대 DPS 표시</value>
+  </data>
+  <data name="PartyListShowSelf" xml:space="preserve">
+    <value>내 항목 표시</value>
+  </data>
+  <data name="PartyListSize" xml:space="preserve">
+    <value>크기:</value>
+  </data>
+  <data name="PartyListTextColor" xml:space="preserve">
+    <value>글자색:</value>
+  </data>
+  <data name="PartyListTextStyle" xml:space="preserve">
+    <value>글자 스타일:</value>
+  </data>
+  <data name="PartyListTopColor" xml:space="preserve">
+    <value>1위 글자색:</value>
+  </data>
+  <data name="PartyListTopFormat" xml:space="preserve">
+    <value>1위 표시 형식:</value>
+  </data>
+  <data name="PartyListTopMember" xml:space="preserve">
+    <value>1위 파티원</value>
+  </data>
+  <data name="PartyListTopStat" xml:space="preserve">
+    <value>순위 기준:</value>
+  </data>
+  <data name="PartyListWidth" xml:space="preserve">
+    <value>너비:</value>
+  </data>
+  <data name="PickerClear" xml:space="preserve">
+    <value>모두 해제</value>
+  </data>
+  <data name="PickerTextFlagsHelp" xml:space="preserve">
+    <value>텍스트 플래그는 게임 UI를 사용합니다. 글꼴에 따라 일부 항목의 동작이 달라질 수 있습니다.</value>
+  </data>
+  <data name="PlacementLock" xml:space="preserve">
+    <value>고정하고 마치기</value>
+  </data>
+  <data name="PlacementMovable" xml:space="preserve">
+    <value>이동 가능하게 두기</value>
+  </data>
+  <data name="PlacementMove" xml:space="preserve">
+    <value>미터기를 끌어 이동하고 모서리를 끌어 크기를 조절하세요.</value>
+  </data>
+  <data name="PlacementSample" xml:space="preserve">
+    <value>선택한 전투가 없으면 미터기에 예시 데이터가 표시됩니다.</value>
+  </data>
+  <data name="PlacementSampleTitle" xml:space="preserve">
+    <value>배치 예시</value>
+  </data>
+  <data name="PlacementSkip" xml:space="preserve">
+    <value>건너뛰기</value>
+  </data>
+  <data name="PresetBestHitStrip" xml:space="preserve">
+    <value>최고 피해 표시줄</value>
+  </data>
+  <data name="PresetCombatTable" xml:space="preserve">
+    <value>전투 통계표</value>
+  </data>
+  <data name="PresetCompactTiles" xml:space="preserve">
+    <value>간결한 타일</value>
+  </data>
+  <data name="PresetCompactUnderline" xml:space="preserve">
+    <value>간결한 밑줄</value>
+  </data>
+  <data name="PresetDefaultStylish" xml:space="preserve">
+    <value>세련된 기본형</value>
+  </data>
+  <data name="PresetFooterDeaths" xml:space="preserve">
+    <value>전투 불능: {0}</value>
+  </data>
+  <data name="PresetFooterPartyDps" xml:space="preserve">
+    <value>파티 DPS: {0}</value>
+  </data>
+  <data name="PresetFooterRaidDps" xml:space="preserve">
+    <value>공대 DPS: {0}</value>
+  </data>
+  <data name="PresetPartyCards" xml:space="preserve">
+    <value>파티 카드</value>
+  </data>
+  <data name="PreviewBoss" xml:space="preserve">
+    <value>예시 보스</value>
+  </data>
+  <data name="PreviewZone" xml:space="preserve">
+    <value>예시 지역</value>
+  </data>
+  <data name="SetupAboveBar" xml:space="preserve">
+    <value>막대 위</value>
+  </data>
+  <data name="SetupActGuide" xml:space="preserve">
+    <value>ACT 설정 안내</value>
+  </data>
+  <data name="SetupActIntro" xml:space="preserve">
+    <value>PC에 설치한 ACT를 사용합니다. FFLogs용으로 ACT를 사용 중이라면 선택하세요.</value>
+  </data>
+  <data name="SetupActServer" xml:space="preserve">
+    <value>ACT에서 Plugins &gt; OverlayPlugin WSServer를 여세요.</value>
+  </data>
+  <data name="SetupActStart" xml:space="preserve">
+    <value>Stream/Local overlay에서 Start를 누르세요. 플레이 중에는 ACT를 켜 두세요.</value>
+  </data>
+  <data name="SetupActUnavailable" xml:space="preserve">
+    <value>ACT에 연결할 수 없습니다</value>
+  </data>
+  <data name="SetupAddMeter" xml:space="preserve">
+    <value>독립 미터기 추가</value>
+  </data>
+  <data name="SetupAddMeterHelp" xml:space="preserve">
+    <value>HUD에서 자유롭게 옮길 수 있는 별도 창입니다.</value>
+  </data>
+  <data name="SetupAppearance" xml:space="preserve">
+    <value>모양</value>
+  </data>
+  <data name="SetupBack" xml:space="preserve">
+    <value>뒤로</value>
+  </data>
+  <data name="SetupBackground" xml:space="preserve">
+    <value>배경</value>
+  </data>
+  <data name="SetupBarColor" xml:space="preserve">
+    <value>막대 색상</value>
+  </data>
+  <data name="SetupBarFill" xml:space="preserve">
+    <value>막대 수치</value>
+  </data>
+  <data name="SetupBarSizing" xml:space="preserve">
+    <value>막대 크기 조절</value>
+  </data>
+  <data name="SetupBarStyle" xml:space="preserve">
+    <value>막대 스타일</value>
+  </data>
+  <data name="SetupBarTint" xml:space="preserve">
+    <value>막대 색조</value>
+  </data>
+  <data name="SetupBarType" xml:space="preserve">
+    <value>막대 종류</value>
+  </data>
+  <data name="SetupCancel" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="SetupCheckConnection" xml:space="preserve">
+    <value>연결 확인</value>
+  </data>
+  <data name="SetupChecking" xml:space="preserve">
+    <value>연결 확인 중…</value>
+  </data>
+  <data name="SetupChooseColumn" xml:space="preserve">
+    <value>열을 하나 이상 선택하세요.</value>
+  </data>
+  <data name="SetupChooseDisplay" xml:space="preserve">
+    <value>DPS를 어디에 표시할까요?</value>
+  </data>
+  <data name="SetupChooseParser" xml:space="preserve">
+    <value>분석기 선택</value>
+  </data>
+  <data name="SetupClickthrough" xml:space="preserve">
+    <value>클릭 통과</value>
+  </data>
+  <data name="SetupClickthroughHelp" xml:space="preserve">
+    <value>클릭이 미터기를 통과합니다. 메뉴 버튼은 계속 사용할 수 있습니다.</value>
+  </data>
+  <data name="SetupColumns" xml:space="preserve">
+    <value>열</value>
+  </data>
+  <data name="SetupConnected" xml:space="preserve">
+    <value>연결됨</value>
+  </data>
+  <data name="SetupContinueOffline" xml:space="preserve">
+    <value>연결 없이 계속</value>
+  </data>
+  <data name="SetupCustomize" xml:space="preserve">
+    <value>직접 만들기</value>
+  </data>
+  <data name="SetupDefault" xml:space="preserve">
+    <value>기본값</value>
+  </data>
+  <data name="SetupEditMeter" xml:space="preserve">
+    <value>미터기 설정</value>
+  </data>
+  <data name="SetupExtras" xml:space="preserve">
+    <value>추가 설정</value>
+  </data>
+  <data name="SetupFinish" xml:space="preserve">
+    <value>완료</value>
+  </data>
+  <data name="SetupFooter" xml:space="preserve">
+    <value>바닥글</value>
+  </data>
+  <data name="SetupFooterHelp" xml:space="preserve">
+    <value>미터기 하단에 전투불능 횟수와 파티 DPS를 표시합니다.</value>
+  </data>
+  <data name="SetupIconStyle" xml:space="preserve">
+    <value>아이콘 스타일</value>
+  </data>
+  <data name="SetupIinactChecking" xml:space="preserve">
+    <value>IINACT 확인 중…</value>
+  </data>
+  <data name="SetupIinactDisabled" xml:space="preserve">
+    <value>IINACT가 설치되어 있습니다. Dalamud에서 활성화하세요.</value>
+  </data>
+  <data name="SetupIinactEnabled" xml:space="preserve">
+    <value>Dalamud에서 IINACT가 활성화되었습니다.</value>
+  </data>
+  <data name="SetupIinactInstall" xml:space="preserve">
+    <value>IINACT 설치</value>
+  </data>
+  <data name="SetupIinactIntro" xml:space="preserve">
+    <value>게임 안에서 실행되며 FFLogs에 업로드할 수 있는 로그를 저장합니다.</value>
+  </data>
+  <data name="SetupIinactLoaded" xml:space="preserve">
+    <value>IINACT를 불러왔습니다. 설정을 확인하세요.</value>
+  </data>
+  <data name="SetupIinactMissing" xml:space="preserve">
+    <value>IINACT가 설치되지 않았습니다.</value>
+  </data>
+  <data name="SetupIinactNotReady" xml:space="preserve">
+    <value>IINACT 준비 안 됨</value>
+  </data>
+  <data name="SetupIinactReady" xml:space="preserve">
+    <value>IINACT 준비 완료</value>
+  </data>
+  <data name="SetupInsideBar" xml:space="preserve">
+    <value>막대 안</value>
+  </data>
+  <data name="SetupInternalParser" xml:space="preserve">
+    <value>내장 분석기</value>
+  </data>
+  <data name="SetupInvalidUrl" xml:space="preserve">
+    <value>ws:// 또는 wss:// URL을 입력하세요</value>
+  </data>
+  <data name="SetupLocalDifferences" xml:space="preserve">
+    <value>일부 수치는 ACT나 IINACT와 다를 수 있습니다.</value>
+  </data>
+  <data name="SetupLocalIntro" xml:space="preserve">
+    <value>내장 분석기로 게임 안에서 전투 통계를 확인합니다.</value>
+  </data>
+  <data name="SetupLocalNoLogs" xml:space="preserve">
+    <value>FFLogs용 로그는 저장하지 않습니다.</value>
+  </data>
+  <data name="SetupNext" xml:space="preserve">
+    <value>다음</value>
+  </data>
+  <data name="SetupNextChoice" xml:space="preserve">
+    <value>다음 항목: {0}</value>
+  </data>
+  <data name="SetupOff" xml:space="preserve">
+    <value>꺼짐</value>
+  </data>
+  <data name="SetupOn" xml:space="preserve">
+    <value>켜짐</value>
+  </data>
+  <data name="SetupPartyListDps" xml:space="preserve">
+    <value>파티 목록에 DPS 표시</value>
+  </data>
+  <data name="SetupPersonalDps" xml:space="preserve">
+    <value>내 DPS 표시</value>
+  </data>
+  <data name="SetupPersonalDpsHelp" xml:space="preserve">
+    <value>서버 정보 표시줄에 내 DPS를 표시합니다. 끄면 파티 DPS가 표시됩니다.</value>
+  </data>
+  <data name="SetupPlayerColor" xml:space="preserve">
+    <value>이름 색상</value>
+  </data>
+  <data name="SetupPlayerColorHelp" xml:space="preserve">
+    <value>플레이어 이름을 직업별, 역할별 또는 지정한 색으로 표시합니다.</value>
+  </data>
+  <data name="SetupPlayerLayout" xml:space="preserve">
+    <value>플레이어 배치</value>
+  </data>
+  <data name="SetupPreset" xml:space="preserve">
+    <value>프리셋</value>
+  </data>
+  <data name="SetupPresetDefault" xml:space="preserve">
+    <value>프리셋 기본값</value>
+  </data>
+  <data name="SetupPreviousChoice" xml:space="preserve">
+    <value>이전 항목: {0}</value>
+  </data>
+  <data name="SetupPrivacy" xml:space="preserve">
+    <value>개인정보 보호 (이름 대신 직업 표시)</value>
+  </data>
+  <data name="SetupReplaceYou" xml:space="preserve">
+    <value>YOU를 내 이름으로 바꾸기</value>
+  </data>
+  <data name="SetupSampleFight" xml:space="preserve">
+    <value>예시 전투</value>
+  </data>
+  <data name="SetupSaved" xml:space="preserve">
+    <value>NativeMeters 설정을 저장했습니다. /ntm setup 명령어로 다시 열 수 있습니다.</value>
+  </data>
+  <data name="SetupServerDps" xml:space="preserve">
+    <value>서버 정보 표시줄에 DPS 표시</value>
+  </data>
+  <data name="SetupSettingsHelp" xml:space="preserve">
+    <value>/ntm 명령어로 언제든지 설정을 바꿀 수 있습니다.</value>
+  </data>
+  <data name="SetupSkip" xml:space="preserve">
+    <value>설정 건너뛰기</value>
+  </data>
+  <data name="SetupSortBy" xml:space="preserve">
+    <value>정렬 기준</value>
+  </data>
+  <data name="SetupStandalone" xml:space="preserve">
+    <value>독립 미터기</value>
+  </data>
+  <data name="SetupStrikingDummy" xml:space="preserve">
+    <value>나무인형</value>
+  </data>
+  <data name="SetupTextPosition" xml:space="preserve">
+    <value>텍스트 위치</value>
+  </data>
+  <data name="SetupTryDummy" xml:space="preserve">
+    <value>나무인형을 공격해 미터기를 시험해 보세요.</value>
+  </data>
+  <data name="SetupUnchecked" xml:space="preserve">
+    <value>연결 확인 전</value>
+  </data>
+  <data name="SetupUnlockHelp" xml:space="preserve">
+    <value>미터기 설정에서 고정을 풀어 이동한 뒤 다시 고정하세요.</value>
+  </data>
+  <data name="SetupUsePreset" xml:space="preserve">
+    <value>프리셋 사용</value>
+  </data>
+  <data name="SetupWebSocket" xml:space="preserve">
+    <value>WebSocket URL</value>
+  </data>
+  <data name="StatActiveDps" xml:space="preserve">
+    <value>공격 중 DPS</value>
+  </data>
+  <data name="StatCriticalHitRate" xml:space="preserve">
+    <value>극대화율</value>
+  </data>
+  <data name="StatDamageShare" xml:space="preserve">
+    <value>피해량 비중</value>
+  </data>
+  <data name="StatDeaths" xml:space="preserve">
+    <value>전투 불능 횟수</value>
+  </data>
+  <data name="StatDirectHitRate" xml:space="preserve">
+    <value>직격률</value>
+  </data>
+  <data name="StatEncounterDps" xml:space="preserve">
+    <value>전투 전체 DPS</value>
+  </data>
+  <data name="StatEncounterHps" xml:space="preserve">
+    <value>전투 전체 HPS</value>
+  </data>
+  <data name="TabColors" xml:space="preserve">
+    <value>색상</value>
+  </data>
+  <data name="TabConnection" xml:space="preserve">
+    <value>연결</value>
+  </data>
+  <data name="TabGeneral" xml:space="preserve">
+    <value>일반</value>
+  </data>
+  <data name="TabMeters" xml:space="preserve">
+    <value>미터</value>
+  </data>
+  <data name="TabPartyList" xml:space="preserve">
+    <value>파티 목록</value>
+  </data>
+  <data name="TabVisibility" xml:space="preserve">
+    <value>표시 조건</value>
+  </data>
+  <data name="TagCategoryCombatant" xml:space="preserve">
+    <value>6. 원시 데이터 (전투원)</value>
+  </data>
+  <data name="TagCategoryCommon" xml:space="preserve">
+    <value>1. 기본</value>
+  </data>
+  <data name="TagCategoryCustom" xml:space="preserve">
+    <value>5. 사용자 지정</value>
+  </data>
+  <data name="TagCategoryDamage" xml:space="preserve">
+    <value>2. 피해</value>
+  </data>
+  <data name="TagCategoryDefense" xml:space="preserve">
+    <value>4. 방어</value>
+  </data>
+  <data name="TagCategoryEncounter" xml:space="preserve">
+    <value>7. 원시 데이터 (전투)</value>
+  </data>
+  <data name="TagCategoryHealing" xml:space="preserve">
+    <value>3. 회복</value>
+  </data>
+  <data name="TagDescAbsorb" xml:space="preserve">
+    <value>흡수한 HP의 합계</value>
+  </data>
+  <data name="TagDescActiveDps" xml:space="preserve">
+    <value>실제 공격 시간을 기준으로 계산한 초당 피해량</value>
+  </data>
+  <data name="TagDescBlockPct" xml:space="preserve">
+    <value>공격을 방패로 막은 비율</value>
+  </data>
+  <data name="TagDescCount" xml:space="preserve">
+    <value>이 미터기에 표시되는 전투원 수</value>
+  </data>
+  <data name="TagDescCritDirectPct" xml:space="preserve">
+    <value>극대화와 직격이 동시에 발생한 비율</value>
+  </data>
+  <data name="TagDescCritHealPct" xml:space="preserve">
+    <value>회복 시 극대화 발생 비율</value>
+  </data>
+  <data name="TagDescCritPct" xml:space="preserve">
+    <value>극대화 발생 비율</value>
+  </data>
+  <data name="TagDescDamagePct" xml:space="preserve">
+    <value>공격대 전체 피해량 중 플레이어의 비율 (개별 행 전용)</value>
+  </data>
+  <data name="TagDescDamageTaken" xml:space="preserve">
+    <value>받은 피해량의 합계</value>
+  </data>
+  <data name="TagDescDamageTotal" xml:space="preserve">
+    <value>백만 단위의 총 가한 피해량</value>
+  </data>
+  <data name="TagDescDeaths" xml:space="preserve">
+    <value>전투불능이 된 횟수</value>
+  </data>
+  <data name="TagDescDirectPct" xml:space="preserve">
+    <value>직격 발생 비율</value>
+  </data>
+  <data name="TagDescDuration" xml:space="preserve">
+    <value>전투 시간 (분:초)</value>
+  </data>
+  <data name="TagDescEncounterDps" xml:space="preserve">
+    <value>전투 전체 시간을 기준으로 계산한 초당 피해량</value>
+  </data>
+  <data name="TagDescEncounterDpsCompact" xml:space="preserve">
+    <value>전체 전투 시간 기준 DPS를 축약 단위로 표시</value>
+  </data>
+  <data name="TagDescEncounterDpsKilo" xml:space="preserve">
+    <value>전체 전투 시간 기준 DPS를 천 단위로 표시</value>
+  </data>
+  <data name="TagDescEncounterHps" xml:space="preserve">
+    <value>전투 전체 시간을 기준으로 계산한 초당 회복량</value>
+  </data>
+  <data name="TagDescEncounterHpsKilo" xml:space="preserve">
+    <value>전체 전투 시간 기준 HPS를 천 단위로 표시</value>
+  </data>
+  <data name="TagDescFirstName" xml:space="preserve">
+    <value>이름의 첫 부분만 표시</value>
+  </data>
+  <data name="TagDescFocusHp" xml:space="preserve">
+    <value>주시 대상의 남은 HP 비율</value>
+  </data>
+  <data name="TagDescFocusName" xml:space="preserve">
+    <value>주시 대상의 이름</value>
+  </data>
+  <data name="TagDescFullName" xml:space="preserve">
+    <value>행에는 플레이어 이름, 머리글에는 전투 이름</value>
+  </data>
+  <data name="TagDescHealedPct" xml:space="preserve">
+    <value>공격대 전체 회복량 중 플레이어의 비율 (개별 행 전용)</value>
+  </data>
+  <data name="TagDescHealedTotal" xml:space="preserve">
+    <value>제공한 회복량의 합계</value>
+  </data>
+  <data name="TagDescHealsTaken" xml:space="preserve">
+    <value>받은 회복량의 합계</value>
+  </data>
+  <data name="TagDescHits" xml:space="preserve">
+    <value>명중한 총 공격 횟수</value>
+  </data>
+  <data name="TagDescInitials" xml:space="preserve">
+    <value>이름과 성의 첫 글자</value>
+  </data>
+  <data name="TagDescJobAbbr" xml:space="preserve">
+    <value>잡 이름의 약칭</value>
+  </data>
+  <data name="TagDescJobName" xml:space="preserve">
+    <value>잡의 전체 이름</value>
+  </data>
+  <data name="TagDescLastName" xml:space="preserve">
+    <value>이름의 뒷부분만 표시</value>
+  </data>
+  <data name="TagDescMaxHealFull" xml:space="preserve">
+    <value>최대 회복을 기록한 기술 이름과 회복량</value>
+  </data>
+  <data name="TagDescMaxHealSkill" xml:space="preserve">
+    <value>최대 회복을 기록한 기술 이름</value>
+  </data>
+  <data name="TagDescMaxHealValue" xml:space="preserve">
+    <value>단일 회복의 최대 회복량</value>
+  </data>
+  <data name="TagDescMaxHitFull" xml:space="preserve">
+    <value>최대 피해를 준 기술 이름과 피해량</value>
+  </data>
+  <data name="TagDescMaxHitSkill" xml:space="preserve">
+    <value>최대 피해를 준 기술 이름</value>
+  </data>
+  <data name="TagDescMaxHitValue" xml:space="preserve">
+    <value>단일 타격의 최대 피해량</value>
+  </data>
+  <data name="TagDescMisses" xml:space="preserve">
+    <value>빗나간 총 공격 횟수</value>
+  </data>
+  <data name="TagDescOverheal" xml:space="preserve">
+    <value>최대 HP를 초과한 총 회복량</value>
+  </data>
+  <data name="TagDescOverhealPct" xml:space="preserve">
+    <value>전체 회복량 중 최대 HP를 초과한 비율</value>
+  </data>
+  <data name="TagDescParryPct" xml:space="preserve">
+    <value>공격을 받아넘긴 비율</value>
+  </data>
+  <data name="TagDescRank" xml:space="preserve">
+    <value>이 미터기 내 순위</value>
+  </data>
+  <data name="TagDescRankCount" xml:space="preserve">
+    <value>전체 인원 중 순위</value>
+  </data>
+  <data name="TagDescRecentDps" xml:space="preserve">
+    <value>최근 {0}초 동안의 초당 피해량</value>
+  </data>
+  <data name="TagDescShield" xml:space="preserve">
+    <value>부여한 보호막 수치의 합계</value>
+  </data>
+  <data name="TagDescSwings" xml:space="preserve">
+    <value>명중과 빗나감을 포함한 총 공격 횟수</value>
+  </data>
+  <data name="TagDescTargetHp" xml:space="preserve">
+    <value>현재 대상의 남은 HP 비율</value>
+  </data>
+  <data name="TagDescTargetName" xml:space="preserve">
+    <value>현재 대상의 이름</value>
+  </data>
+  <data name="TagDescZone" xml:space="preserve">
+    <value>현재 지역 또는 인스턴스</value>
+  </data>
+  <data name="TagExample" xml:space="preserve">
+    <value>예: {0}</value>
+  </data>
+  <data name="TagExampleCure" xml:space="preserve">
+    <value>케알가</value>
+  </data>
+  <data name="TagExampleDummy" xml:space="preserve">
+    <value>나무인형</value>
+  </data>
+  <data name="TagExampleGoblet" xml:space="preserve">
+    <value>하늘잔 마루</value>
+  </data>
+  <data name="TagExampleMidare" xml:space="preserve">
+    <value>난설월화</value>
+  </data>
+  <data name="TagExampleName" xml:space="preserve">
+    <value>John Doe / 우두머리 이름</value>
+  </data>
+  <data name="TagExampleWarrior" xml:space="preserve">
+    <value>전사</value>
+  </data>
+  <data name="TagFormatHelpBasic" xml:space="preserve">
+    <value>형식: [tag_part:modifier.precision]
+- :r = 자릿수 구분 없음
+- :c = 자동 축약 단위
+- :k/:m = 천/백만 단위
+- .N = 소수 자릿수
+예시: [dps:c.1] -&gt; 12.3K</value>
+  </data>
+  <data name="TagFormatHelpComponent" xml:space="preserve">
+    <value>형식: [tag_part:modifier.precision]
+- :r = 자릿수 구분 없음
+- :c = 자동 축약 단위
+- :k/:m = 천/백만 단위
+- .N = 소수 자릿수 또는 글자 수
+- _first/_last = 이름의 첫 부분/뒷부분
+- _skill/_val = 최대 피해 기술의 이름/수치
+
+예시: [name_first.1].:[dps:c.1] -&gt; J.:12.3K</value>
+  </data>
+  <data name="TagInsert" xml:space="preserve">
+    <value>삽입</value>
+  </data>
+  <data name="TagLabel_-- Insert Tag --" xml:space="preserve">
+    <value>-- 태그 삽입 --</value>
+  </data>
+  <data name="TagLabel_Crit %" xml:space="preserve">
+    <value>극대화율</value>
+  </data>
+  <data name="TagLabel_DH %" xml:space="preserve">
+    <value>직격률</value>
+  </data>
+  <data name="TagLabel_DPS" xml:space="preserve">
+    <value>DPS</value>
+  </data>
+  <data name="TagLabel_DPS: Compact" xml:space="preserve">
+    <value>DPS: 축약</value>
+  </data>
+  <data name="TagLabel_DPS: Kilo" xml:space="preserve">
+    <value>DPS: 천 단위</value>
+  </data>
+  <data name="TagLabel_DPS: Raw (No Comma)" xml:space="preserve">
+    <value>DPS: 자릿수 구분 없음</value>
+  </data>
+  <data name="TagLabel_Dmg: Percent" xml:space="preserve">
+    <value>피해: 비율</value>
+  </data>
+  <data name="TagLabel_Dmg: Total" xml:space="preserve">
+    <value>피해: 합계</value>
+  </data>
+  <data name="TagLabel_Enc: DPS Compact" xml:space="preserve">
+    <value>전투: DPS (축약)</value>
+  </data>
+  <data name="TagLabel_Enc: Duration" xml:space="preserve">
+    <value>전투: 시간</value>
+  </data>
+  <data name="TagLabel_Enc: Zone" xml:space="preserve">
+    <value>전투: 지역</value>
+  </data>
+  <data name="TagLabel_Heal: %" xml:space="preserve">
+    <value>회복: 비율</value>
+  </data>
+  <data name="TagLabel_Heal: Overheal %" xml:space="preserve">
+    <value>회복: 초과 회복률</value>
+  </data>
+  <data name="TagLabel_Job: Abbr" xml:space="preserve">
+    <value>잡: 약칭</value>
+  </data>
+  <data name="TagLabel_MaxHit: Full" xml:space="preserve">
+    <value>최대 피해: 전체</value>
+  </data>
+  <data name="TagLabel_MaxHit: Skill Only" xml:space="preserve">
+    <value>최대 피해: 기술 이름만</value>
+  </data>
+  <data name="TagLabel_MaxHit: Val Only" xml:space="preserve">
+    <value>최대 피해: 수치만</value>
+  </data>
+  <data name="TagLabel_Name: First" xml:space="preserve">
+    <value>이름: 첫 부분</value>
+  </data>
+  <data name="TagLabel_Name: Full" xml:space="preserve">
+    <value>이름: 전체</value>
+  </data>
+  <data name="TagLabel_Name: Initial" xml:space="preserve">
+    <value>이름: 머리글자</value>
+  </data>
+  <data name="TagLabel_Rank" xml:space="preserve">
+    <value>순위</value>
+  </data>
+  <data name="TagLabel_Rank / Count" xml:space="preserve">
+    <value>순위 / 인원</value>
+  </data>
+  <data name="TagNameAbsorb" xml:space="preserve">
+    <value>HP 흡수</value>
+  </data>
+  <data name="TagNameActiveDps" xml:space="preserve">
+    <value>활동 시간 기준 DPS</value>
+  </data>
+  <data name="TagNameBlockPct" xml:space="preserve">
+    <value>방패 막기 비율</value>
+  </data>
+  <data name="TagNameCount" xml:space="preserve">
+    <value>전투원 수</value>
+  </data>
+  <data name="TagNameCritDirectPct" xml:space="preserve">
+    <value>극대직격률</value>
+  </data>
+  <data name="TagNameCritHealPct" xml:space="preserve">
+    <value>회복 극대화율</value>
+  </data>
+  <data name="TagNameCritPct" xml:space="preserve">
+    <value>극대화율</value>
+  </data>
+  <data name="TagNameDamagePct" xml:space="preserve">
+    <value>피해 기여도</value>
+  </data>
+  <data name="TagNameDamageTaken" xml:space="preserve">
+    <value>받은 피해</value>
+  </data>
+  <data name="TagNameDamageTotal" xml:space="preserve">
+    <value>총 피해량</value>
+  </data>
+  <data name="TagNameDeaths" xml:space="preserve">
+    <value>전투불능 횟수</value>
+  </data>
+  <data name="TagNameDirectPct" xml:space="preserve">
+    <value>직격률</value>
+  </data>
+  <data name="TagNameDuration" xml:space="preserve">
+    <value>전투 시간</value>
+  </data>
+  <data name="TagNameEncounterDps" xml:space="preserve">
+    <value>전체 전투 시간 기준 DPS</value>
+  </data>
+  <data name="TagNameEncounterDpsCompact" xml:space="preserve">
+    <value>전투 DPS (축약)</value>
+  </data>
+  <data name="TagNameEncounterDpsKilo" xml:space="preserve">
+    <value>전투 DPS (천 단위)</value>
+  </data>
+  <data name="TagNameEncounterHps" xml:space="preserve">
+    <value>전체 전투 시간 기준 HPS</value>
+  </data>
+  <data name="TagNameEncounterHpsKilo" xml:space="preserve">
+    <value>전투 HPS (천 단위)</value>
+  </data>
+  <data name="TagNameFirstName" xml:space="preserve">
+    <value>이름 (첫 부분)</value>
+  </data>
+  <data name="TagNameFocusHp" xml:space="preserve">
+    <value>주시 대상 HP 비율</value>
+  </data>
+  <data name="TagNameFocusName" xml:space="preserve">
+    <value>주시 대상 이름</value>
+  </data>
+  <data name="TagNameFullName" xml:space="preserve">
+    <value>이름</value>
+  </data>
+  <data name="TagNameHealedPct" xml:space="preserve">
+    <value>회복 기여도</value>
+  </data>
+  <data name="TagNameHealedTotal" xml:space="preserve">
+    <value>총 회복량</value>
+  </data>
+  <data name="TagNameHealsTaken" xml:space="preserve">
+    <value>받은 회복량</value>
+  </data>
+  <data name="TagNameHits" xml:space="preserve">
+    <value>명중 횟수</value>
+  </data>
+  <data name="TagNameInitials" xml:space="preserve">
+    <value>머리글자</value>
+  </data>
+  <data name="TagNameJobAbbr" xml:space="preserve">
+    <value>잡 약칭</value>
+  </data>
+  <data name="TagNameJobName" xml:space="preserve">
+    <value>잡 이름</value>
+  </data>
+  <data name="TagNameLastName" xml:space="preserve">
+    <value>성 (뒷부분)</value>
+  </data>
+  <data name="TagNameMaxHealFull" xml:space="preserve">
+    <value>최대 회복: 전체</value>
+  </data>
+  <data name="TagNameMaxHealSkill" xml:space="preserve">
+    <value>최대 회복: 기술</value>
+  </data>
+  <data name="TagNameMaxHealValue" xml:space="preserve">
+    <value>최대 회복: 수치</value>
+  </data>
+  <data name="TagNameMaxHitFull" xml:space="preserve">
+    <value>최대 피해: 전체</value>
+  </data>
+  <data name="TagNameMaxHitSkill" xml:space="preserve">
+    <value>최대 피해: 기술</value>
+  </data>
+  <data name="TagNameMaxHitValue" xml:space="preserve">
+    <value>최대 피해: 수치</value>
+  </data>
+  <data name="TagNameMisses" xml:space="preserve">
+    <value>빗나간 횟수</value>
+  </data>
+  <data name="TagNameOverheal" xml:space="preserve">
+    <value>총 초과 회복량</value>
+  </data>
+  <data name="TagNameOverhealPct" xml:space="preserve">
+    <value>초과 회복률</value>
+  </data>
+  <data name="TagNameParryPct" xml:space="preserve">
+    <value>받아넘기기 비율</value>
+  </data>
+  <data name="TagNameRank" xml:space="preserve">
+    <value>순위</value>
+  </data>
+  <data name="TagNameRankCount" xml:space="preserve">
+    <value>순위 / 인원</value>
+  </data>
+  <data name="TagNameRecentDps" xml:space="preserve">
+    <value>최근 {0}초 DPS</value>
+  </data>
+  <data name="TagNameShield" xml:space="preserve">
+    <value>보호막</value>
+  </data>
+  <data name="TagNameSwings" xml:space="preserve">
+    <value>공격 횟수</value>
+  </data>
+  <data name="TagNameTargetHp" xml:space="preserve">
+    <value>대상 HP 비율</value>
+  </data>
+  <data name="TagNameTargetName" xml:space="preserve">
+    <value>대상 이름</value>
+  </data>
+  <data name="TagNameZone" xml:space="preserve">
+    <value>지역 이름</value>
+  </data>
+  <data name="TagRawProperty" xml:space="preserve">
+    <value>원시 속성: {0}</value>
+  </data>
+  <data name="VisibilityAlwaysConditions" xml:space="preserve">
+    <value>항상 표시 조건</value>
+  </data>
+  <data name="VisibilityAlwaysDrawn" xml:space="preserve">
+    <value>무기를 꺼내면 항상 표시</value>
+  </data>
+  <data name="VisibilityAlwaysDuty" xml:space="preserve">
+    <value>임무 중 항상 표시</value>
+  </data>
+  <data name="VisibilityAlwaysParty" xml:space="preserve">
+    <value>파티 참가 중 항상 표시</value>
+  </data>
+  <data name="VisibilityAlwaysPvp" xml:space="preserve">
+    <value>PvP 중 항상 표시</value>
+  </data>
+  <data name="VisibilityAlwaysTarget" xml:space="preserve">
+    <value>대상을 선택하면 항상 표시</value>
+  </data>
+  <data name="VisibilityCrafting" xml:space="preserve">
+    <value>제작 중 숨기기</value>
+  </data>
+  <data name="VisibilityCutscene" xml:space="preserve">
+    <value>컷신·퀘스트 이벤트 중 숨기기</value>
+  </data>
+  <data name="VisibilityFullHp" xml:space="preserve">
+    <value>HP가 가득 차면 숨기기</value>
+  </data>
+  <data name="VisibilityGathering" xml:space="preserve">
+    <value>채집 중 숨기기</value>
+  </data>
+  <data name="VisibilityGeneral" xml:space="preserve">
+    <value>일반</value>
+  </data>
+  <data name="VisibilityGoldSaucer" xml:space="preserve">
+    <value>골드 소서에서 숨기기</value>
+  </data>
+  <data name="VisibilityHideConditions" xml:space="preserve">
+    <value>숨김 조건</value>
+  </data>
+  <data name="VisibilityInCombat" xml:space="preserve">
+    <value>전투 중 숨기기</value>
+  </data>
+  <data name="VisibilityInDuty" xml:space="preserve">
+    <value>임무 중 숨기기</value>
+  </data>
+  <data name="VisibilityOutOfCombat" xml:space="preserve">
+    <value>비전투 시 숨기기</value>
+  </data>
+  <data name="VisibilityPerforming" xml:space="preserve">
+    <value>악기 연주 중 숨기기</value>
+  </data>
+  <data name="VisibilityPvp" xml:space="preserve">
+    <value>PvP 중 숨기기</value>
+  </data>
+  <data name="VisibilityPvpHelp" xml:space="preserve">
+    <value>‘항상 표시’ 조건보다 우선합니다.</value>
+  </data>
+  <data name="VisibilitySanctuary" xml:space="preserve">
+    <value>휴식 지역에서 숨기기</value>
+  </data>
+  <data name="VisibilityWithHud" xml:space="preserve">
+    <value>게임 HUD와 함께 숨기기</value>
+  </data>
+  <data name="WindowBreakdown" xml:space="preserve">
+    <value>NativeMeters 상세 분석</value>
+  </data>
+  <data name="WindowColorPicker" xml:space="preserve">
+    <value>색상 선택</value>
+  </data>
+  <data name="WindowConfiguration" xml:space="preserve">
+    <value>NativeMeters 설정</value>
+  </data>
+  <data name="WindowIconPicker" xml:space="preserve">
+    <value>아이콘 선택</value>
+  </data>
+  <data name="WindowImportMeter" xml:space="preserve">
+    <value>미터 가져오기</value>
+  </data>
+  <data name="WindowPlacement" xml:space="preserve">
+    <value>미터 배치</value>
+  </data>
+  <data name="WindowSetup" xml:space="preserve">
+    <value>NativeMeters 초기 설정</value>
+  </data>
+  <data name="WindowTagPicker" xml:space="preserve">
+    <value>태그 검색</value>
+  </data>
+  <data name="WindowTextFlags" xml:space="preserve">
+    <value>텍스트 플래그</value>
+  </data>
+</root>

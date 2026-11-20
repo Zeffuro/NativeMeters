@@ -7,6 +7,7 @@ using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
 using NativeMeters.Services;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Sections;
 
@@ -47,12 +48,13 @@ public sealed class MeterComponentsSection : MeterConfigSection
 
         typeDropdown = new StringDropDownNode {
             Size = new Vector2(150, 28),
-            Options = Enum.GetValues<MeterComponentType>().Select(type => type.GetDisplayName()).ToList(),
+            Options = Enum.GetNames<MeterComponentType>().ToList(),
+            GetLabelFunction = name => Enum.TryParse<MeterComponentType>(name, out var type) ? type.GetDisplayName() : name,
         };
         addRow.AddNode(typeDropdown);
 
         addRow.AddNode(new TextButtonNode {
-            String = "Add Component",
+            String = Loc.Get("ComponentAdd"),
             Size = new Vector2(120, 28),
             OnClick = () => AddNewComponent(typeDropdown.SelectedOption)
         });
@@ -68,17 +70,16 @@ public sealed class MeterComponentsSection : MeterConfigSection
         _ => Settings.RowComponents
     };
 
-    private void AddNewComponent(string? selectedComponent)
+    private void AddNewComponent(string? selection)
     {
-        if (selectedComponent == "Button") selectedComponent = nameof(MeterComponentType.MenuButton);
-        if (!Enum.TryParse<MeterComponentType>(selectedComponent, out var parsedComponentType)) return;
+        if (!Enum.TryParse<MeterComponentType>(selection, out var type)) return;
 
         QueueEdit(components =>
         {
             var component = new ComponentSettings {
                 Id = Guid.NewGuid().ToString(),
-                Type = parsedComponentType,
-                Name = $"New {parsedComponentType.GetDisplayName()}",
+                Type = type,
+                Name = Loc.Format("ComponentNew", type.GetDisplayName()),
                 Size = new Vector2(100, 20),
                 Position = Vector2.Zero,
                 ZIndex = components.Count > 0 ? components.Max(c => c.ZIndex) + 1 : 0

@@ -9,6 +9,7 @@ using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using NativeMeters.Clients;
 using NativeMeters.Configuration;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Input;
 using NativeMeters.Services;
@@ -20,13 +21,6 @@ internal sealed class SetupConnectionNode : TabbedVerticalListNode
 {
     private const int StatusPollIntervalMs = 750;
     private const int ProbeTimeoutSeconds = 4;
-    private static readonly (ConnectionType Type, string Label)[] Sources =
-    [
-        (ConnectionType.WebSocket, "ACT"),
-        (ConnectionType.IINACTIPC, "IINACT"),
-        (ConnectionType.Internal, "Internal Parser"),
-    ];
-
     private readonly TabbedVerticalListNode act;
     private readonly TabbedVerticalListNode iinact;
     private readonly TabbedVerticalListNode local;
@@ -54,50 +48,56 @@ internal sealed class SetupConnectionNode : TabbedVerticalListNode
         Source = Enum.IsDefined(settings.SelectedConnectionType) ? settings.SelectedConnectionType : ConnectionType.WebSocket;
         WebSocketUrl = settings.WebSocketUrl ?? ConnectionSettings.DefaultWebSocketUrl;
 
+        (ConnectionType Type, string Label)[] sources =
+        [
+            (ConnectionType.WebSocket, "ACT"),
+            (ConnectionType.IINACTIPC, "IINACT"),
+            (ConnectionType.Internal, Loc.Get("SetupInternalParser")),
+        ];
         var radios = new RadioButtonGroupNode { VerticalPadding = 6 };
-        foreach (var (type, label) in Sources)
+        foreach (var (type, label) in sources)
             radios.AddButton(label, () => Select(type));
-        radios.SelectedOption = Sources.First(entry => entry.Type == Source).Label;
+        radios.SelectedOption = sources.First(entry => entry.Type == Source).Label;
         AddNode(1, radios);
         AddDummy(5);
 
         act = Page(width - Indent - Spacing);
         act.AddNode([
-            Line("Uses ACT on your PC. Pick this if you already run ACT for FFLogs."),
-            Line("In ACT, open Plugins > OverlayPlugin WSServer."),
-            Line("On Stream/Local overlay, click Start. Keep ACT running while you play."),
+            Line(Loc.Get("SetupActIntro")),
+            Line(Loc.Get("SetupActServer")),
+            Line(Loc.Get("SetupActStart")),
             new LabeledTextInputNode
             {
-                LabelText = "WebSocket URL",
+                LabelText = Loc.Get("SetupWebSocket"),
                 Text = WebSocketUrl,
                 OnInputReceived = text => ChangeUrl(text.ToString()),
                 OnInputComplete = text => ChangeUrl(text.ToString()),
             },
-            Guide("ACT setup guide", "https://overlayplugin.github.io/docs/setup/"),
+            Guide(Loc.Get("SetupActGuide"), "https://overlayplugin.github.io/docs/setup/"),
         ]);
         iinact = Page(width - Indent - Spacing);
-        iinactInstall = Line("Checking IINACT…");
+        iinactInstall = Line(Loc.Get("SetupIinactChecking"));
         iinact.AddNode([
-            Line("Runs inside the game and saves logs you can upload to FFLogs."),
+            Line(Loc.Get("SetupIinactIntro")),
             iinactInstall,
-            Guide("Install IINACT", "https://www.iinact.com/installation/"),
+            Guide(Loc.Get("SetupIinactInstall"), "https://www.iinact.com/installation/"),
         ]);
         local = Page(width - Indent - Spacing);
         local.AddNode([
-            Line("Use the built-in parser to see your stats in game."),
-            Line("Some numbers can differ from ACT or IINACT."),
-            Line("It doesn't save logs for FFLogs."),
+            Line(Loc.Get("SetupLocalIntro")),
+            Line(Loc.Get("SetupLocalDifferences")),
+            Line(Loc.Get("SetupLocalNoLogs")),
         ]);
         AddNode(1, [act, iinact, local]);
         AddDummy(5);
         status = new LabeledTextButtonNode
         {
             LabelWidth = 272,
-            LabelText = "Connection unchecked",
-            ButtonText = "Check connection",
+            LabelText = Loc.Get("SetupUnchecked"),
+            ButtonText = Loc.Get("SetupCheckConnection"),
             OnClick = CheckConnection,
         };
-        bypassCheck = Check("Continue without a connection", false, value =>
+        bypassCheck = Check(Loc.Get("SetupContinueOffline"), false, value =>
         {
             bypass = value;
             RefreshStatus();
@@ -191,13 +191,13 @@ internal sealed class SetupConnectionNode : TabbedVerticalListNode
 
         var label = Source switch
         {
-            ConnectionType.IINACTIPC when ready => "IINACT is ready",
-            ConnectionType.IINACTIPC => "IINACT isn't ready",
-            _ when !valid => "Enter a ws:// or wss:// URL",
-            _ when probe != null => "Checking connection…",
-            _ when ready => "Connected",
-            _ when probeResult == false => "Couldn't connect to ACT",
-            _ => "Connection unchecked",
+            ConnectionType.IINACTIPC when ready => Loc.Get("SetupIinactReady"),
+            ConnectionType.IINACTIPC => Loc.Get("SetupIinactNotReady"),
+            _ when !valid => Loc.Get("SetupInvalidUrl"),
+            _ when probe != null => Loc.Get("SetupChecking"),
+            _ when ready => Loc.Get("SetupConnected"),
+            _ when probeResult == false => Loc.Get("SetupActUnavailable"),
+            _ => Loc.Get("SetupUnchecked"),
         };
         if (status.LabelText.ToString() != label)
         {
@@ -208,9 +208,9 @@ internal sealed class SetupConnectionNode : TabbedVerticalListNode
         if (Source == ConnectionType.IINACTIPC)
         {
             var plugin = Service.PluginInterface.InstalledPlugins.FirstOrDefault(entry => entry.InternalName == "IINACT");
-            var installation = plugin is null ? "IINACT isn't installed."
-                : !plugin.IsLoaded ? "IINACT is installed. Enable it in Dalamud."
-                : ready ? "IINACT is enabled in Dalamud." : "IINACT is loaded. Check its settings.";
+            var installation = plugin is null ? Loc.Get("SetupIinactMissing")
+                : !plugin.IsLoaded ? Loc.Get("SetupIinactDisabled")
+                : ready ? Loc.Get("SetupIinactEnabled") : Loc.Get("SetupIinactLoaded");
             if (iinactInstall.String.ToString() != installation) iinactInstall.String = installation;
         }
 

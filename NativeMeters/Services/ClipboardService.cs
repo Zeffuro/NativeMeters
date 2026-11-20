@@ -5,6 +5,7 @@ using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using NativeMeters.Data.Stats;
 using NativeMeters.Extensions;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Services;
 
@@ -23,7 +24,7 @@ public static class ClipboardService
             var sb = new StringBuilder();
 
             sb.AppendLine($"═══ {encounter.Title} ═══");
-            sb.AppendLine($"Duration: {encounter.Duration:mm\\:ss}");
+            sb.AppendLine(Loc.Format("ClipboardDuration", encounter.Duration.ToString(@"mm\:ss")));
             sb.AppendLine();
 
             var selector = StatSelector.GetStatSelector("ENCDPS");
@@ -34,21 +35,22 @@ public static class ClipboardService
             {
                 bool hasValidJob = c.Job.RowId > 0;
                 string jobAbbrev = hasValidJob ? c.Job.Abbreviation.ToString() : "LB";
-                string name = System.Config.General.PrivacyMode && hasValidJob ? c.Job.NameEnglish.ToString() : c.Name;
+                string name = System.Config.General.PrivacyMode && hasValidJob ? GameNames.JobName(c.Job) : c.Name;
 
-                sb.AppendLine($"{rank}. {name} ({jobAbbrev}) - {c.ENCDPS:N0} DPS");
+                if (c.IsLimitBreak) name = Loc.Get("HudLimitBreak");
+                sb.AppendLine(Loc.Format("ClipboardPlayer", rank, name, jobAbbrev, c.ENCDPS));
                 rank++;
             }
 
             sb.AppendLine();
-            sb.AppendLine($"Deaths: {encounter.Deaths} | Raid DPS: {encounter.ENCDPS:N0}");
+            sb.AppendLine(Loc.Format("ClipboardTotals", encounter.Deaths, encounter.ENCDPS));
 
             SetClipboardText(sb.ToString());
-            Service.NotificationManager.Success("Encounter copied to clipboard!");
+            Service.NotificationManager.Success(Loc.Get("ClipboardCopied"));
         }
         catch (Exception)
         {
-            Service.NotificationManager.Error("Failed to copy encounter summary");
+            Service.NotificationManager.Error(Loc.Get("ClipboardCopyFailed"));
         }
     }
 

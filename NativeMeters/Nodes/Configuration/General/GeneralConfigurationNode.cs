@@ -1,10 +1,11 @@
+using System;
 using System.Numerics;
 using KamiToolKit.Nodes;
+using NativeMeters.Localization;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Input;
-using CheckboxNode = NativeMeters.Nodes.Input.SyncedCheckboxNode;
 
 namespace NativeMeters.Nodes.Configuration.General;
 
@@ -12,18 +13,18 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
 {
     private const float CheckboxHeight = 20.0f;
 
-    public GeneralConfigurationNode()
+    public GeneralConfigurationNode(Action<string?> changeLanguage)
     {
         GeneralSettings config = System.Config.General;
 
         ItemSpacing = 2;
 
         AddNode(1, [
-            new CheckboxNode
+            new CheckboxRowNode
             {
                 Height = CheckboxHeight,
                 IsVisible = true,
-                String = "Enabled",
+                String = Loc.Get("GeneralEnabled"),
                 IsChecked = config.IsEnabled,
                 OnClick = isChecked =>
                 {
@@ -33,10 +34,10 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
                     System.PartyListMeterManager?.UpdateSettings();
                 },
             },
-            new CheckboxNode
+            new CheckboxRowNode
             {
                 Height = CheckboxHeight,
-                String = "Preview",
+                String = Loc.Get("GeneralPreview"),
                 IsChecked = config.PreviewEnabled,
                 OnClick = isChecked =>
                 {
@@ -45,16 +46,17 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
                     System.PartyListMeterManager?.UpdateSettings();
                 }
             },
+            LanguageDropdown.Create(changeLanguage),
         ]);
 
         AddNode(new ResNode { Height = 10 });
 
         AddNode(1, [
-            new CheckboxNode
+            new CheckboxRowNode
             {
                 Height = CheckboxHeight,
                 IsVisible = true,
-                String = "Replace YOU with your name",
+                String = Loc.Get("GeneralReplaceYou"),
                 IsChecked = config.ReplaceYou,
                 OnClick = isChecked =>
                 {
@@ -62,13 +64,13 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
                     ConfigRepository.Save(System.Config);
                 }
             },
-            new CheckboxNode
+            new CheckboxRowNode
             {
                 Height = CheckboxHeight,
                 IsVisible = true,
-                String = "Privacy Mode",
+                String = Loc.Get("GeneralPrivacy"),
                 IsChecked = config.PrivacyMode,
-                TextTooltip = "Shows player jobs instead of names.",
+                TextTooltip = Loc.Get("GeneralPrivacyHelp"),
                 OnClick = isChecked =>
                 {
                     config.PrivacyMode = isChecked;
@@ -80,10 +82,10 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
         AddNode(new ResNode { Height = 10 });
 
         AddNode(1, [
-            new CheckboxNode
+            new CheckboxRowNode
             {
                 Height = CheckboxHeight,
-                String = "Run internal parser for detailed breakdown (even when using ACT/IINACT)",
+                String = Loc.Get("GeneralBreakdownParser"),
                 IsChecked = config.EnableInternalParserForBreakdown,
                 OnClick = isChecked =>
                 {
@@ -106,11 +108,11 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
                     }
                 }
             },
-            new CheckboxNode
+            new CheckboxRowNode
             {
                 Height = CheckboxHeight,
                 IsVisible = true,
-                String = "Enable Encounter History",
+                String = Loc.Get("GeneralHistoryEnabled"),
                 IsChecked = config.EnableEncounterHistory,
                 OnClick = isChecked =>
                 {
@@ -121,11 +123,11 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
         ]);
 
         AddNode(2, [
-            new CheckboxNode
+            new CheckboxRowNode
             {
                 Height = CheckboxHeight,
                 IsVisible = true,
-                String = "Auto-switch to live when new fight starts",
+                String = Loc.Get("GeneralSwitchLive"),
                 IsChecked = config.AutoSwitchToLiveEncounter,
                 OnClick = isChecked =>
                 {
@@ -137,7 +139,7 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
             {
                 Size = new Vector2(300, 28),
                 IsVisible = true,
-                LabelText = "Max History Size",
+                LabelText = Loc.Get("GeneralHistorySize"),
                 Min = 1,
                 Max = 50,
                 Value = config.MaxEncounterHistory,
@@ -152,10 +154,10 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
         AddNode(new ResNode { Height = 10 });
 
         AddNode(1, [
-            new CheckboxNode
+            new CheckboxRowNode
             {
                 Height = CheckboxHeight,
-                String = "Clear ACT when clearing Meter",
+                String = Loc.Get("GeneralClearAct"),
                 IsChecked = config.ClearActWithMeter,
                 OnClick = val =>
                 {
@@ -163,17 +165,17 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
                     ConfigRepository.Save(System.Config);
                 }
             },
-            new CheckboxNode
+            new CheckboxRowNode
             {
                 Height = CheckboxHeight,
-                String = "Force ACT to end encounter after combat",
+                String = Loc.Get("GeneralEndAct"),
                 IsChecked = config.ForceEndEncounter,
                 OnClick = val =>
                 {
                     config.ForceEndEncounter = val;
                     ConfigRepository.Save(System.Config);
                 },
-                TextTooltip = "I highly recommend enabling the \"End ACT encounter after wipe/out of combat\" option under Plugins -> OverlayPlugin -> Event Settings instead of using this."
+                TextTooltip = Loc.Get("GeneralEndActHelp")
             },
         ]);
 
@@ -186,12 +188,12 @@ internal sealed class GeneralConfigurationNode : TabbedVerticalListNode
         };
         encounterButtonRow.AddNode([
             new TextButtonNode {
-                String = "End Encounter",
+                String = Loc.Get("GeneralEndEncounter"),
                 Size = new Vector2(120, 28),
                 OnClick = () => System.ActiveMeterService.EndEncounter()
             },
             new TextButtonNode {
-                String = "Clear Meter",
+                String = Loc.Get("GeneralClearMeter"),
                 Size = new Vector2(120, 28),
                 OnClick = () => System.ActiveMeterService.ClearMeter()
             },

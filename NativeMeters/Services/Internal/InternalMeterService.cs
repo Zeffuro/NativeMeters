@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using NativeMeters.Extensions;
 using NativeMeters.Models;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Services.Internal;
 
@@ -63,7 +64,7 @@ public class InternalMeterService : MeterServiceBase, IDisposable
         networkParser.Enable();
 
         Service.Framework.Update += OnFrameworkTick;
-        Service.NotificationManager.Success("Internal parser enabled (experimental).");
+        Service.NotificationManager.Success(Loc.Get("NotifyInternalParserEnabled"));
     }
 
     private void OnFrameworkTick(object? _)

@@ -15,6 +15,7 @@ using NativeMeters.Nodes.Configuration;
 using NativeMeters.Nodes.Configuration.Meter.Sections;
 using NativeMeters.Nodes.LayoutNodes;
 using NativeMeters.Services;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
@@ -59,7 +60,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
 
         var titleLabel = new LabelTextNode
         {
-            String = "Meter Configuration",
+            String = Loc.Get("MeterHeading"),
             FontSize = 18,
             TextColor = ColorHelper.GetColor(50),
             Size = new Vector2(200, 32),
@@ -87,7 +88,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
         {
             Width = 28, Height = 28,
             TexturePath = Path.Combine(Service.PluginInterface.AssemblyLocation.Directory?.FullName!, @"Assets\Icons\download.png"),
-            TextTooltip = "Import Meter from Clipboard",
+            TextTooltip = Loc.Get("MeterImportTooltip"),
             OnClick = HandleImport
         });
 
@@ -95,7 +96,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
         {
             Width = 28, Height = 28,
             TexturePath = Path.Combine(Service.PluginInterface.AssemblyLocation.Directory?.FullName!, @"Assets\Icons\upload.png"),
-            TextTooltip = "Export Meter to Clipboard",
+            TextTooltip = Loc.Get("MeterExportTooltip"),
             OnClick = () => ConfigPorter.TryExportMeterToClipboard(settings)
         });
 
@@ -116,25 +117,25 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
         sections.Add(new MeterGeneralSection(() => settings, onNameChanged)
         {
             Width = 200,
-            String = "General Settings",
+            String = Loc.Get("MeterGeneralSettings"),
             IsCollapsed = false,
         });
         sections.Add(new MeterDisplaySection(() => settings)
         {
-            String = "Display Settings",
+            String = Loc.Get("MeterDisplaySettings"),
             IsCollapsed = false,
         });
         sections.Add(new MeterComponentsSection(() => settings, HandleLayoutChange, ComponentTarget.Header)
         {
-            String = "Header Components",
+            String = Loc.Get("MeterHeaderComponents"),
         });
         sections.Add(new MeterComponentsSection(() => settings, HandleLayoutChange, ComponentTarget.Row)
         {
-            String = "Row Components (Combatants)",
+            String = Loc.Get("MeterRowComponents"),
         });
         sections.Add(new MeterComponentsSection(() => settings, HandleLayoutChange, ComponentTarget.Footer)
         {
-            String = "Footer Components",
+            String = Loc.Get("MeterFooterComponents"),
         });
 
         foreach (var section in sections)
@@ -236,6 +237,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
 
     private void RecalculateScrollingContent()
     {
+        using var layoutVisibility = new LayoutVisibilityScope(scrollingArea.ContentNode);
         var oldScrollPosition = scrollingArea.ScrollBarNode.ScrollPosition;
         var contentWidth = Math.Max(0.0f, scrollingArea.Width - ScrollbarContentGutter);
 
@@ -286,7 +288,7 @@ public sealed class MeterDefinitionConfigurationNode : ResNode
             System.OverlayManager.Setup();
             RefreshAllSections();
             if (target.Name != originalName) onNameChanged?.Invoke(target);
-            Service.NotificationManager.Success("Meter settings imported.");
+            Service.NotificationManager.Success(Loc.Get("NotifyMeterImported"));
         });
     }
 }

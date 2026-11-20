@@ -1,39 +1,13 @@
-using System;
-using System.Collections.Generic;
-using KamiToolKit.Nodes;
+using NativeMeters.Nodes.Input;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Panels;
 
-internal sealed class ComponentStringDropdownRowNode : ComponentEditorRowNode<StringDropDownNode>
+internal sealed class ComponentStringDropdownRowNode : LabeledDropdownNode
 {
-    public ComponentStringDropdownRowNode() : base(new StringDropDownNode()) { }
-
-    public List<string> Options
+    public ComponentStringDropdownRowNode()
     {
-        get => ControlNode.Options;
-        set => ControlNode.Options = value;
-    }
-
-    public string? SelectedOption
-    {
-        get => ControlNode.SelectedOption;
-        set => ControlNode.SelectedOption = value;
-    }
-
-    public int MaxListOptions
-    {
-        get => ControlNode.MaxListOptions;
-        set => ControlNode.MaxListOptions = value;
-    }
-
-    public Action<string>? OnOptionSelected
-    {
-        get => ControlNode.OnOptionSelected;
-        set => ControlNode.OnOptionSelected = value;
-    }
-
-    protected override void OnVisibilityChanged(bool isVisible)
-    {
-        if (!isVisible) ControlNode.Collapse(playSoundEffect: false);
+        LabelWidth = 128.0f;
+        ControlSpacing = 0.0f;
+        MaximumControlWidth = float.PositiveInfinity;
     }
 }

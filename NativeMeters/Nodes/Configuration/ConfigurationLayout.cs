@@ -5,6 +5,8 @@ namespace NativeMeters.Nodes.Configuration;
 
 internal static class ConfigurationLayout
 {
+    public const float StandardLabelWidth = 160.0f;
+
     public static void SetSize(NodeBase node, Vector2 size)
     {
         var nativeSize = new Vector2((ushort)size.X, (ushort)size.Y);

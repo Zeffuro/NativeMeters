@@ -53,8 +53,8 @@ internal class CheckboxRowNode : ResNode, IConfigurationNavigationNode
 
     public ReadOnlySeString String
     {
-        get => checkboxNode.String;
-        set => checkboxNode.String = value;
+        get => checkboxNode.Label.String;
+        set => checkboxNode.Label.String = value;
     }
 
     public bool IsChecked
@@ -90,5 +90,6 @@ internal class CheckboxRowNode : ResNode, IConfigurationNavigationNode
 
         checkboxNode.Position = Vector2.Zero;
         ConfigurationLayout.SetSize(checkboxNode, Size);
+        ConfigurationLayout.SetWidth(checkboxNode.Label, Math.Max(0, Width - Height));
     }
 }

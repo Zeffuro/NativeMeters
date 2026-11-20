@@ -10,6 +10,7 @@ using NativeMeters.Models;
 using NativeMeters.Nodes.Configuration.Meter.Search;
 using NativeMeters.Services;
 using NativeMeters.Tags;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Panels;
 
@@ -60,11 +61,11 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         FitContents = true;
         ItemSpacing = 4.0f;
 
-        const string tagTooltip = TagFormatHelp.ComponentTooltip;
+        var tagTooltip = TagFormatHelp.ComponentTooltip;
 
         nameInput = new ComponentTextInputRowNode
         {
-            LabelText = "Display Name: ",
+            LabelText = Loc.Get("ComponentDisplayName"),
             Size = new Vector2(Width, InputHeight),
             OnInputComplete = val =>
             {
@@ -79,7 +80,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         sourceInput = new ComponentTextInputRowNode
         {
-            LabelText = "Format String: ",
+            LabelText = Loc.Get("ComponentFormatString"),
             Size = new Vector2(0, InputHeight),
             Placeholder = "[name] [dps]",
             OnInputComplete = val =>
@@ -110,8 +111,10 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         barStatDropdown = new ComponentStringDropdownRowNode
         {
-            LabelText = "Fill Stat: ",
+            ShowStepButtons = true,
+            LabelText = Loc.Get("ComponentFillStat"),
             Size = new Vector2(Width, InputHeight),
+            GetOptionLabel = Loc.StatLabel,
             Options = StatSelector.GetAvailableStatSelectors(),
             OnOptionSelected = val =>
             {
@@ -123,7 +126,8 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         jobIconTypeEnumDropdown = new ComponentEnumDropdownRowNode<JobIconType>
         {
-            LabelText = "Icon Style: ",
+            ShowStepButtons = true,
+            LabelText = Loc.Get("ComponentIconStyle"),
             Size = new Vector2(Width, InputHeight),
             Options = Enum.GetValues<JobIconType>().ToList(),
             OnOptionSelected = val =>
@@ -135,7 +139,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         buttonActionDropdown = new ComponentEnumDropdownRowNode<MeterButtonAction>
         {
-            LabelText = "Button Action: ",
+            LabelText = Loc.Get("ComponentButtonAction"),
             Size = new Vector2(Width, InputHeight),
             Options = Enum.GetValues<MeterButtonAction>().ToList(),
             OnOptionSelected = val =>
@@ -148,7 +152,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         assetDropdown = new ComponentEnumDropdownRowNode<MeterAsset>
         {
-            LabelText = "Asset: ",
+            LabelText = Loc.Get("ComponentAsset"),
             Size = new Vector2(Width, InputHeight),
             Options = Enum.GetValues<MeterAsset>().ToList(),
             OnOptionSelected = val =>
@@ -161,7 +165,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         iconIdInput = new ComponentNumericInputRowNode
         {
-            LabelText = "Icon ID:",
+            LabelText = Loc.Get("ComponentIconId"),
             Size = new Vector2(200, InputHeight),
             OnValueUpdate = val =>
             {
@@ -184,7 +188,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         posRow = new HorizontalListNode { Size = new Vector2(Width, RowHeight), ItemSpacing = 8.0f };
         posXInput = new ComponentNumericInputRowNode
         {
-            LabelText = "Pos X:",
+            LabelText = Loc.Get("ComponentPositionX"),
             Size = new Vector2(166, InputHeight),
             Step = 10,
             Min = -100,
@@ -198,7 +202,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         };
         posYInput = new ComponentNumericInputRowNode
         {
-            LabelText = "Pos Y:",
+            LabelText = Loc.Get("ComponentPositionY"),
             Size = new Vector2(166, InputHeight),
             Step = 10,
             Min = -100,
@@ -215,7 +219,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         sizeRow = new HorizontalListNode { Size = new Vector2(Width, RowHeight), ItemSpacing = 8.0f };
         widthInput = new ComponentNumericInputRowNode
         {
-            LabelText = "Width:",
+            LabelText = Loc.Get("ComponentWidth"),
             Size = new Vector2(166, InputHeight),
             OnValueUpdate = val =>
             {
@@ -226,7 +230,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
         };
         heightInput = new ComponentNumericInputRowNode
         {
-            LabelText = "Height:",
+            LabelText = Loc.Get("ComponentHeight"),
             Size = new Vector2(166, InputHeight),
             OnValueUpdate = val =>
             {
@@ -239,7 +243,7 @@ public sealed class ComponentBasicsPanel : VerticalListNode
 
         zIndexInput = new ComponentNumericInputRowNode
         {
-            LabelText = "Z-Order:",
+            LabelText = Loc.Get("ComponentZOrder"),
             Size = new Vector2(Width, InputHeight),
             OnValueUpdate = val =>
             {

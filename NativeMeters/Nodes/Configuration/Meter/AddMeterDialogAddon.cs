@@ -9,6 +9,7 @@ using NativeMeters.Configuration.Presets;
 using NativeMeters.Nodes.Configuration.Setup;
 using NativeMeters.Services;
 using static NativeMeters.Nodes.Configuration.Setup.SetupControls;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
@@ -22,6 +23,7 @@ public sealed class AddMeterDialogAddon : NativeAddon
 
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> values)
     {
+        this.SetLocalizedTitle("MeterAdd");
         const float importWidth = 176;
         const float buttonGap = 12;
         closing = false;
@@ -34,9 +36,9 @@ public sealed class AddMeterDialogAddon : NativeAddon
             Position = start,
         };
         editor.AttachNode(this);
-        cancel = AddButton("Cancel", 1, start.X, ButtonWidth, Close);
-        import = AddButton("Import from Clipboard", 2, start.X + width - ButtonWidth - buttonGap - importWidth, importWidth, ImportFromClipboard);
-        add = AddButton("Add Meter", 3, start.X + width - ButtonWidth, ButtonWidth, CreateFromEditor);
+        cancel = AddButton(Loc.Get("MeterCancel"), 1, start.X, ButtonWidth, Close);
+        import = AddButton(Loc.Get("MeterImportClipboard"), 2, start.X + width - ButtonWidth - buttonGap - importWidth, importWidth, ImportFromClipboard);
+        add = AddButton(Loc.Get("MeterAdd"), 3, start.X + width - ButtonWidth, ButtonWidth, CreateFromEditor);
         RefreshNavigation();
 
         TextButtonNode AddButton(string label, int index, float x, float buttonWidth, Action clicked)
@@ -113,5 +115,5 @@ public sealed class AddMeterDialogAddon : NativeAddon
     }
 
     private static string CreateNewMeterName()
-        => $"New Meter {System.Config.Meters.Count + 1}";
+        => Loc.Format("MeterNew", System.Config.Meters.Count + 1);
 }

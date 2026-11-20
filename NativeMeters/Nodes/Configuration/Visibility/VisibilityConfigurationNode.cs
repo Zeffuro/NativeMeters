@@ -1,4 +1,5 @@
 using KamiToolKit.Nodes;
+using NativeMeters.Localization;
 using NativeMeters.Configuration.Persistence;
 using CheckboxNode = NativeMeters.Nodes.Input.SyncedCheckboxNode;
 
@@ -16,14 +17,14 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
         AddNode(new CategoryTextNode
         {
             Height = 18,
-            String = "General",
+            String = Loc.Get("VisibilityGeneral"),
         });
 
         AddNode(1, new CheckboxNode
         {
             Size = Size with { Y = 18 },
             IsVisible = true,
-            String = "Hide with Native UI",
+            String = Loc.Get("VisibilityWithHud"),
             IsChecked = config.HideWithNativeUi,
             OnClick = isChecked =>
             {
@@ -37,7 +38,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
         AddNode(new CategoryTextNode
         {
             Height = 18,
-            String = "Hide Conditions",
+            String = Loc.Get("VisibilityHideConditions"),
         });
 
         AddNode(1, [
@@ -45,7 +46,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Hide outside of combat",
+                String = Loc.Get("VisibilityOutOfCombat"),
                 IsChecked = config.HideOutsideOfCombat,
                 OnClick = isChecked =>
                 {
@@ -57,7 +58,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Hide in combat",
+                String = Loc.Get("VisibilityInCombat"),
                 IsChecked = config.HideInCombat,
                 OnClick = isChecked =>
                 {
@@ -69,7 +70,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Hide in Gold Saucer",
+                String = Loc.Get("VisibilityGoldSaucer"),
                 IsChecked = config.HideInGoldSaucer,
                 OnClick = isChecked =>
                 {
@@ -81,7 +82,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Hide while at full HP",
+                String = Loc.Get("VisibilityFullHp"),
                 IsChecked = config.HideWhileFullHp,
                 OnClick = isChecked =>
                 {
@@ -93,7 +94,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Hide when in duty",
+                String = Loc.Get("VisibilityInDuty"),
                 IsChecked = config.HideWhenInDuty,
                 OnClick = isChecked =>
                 {
@@ -105,7 +106,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Hide in Sanctuary",
+                String = Loc.Get("VisibilitySanctuary"),
                 IsChecked = config.HideInSanctuary,
                 OnClick = isChecked =>
                 {
@@ -117,9 +118,9 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Hide in PvP",
+                String = Loc.Get("VisibilityPvp"),
                 IsChecked = config.HideInPvP,
-                TextTooltip = "Overrides Always Show conditions.",
+                TextTooltip = Loc.Get("VisibilityPvpHelp"),
                 OnClick = isChecked =>
                 {
                     config.HideInPvP = isChecked;
@@ -130,7 +131,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Hide while performing",
+                String = Loc.Get("VisibilityPerforming"),
                 IsChecked = config.HideWhilePerforming,
                 OnClick = isChecked =>
                 {
@@ -142,7 +143,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Hide in cutscene / quest event",
+                String = Loc.Get("VisibilityCutscene"),
                 IsChecked = config.HideInCutscene,
                 OnClick = isChecked =>
                 {
@@ -154,7 +155,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Hide when crafting",
+                String = Loc.Get("VisibilityCrafting"),
                 IsChecked = config.HideWhenCrafting,
                 OnClick = isChecked =>
                 {
@@ -166,7 +167,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Hide when gathering",
+                String = Loc.Get("VisibilityGathering"),
                 IsChecked = config.HideWhenGathering,
                 OnClick = isChecked =>
                 {
@@ -181,7 +182,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
         AddNode(new CategoryTextNode
         {
             Height = 18,
-            String = "Always Show Conditions",
+            String = Loc.Get("VisibilityAlwaysConditions"),
         });
 
         AddNode(1, [
@@ -189,7 +190,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Always show when in duty",
+                String = Loc.Get("VisibilityAlwaysDuty"),
                 IsChecked = config.AlwaysShowWhenInDuty,
                 OnClick = isChecked =>
                 {
@@ -201,7 +202,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Always show when weapon is drawn",
+                String = Loc.Get("VisibilityAlwaysDrawn"),
                 IsChecked = config.AlwaysShowWhenWeaponDrawn,
                 OnClick = isChecked =>
                 {
@@ -213,7 +214,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Always show while in a party",
+                String = Loc.Get("VisibilityAlwaysParty"),
                 IsChecked = config.AlwaysShowWhileInParty,
                 OnClick = isChecked =>
                 {
@@ -225,7 +226,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Always show while in PvP",
+                String = Loc.Get("VisibilityAlwaysPvp"),
                 IsChecked = config.AlwaysShowWhileInPvP,
                 OnClick = isChecked =>
                 {
@@ -237,7 +238,7 @@ internal sealed class VisibilityConfigurationNode : TabbedVerticalListNode
             {
                 Size = Size with { Y = 18 },
                 IsVisible = true,
-                String = "Always show while target exists",
+                String = Loc.Get("VisibilityAlwaysTarget"),
                 IsChecked = config.AlwaysShowWhileTargetExists,
                 OnClick = isChecked =>
                 {

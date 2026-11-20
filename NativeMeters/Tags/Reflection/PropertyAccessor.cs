@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 using NativeMeters.Services;
 
@@ -72,7 +73,7 @@ public static class PropertyAccessor
             key.Equals("name", StringComparison.OrdinalIgnoreCase) &&
             data is Combatant combatant)
         {
-            var jobName = combatant.Job.NameEnglish.ToString();
+            var jobName = GameNames.JobName(combatant.Job);
             return combatant.PrivacyIndex.HasValue
                 ? $"{jobName} {combatant.PrivacyIndex.Value}"
                 : jobName;

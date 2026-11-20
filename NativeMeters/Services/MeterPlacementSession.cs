@@ -6,6 +6,7 @@ using NativeMeters.Addons;
 using NativeMeters.Configuration;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Configuration.Setup;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Services;
 
@@ -19,7 +20,7 @@ internal sealed class MeterPlacementSession(SystemConfiguration config, MeterSet
     public Vector2 Size { get; set; } = meter.Size;
     public bool DialogOpened { get; set; }
     public MeterPlacementOutcome? Outcome { get; private set; }
-    public SetupSampleFight Sample => sample ??= new SetupSampleFight("Placement sample");
+    public SetupSampleFight Sample => sample ??= new SetupSampleFight(Loc.Get("PlacementSampleTitle"));
 
     public bool AppliesTo(SystemConfiguration current)
         => ReferenceEquals(config, current) && config.General.IsEnabled && meter.IsEnabled && !meter.IsCollapsed

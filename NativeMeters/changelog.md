@@ -1,3 +1,11 @@
+# 1.1.0.1
+
+- Added more bars, Stock Colors, and the AngelStyle preset.
+- Added Preserve Ends and fixed the Default Stylish bar.
+- Added Icon Style to Add Meter and more bar options to Party List Meters.
+- Added arrows to more dropdowns and fixed some config spacing and overlap.
+- Added translations and a language dropdown in General.
+
 # 1.1.0.0
 
 - Added a first-time setup wizard that helps you place your first meter. Run `/ntm setup` to open it again.

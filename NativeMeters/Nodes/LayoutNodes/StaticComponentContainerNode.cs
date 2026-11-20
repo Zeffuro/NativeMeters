@@ -7,6 +7,7 @@ using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Simplified;
 using NativeMeters.Configuration;
 using NativeMeters.Extensions;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Components;
 using NativeMeters.Nodes.Components.ProgressBars;
@@ -22,7 +23,7 @@ public sealed class StaticComponentContainerNode : ResNode
     private int lastSettingsHash;
     private ResNode? emptyGuard;
 
-    private static readonly Encounter EmptyEncounter = new() { Title = "No Encounter" };
+    private static Encounter? emptyEncounter;
 
     public MeterSettings? MeterSettings
     {
@@ -61,7 +62,8 @@ public sealed class StaticComponentContainerNode : ResNode
             emptyGuard = null;
         }
 
-        encounter ??= System.ActiveMeterService.GetEncounter() ?? EmptyEncounter;
+        encounter ??= System.ActiveMeterService.GetEncounter();
+        encounter ??= emptyEncounter ??= new Encounter { Title = Loc.Get("HudNoEncounter") };
         foreach (var settings in cachedSortedSettings)
         {
             if (graphManager.Components.TryGetValue(settings.Id, out var node))

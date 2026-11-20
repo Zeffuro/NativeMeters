@@ -17,7 +17,7 @@ internal sealed partial class PartyListMeterConfigurationNode
         {
             Icon = CircleButtonIcon.QuestionMark,
             Size = new Vector2(FormatButtonSize),
-            Y = (ControlHeight - FormatButtonSize) / 2.0f,
+            Y = (FormatRowHeight - FormatButtonSize) / 2.0f,
             TextTooltip = TagFormatHelp.ComponentTooltip,
         };
 
@@ -26,7 +26,7 @@ internal sealed partial class PartyListMeterConfigurationNode
         {
             Icon = CircleButtonIcon.MagnifyingGlass,
             Size = new Vector2(FormatButtonSize),
-            Y = (ControlHeight - FormatButtonSize) / 2.0f,
+            Y = (FormatRowHeight - FormatButtonSize) / 2.0f,
             OnClick = onClick,
         };
 
@@ -155,18 +155,18 @@ internal sealed partial class PartyListMeterConfigurationNode
         CircleButtonNode helpButton,
         CircleButtonNode browseButton)
     {
-        row.Height = ControlHeight;
+        row.Height = FormatRowHeight;
         helpButton.Size = new Vector2(FormatButtonSize);
         browseButton.Size = new Vector2(FormatButtonSize);
-        helpButton.Y = (ControlHeight - FormatButtonSize) / 2.0f;
-        browseButton.Y = (ControlHeight - FormatButtonSize) / 2.0f;
+        helpButton.Y = (FormatRowHeight - FormatButtonSize) / 2.0f;
+        browseButton.Y = (FormatRowHeight - FormatButtonSize) / 2.0f;
 
         var rowWidth = Math.Max(0.0f, row.Width);
         var buttonWidth = helpButton.Width + browseButton.Width + row.ItemSpacing * 2.0f;
         var maxInputWidth = Math.Max(0.0f, rowWidth - buttonWidth);
         var preferredInputWidth = input.LabelWidth + input.ControlSpacing + input.MaximumControlWidth;
 
-        input.Size = new Vector2(Math.Min(maxInputWidth, preferredInputWidth), ControlHeight);
+        input.Size = new Vector2(Math.Min(maxInputWidth, preferredInputWidth), FormatRowHeight);
         row.RecalculateLayout();
     }
 

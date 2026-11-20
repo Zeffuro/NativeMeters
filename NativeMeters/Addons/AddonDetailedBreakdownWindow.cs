@@ -7,6 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 using NativeMeters.Models.Breakdown;
 using NativeMeters.Nodes.Breakdown;
@@ -56,6 +57,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
+        this.SetLocalizedTitle("WindowBreakdown");
         var contentY = ContentStartPosition.Y;
         var contentW = ContentSize.X;
         var contentH = ContentSize.Y;
@@ -64,7 +66,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         {
             Position = ContentStartPosition,
             Size = new Vector2(EncounterButtonWidth, TopRowHeight),
-            String = "Previous",
+            String = Loc.Get("BreakdownPrevious"),
             IsVisible = true,
             OnClick = () => NavigateEncounter(-1),
         };
@@ -83,7 +85,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
             TextFlags = TextFlags.Edge,
             AlignmentType = AlignmentType.Center,
             TextColor = new Vector4(1f, 1f, 1f, 0.9f),
-            String = "Live",
+            String = Loc.Get("BreakdownLive"),
             IsVisible = true,
         };
         encounterLabelNode.AttachNode(this);
@@ -92,6 +94,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         {
             Position = ContentStartPosition with { X = sortX, Y = ContentStartPosition.Y + SortRowY },
             Size = new Vector2(SortDropdownWidth, TopRowHeight),
+            GetLabelFunction = value => Loc.EnumLabel(value),
             Options = Enum.GetValues<BreakdownSortMode>().ToList(),
             SelectedOption = sortMode,
             MaxListOptions = 4,
@@ -115,7 +118,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
             Position = ContentStartPosition with { X = lockX, Y = ContentStartPosition.Y + SortRowY },
             Size = new Vector2(LockButtonSize, TopRowHeight),
             IsLocked = isOrderLocked,
-            TextTooltip = "Lock current breakdown order",
+            TextTooltip = Loc.Get("BreakdownLockOrder"),
             IsVisible = true,
             OnClick = OnOrderLockClicked,
         };
@@ -125,7 +128,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         {
             Position = ContentStartPosition with { X = nextX },
             Size = new Vector2(EncounterButtonWidth, TopRowHeight),
-            String = "Next",
+            String = Loc.Get("BreakdownNext"),
             IsVisible = true,
             OnClick = () => NavigateEncounter(1),
         };
@@ -139,8 +142,8 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         };
         tabBarNode.AttachNode(this);
 
-        tabBarNode.AddTab("Damage", () => SwitchTab(BreakdownTab.Damage));
-        tabBarNode.AddTab("Healing", () => SwitchTab(BreakdownTab.Healing));
+        tabBarNode.AddTab(Loc.Get("BreakdownDamage"), () => SwitchTab(BreakdownTab.Damage));
+        tabBarNode.AddTab(Loc.Get("BreakdownHealing"), () => SwitchTab(BreakdownTab.Healing));
 
         summaryBar = new EncounterSummaryBarNode
         {
@@ -230,7 +233,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
     {
         if (selectedEncounterIndex < 0)
         {
-            encounterLabelNode.String = "Live";
+            encounterLabelNode.String = Loc.Get("BreakdownLive");
             return;
         }
 
@@ -238,13 +241,13 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         if (selectedEncounterIndex < history.Count)
         {
             var enc = history[selectedEncounterIndex].Encounter;
-            var title = enc?.Title ?? "Unknown";
+            var title = enc?.Title ?? Loc.Get("BreakdownUnknown");
             var dur = enc?.Duration.ToString(@"mm\:ss") ?? "0:00";
-            encounterLabelNode.String = $"{title} ({dur})";
+            encounterLabelNode.String = Loc.Format("BreakdownEncounterTitle", title, dur);
         }
         else
         {
-            encounterLabelNode.String = "No Data";
+            encounterLabelNode.String = Loc.Get("BreakdownNoData");
         }
     }
 
@@ -289,7 +292,7 @@ public class AddonDetailedBreakdownWindow : NativeAddon
         bool isDamageMode = currentTab == BreakdownTab.Damage;
         float listWidth = GetScrollingContentWidth();
         tableHeader.Width = Math.Max(0, listWidth - BreakdownPlayerSectionNode.RowIndent);
-        tableHeader.UpdateLabels(isDamageMode ? "Damage" : "Healing", isDamageMode ? "DPS" : "HPS");
+        tableHeader.UpdateLabels(isDamageMode ? Loc.Get("BreakdownDamage") : Loc.Get("BreakdownHealing"), isDamageMode ? "DPS" : "HPS");
 
         double duration = encounter.DURATION > 0 ? encounter.DURATION : 1.0;
 
@@ -480,8 +483,8 @@ public class AddonDetailedBreakdownWindow : NativeAddon
 
     private static int CompareName(Combatant a, Combatant b)
         => string.Compare(
-            BreakdownPlayerSectionNode.GetDisplayName(a),
-            BreakdownPlayerSectionNode.GetDisplayName(b),
+            BreakdownPlayerSectionNode.GetDisplayName(a, localized: false),
+            BreakdownPlayerSectionNode.GetDisplayName(b, localized: false),
             StringComparison.OrdinalIgnoreCase);
 
     private static string GetJobSortLabel(Combatant combatant)

@@ -32,7 +32,7 @@ public abstract class LabeledControlRowNode<TControl> : ResNode, IConfigurationN
         Height = 28.0f;
     }
 
-    public float LabelWidth { get; set; } = 160.0f;
+    public float LabelWidth { get; set; } = ConfigurationLayout.StandardLabelWidth;
     public float ControlSpacing { get; set; } = 8.0f;
     public float MaximumControlWidth { get; set; } = 360.0f;
 
@@ -72,7 +72,7 @@ public abstract class LabeledControlRowNode<TControl> : ResNode, IConfigurationN
         set => LabelNode.TextFlags = value;
     }
 
-    public IEnumerable<ConfigurationNavigationTarget> GetNavigationTargets()
+    public virtual IEnumerable<ConfigurationNavigationTarget> GetNavigationTargets()
     {
         if (ControlNode is ComponentNode componentNode)
         {
@@ -95,6 +95,11 @@ public abstract class LabeledControlRowNode<TControl> : ResNode, IConfigurationN
             ? availableControlWidth
             : Math.Min(MaximumControlWidth, availableControlWidth);
 
+        LayoutRow(labelWidth, controlX, controlWidth);
+    }
+
+    protected virtual void LayoutRow(float labelWidth, float controlX, float controlWidth)
+    {
         LabelNode.Position = Vector2.Zero;
         ConfigurationLayout.SetSize(LabelNode, new Vector2(labelWidth, Height));
 

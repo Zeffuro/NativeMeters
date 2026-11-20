@@ -4,6 +4,7 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Simplified;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 using NativeMeters.Models.Breakdown;
 using NativeMeters.Tags.Formatting;
@@ -119,7 +120,7 @@ public sealed class BreakdownTableRowNode : SimpleComponentNode
 
         if (actionName.Equals("attack", StringComparison.OrdinalIgnoreCase))
         {
-            actionName = "Attack";
+            actionName = Loc.Get("BreakdownAttack");
             actionIconId = 101;
         }
 
@@ -144,11 +145,11 @@ public sealed class BreakdownTableRowNode : SimpleComponentNode
             {
                 "Action" => actionName,
                 "Hits" => action.Hits.ToString(),
-                "Crit" => action.Hits > 0 ? $"{(int)Math.Round(action.CritHits * 100.0 / action.Hits)}%" : "-",
-                "DH" => action.Hits > 0 ? $"{(int)Math.Round(action.DirectHits * 100.0 / action.Hits)}%" : "-",
+                "Crit" => action.Hits > 0 ? Loc.Format("BreakdownPercent", (int)Math.Round(action.CritHits * 100.0 / action.Hits)) : "-",
+                "DH" => action.Hits > 0 ? Loc.Format("BreakdownPercent", (int)Math.Round(action.DirectHits * 100.0 / action.Hits)) : "-",
                 "Pct" => isDamageMode
-                    ? (action.DamagePercent > 0 ? $"{action.DamagePercent:F1}%" : "-")
-                    : (action.HealingPercent > 0 ? $"{action.HealingPercent:F1}%" : "-"),
+                    ? (action.DamagePercent > 0 ? Loc.Format("BreakdownDecimalPercent", action.DamagePercent) : "-")
+                    : (action.HealingPercent > 0 ? Loc.Format("BreakdownDecimalPercent", action.HealingPercent) : "-"),
                 "Total" => isDamageMode
                     ? Formatter.Format(action.TotalDamage, "", "k", 1)
                     : Formatter.Format(action.TotalHealing, "", "k", 1),
@@ -157,7 +158,7 @@ public sealed class BreakdownTableRowNode : SimpleComponentNode
                     : (action.HealingPerSecond > 0 ? Formatter.Format(action.HealingPerSecond, "", "", 0) : "0"),
                 "Max" => action.MaxHit > 0 ? Formatter.Format(action.MaxHit, "", "k", 1) : "-",
                 "Active" => action.ActiveSpan.TotalSeconds > 0 ? $"{action.ActiveSpan:m\\:ss}" : "-",
-                "Overheal" => action.OverHeal > 0 ? $"{action.OverHeal:F1}%" : "-",
+                "Overheal" => action.OverHeal > 0 ? Loc.Format("BreakdownDecimalPercent", action.OverHeal) : "-",
                 _ => "",
             };
         }

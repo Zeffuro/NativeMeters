@@ -3,6 +3,7 @@ using System.Linq;
 using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Panels;
 
@@ -42,14 +43,15 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         headerLabel = new LabelTextNode
         {
-            String = "Visuals",
+            String = Loc.Get("ComponentVisuals"),
             Size = new Vector2(Width, 20),
             TextColor = new Vector4(0.7f, 0.7f, 1f, 1f)
         };
 
         colorModeDropdown = new ComponentEnumDropdownRowNode<ColorMode>
         {
-            LabelText = "Coloring Mode:",
+            ShowStepButtons = true,
+            LabelText = Loc.Get("ComponentColoring"),
             Size = new Vector2(Width, 28),
             Options = Enum.GetValues<ColorMode>().ToList(),
             OnOptionSelected = val =>
@@ -62,7 +64,8 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         barSizingDropdown = new ComponentEnumDropdownRowNode<ProgressBarSizing>
         {
-            LabelText = "Bar Sizing:",
+            ShowStepButtons = true,
+            LabelText = Loc.Get("ComponentBarSizing"),
             Size = new Vector2(Width, 28),
             Options = Enum.GetValues<ProgressBarSizing>().ToList(),
             OnOptionSelected = val =>
@@ -75,7 +78,8 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         barTypeDropdown = new ComponentEnumDropdownRowNode<ProgressBarType>
         {
-            LabelText = "Bar Type:",
+            ShowStepButtons = true,
+            LabelText = Loc.Get("ComponentBarType"),
             Size = new Vector2(Width, 28),
             Options = ProgressBarTypeOptions.Ordered(),
             OnOptionSelected = val =>
@@ -96,7 +100,8 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         barColorTreatmentDropdown = new ComponentEnumDropdownRowNode<ProgressBarColorTreatment>
         {
-            LabelText = "Bar Tint:",
+            ShowStepButtons = true,
+            LabelText = Loc.Get("ComponentBarTint"),
             Size = new Vector2(Width, 28),
             Options = Enum.GetValues<ProgressBarColorTreatment>().ToList(),
             OnOptionSelected = val =>
@@ -109,7 +114,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         barFillRightToLeftCheckbox = new ComponentCheckboxRowNode
         {
-            String = "Fill Right To Left",
+            String = Loc.Get("ComponentFillRtl"),
             Size = new Vector2(Width, 28),
             OnClick = val =>
             {
@@ -122,7 +127,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         textColorInput = new ComponentColorInputRowNode
         {
-            Label = "Static Color",
+            Label = Loc.Get("ComponentStaticColor"),
             Size = new Vector2(Width, 28),
             DefaultColor = new ComponentSettings().TextColor,
             CurrentColor = settings?.TextColor ?? new ComponentSettings().TextColor,
@@ -133,7 +138,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         outlineColorInput = new ComponentColorInputRowNode
         {
-            Label = "Outline Color",
+            Label = Loc.Get("ComponentOutlineColor"),
             Size = new Vector2(Width, 28),
             DefaultColor = new ComponentSettings().TextOutlineColor,
             CurrentColor = settings?.TextOutlineColor ?? new ComponentSettings().TextOutlineColor,
@@ -144,7 +149,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         backgroundTextColorInput = new ComponentColorInputRowNode
         {
-            Label = "Background Color: ",
+            Label = Loc.Get("MeterBackgroundColor"),
             Size = new Vector2(Width, 28),
             DefaultColor = new ComponentSettings().TextBackgroundColor,
             CurrentColor = settings?.TextBackgroundColor ?? new ComponentSettings().TextBackgroundColor,
@@ -155,7 +160,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         barColorInput = new ComponentColorInputRowNode
         {
-            Label = "Bar Color: ",
+            Label = Loc.Get("ComponentBarColor"),
             Size = new Vector2(Width, 28),
             DefaultColor = new ComponentSettings().BarColor,
             CurrentColor = settings?.BarColor ?? new ComponentSettings().BarColor,
@@ -166,7 +171,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         barBgColorInput = new ComponentColorInputRowNode
         {
-            Label = "Bar Background Color: ",
+            Label = Loc.Get("ComponentBarBackground"),
             Size = new Vector2(Width, 28),
             DefaultColor = new ComponentSettings().BarBackgroundColor,
             CurrentColor = settings?.BarColor ?? new ComponentSettings().BarBackgroundColor,
@@ -177,7 +182,7 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         backgroundCheckbox = new ComponentCheckboxRowNode
         {
-            String = "Show BG",
+            String = Loc.Get("MeterBackground"),
             Size = new Vector2(Width, 28),
             OnClick = val =>
             {
@@ -248,8 +253,8 @@ public sealed class ComponentVisualsPanel : VerticalListNode
 
         ApplyVisibility();
 
-        backgroundTextColorInput.Label = isBar ? "Bar BG Color: " : "Background Color: ";
-        textColorInput.Label = isBg ? "Plate Color: " : "Static Color: ";
+        backgroundTextColorInput.Label = isBar ? Loc.Get("ComponentBarBackground") : Loc.Get("MeterBackgroundColor");
+        textColorInput.Label = isBg ? Loc.Get("ComponentPlateColor") : Loc.Get("ComponentStaticColor");
 
         colorModeDropdown.SelectedOption = settings.ColorMode;
         textColorInput.CurrentColor = settings.TextColor;

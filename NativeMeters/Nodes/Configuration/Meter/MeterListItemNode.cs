@@ -6,6 +6,7 @@ using KamiToolKit.Interfaces;
 using KamiToolKit.Nodes;
 using Lumina.Data.Parsing.Uld;
 using NativeMeters.Configuration;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter;
 
@@ -63,12 +64,12 @@ public class MeterListItemNode : ListItemWithFocusNav<MeterSettings>, IListItemN
     }
 
     public static string GetLabel(MeterSettings settings)
-        => string.IsNullOrWhiteSpace(settings.Name) ? "Unnamed Meter" : settings.Name;
+        => string.IsNullOrWhiteSpace(settings.Name) ? Loc.Get("MeterUnnamed") : settings.Name;
 
     public static string GetSubLabel(MeterSettings settings)
     {
-        var status = settings.IsEnabled ? "Enabled" : "Disabled";
-        return $"{status} ({settings.StatToTrack})";
+        var status = settings.IsEnabled ? Loc.Get("MeterEnabled") : Loc.Get("MeterDisabled");
+        return $"{status} ({Loc.StatLabel(settings.StatToTrack)})";
     }
 
     public static uint? GetIconId(MeterSettings settings) => 0;

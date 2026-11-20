@@ -1,0 +1,2162 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="BreakdownAction" xml:space="preserve">
+    <value>技能</value>
+  </data>
+  <data name="BreakdownActive" xml:space="preserve">
+    <value>活动</value>
+  </data>
+  <data name="BreakdownAttack" xml:space="preserve">
+    <value>攻击</value>
+  </data>
+  <data name="BreakdownCritShort" xml:space="preserve">
+    <value>暴击%</value>
+  </data>
+  <data name="BreakdownDamage" xml:space="preserve">
+    <value>伤害</value>
+  </data>
+  <data name="BreakdownDamageStats" xml:space="preserve">
+    <value>DPS {0}  暴击 {1:F0}%  直击 {2:F0}%  活动 {3:F0}%</value>
+  </data>
+  <data name="BreakdownDecimalPercent" xml:space="preserve">
+    <value>{0:F1}%</value>
+  </data>
+  <data name="BreakdownDirectShort" xml:space="preserve">
+    <value>直击%</value>
+  </data>
+  <data name="BreakdownEncounterTitle" xml:space="preserve">
+    <value>{0}（{1}）</value>
+  </data>
+  <data name="BreakdownHealing" xml:space="preserve">
+    <value>治疗量</value>
+  </data>
+  <data name="BreakdownHealingStats" xml:space="preserve">
+    <value>HPS {0}  暴击 {1:F0}%  过量 {2:F0}%  活动 {3:F0}%</value>
+  </data>
+  <data name="BreakdownHits" xml:space="preserve">
+    <value>命中数</value>
+  </data>
+  <data name="BreakdownLive" xml:space="preserve">
+    <value>当前战斗</value>
+  </data>
+  <data name="BreakdownLockOrder" xml:space="preserve">
+    <value>锁定当前明细顺序</value>
+  </data>
+  <data name="BreakdownMax" xml:space="preserve">
+    <value>最大</value>
+  </data>
+  <data name="BreakdownNext" xml:space="preserve">
+    <value>下一个</value>
+  </data>
+  <data name="BreakdownNoData" xml:space="preserve">
+    <value>暂无数据</value>
+  </data>
+  <data name="BreakdownOverhealShort" xml:space="preserve">
+    <value>过量%</value>
+  </data>
+  <data name="BreakdownPercent" xml:space="preserve">
+    <value>{0}%</value>
+  </data>
+  <data name="BreakdownPrevious" xml:space="preserve">
+    <value>上一个</value>
+  </data>
+  <data name="BreakdownRaidDps" xml:space="preserve">
+    <value>小队DPS {0}</value>
+  </data>
+  <data name="BreakdownRaidHps" xml:space="preserve">
+    <value>小队HPS {0}</value>
+  </data>
+  <data name="BreakdownTotalDamage" xml:space="preserve">
+    <value>总伤害 {0}</value>
+  </data>
+  <data name="BreakdownTotalHealing" xml:space="preserve">
+    <value>总治疗量 {0}</value>
+  </data>
+  <data name="BreakdownUnknown" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="ClipboardCopied" xml:space="preserve">
+    <value>已将战斗概要复制到剪贴板。</value>
+  </data>
+  <data name="ClipboardCopyFailed" xml:space="preserve">
+    <value>无法复制战斗概要。</value>
+  </data>
+  <data name="ClipboardDuration" xml:space="preserve">
+    <value>时长：{0}</value>
+  </data>
+  <data name="ClipboardPlayer" xml:space="preserve">
+    <value>第{0}名 {1}（{2}） DPS {3:N0}</value>
+  </data>
+  <data name="ClipboardTotals" xml:space="preserve">
+    <value>战斗不能：{0}次 | 小队DPS：{1:N0}</value>
+  </data>
+  <data name="ColorsDps" xml:space="preserve">
+    <value>进攻职业</value>
+  </data>
+  <data name="ColorsHealers" xml:space="preserve">
+    <value>治疗职业</value>
+  </data>
+  <data name="ColorsJob" xml:space="preserve">
+    <value>职业颜色</value>
+  </data>
+  <data name="ColorsOther" xml:space="preserve">
+    <value>其他／极限技</value>
+  </data>
+  <data name="ColorsRole" xml:space="preserve">
+    <value>职能颜色</value>
+  </data>
+  <data name="ColorsTanks" xml:space="preserve">
+    <value>防护职业</value>
+  </data>
+  <data name="CommandCaptureFailed" xml:space="preserve">
+    <value>录制失败：{0}</value>
+  </data>
+  <data name="CommandCaptureNotRunning" xml:space="preserve">
+    <value>当前没有录制。</value>
+  </data>
+  <data name="CommandCaptureSaved" xml:space="preserve">
+    <value>录制已保存到 {0}。</value>
+  </data>
+  <data name="CommandCaptureStarted" xml:space="preserve">
+    <value>正在录制到 {0}。</value>
+  </data>
+  <data name="CommandCaptureUsage" xml:space="preserve">
+    <value>请使用 /ntm debug capture start 或 /ntm debug capture stop。</value>
+  </data>
+  <data name="CommandHelpHeading" xml:space="preserve">
+    <value>NativeMeters 帮助：</value>
+  </data>
+  <data name="CommandLoginRequired" xml:space="preserve">
+    <value>请登录角色后打开初始设置。</value>
+  </data>
+  <data name="CommandMainHelp" xml:space="preserve">
+    <value>NativeMeters 主命令。输入 /ntm help 查看所有选项。</value>
+  </data>
+  <data name="CommandMetersDisabled" xml:space="preserve">
+    <value>已停用统计面板。</value>
+  </data>
+  <data name="CommandMetersEnabled" xml:space="preserve">
+    <value>已启用统计面板。</value>
+  </data>
+  <data name="CommandOpenBreakdown" xml:space="preserve">
+    <value>打开详细分析窗口</value>
+  </data>
+  <data name="CommandOpenConfig" xml:space="preserve">
+    <value>打开设置窗口</value>
+  </data>
+  <data name="CommandOpenSetup" xml:space="preserve">
+    <value>打开设置向导</value>
+  </data>
+  <data name="CommandResetDummies" xml:space="preserve">
+    <value>重置附近所有木人的仇恨</value>
+  </data>
+  <data name="CommandShowHelp" xml:space="preserve">
+    <value>显示此帮助</value>
+  </data>
+  <data name="CommandToggle" xml:space="preserve">
+    <value>切换统计面板显示</value>
+  </data>
+  <data name="CommandUnknown" xml:space="preserve">
+    <value>未知命令：{0}。输入“{1} help”查看命令列表。</value>
+  </data>
+  <data name="CommonAdd" xml:space="preserve">
+    <value>添加</value>
+  </data>
+  <data name="CommonClose" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="CommonDelete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="CommonDuplicate" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="CommonNextOption" xml:space="preserve">
+    <value>下一项</value>
+  </data>
+  <data name="CommonNone" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="CommonPreviousOption" xml:space="preserve">
+    <value>上一项</value>
+  </data>
+  <data name="CommonRemove" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="CommonSearch" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+  <data name="ComponentAdd" xml:space="preserve">
+    <value>添加组件</value>
+  </data>
+  <data name="ComponentAlignment" xml:space="preserve">
+    <value>对齐：</value>
+  </data>
+  <data name="ComponentAsset" xml:space="preserve">
+    <value>素材：</value>
+  </data>
+  <data name="ComponentBarBackground" xml:space="preserve">
+    <value>进度条背景颜色：</value>
+  </data>
+  <data name="ComponentBarColor" xml:space="preserve">
+    <value>进度条颜色：</value>
+  </data>
+  <data name="ComponentBarSizing" xml:space="preserve">
+    <value>进度条缩放：</value>
+  </data>
+  <data name="ComponentBarTint" xml:space="preserve">
+    <value>进度条色调：</value>
+  </data>
+  <data name="ComponentBarType" xml:space="preserve">
+    <value>进度条类型：</value>
+  </data>
+  <data name="ComponentButtonAction" xml:space="preserve">
+    <value>按钮动作：</value>
+  </data>
+  <data name="ComponentColoring" xml:space="preserve">
+    <value>着色模式：</value>
+  </data>
+  <data name="ComponentDisplayName" xml:space="preserve">
+    <value>显示名称：</value>
+  </data>
+  <data name="ComponentFillRtl" xml:space="preserve">
+    <value>从右向左填充</value>
+  </data>
+  <data name="ComponentFillStat" xml:space="preserve">
+    <value>填充统计项：</value>
+  </data>
+  <data name="ComponentFont" xml:space="preserve">
+    <value>字体：</value>
+  </data>
+  <data name="ComponentFontSize" xml:space="preserve">
+    <value>字号：</value>
+  </data>
+  <data name="ComponentFormatString" xml:space="preserve">
+    <value>格式字符串：</value>
+  </data>
+  <data name="ComponentHeight" xml:space="preserve">
+    <value>高度：</value>
+  </data>
+  <data name="ComponentIconId" xml:space="preserve">
+    <value>图标 ID：</value>
+  </data>
+  <data name="ComponentIconStyle" xml:space="preserve">
+    <value>图标样式：</value>
+  </data>
+  <data name="ComponentNew" xml:space="preserve">
+    <value>新建：{0}</value>
+  </data>
+  <data name="ComponentOutlineColor" xml:space="preserve">
+    <value>描边颜色</value>
+  </data>
+  <data name="ComponentPlateColor" xml:space="preserve">
+    <value>底板颜色：</value>
+  </data>
+  <data name="ComponentPositionX" xml:space="preserve">
+    <value>X 位置：</value>
+  </data>
+  <data name="ComponentPositionY" xml:space="preserve">
+    <value>Y 位置：</value>
+  </data>
+  <data name="ComponentStaticColor" xml:space="preserve">
+    <value>固定颜色：</value>
+  </data>
+  <data name="ComponentStyle" xml:space="preserve">
+    <value>样式：</value>
+  </data>
+  <data name="ComponentTypography" xml:space="preserve">
+    <value>文字</value>
+  </data>
+  <data name="ComponentVisuals" xml:space="preserve">
+    <value>外观</value>
+  </data>
+  <data name="ComponentWidth" xml:space="preserve">
+    <value>宽度：</value>
+  </data>
+  <data name="ComponentZOrder" xml:space="preserve">
+    <value>层叠顺序：</value>
+  </data>
+  <data name="ConnectionAutoReconnect" xml:space="preserve">
+    <value>自动重连</value>
+  </data>
+  <data name="ConnectionConnected" xml:space="preserve">
+    <value>状态：已连接</value>
+  </data>
+  <data name="ConnectionDisconnected" xml:space="preserve">
+    <value>状态：未连接</value>
+  </data>
+  <data name="ConnectionInterval" xml:space="preserve">
+    <value>重连间隔</value>
+  </data>
+  <data name="ConnectionLogErrors" xml:space="preserve">
+    <value>记录连接错误</value>
+  </data>
+  <data name="ConnectionLogging" xml:space="preserve">
+    <value>重连与日志</value>
+  </data>
+  <data name="ConnectionMergePets" xml:space="preserve">
+    <value>将召唤物与主人合并</value>
+  </data>
+  <data name="ConnectionMergePetsHelp" xml:space="preserve">
+    <value>将宠物及召唤物的伤害计入主人名下。
+关闭后将单独列出。</value>
+  </data>
+  <data name="ConnectionParseFilter" xml:space="preserve">
+    <value>解析对象</value>
+  </data>
+  <data name="ConnectionParserOptions" xml:space="preserve">
+    <value>内置解析器选项</value>
+  </data>
+  <data name="ConnectionParserWarning" xml:space="preserve">
+    <value>内置解析器（实验功能）
+
+• 持续伤害和持续治疗为估算值。
+  与ACT/IINACT的差异约为5%～10%。
+• 通过当前状态效果推算每次持续伤害的来源。
+  小队中有多个持续伤害效果时，归属可能不准确。
+如需精确统计，请使用ACT/IINACT。</value>
+  </data>
+  <data name="ConnectionReconnect" xml:space="preserve">
+    <value>重新连接</value>
+  </data>
+  <data name="ConnectionResetUrl" xml:space="preserve">
+    <value>恢复默认地址</value>
+  </data>
+  <data name="ConnectionSeparateCompanions" xml:space="preserve">
+    <value>单独显示陆行鸟搭档</value>
+  </data>
+  <data name="ConnectionSeparateCompanionsHelp" xml:space="preserve">
+    <value>将搭档的伤害单独列出，不计入玩家名下。</value>
+  </data>
+  <data name="ConnectionSettings" xml:space="preserve">
+    <value>服务器连接设置</value>
+  </data>
+  <data name="ConnectionTypeLabel" xml:space="preserve">
+    <value>连接类型</value>
+  </data>
+  <data name="ConnectionUrl" xml:space="preserve">
+    <value>WebSocket地址</value>
+  </data>
+  <data name="ConnectionUseYou" xml:space="preserve">
+    <value>将自己的角色名显示为“YOU”</value>
+  </data>
+  <data name="ConnectionUseYouHelp" xml:space="preserve">
+    <value>与ACT一致，将自己的角色记为“YOU”。</value>
+  </data>
+  <data name="DtrClickConfig" xml:space="preserve">
+    <value>点击打开设置</value>
+  </data>
+  <data name="DtrDisconnectedText" xml:space="preserve">
+    <value>断开时的文本：</value>
+  </data>
+  <data name="DtrFormat" xml:space="preserve">
+    <value>显示格式：</value>
+  </data>
+  <data name="DtrHeading" xml:space="preserve">
+    <value>服务器信息栏</value>
+  </data>
+  <data name="DtrInsertTag" xml:space="preserve">
+    <value>插入标签：</value>
+  </data>
+  <data name="DtrPersonalDps" xml:space="preserve">
+    <value>显示个人DPS</value>
+  </data>
+  <data name="DtrPersonalDpsHelp" xml:space="preserve">
+    <value>用[dps]标签显示个人DPS，而非小队DPS。</value>
+  </data>
+  <data name="DtrShowDisconnected" xml:space="preserve">
+    <value>断开连接时仍显示</value>
+  </data>
+  <data name="Enum_AlignmentType_Bottom" xml:space="preserve">
+    <value>底部</value>
+  </data>
+  <data name="Enum_AlignmentType_BottomLeft" xml:space="preserve">
+    <value>左下</value>
+  </data>
+  <data name="Enum_AlignmentType_BottomRight" xml:space="preserve">
+    <value>右下</value>
+  </data>
+  <data name="Enum_AlignmentType_Center" xml:space="preserve">
+    <value>居中</value>
+  </data>
+  <data name="Enum_AlignmentType_Left" xml:space="preserve">
+    <value>左侧</value>
+  </data>
+  <data name="Enum_AlignmentType_Right" xml:space="preserve">
+    <value>右侧</value>
+  </data>
+  <data name="Enum_AlignmentType_Top" xml:space="preserve">
+    <value>顶部</value>
+  </data>
+  <data name="Enum_AlignmentType_TopLeft" xml:space="preserve">
+    <value>左上</value>
+  </data>
+  <data name="Enum_AlignmentType_TopRight" xml:space="preserve">
+    <value>右上</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Job" xml:space="preserve">
+    <value>特职</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Name" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Output" xml:space="preserve">
+    <value>DPS / HPS</value>
+  </data>
+  <data name="Enum_BreakdownSortMode_Role" xml:space="preserve">
+    <value>职能</value>
+  </data>
+  <data name="Enum_ColorMode_Job" xml:space="preserve">
+    <value>特职</value>
+  </data>
+  <data name="Enum_ColorMode_Role" xml:space="preserve">
+    <value>职能</value>
+  </data>
+  <data name="Enum_ColorMode_Static" xml:space="preserve">
+    <value>固定</value>
+  </data>
+  <data name="Enum_ConnectionType_IINACTIPC" xml:space="preserve">
+    <value>IINACT</value>
+  </data>
+  <data name="Enum_ConnectionType_Internal" xml:space="preserve">
+    <value>内置解析器</value>
+  </data>
+  <data name="Enum_ConnectionType_WebSocket" xml:space="preserve">
+    <value>ACT（WebSocket）</value>
+  </data>
+  <data name="Enum_CustomMeterBarStyle_FullWidth" xml:space="preserve">
+    <value>填充进度条</value>
+  </data>
+  <data name="Enum_CustomMeterBarStyle_None" xml:space="preserve">
+    <value>无进度条</value>
+  </data>
+  <data name="Enum_CustomMeterBarStyle_Underline" xml:space="preserve">
+    <value>下划线</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_BestHit" xml:space="preserve">
+    <value>最高伤害</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_CriticalDirectHitPercent" xml:space="preserve">
+    <value>暴击直击率</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_CriticalHitPercent" xml:space="preserve">
+    <value>暴击率</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Damage" xml:space="preserve">
+    <value>总伤害</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_DamagePercent" xml:space="preserve">
+    <value>伤害占比</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Deaths" xml:space="preserve">
+    <value>倒地次数</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_DirectHitPercent" xml:space="preserve">
+    <value>直击率</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Dps" xml:space="preserve">
+    <value>DPS</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Hits" xml:space="preserve">
+    <value>命中次数</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Hps" xml:space="preserve">
+    <value>HPS</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_PlayerName" xml:space="preserve">
+    <value>玩家名称</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Rank" xml:space="preserve">
+    <value>排名</value>
+  </data>
+  <data name="Enum_CustomMeterColumn_Swings" xml:space="preserve">
+    <value>攻击次数</value>
+  </data>
+  <data name="Enum_FontType_JupiterLarge" xml:space="preserve">
+    <value>Jupiter 大号</value>
+  </data>
+  <data name="Enum_FontType_MiedingerMed" xml:space="preserve">
+    <value>Miedinger 中等</value>
+  </data>
+  <data name="Enum_JobIconType_Blue" xml:space="preserve">
+    <value>蓝色</value>
+  </data>
+  <data name="Enum_JobIconType_Dark" xml:space="preserve">
+    <value>深色</value>
+  </data>
+  <data name="Enum_JobIconType_Default" xml:space="preserve">
+    <value>默认</value>
+  </data>
+  <data name="Enum_JobIconType_Framed" xml:space="preserve">
+    <value>带边框</value>
+  </data>
+  <data name="Enum_JobIconType_Gearset" xml:space="preserve">
+    <value>装备套装</value>
+  </data>
+  <data name="Enum_JobIconType_Glowing" xml:space="preserve">
+    <value>发光</value>
+  </data>
+  <data name="Enum_JobIconType_Gold" xml:space="preserve">
+    <value>金色</value>
+  </data>
+  <data name="Enum_JobIconType_Green" xml:space="preserve">
+    <value>绿色</value>
+  </data>
+  <data name="Enum_JobIconType_Light" xml:space="preserve">
+    <value>浅色</value>
+  </data>
+  <data name="Enum_JobIconType_Orange" xml:space="preserve">
+    <value>橙色</value>
+  </data>
+  <data name="Enum_JobIconType_Purple" xml:space="preserve">
+    <value>紫色</value>
+  </data>
+  <data name="Enum_JobIconType_Red" xml:space="preserve">
+    <value>红色</value>
+  </data>
+  <data name="Enum_MeterAsset_DutyClock" xml:space="preserve">
+    <value>副本计时器</value>
+  </data>
+  <data name="Enum_MeterBackgroundStyle_Tooltip" xml:space="preserve">
+    <value>提示框（原版）</value>
+  </data>
+  <data name="Enum_MeterBackgroundStyle_Window" xml:space="preserve">
+    <value>窗口</value>
+  </data>
+  <data name="Enum_MeterBackgroundStyle_WindowFocused" xml:space="preserve">
+    <value>窗口（亮边框）</value>
+  </data>
+  <data name="Enum_MeterButtonAction_ContextMenu" xml:space="preserve">
+    <value>右键菜单</value>
+  </data>
+  <data name="Enum_MeterButtonAction_CopyEncounterSummary" xml:space="preserve">
+    <value>复制战斗摘要</value>
+  </data>
+  <data name="Enum_MeterButtonAction_DetailedBreakdown" xml:space="preserve">
+    <value>详细分析</value>
+  </data>
+  <data name="Enum_MeterButtonAction_ResetDummies" xml:space="preserve">
+    <value>重置所有木人</value>
+  </data>
+  <data name="Enum_MeterButtonAction_Settings" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="Enum_MeterButtonAction_ToggleCollapse" xml:space="preserve">
+    <value>收起/展开</value>
+  </data>
+  <data name="Enum_MeterComponentType_Asset" xml:space="preserve">
+    <value>素材</value>
+  </data>
+  <data name="Enum_MeterComponentType_Background" xml:space="preserve">
+    <value>背景</value>
+  </data>
+  <data name="Enum_MeterComponentType_Icon" xml:space="preserve">
+    <value>图标</value>
+  </data>
+  <data name="Enum_MeterComponentType_JobIcon" xml:space="preserve">
+    <value>特职图标</value>
+  </data>
+  <data name="Enum_MeterComponentType_MenuButton" xml:space="preserve">
+    <value>按钮</value>
+  </data>
+  <data name="Enum_MeterComponentType_ProgressBar" xml:space="preserve">
+    <value>进度条</value>
+  </data>
+  <data name="Enum_MeterComponentType_Separator" xml:space="preserve">
+    <value>分隔线</value>
+  </data>
+  <data name="Enum_MeterComponentType_Text" xml:space="preserve">
+    <value>文本</value>
+  </data>
+  <data name="Enum_MeterLayout_Horizontal" xml:space="preserve">
+    <value>横向</value>
+  </data>
+  <data name="Enum_MeterLayout_Vertical" xml:space="preserve">
+    <value>纵向</value>
+  </data>
+  <data name="Enum_ParseFilter_Alliance" xml:space="preserve">
+    <value>团队（含召唤物）</value>
+  </data>
+  <data name="Enum_ParseFilter_None" xml:space="preserve">
+    <value>不限（所有实体）</value>
+  </data>
+  <data name="Enum_ParseFilter_Party" xml:space="preserve">
+    <value>小队（含召唤物）</value>
+  </data>
+  <data name="Enum_ParseFilter_Self" xml:space="preserve">
+    <value>自身（含召唤物）</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_HpBar" xml:space="preserve">
+    <value>体力条</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_MemberRow" xml:space="preserve">
+    <value>成员行</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_MpBar" xml:space="preserve">
+    <value>魔力条</value>
+  </data>
+  <data name="Enum_PartyListMeterAnchor_NameAndBars" xml:space="preserve">
+    <value>名称/量谱</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_Auto" xml:space="preserve">
+    <value>自动</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_Flat" xml:space="preserve">
+    <value>纯色</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_LegacyAdditive" xml:space="preserve">
+    <value>加色（旧版）</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_NativeTint" xml:space="preserve">
+    <value>原生色调</value>
+  </data>
+  <data name="Enum_ProgressBarColorTreatment_StockColors" xml:space="preserve">
+    <value>原版配色</value>
+  </data>
+  <data name="Enum_ProgressBarSizing_PreserveEnds" xml:space="preserve">
+    <value>保留两端</value>
+  </data>
+  <data name="Enum_ProgressBarSizing_Stretch" xml:space="preserve">
+    <value>拉伸</value>
+  </data>
+  <data name="Enum_ProgressBarType_AetherGauge" xml:space="preserve">
+    <value>以太量谱</value>
+  </data>
+  <data name="Enum_ProgressBarType_BardArrow" xml:space="preserve">
+    <value>吟游诗人箭矢</value>
+  </data>
+  <data name="Enum_ProgressBarType_Cast" xml:space="preserve">
+    <value>咏唱条</value>
+  </data>
+  <data name="Enum_ProgressBarType_CastLegacy" xml:space="preserve">
+    <value>咏唱条（旧版）</value>
+  </data>
+  <data name="Enum_ProgressBarType_CollectableNegotiation" xml:space="preserve">
+    <value>收藏品交涉</value>
+  </data>
+  <data name="Enum_ProgressBarType_ContentGauge" xml:space="preserve">
+    <value>副本量谱</value>
+  </data>
+  <data name="Enum_ProgressBarType_CustomDeliveries" xml:space="preserve">
+    <value>老主顾交易</value>
+  </data>
+  <data name="Enum_ProgressBarType_EnemyCast" xml:space="preserve">
+    <value>敌人咏唱条</value>
+  </data>
+  <data name="Enum_ProgressBarType_EnemyCastLegacy" xml:space="preserve">
+    <value>敌人咏唱条（旧版）</value>
+  </data>
+  <data name="Enum_ProgressBarType_GoldSaucerGauge" xml:space="preserve">
+    <value>金碟游乐场量谱</value>
+  </data>
+  <data name="Enum_ProgressBarType_ItemInspection" xml:space="preserve">
+    <value>道具鉴定</value>
+  </data>
+  <data name="Enum_ProgressBarType_LimitBreak" xml:space="preserve">
+    <value>极限技</value>
+  </data>
+  <data name="Enum_ProgressBarType_PartyListHp" xml:space="preserve">
+    <value>小队列表量谱</value>
+  </data>
+  <data name="Enum_ProgressBarType_ToDo" xml:space="preserve">
+    <value>任务列表</value>
+  </data>
+  <data name="Enum_ProgressBarType_ToDoLegacy" xml:space="preserve">
+    <value>任务列表（旧版）</value>
+  </data>
+  <data name="Enum_SelfTextOverrideMode_AllText" xml:space="preserve">
+    <value>行内所有文字</value>
+  </data>
+  <data name="Enum_SelfTextOverrideMode_NameOnly" xml:space="preserve">
+    <value>仅名称</value>
+  </data>
+  <data name="Enum_TextFlags_AutoAdjustNodeSize" xml:space="preserve">
+    <value>随文字自动调整大小</value>
+  </data>
+  <data name="Enum_TextFlags_Bold" xml:space="preserve">
+    <value>粗体</value>
+  </data>
+  <data name="Enum_TextFlags_Edge" xml:space="preserve">
+    <value>描边</value>
+  </data>
+  <data name="Enum_TextFlags_Ellipsis" xml:space="preserve">
+    <value>省略号</value>
+  </data>
+  <data name="Enum_TextFlags_Emboss" xml:space="preserve">
+    <value>浮雕</value>
+  </data>
+  <data name="Enum_TextFlags_FixedFontResolution" xml:space="preserve">
+    <value>固定字体分辨率</value>
+  </data>
+  <data name="Enum_TextFlags_FontCache" xml:space="preserve">
+    <value>字体缓存</value>
+  </data>
+  <data name="Enum_TextFlags_Glare" xml:space="preserve">
+    <value>辉光</value>
+  </data>
+  <data name="Enum_TextFlags_Italic" xml:space="preserve">
+    <value>斜体</value>
+  </data>
+  <data name="Enum_TextFlags_LinkData" xml:space="preserve">
+    <value>链接数据</value>
+  </data>
+  <data name="Enum_TextFlags_MultiLine" xml:space="preserve">
+    <value>多行</value>
+  </data>
+  <data name="Enum_TextFlags_OverflowHidden" xml:space="preserve">
+    <value>隐藏溢出文字</value>
+  </data>
+  <data name="Enum_TextFlags_WordWrap" xml:space="preserve">
+    <value>按词换行</value>
+  </data>
+  <data name="GeneralBreakdownParser" xml:space="preserve">
+    <value>使用内置解析器生成详细统计（包括使用ACT/IINACT时）</value>
+  </data>
+  <data name="GeneralClearAct" xml:space="preserve">
+    <value>清空统计时也清空ACT</value>
+  </data>
+  <data name="GeneralClearMeter" xml:space="preserve">
+    <value>清空统计</value>
+  </data>
+  <data name="GeneralDebugMode" xml:space="preserve">
+    <value>调试模式</value>
+  </data>
+  <data name="GeneralEnabled" xml:space="preserve">
+    <value>启用</value>
+  </data>
+  <data name="GeneralEndAct" xml:space="preserve">
+    <value>脱战后强制ACT结束统计</value>
+  </data>
+  <data name="GeneralEndActHelp" xml:space="preserve">
+    <value>建议改为启用Plugins → OverlayPlugin → Event Settings中的“End ACT encounter after wipe/out of combat”。</value>
+  </data>
+  <data name="GeneralEndEncounter" xml:space="preserve">
+    <value>结束统计</value>
+  </data>
+  <data name="GeneralExport" xml:space="preserve">
+    <value>导出设置</value>
+  </data>
+  <data name="GeneralHeading" xml:space="preserve">
+    <value>常规设置</value>
+  </data>
+  <data name="GeneralHistoryEnabled" xml:space="preserve">
+    <value>保存战斗历史</value>
+  </data>
+  <data name="GeneralHistorySize" xml:space="preserve">
+    <value>最多保存战斗数</value>
+  </data>
+  <data name="GeneralImport" xml:space="preserve">
+    <value>导入设置
+（按住Shift键确认）</value>
+  </data>
+  <data name="GeneralLanguage" xml:space="preserve">
+    <value>显示语言：</value>
+  </data>
+  <data name="GeneralLanguageGame" xml:space="preserve">
+    <value>使用游戏语言</value>
+  </data>
+  <data name="GeneralPreview" xml:space="preserve">
+    <value>预览</value>
+  </data>
+  <data name="GeneralPrivacy" xml:space="preserve">
+    <value>隐私模式</value>
+  </data>
+  <data name="GeneralPrivacyHelp" xml:space="preserve">
+    <value>显示职业名称来代替玩家姓名。</value>
+  </data>
+  <data name="GeneralReplaceYou" xml:space="preserve">
+    <value>将YOU替换为自己的名字</value>
+  </data>
+  <data name="GeneralReset" xml:space="preserve">
+    <value>重置</value>
+  </data>
+  <data name="GeneralResetHelp" xml:space="preserve">
+    <value>重置设置
+（长按按钮确认）</value>
+  </data>
+  <data name="GeneralSwitchLive" xml:space="preserve">
+    <value>战斗开始时切换到实时统计</value>
+  </data>
+  <data name="HudDisconnected" xml:space="preserve">
+    <value>未连接到 ACT/IINACT</value>
+  </data>
+  <data name="HudEncounterDetails" xml:space="preserve">
+    <value>战斗：{0}
+时长：{1}
+小队DPS：{2:N0}
+战斗不能：{3}次</value>
+  </data>
+  <data name="HudIdle" xml:space="preserve">
+    <value>待机</value>
+  </data>
+  <data name="HudLimitBreak" xml:space="preserve">
+    <value>极限技</value>
+  </data>
+  <data name="HudLock" xml:space="preserve">
+    <value>锁定</value>
+  </data>
+  <data name="HudLockHelp" xml:space="preserve">
+    <value>锁定位置和大小</value>
+  </data>
+  <data name="HudNoEncounter" xml:space="preserve">
+    <value>无战斗</value>
+  </data>
+  <data name="HudOpenConfig" xml:space="preserve">
+    <value>点击打开设置</value>
+  </data>
+  <data name="IconIdLabel" xml:space="preserve">
+    <value>图标 ID：{0}</value>
+  </data>
+  <data name="JobName_1" xml:space="preserve">
+    <value>剑术师</value>
+  </data>
+  <data name="JobName_19" xml:space="preserve">
+    <value>骑士</value>
+  </data>
+  <data name="JobName_2" xml:space="preserve">
+    <value>格斗家</value>
+  </data>
+  <data name="JobName_20" xml:space="preserve">
+    <value>武僧</value>
+  </data>
+  <data name="JobName_21" xml:space="preserve">
+    <value>战士</value>
+  </data>
+  <data name="JobName_22" xml:space="preserve">
+    <value>龙骑士</value>
+  </data>
+  <data name="JobName_23" xml:space="preserve">
+    <value>吟游诗人</value>
+  </data>
+  <data name="JobName_24" xml:space="preserve">
+    <value>白魔法师</value>
+  </data>
+  <data name="JobName_25" xml:space="preserve">
+    <value>黑魔法师</value>
+  </data>
+  <data name="JobName_26" xml:space="preserve">
+    <value>秘术师</value>
+  </data>
+  <data name="JobName_27" xml:space="preserve">
+    <value>召唤师</value>
+  </data>
+  <data name="JobName_28" xml:space="preserve">
+    <value>学者</value>
+  </data>
+  <data name="JobName_29" xml:space="preserve">
+    <value>双剑师</value>
+  </data>
+  <data name="JobName_3" xml:space="preserve">
+    <value>斧术师</value>
+  </data>
+  <data name="JobName_30" xml:space="preserve">
+    <value>忍者</value>
+  </data>
+  <data name="JobName_31" xml:space="preserve">
+    <value>机工士</value>
+  </data>
+  <data name="JobName_32" xml:space="preserve">
+    <value>暗黑骑士</value>
+  </data>
+  <data name="JobName_33" xml:space="preserve">
+    <value>占星术士</value>
+  </data>
+  <data name="JobName_34" xml:space="preserve">
+    <value>武士</value>
+  </data>
+  <data name="JobName_35" xml:space="preserve">
+    <value>赤魔法师</value>
+  </data>
+  <data name="JobName_36" xml:space="preserve">
+    <value>青魔法师</value>
+  </data>
+  <data name="JobName_37" xml:space="preserve">
+    <value>绝枪战士</value>
+  </data>
+  <data name="JobName_38" xml:space="preserve">
+    <value>舞者</value>
+  </data>
+  <data name="JobName_39" xml:space="preserve">
+    <value>钐镰客</value>
+  </data>
+  <data name="JobName_4" xml:space="preserve">
+    <value>枪术师</value>
+  </data>
+  <data name="JobName_40" xml:space="preserve">
+    <value>贤者</value>
+  </data>
+  <data name="JobName_41" xml:space="preserve">
+    <value>蝰蛇剑士</value>
+  </data>
+  <data name="JobName_42" xml:space="preserve">
+    <value>绘灵法师</value>
+  </data>
+  <data name="JobName_43" xml:space="preserve">
+    <value>驯兽师</value>
+  </data>
+  <data name="JobName_5" xml:space="preserve">
+    <value>弓箭手</value>
+  </data>
+  <data name="JobName_6" xml:space="preserve">
+    <value>幻术师</value>
+  </data>
+  <data name="JobName_7" xml:space="preserve">
+    <value>咒术师</value>
+  </data>
+  <data name="MenuClearHistory" xml:space="preserve">
+    <value>清空历史</value>
+  </data>
+  <data name="MenuClearMeter" xml:space="preserve">
+    <value>清空统计</value>
+  </data>
+  <data name="MenuCollapse" xml:space="preserve">
+    <value>收起</value>
+  </data>
+  <data name="MenuCopyClipboard" xml:space="preserve">
+    <value>复制到剪贴板</value>
+  </data>
+  <data name="MenuEndEncounter" xml:space="preserve">
+    <value>结束战斗</value>
+  </data>
+  <data name="MenuExpand" xml:space="preserve">
+    <value>展开</value>
+  </data>
+  <data name="MenuLive" xml:space="preserve">
+    <value>实时（当前）</value>
+  </data>
+  <data name="MenuLocked" xml:space="preserve">
+    <value>已锁定</value>
+  </data>
+  <data name="MenuPreviousEncounters" xml:space="preserve">
+    <value>历史战斗…</value>
+  </data>
+  <data name="MenuPrivacy" xml:space="preserve">
+    <value>隐私模式</value>
+  </data>
+  <data name="MenuSortBy" xml:space="preserve">
+    <value>排序依据…</value>
+  </data>
+  <data name="MenuUnknownEncounter" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="MeterAdd" xml:space="preserve">
+    <value>添加统计面板</value>
+  </data>
+  <data name="MeterBackground" xml:space="preserve">
+    <value>显示背景</value>
+  </data>
+  <data name="MeterBackgroundColor" xml:space="preserve">
+    <value>背景颜色：</value>
+  </data>
+  <data name="MeterBackgroundStyle" xml:space="preserve">
+    <value>背景样式：</value>
+  </data>
+  <data name="MeterCancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="MeterCardHeight" xml:space="preserve">
+    <value>卡片高度：</value>
+  </data>
+  <data name="MeterCardSpacing" xml:space="preserve">
+    <value>卡片间距：</value>
+  </data>
+  <data name="MeterClickthrough" xml:space="preserve">
+    <value>鼠标穿透</value>
+  </data>
+  <data name="MeterDisabled" xml:space="preserve">
+    <value>禁用</value>
+  </data>
+  <data name="MeterDisplaySettings" xml:space="preserve">
+    <value>显示设置</value>
+  </data>
+  <data name="MeterEnableFooter" xml:space="preserve">
+    <value>显示表尾</value>
+  </data>
+  <data name="MeterEnableHeader" xml:space="preserve">
+    <value>显示表头</value>
+  </data>
+  <data name="MeterEnabled" xml:space="preserve">
+    <value>启用</value>
+  </data>
+  <data name="MeterExportTooltip" xml:space="preserve">
+    <value>将统计面板导出到剪贴板</value>
+  </data>
+  <data name="MeterFooterComponents" xml:space="preserve">
+    <value>表尾组件</value>
+  </data>
+  <data name="MeterFooterSpace" xml:space="preserve">
+    <value>表尾高度：</value>
+  </data>
+  <data name="MeterGeneralSettings" xml:space="preserve">
+    <value>常规设置</value>
+  </data>
+  <data name="MeterHeaderComponents" xml:space="preserve">
+    <value>表头组件</value>
+  </data>
+  <data name="MeterHeaderSpace" xml:space="preserve">
+    <value>表头高度：</value>
+  </data>
+  <data name="MeterHeading" xml:space="preserve">
+    <value>统计面板设置</value>
+  </data>
+  <data name="MeterHighlightSelf" xml:space="preserve">
+    <value>高亮自己</value>
+  </data>
+  <data name="MeterHighlightSelfTooltip" xml:space="preserve">
+    <value>在此统计面板中为自己使用专用颜色。</value>
+  </data>
+  <data name="MeterImportClipboard" xml:space="preserve">
+    <value>从剪贴板导入</value>
+  </data>
+  <data name="MeterImportTooltip" xml:space="preserve">
+    <value>从剪贴板导入统计面板</value>
+  </data>
+  <data name="MeterKeepSelfTooltip" xml:space="preserve">
+    <value>收起后仅显示自己，展开时恢复原窗口大小。</value>
+  </data>
+  <data name="MeterKeepSelfVisible" xml:space="preserve">
+    <value>收起时仍显示自己</value>
+  </data>
+  <data name="MeterLayout" xml:space="preserve">
+    <value>布局：</value>
+  </data>
+  <data name="MeterLockPositionSize" xml:space="preserve">
+    <value>锁定位置和大小</value>
+  </data>
+  <data name="MeterMaxCombatants" xml:space="preserve">
+    <value>最多战斗成员数：</value>
+  </data>
+  <data name="MeterName" xml:space="preserve">
+    <value>统计面板名称：</value>
+  </data>
+  <data name="MeterNew" xml:space="preserve">
+    <value>新统计面板 {0}</value>
+  </data>
+  <data name="MeterNoneFound" xml:space="preserve">
+    <value>未找到统计面板。</value>
+  </data>
+  <data name="MeterOverrideSelfBarColor" xml:space="preserve">
+    <value>覆盖自身进度条颜色</value>
+  </data>
+  <data name="MeterOverrideSelfOutline" xml:space="preserve">
+    <value>覆盖自身描边颜色</value>
+  </data>
+  <data name="MeterOverrideSelfTextColor" xml:space="preserve">
+    <value>覆盖自身文字颜色</value>
+  </data>
+  <data name="MeterOverrideSelfTextStyle" xml:space="preserve">
+    <value>覆盖自身文字样式</value>
+  </data>
+  <data name="MeterPinSelf" xml:space="preserve">
+    <value>将自己置顶</value>
+  </data>
+  <data name="MeterPinSelfCard" xml:space="preserve">
+    <value>将自己固定在首张卡片</value>
+  </data>
+  <data name="MeterReplace" xml:space="preserve">
+    <value>替换统计面板</value>
+  </data>
+  <data name="MeterReplacePrompt" xml:space="preserve">
+    <value>用剪贴板内容替换此统计面板的设置？</value>
+  </data>
+  <data name="MeterRowComponents" xml:space="preserve">
+    <value>行组件（战斗成员）</value>
+  </data>
+  <data name="MeterRowHeight" xml:space="preserve">
+    <value>行高：</value>
+  </data>
+  <data name="MeterRowSpacing" xml:space="preserve">
+    <value>行间距：</value>
+  </data>
+  <data name="MeterScale" xml:space="preserve">
+    <value>缩放比例（%）：</value>
+  </data>
+  <data name="MeterScrollbar" xml:space="preserve">
+    <value>显示滚动条</value>
+  </data>
+  <data name="MeterSelectOrCreate" xml:space="preserve">
+    <value>选择现有统计面板或新建一个。</value>
+  </data>
+  <data name="MeterSelfBarColor" xml:space="preserve">
+    <value>自身进度条颜色：</value>
+  </data>
+  <data name="MeterSelfOutlineColor" xml:space="preserve">
+    <value>自身描边颜色：</value>
+  </data>
+  <data name="MeterSelfTextColor" xml:space="preserve">
+    <value>自身文字颜色：</value>
+  </data>
+  <data name="MeterSelfTextFont" xml:space="preserve">
+    <value>自身字体：</value>
+  </data>
+  <data name="MeterSelfTextSize" xml:space="preserve">
+    <value>自身字号：</value>
+  </data>
+  <data name="MeterSelfTextStyle" xml:space="preserve">
+    <value>自身文字样式：</value>
+  </data>
+  <data name="MeterSelfTextTarget" xml:space="preserve">
+    <value>自身文本作用范围：</value>
+  </data>
+  <data name="MeterSelfTextTargetTooltip" xml:space="preserve">
+    <value>使用上方的自身文本作用范围。</value>
+  </data>
+  <data name="MeterShowLimitBreak" xml:space="preserve">
+    <value>显示极限技</value>
+  </data>
+  <data name="MeterShowNonPlayers" xml:space="preserve">
+    <value>显示非玩家战斗成员</value>
+  </data>
+  <data name="MeterSortBy" xml:space="preserve">
+    <value>排序依据：</value>
+  </data>
+  <data name="MeterUnnamed" xml:space="preserve">
+    <value>未命名统计面板</value>
+  </data>
+  <data name="NotifyClipboardEmpty" xml:space="preserve">
+    <value>剪贴板为空。</value>
+  </data>
+  <data name="NotifyClipboardMeterInvalid" xml:space="preserve">
+    <value>剪贴板中的统计面板数据无效。</value>
+  </data>
+  <data name="NotifyClipboardParseFailed" xml:space="preserve">
+    <value>无法解析剪贴板数据。</value>
+  </data>
+  <data name="NotifyConfigClipboardInvalid" xml:space="preserve">
+    <value>剪贴板为空或内容无法导入。</value>
+  </data>
+  <data name="NotifyConfigExported" xml:space="preserve">
+    <value>已将设置导出到剪贴板。</value>
+  </data>
+  <data name="NotifyConfigImportFailed" xml:space="preserve">
+    <value>剪贴板数据无效或无法导入。</value>
+  </data>
+  <data name="NotifyConfigImported" xml:space="preserve">
+    <value>已从剪贴板导入设置。</value>
+  </data>
+  <data name="NotifyConfigReset" xml:space="preserve">
+    <value>设置已恢复默认值。</value>
+  </data>
+  <data name="NotifyConnected" xml:space="preserve">
+    <value>已连接到 {0}。</value>
+  </data>
+  <data name="NotifyInternalParserEnabled" xml:space="preserve">
+    <value>已启用内置解析器（实验功能）。</value>
+  </data>
+  <data name="NotifyMeterExported" xml:space="preserve">
+    <value>已将统计面板“{0}”导出到剪贴板。</value>
+  </data>
+  <data name="NotifyMeterImported" xml:space="preserve">
+    <value>已导入统计面板设置。</value>
+  </data>
+  <data name="PartyListAlignment" xml:space="preserve">
+    <value>对齐：</value>
+  </data>
+  <data name="PartyListAnchor" xml:space="preserve">
+    <value>锚点：</value>
+  </data>
+  <data name="PartyListBarBackground" xml:space="preserve">
+    <value>条形背景色：</value>
+  </data>
+  <data name="PartyListBarColor" xml:space="preserve">
+    <value>条形颜色：</value>
+  </data>
+  <data name="PartyListBarColorMode" xml:space="preserve">
+    <value>条形配色模式：</value>
+  </data>
+  <data name="PartyListBarSizing" xml:space="preserve">
+    <value>条形缩放：</value>
+  </data>
+  <data name="PartyListBarTint" xml:space="preserve">
+    <value>条形着色：</value>
+  </data>
+  <data name="PartyListBarType" xml:space="preserve">
+    <value>条形类型：</value>
+  </data>
+  <data name="PartyListEnableHelp" xml:space="preserve">
+    <value>在小队列表的每一行显示NativeMeters统计文本。</value>
+  </data>
+  <data name="PartyListFillLeft" xml:space="preserve">
+    <value>从右向左填充</value>
+  </data>
+  <data name="PartyListFillStat" xml:space="preserve">
+    <value>填充指标：</value>
+  </data>
+  <data name="PartyListFont" xml:space="preserve">
+    <value>字体：</value>
+  </data>
+  <data name="PartyListFontSize" xml:space="preserve">
+    <value>字号：</value>
+  </data>
+  <data name="PartyListFormat" xml:space="preserve">
+    <value>显示格式：</value>
+  </data>
+  <data name="PartyListHeight" xml:space="preserve">
+    <value>高度：</value>
+  </data>
+  <data name="PartyListHideEmpty" xml:space="preserve">
+    <value>无战斗数据时隐藏</value>
+  </data>
+  <data name="PartyListHighlightTop" xml:space="preserve">
+    <value>突出显示排名第一的队员</value>
+  </data>
+  <data name="PartyListHighlightTopHelp" xml:space="preserve">
+    <value>对所选指标排名第一的队员使用单独的文本格式和颜色。</value>
+  </data>
+  <data name="PartyListMemberBar" xml:space="preserve">
+    <value>队员条</value>
+  </data>
+  <data name="PartyListMemberStyle" xml:space="preserve">
+    <value>队员文字样式</value>
+  </data>
+  <data name="PartyListMemberText" xml:space="preserve">
+    <value>队员文本</value>
+  </data>
+  <data name="PartyListMeter" xml:space="preserve">
+    <value>小队列表统计</value>
+  </data>
+  <data name="PartyListOutline" xml:space="preserve">
+    <value>描边颜色：</value>
+  </data>
+  <data name="PartyListPosX" xml:space="preserve">
+    <value>X：</value>
+  </data>
+  <data name="PartyListPosY" xml:space="preserve">
+    <value>Y：</value>
+  </data>
+  <data name="PartyListPosition" xml:space="preserve">
+    <value>位置：</value>
+  </data>
+  <data name="PartyListRaidAlignment" xml:space="preserve">
+    <value>团队文本对齐：</value>
+  </data>
+  <data name="PartyListRaidColor" xml:space="preserve">
+    <value>团队文字颜色：</value>
+  </data>
+  <data name="PartyListRaidDps" xml:space="preserve">
+    <value>团队DPS</value>
+  </data>
+  <data name="PartyListRaidFont" xml:space="preserve">
+    <value>团队字体：</value>
+  </data>
+  <data name="PartyListRaidFontSize" xml:space="preserve">
+    <value>团队字号：</value>
+  </data>
+  <data name="PartyListRaidFormat" xml:space="preserve">
+    <value>团队统计格式：</value>
+  </data>
+  <data name="PartyListRaidHelp" xml:space="preserve">
+    <value>在小队列表标题旁显示本场战斗的总DPS。</value>
+  </data>
+  <data name="PartyListRaidOutline" xml:space="preserve">
+    <value>团队文字描边颜色：</value>
+  </data>
+  <data name="PartyListRaidStyle" xml:space="preserve">
+    <value>团队文字样式：</value>
+  </data>
+  <data name="PartyListResetHelp" xml:space="preserve">
+    <value>重置小队列表设置
+（长按按钮确认）</value>
+  </data>
+  <data name="PartyListShowBars" xml:space="preserve">
+    <value>显示队员条</value>
+  </data>
+  <data name="PartyListShowBarsHelp" xml:space="preserve">
+    <value>在小队列表的每一行以条形显示选定的指标。</value>
+  </data>
+  <data name="PartyListShowMembers" xml:space="preserve">
+    <value>显示队员</value>
+  </data>
+  <data name="PartyListShowRaid" xml:space="preserve">
+    <value>显示团队DPS</value>
+  </data>
+  <data name="PartyListShowSelf" xml:space="preserve">
+    <value>显示自己</value>
+  </data>
+  <data name="PartyListSize" xml:space="preserve">
+    <value>尺寸：</value>
+  </data>
+  <data name="PartyListTextColor" xml:space="preserve">
+    <value>文字颜色：</value>
+  </data>
+  <data name="PartyListTextStyle" xml:space="preserve">
+    <value>文字样式：</value>
+  </data>
+  <data name="PartyListTopColor" xml:space="preserve">
+    <value>第一名文字颜色：</value>
+  </data>
+  <data name="PartyListTopFormat" xml:space="preserve">
+    <value>第一名格式：</value>
+  </data>
+  <data name="PartyListTopMember" xml:space="preserve">
+    <value>第一名队员</value>
+  </data>
+  <data name="PartyListTopStat" xml:space="preserve">
+    <value>排名指标：</value>
+  </data>
+  <data name="PartyListWidth" xml:space="preserve">
+    <value>宽度：</value>
+  </data>
+  <data name="PickerClear" xml:space="preserve">
+    <value>清除</value>
+  </data>
+  <data name="PickerTextFlagsHelp" xml:space="preserve">
+    <value>文字标志使用游戏界面功能。部分选项的效果取决于字体。</value>
+  </data>
+  <data name="PlacementLock" xml:space="preserve">
+    <value>锁定并完成</value>
+  </data>
+  <data name="PlacementMovable" xml:space="preserve">
+    <value>保持可移动</value>
+  </data>
+  <data name="PlacementMove" xml:space="preserve">
+    <value>拖动统计窗口可移动位置，拖动边角可调整大小。</value>
+  </data>
+  <data name="PlacementSample" xml:space="preserve">
+    <value>未选择战斗时会显示示例数据。</value>
+  </data>
+  <data name="PlacementSampleTitle" xml:space="preserve">
+    <value>摆放预览</value>
+  </data>
+  <data name="PlacementSkip" xml:space="preserve">
+    <value>跳过</value>
+  </data>
+  <data name="PresetBestHitStrip" xml:space="preserve">
+    <value>最高伤害条</value>
+  </data>
+  <data name="PresetCombatTable" xml:space="preserve">
+    <value>战斗统计表</value>
+  </data>
+  <data name="PresetCompactTiles" xml:space="preserve">
+    <value>紧凑方格</value>
+  </data>
+  <data name="PresetCompactUnderline" xml:space="preserve">
+    <value>紧凑下划线</value>
+  </data>
+  <data name="PresetDefaultStylish" xml:space="preserve">
+    <value>默认·简洁</value>
+  </data>
+  <data name="PresetFooterDeaths" xml:space="preserve">
+    <value>倒地：{0}</value>
+  </data>
+  <data name="PresetFooterPartyDps" xml:space="preserve">
+    <value>小队 DPS：{0}</value>
+  </data>
+  <data name="PresetFooterRaidDps" xml:space="preserve">
+    <value>团队 DPS：{0}</value>
+  </data>
+  <data name="PresetPartyCards" xml:space="preserve">
+    <value>小队卡片</value>
+  </data>
+  <data name="PreviewBoss" xml:space="preserve">
+    <value>示例首领</value>
+  </data>
+  <data name="PreviewZone" xml:space="preserve">
+    <value>示例区域</value>
+  </data>
+  <data name="SetupAboveBar" xml:space="preserve">
+    <value>统计条上方</value>
+  </data>
+  <data name="SetupActGuide" xml:space="preserve">
+    <value>ACT 设置指南</value>
+  </data>
+  <data name="SetupActIntro" xml:space="preserve">
+    <value>使用电脑上的 ACT。如果你已在使用 ACT 记录 FFLogs 日志，请选择此项。</value>
+  </data>
+  <data name="SetupActServer" xml:space="preserve">
+    <value>在 ACT 中打开 Plugins &gt; OverlayPlugin WSServer。</value>
+  </data>
+  <data name="SetupActStart" xml:space="preserve">
+    <value>在 Stream/Local overlay 中点击 Start。游戏期间请保持 ACT 运行。</value>
+  </data>
+  <data name="SetupActUnavailable" xml:space="preserve">
+    <value>无法连接到 ACT</value>
+  </data>
+  <data name="SetupAddMeter" xml:space="preserve">
+    <value>添加独立统计窗口</value>
+  </data>
+  <data name="SetupAddMeterHelp" xml:space="preserve">
+    <value>可在界面上自由移动的独立窗口。</value>
+  </data>
+  <data name="SetupAppearance" xml:space="preserve">
+    <value>外观</value>
+  </data>
+  <data name="SetupBack" xml:space="preserve">
+    <value>上一步</value>
+  </data>
+  <data name="SetupBackground" xml:space="preserve">
+    <value>背景</value>
+  </data>
+  <data name="SetupBarColor" xml:space="preserve">
+    <value>统计条颜色</value>
+  </data>
+  <data name="SetupBarFill" xml:space="preserve">
+    <value>填充指标</value>
+  </data>
+  <data name="SetupBarSizing" xml:space="preserve">
+    <value>统计条缩放</value>
+  </data>
+  <data name="SetupBarStyle" xml:space="preserve">
+    <value>统计条样式</value>
+  </data>
+  <data name="SetupBarTint" xml:space="preserve">
+    <value>统计条色调</value>
+  </data>
+  <data name="SetupBarType" xml:space="preserve">
+    <value>统计条类型</value>
+  </data>
+  <data name="SetupCancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="SetupCheckConnection" xml:space="preserve">
+    <value>检查连接</value>
+  </data>
+  <data name="SetupChecking" xml:space="preserve">
+    <value>正在检查连接…</value>
+  </data>
+  <data name="SetupChooseColumn" xml:space="preserve">
+    <value>请至少选择一列。</value>
+  </data>
+  <data name="SetupChooseDisplay" xml:space="preserve">
+    <value>在哪里显示DPS？</value>
+  </data>
+  <data name="SetupChooseParser" xml:space="preserve">
+    <value>选择解析器</value>
+  </data>
+  <data name="SetupClickthrough" xml:space="preserve">
+    <value>鼠标穿透</value>
+  </data>
+  <data name="SetupClickthroughHelp" xml:space="preserve">
+    <value>点击会穿透统计窗口，菜单按钮仍可使用。</value>
+  </data>
+  <data name="SetupColumns" xml:space="preserve">
+    <value>显示列</value>
+  </data>
+  <data name="SetupConnected" xml:space="preserve">
+    <value>已连接</value>
+  </data>
+  <data name="SetupContinueOffline" xml:space="preserve">
+    <value>跳过连接继续</value>
+  </data>
+  <data name="SetupCustomize" xml:space="preserve">
+    <value>自定义</value>
+  </data>
+  <data name="SetupDefault" xml:space="preserve">
+    <value>默认</value>
+  </data>
+  <data name="SetupEditMeter" xml:space="preserve">
+    <value>设置统计窗口</value>
+  </data>
+  <data name="SetupExtras" xml:space="preserve">
+    <value>其他选项</value>
+  </data>
+  <data name="SetupFinish" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="SetupFooter" xml:space="preserve">
+    <value>底栏</value>
+  </data>
+  <data name="SetupFooterHelp" xml:space="preserve">
+    <value>在统计窗口下方显示战斗不能次数和小队DPS。</value>
+  </data>
+  <data name="SetupIconStyle" xml:space="preserve">
+    <value>图标样式</value>
+  </data>
+  <data name="SetupIinactChecking" xml:space="preserve">
+    <value>正在检查 IINACT…</value>
+  </data>
+  <data name="SetupIinactDisabled" xml:space="preserve">
+    <value>IINACT 已安装。请在 Dalamud 中启用。</value>
+  </data>
+  <data name="SetupIinactEnabled" xml:space="preserve">
+    <value>已在 Dalamud 中启用 IINACT。</value>
+  </data>
+  <data name="SetupIinactInstall" xml:space="preserve">
+    <value>安装 IINACT</value>
+  </data>
+  <data name="SetupIinactIntro" xml:space="preserve">
+    <value>在游戏内运行，并保存可上传至 FFLogs 的日志。</value>
+  </data>
+  <data name="SetupIinactLoaded" xml:space="preserve">
+    <value>已加载 IINACT。请检查其设置。</value>
+  </data>
+  <data name="SetupIinactMissing" xml:space="preserve">
+    <value>未安装 IINACT。</value>
+  </data>
+  <data name="SetupIinactNotReady" xml:space="preserve">
+    <value>IINACT 尚未就绪</value>
+  </data>
+  <data name="SetupIinactReady" xml:space="preserve">
+    <value>IINACT 已就绪</value>
+  </data>
+  <data name="SetupInsideBar" xml:space="preserve">
+    <value>统计条内</value>
+  </data>
+  <data name="SetupInternalParser" xml:space="preserve">
+    <value>内置解析器</value>
+  </data>
+  <data name="SetupInvalidUrl" xml:space="preserve">
+    <value>请输入以 ws:// 或 wss:// 开头的地址</value>
+  </data>
+  <data name="SetupLocalDifferences" xml:space="preserve">
+    <value>部分数值可能与 ACT 或 IINACT 不同。</value>
+  </data>
+  <data name="SetupLocalIntro" xml:space="preserve">
+    <value>使用内置解析器在游戏中查看战斗统计。</value>
+  </data>
+  <data name="SetupLocalNoLogs" xml:space="preserve">
+    <value>不会保存供 FFLogs 使用的日志。</value>
+  </data>
+  <data name="SetupNext" xml:space="preserve">
+    <value>下一步</value>
+  </data>
+  <data name="SetupNextChoice" xml:space="preserve">
+    <value>下一项：{0}</value>
+  </data>
+  <data name="SetupOff" xml:space="preserve">
+    <value>关</value>
+  </data>
+  <data name="SetupOn" xml:space="preserve">
+    <value>开</value>
+  </data>
+  <data name="SetupPartyListDps" xml:space="preserve">
+    <value>在小队列表显示DPS</value>
+  </data>
+  <data name="SetupPersonalDps" xml:space="preserve">
+    <value>显示个人DPS</value>
+  </data>
+  <data name="SetupPersonalDpsHelp" xml:space="preserve">
+    <value>在服务器信息栏显示个人DPS。关闭时显示小队DPS。</value>
+  </data>
+  <data name="SetupPlayerColor" xml:space="preserve">
+    <value>姓名颜色</value>
+  </data>
+  <data name="SetupPlayerColorHelp" xml:space="preserve">
+    <value>按职业、职能或固定颜色显示玩家姓名。</value>
+  </data>
+  <data name="SetupPlayerLayout" xml:space="preserve">
+    <value>玩家排列</value>
+  </data>
+  <data name="SetupPreset" xml:space="preserve">
+    <value>预设</value>
+  </data>
+  <data name="SetupPresetDefault" xml:space="preserve">
+    <value>预设默认值</value>
+  </data>
+  <data name="SetupPreviousChoice" xml:space="preserve">
+    <value>上一项：{0}</value>
+  </data>
+  <data name="SetupPrivacy" xml:space="preserve">
+    <value>隐私模式（用职业代替姓名）</value>
+  </data>
+  <data name="SetupReplaceYou" xml:space="preserve">
+    <value>将 YOU 替换为自己的名字</value>
+  </data>
+  <data name="SetupSampleFight" xml:space="preserve">
+    <value>战斗示例</value>
+  </data>
+  <data name="SetupSaved" xml:space="preserve">
+    <value>NativeMeters 设置已保存。输入 /ntm setup 可再次打开设置向导。</value>
+  </data>
+  <data name="SetupServerDps" xml:space="preserve">
+    <value>在服务器信息栏显示DPS</value>
+  </data>
+  <data name="SetupSettingsHelp" xml:space="preserve">
+    <value>可随时输入 /ntm 更改设置。</value>
+  </data>
+  <data name="SetupSkip" xml:space="preserve">
+    <value>跳过设置</value>
+  </data>
+  <data name="SetupSortBy" xml:space="preserve">
+    <value>排序依据</value>
+  </data>
+  <data name="SetupStandalone" xml:space="preserve">
+    <value>独立统计窗口</value>
+  </data>
+  <data name="SetupStrikingDummy" xml:space="preserve">
+    <value>木人</value>
+  </data>
+  <data name="SetupTextPosition" xml:space="preserve">
+    <value>文本位置</value>
+  </data>
+  <data name="SetupTryDummy" xml:space="preserve">
+    <value>攻击木人即可测试统计窗口。</value>
+  </data>
+  <data name="SetupUnchecked" xml:space="preserve">
+    <value>尚未检查连接</value>
+  </data>
+  <data name="SetupUnlockHelp" xml:space="preserve">
+    <value>先在统计窗口设置中解锁，移动后再锁定。</value>
+  </data>
+  <data name="SetupUsePreset" xml:space="preserve">
+    <value>使用预设</value>
+  </data>
+  <data name="SetupWebSocket" xml:space="preserve">
+    <value>WebSocket 地址</value>
+  </data>
+  <data name="StatActiveDps" xml:space="preserve">
+    <value>活跃 DPS</value>
+  </data>
+  <data name="StatCriticalHitRate" xml:space="preserve">
+    <value>暴击率</value>
+  </data>
+  <data name="StatDamageShare" xml:space="preserve">
+    <value>伤害占比</value>
+  </data>
+  <data name="StatDeaths" xml:space="preserve">
+    <value>倒地次数</value>
+  </data>
+  <data name="StatDirectHitRate" xml:space="preserve">
+    <value>直击率</value>
+  </data>
+  <data name="StatEncounterDps" xml:space="preserve">
+    <value>全程 DPS</value>
+  </data>
+  <data name="StatEncounterHps" xml:space="preserve">
+    <value>全程 HPS</value>
+  </data>
+  <data name="TabColors" xml:space="preserve">
+    <value>颜色</value>
+  </data>
+  <data name="TabConnection" xml:space="preserve">
+    <value>连接</value>
+  </data>
+  <data name="TabGeneral" xml:space="preserve">
+    <value>常规</value>
+  </data>
+  <data name="TabMeters" xml:space="preserve">
+    <value>统计面板</value>
+  </data>
+  <data name="TabPartyList" xml:space="preserve">
+    <value>小队列表</value>
+  </data>
+  <data name="TabVisibility" xml:space="preserve">
+    <value>显示条件</value>
+  </data>
+  <data name="TagCategoryCombatant" xml:space="preserve">
+    <value>6. 原始数据（战斗成员）</value>
+  </data>
+  <data name="TagCategoryCommon" xml:space="preserve">
+    <value>1. 常用</value>
+  </data>
+  <data name="TagCategoryCustom" xml:space="preserve">
+    <value>5. 自定义</value>
+  </data>
+  <data name="TagCategoryDamage" xml:space="preserve">
+    <value>2. 伤害</value>
+  </data>
+  <data name="TagCategoryDefense" xml:space="preserve">
+    <value>4. 防御</value>
+  </data>
+  <data name="TagCategoryEncounter" xml:space="preserve">
+    <value>7. 原始数据（战斗）</value>
+  </data>
+  <data name="TagCategoryHealing" xml:space="preserve">
+    <value>3. 治疗</value>
+  </data>
+  <data name="TagDescAbsorb" xml:space="preserve">
+    <value>吸收的体力总量</value>
+  </data>
+  <data name="TagDescActiveDps" xml:space="preserve">
+    <value>按实际攻击时长计算的每秒伤害</value>
+  </data>
+  <data name="TagDescBlockPct" xml:space="preserve">
+    <value>盾牌格挡攻击的比例</value>
+  </data>
+  <data name="TagDescCount" xml:space="preserve">
+    <value>本统计面板中的战斗成员数量</value>
+  </data>
+  <data name="TagDescCritDirectPct" xml:space="preserve">
+    <value>同时触发暴击与直击的攻击比例</value>
+  </data>
+  <data name="TagDescCritHealPct" xml:space="preserve">
+    <value>治疗时发生暴击的比例</value>
+  </data>
+  <data name="TagDescCritPct" xml:space="preserve">
+    <value>攻击发生暴击的比例</value>
+  </data>
+  <data name="TagDescDamagePct" xml:space="preserve">
+    <value>玩家伤害占团队总伤害的比例（仅成员行）</value>
+  </data>
+  <data name="TagDescDamageTaken" xml:space="preserve">
+    <value>受到的总伤害</value>
+  </data>
+  <data name="TagDescDamageTotal" xml:space="preserve">
+    <value>以百万为单位显示造成的总伤害</value>
+  </data>
+  <data name="TagDescDeaths" xml:space="preserve">
+    <value>陷入无法战斗状态的次数</value>
+  </data>
+  <data name="TagDescDirectPct" xml:space="preserve">
+    <value>攻击发生直击的比例</value>
+  </data>
+  <data name="TagDescDuration" xml:space="preserve">
+    <value>战斗时长（分:秒）</value>
+  </data>
+  <data name="TagDescEncounterDps" xml:space="preserve">
+    <value>按整场战斗时长计算的每秒伤害</value>
+  </data>
+  <data name="TagDescEncounterDpsCompact" xml:space="preserve">
+    <value>以紧凑单位显示全程DPS</value>
+  </data>
+  <data name="TagDescEncounterDpsKilo" xml:space="preserve">
+    <value>以千为单位显示全程DPS</value>
+  </data>
+  <data name="TagDescEncounterHps" xml:space="preserve">
+    <value>按整场战斗时长计算的每秒治疗量</value>
+  </data>
+  <data name="TagDescEncounterHpsKilo" xml:space="preserve">
+    <value>以千为单位显示全程HPS</value>
+  </data>
+  <data name="TagDescFirstName" xml:space="preserve">
+    <value>仅显示姓名的前半部分</value>
+  </data>
+  <data name="TagDescFocusHp" xml:space="preserve">
+    <value>焦点目标的剩余体力百分比</value>
+  </data>
+  <data name="TagDescFocusName" xml:space="preserve">
+    <value>焦点目标的名称</value>
+  </data>
+  <data name="TagDescFullName" xml:space="preserve">
+    <value>行内为玩家姓名，标题中为战斗名称</value>
+  </data>
+  <data name="TagDescHealedPct" xml:space="preserve">
+    <value>玩家治疗量占团队总治疗量的比例（仅成员行）</value>
+  </data>
+  <data name="TagDescHealedTotal" xml:space="preserve">
+    <value>施加的总治疗量</value>
+  </data>
+  <data name="TagDescHealsTaken" xml:space="preserve">
+    <value>受到的总治疗量</value>
+  </data>
+  <data name="TagDescHits" xml:space="preserve">
+    <value>成功命中的攻击总次数</value>
+  </data>
+  <data name="TagDescInitials" xml:space="preserve">
+    <value>姓名两部分各自的首字母</value>
+  </data>
+  <data name="TagDescJobAbbr" xml:space="preserve">
+    <value>职业名称缩写</value>
+  </data>
+  <data name="TagDescJobName" xml:space="preserve">
+    <value>职业全称</value>
+  </data>
+  <data name="TagDescLastName" xml:space="preserve">
+    <value>仅显示姓名的后半部分</value>
+  </data>
+  <data name="TagDescMaxHealFull" xml:space="preserve">
+    <value>最高单次治疗的技能及治疗量</value>
+  </data>
+  <data name="TagDescMaxHealSkill" xml:space="preserve">
+    <value>最高单次治疗的技能名称</value>
+  </data>
+  <data name="TagDescMaxHealValue" xml:space="preserve">
+    <value>最高单次治疗量</value>
+  </data>
+  <data name="TagDescMaxHitFull" xml:space="preserve">
+    <value>造成最高单次伤害的技能及其伤害量</value>
+  </data>
+  <data name="TagDescMaxHitSkill" xml:space="preserve">
+    <value>造成最高单次伤害的技能名称</value>
+  </data>
+  <data name="TagDescMaxHitValue" xml:space="preserve">
+    <value>最高单次伤害量</value>
+  </data>
+  <data name="TagDescMisses" xml:space="preserve">
+    <value>未命中的攻击总次数</value>
+  </data>
+  <data name="TagDescOverheal" xml:space="preserve">
+    <value>超出目标最大体力的总治疗量</value>
+  </data>
+  <data name="TagDescOverhealPct" xml:space="preserve">
+    <value>治疗量中超出目标最大体力的比例</value>
+  </data>
+  <data name="TagDescParryPct" xml:space="preserve">
+    <value>招架攻击的比例</value>
+  </data>
+  <data name="TagDescRank" xml:space="preserve">
+    <value>本统计面板中的排名</value>
+  </data>
+  <data name="TagDescRankCount" xml:space="preserve">
+    <value>全部成员中的排名</value>
+  </data>
+  <data name="TagDescRecentDps" xml:space="preserve">
+    <value>过去{0}秒内的平均每秒伤害</value>
+  </data>
+  <data name="TagDescShield" xml:space="preserve">
+    <value>施加的护盾总量</value>
+  </data>
+  <data name="TagDescSwings" xml:space="preserve">
+    <value>包括命中和未命中的攻击总次数</value>
+  </data>
+  <data name="TagDescTargetHp" xml:space="preserve">
+    <value>当前目标的剩余体力百分比</value>
+  </data>
+  <data name="TagDescTargetName" xml:space="preserve">
+    <value>当前选中目标的名称</value>
+  </data>
+  <data name="TagDescZone" xml:space="preserve">
+    <value>当前区域或副本名称</value>
+  </data>
+  <data name="TagExample" xml:space="preserve">
+    <value>示例：{0}</value>
+  </data>
+  <data name="TagExampleCure" xml:space="preserve">
+    <value>愈疗</value>
+  </data>
+  <data name="TagExampleDummy" xml:space="preserve">
+    <value>木人</value>
+  </data>
+  <data name="TagExampleGoblet" xml:space="preserve">
+    <value>高脚孤丘</value>
+  </data>
+  <data name="TagExampleMidare" xml:space="preserve">
+    <value>纷乱雪月花</value>
+  </data>
+  <data name="TagExampleName" xml:space="preserve">
+    <value>John Doe／首领名称</value>
+  </data>
+  <data name="TagExampleWarrior" xml:space="preserve">
+    <value>战士</value>
+  </data>
+  <data name="TagFormatHelpBasic" xml:space="preserve">
+    <value>格式： [tag_part:modifier.precision]
+- :r = 原值，无分隔符
+- :c = 自动缩短单位
+- :k/:m = 千／百万单位
+- .N = 小数位数
+示例： [dps:c.1] -&gt; 12.3K</value>
+  </data>
+  <data name="TagFormatHelpComponent" xml:space="preserve">
+    <value>格式： [tag_part:modifier.precision]
+- :r = 原值，无分隔符
+- :c = 自动缩短单位
+- :k/:m = 千／百万单位
+- .N = 小数位数或文本长度
+- _first/_last = 姓名的前半／后半
+- _skill/_val = 最大伤害的技能／数值
+
+示例： [name_first.1].:[dps:c.1] -&gt; J.:12.3K</value>
+  </data>
+  <data name="TagInsert" xml:space="preserve">
+    <value>插入</value>
+  </data>
+  <data name="TagLabel_-- Insert Tag --" xml:space="preserve">
+    <value>-- 插入标签 --</value>
+  </data>
+  <data name="TagLabel_Crit %" xml:space="preserve">
+    <value>暴击率</value>
+  </data>
+  <data name="TagLabel_DH %" xml:space="preserve">
+    <value>直击率</value>
+  </data>
+  <data name="TagLabel_DPS" xml:space="preserve">
+    <value>DPS</value>
+  </data>
+  <data name="TagLabel_DPS: Compact" xml:space="preserve">
+    <value>DPS：紧凑</value>
+  </data>
+  <data name="TagLabel_DPS: Kilo" xml:space="preserve">
+    <value>DPS：千</value>
+  </data>
+  <data name="TagLabel_DPS: Raw (No Comma)" xml:space="preserve">
+    <value>DPS：无分隔符</value>
+  </data>
+  <data name="TagLabel_Dmg: Percent" xml:space="preserve">
+    <value>伤害：占比</value>
+  </data>
+  <data name="TagLabel_Dmg: Total" xml:space="preserve">
+    <value>伤害：总量</value>
+  </data>
+  <data name="TagLabel_Enc: DPS Compact" xml:space="preserve">
+    <value>战斗：DPS（紧凑）</value>
+  </data>
+  <data name="TagLabel_Enc: Duration" xml:space="preserve">
+    <value>战斗：时长</value>
+  </data>
+  <data name="TagLabel_Enc: Zone" xml:space="preserve">
+    <value>战斗：区域</value>
+  </data>
+  <data name="TagLabel_Heal: %" xml:space="preserve">
+    <value>治疗：占比</value>
+  </data>
+  <data name="TagLabel_Heal: Overheal %" xml:space="preserve">
+    <value>治疗：过量治疗率</value>
+  </data>
+  <data name="TagLabel_Job: Abbr" xml:space="preserve">
+    <value>职业：简称</value>
+  </data>
+  <data name="TagLabel_MaxHit: Full" xml:space="preserve">
+    <value>最大伤害：完整</value>
+  </data>
+  <data name="TagLabel_MaxHit: Skill Only" xml:space="preserve">
+    <value>最大伤害：仅技能</value>
+  </data>
+  <data name="TagLabel_MaxHit: Val Only" xml:space="preserve">
+    <value>最大伤害：仅数值</value>
+  </data>
+  <data name="TagLabel_Name: First" xml:space="preserve">
+    <value>姓名：前半</value>
+  </data>
+  <data name="TagLabel_Name: Full" xml:space="preserve">
+    <value>姓名：全名</value>
+  </data>
+  <data name="TagLabel_Name: Initial" xml:space="preserve">
+    <value>姓名：首字母</value>
+  </data>
+  <data name="TagLabel_Rank" xml:space="preserve">
+    <value>排名</value>
+  </data>
+  <data name="TagLabel_Rank / Count" xml:space="preserve">
+    <value>排名／人数</value>
+  </data>
+  <data name="TagNameAbsorb" xml:space="preserve">
+    <value>体力吸收</value>
+  </data>
+  <data name="TagNameActiveDps" xml:space="preserve">
+    <value>活跃DPS</value>
+  </data>
+  <data name="TagNameBlockPct" xml:space="preserve">
+    <value>格挡率</value>
+  </data>
+  <data name="TagNameCount" xml:space="preserve">
+    <value>战斗成员数</value>
+  </data>
+  <data name="TagNameCritDirectPct" xml:space="preserve">
+    <value>直暴率</value>
+  </data>
+  <data name="TagNameCritHealPct" xml:space="preserve">
+    <value>治疗暴击率</value>
+  </data>
+  <data name="TagNameCritPct" xml:space="preserve">
+    <value>暴击率</value>
+  </data>
+  <data name="TagNameDamagePct" xml:space="preserve">
+    <value>伤害占比</value>
+  </data>
+  <data name="TagNameDamageTaken" xml:space="preserve">
+    <value>承受伤害</value>
+  </data>
+  <data name="TagNameDamageTotal" xml:space="preserve">
+    <value>总伤害</value>
+  </data>
+  <data name="TagNameDeaths" xml:space="preserve">
+    <value>死亡次数</value>
+  </data>
+  <data name="TagNameDirectPct" xml:space="preserve">
+    <value>直击率</value>
+  </data>
+  <data name="TagNameDuration" xml:space="preserve">
+    <value>战斗时长</value>
+  </data>
+  <data name="TagNameEncounterDps" xml:space="preserve">
+    <value>全程DPS</value>
+  </data>
+  <data name="TagNameEncounterDpsCompact" xml:space="preserve">
+    <value>全程DPS（紧凑）</value>
+  </data>
+  <data name="TagNameEncounterDpsKilo" xml:space="preserve">
+    <value>全程DPS（千）</value>
+  </data>
+  <data name="TagNameEncounterHps" xml:space="preserve">
+    <value>全程HPS</value>
+  </data>
+  <data name="TagNameEncounterHpsKilo" xml:space="preserve">
+    <value>全程HPS（千）</value>
+  </data>
+  <data name="TagNameFirstName" xml:space="preserve">
+    <value>名字（前半）</value>
+  </data>
+  <data name="TagNameFocusHp" xml:space="preserve">
+    <value>焦点目标体力百分比</value>
+  </data>
+  <data name="TagNameFocusName" xml:space="preserve">
+    <value>焦点目标名称</value>
+  </data>
+  <data name="TagNameFullName" xml:space="preserve">
+    <value>姓名</value>
+  </data>
+  <data name="TagNameHealedPct" xml:space="preserve">
+    <value>治疗占比</value>
+  </data>
+  <data name="TagNameHealedTotal" xml:space="preserve">
+    <value>总治疗量</value>
+  </data>
+  <data name="TagNameHealsTaken" xml:space="preserve">
+    <value>受到治疗</value>
+  </data>
+  <data name="TagNameHits" xml:space="preserve">
+    <value>命中次数</value>
+  </data>
+  <data name="TagNameInitials" xml:space="preserve">
+    <value>姓名首字母</value>
+  </data>
+  <data name="TagNameJobAbbr" xml:space="preserve">
+    <value>职业简称</value>
+  </data>
+  <data name="TagNameJobName" xml:space="preserve">
+    <value>职业名称</value>
+  </data>
+  <data name="TagNameLastName" xml:space="preserve">
+    <value>姓氏（后半）</value>
+  </data>
+  <data name="TagNameMaxHealFull" xml:space="preserve">
+    <value>最大治疗：完整</value>
+  </data>
+  <data name="TagNameMaxHealSkill" xml:space="preserve">
+    <value>最大治疗：技能</value>
+  </data>
+  <data name="TagNameMaxHealValue" xml:space="preserve">
+    <value>最大治疗：数值</value>
+  </data>
+  <data name="TagNameMaxHitFull" xml:space="preserve">
+    <value>最大伤害：完整</value>
+  </data>
+  <data name="TagNameMaxHitSkill" xml:space="preserve">
+    <value>最大伤害：技能</value>
+  </data>
+  <data name="TagNameMaxHitValue" xml:space="preserve">
+    <value>最大伤害：数值</value>
+  </data>
+  <data name="TagNameMisses" xml:space="preserve">
+    <value>未命中次数</value>
+  </data>
+  <data name="TagNameOverheal" xml:space="preserve">
+    <value>过量治疗总量</value>
+  </data>
+  <data name="TagNameOverhealPct" xml:space="preserve">
+    <value>过量治疗率</value>
+  </data>
+  <data name="TagNameParryPct" xml:space="preserve">
+    <value>招架率</value>
+  </data>
+  <data name="TagNameRank" xml:space="preserve">
+    <value>排名</value>
+  </data>
+  <data name="TagNameRankCount" xml:space="preserve">
+    <value>排名／人数</value>
+  </data>
+  <data name="TagNameRecentDps" xml:space="preserve">
+    <value>最近{0}秒DPS</value>
+  </data>
+  <data name="TagNameShield" xml:space="preserve">
+    <value>护盾量</value>
+  </data>
+  <data name="TagNameSwings" xml:space="preserve">
+    <value>攻击次数</value>
+  </data>
+  <data name="TagNameTargetHp" xml:space="preserve">
+    <value>目标体力百分比</value>
+  </data>
+  <data name="TagNameTargetName" xml:space="preserve">
+    <value>目标名称</value>
+  </data>
+  <data name="TagNameZone" xml:space="preserve">
+    <value>区域名称</value>
+  </data>
+  <data name="TagRawProperty" xml:space="preserve">
+    <value>原始属性：{0}</value>
+  </data>
+  <data name="VisibilityAlwaysConditions" xml:space="preserve">
+    <value>始终显示条件</value>
+  </data>
+  <data name="VisibilityAlwaysDrawn" xml:space="preserve">
+    <value>拔出武器时始终显示</value>
+  </data>
+  <data name="VisibilityAlwaysDuty" xml:space="preserve">
+    <value>任务中始终显示</value>
+  </data>
+  <data name="VisibilityAlwaysParty" xml:space="preserve">
+    <value>组队时始终显示</value>
+  </data>
+  <data name="VisibilityAlwaysPvp" xml:space="preserve">
+    <value>PvP中始终显示</value>
+  </data>
+  <data name="VisibilityAlwaysTarget" xml:space="preserve">
+    <value>选中目标时始终显示</value>
+  </data>
+  <data name="VisibilityCrafting" xml:space="preserve">
+    <value>制作时隐藏</value>
+  </data>
+  <data name="VisibilityCutscene" xml:space="preserve">
+    <value>过场动画或任务剧情中隐藏</value>
+  </data>
+  <data name="VisibilityFullHp" xml:space="preserve">
+    <value>满体力时隐藏</value>
+  </data>
+  <data name="VisibilityGathering" xml:space="preserve">
+    <value>采集时隐藏</value>
+  </data>
+  <data name="VisibilityGeneral" xml:space="preserve">
+    <value>通用</value>
+  </data>
+  <data name="VisibilityGoldSaucer" xml:space="preserve">
+    <value>在金碟游乐场内隐藏</value>
+  </data>
+  <data name="VisibilityHideConditions" xml:space="preserve">
+    <value>隐藏条件</value>
+  </data>
+  <data name="VisibilityInCombat" xml:space="preserve">
+    <value>战斗中隐藏</value>
+  </data>
+  <data name="VisibilityInDuty" xml:space="preserve">
+    <value>任务中隐藏</value>
+  </data>
+  <data name="VisibilityOutOfCombat" xml:space="preserve">
+    <value>脱战时隐藏</value>
+  </data>
+  <data name="VisibilityPerforming" xml:space="preserve">
+    <value>演奏时隐藏</value>
+  </data>
+  <data name="VisibilityPvp" xml:space="preserve">
+    <value>PvP中隐藏</value>
+  </data>
+  <data name="VisibilityPvpHelp" xml:space="preserve">
+    <value>优先于“始终显示”条件。</value>
+  </data>
+  <data name="VisibilitySanctuary" xml:space="preserve">
+    <value>在休息区内隐藏</value>
+  </data>
+  <data name="VisibilityWithHud" xml:space="preserve">
+    <value>随游戏界面一起隐藏</value>
+  </data>
+  <data name="WindowBreakdown" xml:space="preserve">
+    <value>NativeMeters 详细分析</value>
+  </data>
+  <data name="WindowColorPicker" xml:space="preserve">
+    <value>选择颜色</value>
+  </data>
+  <data name="WindowConfiguration" xml:space="preserve">
+    <value>NativeMeters 设置</value>
+  </data>
+  <data name="WindowIconPicker" xml:space="preserve">
+    <value>选择图标</value>
+  </data>
+  <data name="WindowImportMeter" xml:space="preserve">
+    <value>导入统计面板</value>
+  </data>
+  <data name="WindowPlacement" xml:space="preserve">
+    <value>摆放统计面板</value>
+  </data>
+  <data name="WindowSetup" xml:space="preserve">
+    <value>NativeMeters 初始设置</value>
+  </data>
+  <data name="WindowTagPicker" xml:space="preserve">
+    <value>搜索标签</value>
+  </data>
+  <data name="WindowTextFlags" xml:space="preserve">
+    <value>文字标志</value>
+  </data>
+</root>

@@ -8,6 +8,7 @@ using KamiToolKit.Enums;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Simplified;
+using NativeMeters.Localization;
 using NativeMeters.Configuration;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Models;
@@ -36,14 +37,6 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
     public Action<ConnectionType>? OnConnectionTypeChanged { get; set; }
 
-    private const string InternalWarningTooltip =
-        "Internal Parser (Experimental)\n\n" +
-        "• DoT/HoT damage is estimated, not simulated.\n" +
-        "  Expect ~5-10% variance vs ACT/IINACT.\n" +
-        "• DoT ticks are attributed by scanning active\n" +
-        "  statuses, multi-DoT party accuracy is approximate.\n" +
-        "For accurate parsing, use ACT/IINACT instead.";
-
     public ConnectionConfigurationNode()
     {
         ConnectionSettings config = System.Config.ConnectionSettings;
@@ -55,7 +48,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         AddNode(new CategoryTextNode
         {
             Height = 18,
-            String = "Server Connection Settings",
+            String = Loc.Get("ConnectionSettings"),
         });
 
         AddTab(1);
@@ -65,8 +58,8 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             Size = new Vector2(RowWidth, RowHeight),
             LabelWidth = LabelWidth,
             OnClick = OnReconnectClicked,
-            LabelText = "Status: Disconnected",
-            ButtonText = "Reconnect",
+            LabelText = Loc.Get("ConnectionDisconnected"),
+            ButtonText = Loc.Get("ConnectionReconnect"),
             NavUp = 2,
         };
         AddNode(statusNode);
@@ -81,7 +74,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         {
             Size = new Vector2(RowWidth, RowHeight),
             LabelWidth = LabelWidth,
-            LabelText = "Connection Type",
+            LabelText = Loc.Get("ConnectionTypeLabel"),
             Options = Enum.GetValues<ConnectionType>().ToList(),
             SelectedOption = config.SelectedConnectionType,
             OnOptionSelected = OnConnectionTypeSelected
@@ -93,7 +86,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
             Icon = CircleButtonIcon.Exclamation,
             Size = new Vector2(InlineButtonSize),
             IsVisible = config.SelectedConnectionType == ConnectionType.Internal,
-            TextTooltip = InternalWarningTooltip,
+            TextTooltip = Loc.Get("ConnectionParserWarning"),
         };
         typeContainer.AddNode(warningButton);
 
@@ -110,7 +103,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         {
             Size = new Vector2(RowWidth, RowHeight),
             LabelWidth = LabelWidth,
-            LabelText = "WebSocket URL",
+            LabelText = Loc.Get("ConnectionUrl"),
             Text = config.WebSocketUrl,
             OnInputComplete = text =>
             {
@@ -125,7 +118,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         {
             Icon = CircleButtonIcon.Undo,
             Size = new Vector2(InlineButtonSize),
-            TextTooltip = "Reset to default URL",
+            TextTooltip = Loc.Get("ConnectionResetUrl"),
             OnClick = () =>
             {
                 var defaultUrl = new ConnectionSettings().WebSocketUrl;
@@ -145,7 +138,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         AddNode(new CategoryTextNode
         {
             Height = 28,
-            String = "Reconnection & Logging",
+            String = Loc.Get("ConnectionLogging"),
         });
 
         AddTab(1);
@@ -154,7 +147,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         {
             Size = Size with { Y = 20 },
             IsVisible = true,
-            String = "Enable Auto-Reconnect",
+            String = Loc.Get("ConnectionAutoReconnect"),
             IsChecked = config.AutoReconnect,
             OnClick = isChecked =>
             {
@@ -169,7 +162,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         {
             Size = new Vector2(RowWidth, RowHeight),
             LabelWidth = LabelWidth,
-            LabelText = "Reconnect Interval",
+            LabelText = Loc.Get("ConnectionInterval"),
             Min = 1,
             Max = 60,
             Value = config.AutoReconnectInterval,
@@ -186,7 +179,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
         {
             Size = Size with { Y = 20 },
             IsVisible = true,
-            String = "Log connection errors to log",
+            String = Loc.Get("ConnectionLogErrors"),
             IsChecked = config.LogConnectionErrors,
             OnClick = isChecked =>
             {
@@ -247,7 +240,7 @@ internal sealed class ConnectionConfigurationNode : TabbedVerticalListNode
 
         lastConnectionState = isConnected;
 
-        statusNode.LabelText = isConnected ? "Status: Connected" : "Status: Disconnected";
+        statusNode.LabelText = isConnected ? Loc.Get("ConnectionConnected") : Loc.Get("ConnectionDisconnected");
         statusNode.LabelTextColor = isConnected
             ? ColorHelper.GetColor(46)
             : ColorHelper.GetColor(14);

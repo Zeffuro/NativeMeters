@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using NativeMeters.Data.Stats;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 using static NativeMeters.Configuration.Presets.MeterPresetComponents;
 
@@ -115,8 +116,8 @@ public static class CustomMeterPresets
         target.FooterHeight = height;
         target.FooterComponents =
         [
-            Text("Deaths", "Deaths: [deaths]", 8, 2, 92, 20),
-            Text("Party DPS", "Party DPS: [ENCDPS.0]", 108, 2, 152, 20),
+            Text("Deaths", Loc.Format("PresetFooterDeaths", "[deaths]"), 8, 2, 92, 20),
+            Text("Party DPS", Loc.Format("PresetFooterPartyDps", "[ENCDPS.0]"), 108, 2, 152, 20),
         ];
         target.Size = target.Size with { Y = target.Size.Y + height };
     }

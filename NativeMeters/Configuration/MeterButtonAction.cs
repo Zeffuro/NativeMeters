@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Configuration;
 
@@ -25,9 +26,5 @@ public enum MeterButtonAction
 public static class MeterComponentTypeExtensions
 {
     public static string GetDisplayName(this MeterComponentType type)
-        => type switch
-        {
-            MeterComponentType.MenuButton => "Button",
-            _ => type.ToString(),
-        };
+        => Loc.EnumLabel(type, type == MeterComponentType.MenuButton ? "Button" : type.ToString());
 }

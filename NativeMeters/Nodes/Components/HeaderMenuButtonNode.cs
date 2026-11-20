@@ -5,6 +5,7 @@ using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Simplified;
 using NativeMeters.Addons;
 using NativeMeters.Configuration;
+using NativeMeters.Localization;
 using NativeMeters.Services;
 using NativeMeters.Utilities;
 
@@ -29,7 +30,7 @@ public class HeaderMenuButtonNode : SimpleComponentNode
         {
             Icon = CircleButtonIcon.GearCog,
             Size = new Vector2(24f),
-            TextTooltip = "Context Menu",
+            TextTooltip = Loc.EnumLabel(MeterButtonAction.ContextMenu),
             OnClick = ExecuteAction
         };
         _menuButton.AttachNode(this);

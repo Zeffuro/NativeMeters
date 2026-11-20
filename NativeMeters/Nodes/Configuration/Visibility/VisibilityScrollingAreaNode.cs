@@ -21,6 +21,7 @@ public sealed class VisibilityScrollingAreaNode : ScrollingNode<VerticalListNode
 
     protected override void OnSizeChanged()
     {
+        using var layoutVisibility = new LayoutVisibilityScope(ContentNode);
         base.OnSizeChanged();
         RecalculateConfigurationLayout();
     }

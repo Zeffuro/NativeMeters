@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Linq;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.Nodes;
+using NativeMeters.Localization;
 using NativeMeters.Nodes.Color;
 using NativeMeters.Nodes.Configuration;
 using NativeMeters.Nodes.LayoutNodes;
@@ -31,17 +32,17 @@ public sealed class ColorConfigurationNode : ScrollingNode<VerticalListNode>
 
         roleCategory = new CollapsingHeaderNode
         {
-            String = "Role Colors",
+            String = Loc.Get("ColorsRole"),
             IsCollapsed = false,
             OnToggle = _ => RecalculateSizes()
         };
 
         var roleDefinitions = new (RoleType Role, string Label, Vector4 Current, Vector4 Default, Action<Vector4> Setter)[]
         {
-            (RoleType.Tank, "Tanks", config.TankColor, new Vector4(0.18f, 0.43f, 0.71f, 1.0f), c => config.TankColor = c),
-            (RoleType.Healer, "Healers", config.HealerColor, new Vector4(0.18f, 0.58f, 0.18f, 1.0f), c => config.HealerColor = c),
-            (RoleType.DPS, "DPS", config.DpsColor, new Vector4(0.62f, 0.16f, 0.16f, 1.0f), c => config.DpsColor = c),
-            (RoleType.Other, "Other/Limit Break", config.OtherColor, JobColorMaps.DefaultColors[0], c => config.OtherColor = c)
+            (RoleType.Tank, Loc.Get("ColorsTanks"), config.TankColor, new Vector4(0.18f, 0.43f, 0.71f, 1.0f), c => config.TankColor = c),
+            (RoleType.Healer, Loc.Get("ColorsHealers"), config.HealerColor, new Vector4(0.18f, 0.58f, 0.18f, 1.0f), c => config.HealerColor = c),
+            (RoleType.DPS, Loc.Get("ColorsDps"), config.DpsColor, new Vector4(0.62f, 0.16f, 0.16f, 1.0f), c => config.DpsColor = c),
+            (RoleType.Other, Loc.Get("ColorsOther"), config.OtherColor, JobColorMaps.DefaultColors[0], c => config.OtherColor = c)
         };
 
         foreach (var def in roleDefinitions)
@@ -71,7 +72,7 @@ public sealed class ColorConfigurationNode : ScrollingNode<VerticalListNode>
 
 
         jobCategory = new CollapsingHeaderNode {
-            String = "Job Colors",
+            String = Loc.Get("ColorsJob"),
             IsCollapsed = false,
             OnToggle = _ => RecalculateSizes()
         };
@@ -98,7 +99,7 @@ public sealed class ColorConfigurationNode : ScrollingNode<VerticalListNode>
             });
 
             jobRow.AddNode(new ColorInputRow {
-                Label = job.NameEnglish.ToString(),
+                Label = GameNames.JobName(job),
                 Size = new Vector2(300, 28),
                 DefaultColor = JobColorMaps.DefaultColors.TryGetValue(jobId, out var def) ? def : config.OtherColor,
                 CurrentColor = config.JobColors.TryGetValue(jobId, out var color) ? color : config.OtherColor,
@@ -128,6 +129,7 @@ public sealed class ColorConfigurationNode : ScrollingNode<VerticalListNode>
 
     protected override void OnSizeChanged()
     {
+        using var layoutVisibility = new LayoutVisibilityScope(ContentNode);
         base.OnSizeChanged();
 
         float listWidth = Math.Max(0, Width - 16.0f);

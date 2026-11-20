@@ -7,6 +7,7 @@ using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
 using NativeMeters.Nodes.Color;
 using NativeMeters.Nodes.Input;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Meter.Sections;
 
@@ -115,8 +116,9 @@ public sealed class MeterDisplaySection : MeterConfigSection
     {
         layoutDropdown = new LabeledEnumDropdownNode<MeterLayout>
         {
+            ShowStepButtons = true,
             Size = new Vector2(Width, 28),
-            LabelText = "Layout:",
+            LabelText = Loc.Get("MeterLayout"),
             Options = Enum.GetValues<MeterLayout>().ToList(),
             OnOptionSelected = value =>
             {
@@ -129,8 +131,10 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
         statDropdown = new LabeledDropdownNode
         {
+            ShowStepButtons = true,
             Size = new Vector2(Width, 28),
-            LabelText = "Sort By: ",
+            LabelText = Loc.Get("MeterSortBy"),
+            GetOptionLabel = Loc.StatLabel,
             Options = StatSelector.GetAvailableStatSelectors(),
             OnOptionSelected = val =>
             {
@@ -142,7 +146,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         maxRowsInput = new LabeledNumericInputNode
         {
             Size = new Vector2(Width, 28),
-            LabelText = "Max Combatants:",
+            LabelText = Loc.Get("MeterMaxCombatants"),
             Min = 1, Max = 40,
             OnValueUpdate = val =>
             {
@@ -154,7 +158,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         scaleInput = new LabeledNumericInputNode
         {
             Size = new Vector2(Width, 28),
-            LabelText = "Scale %:",
+            LabelText = Loc.Get("MeterScale"),
             Min = 10, Max = 400,
             Step = 10,
             OnValueUpdate = val =>
@@ -167,7 +171,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         rowHeightInput = new LabeledNumericInputNode
         {
             Size = new Vector2(Width, 28),
-            LabelText = "Row Height:",
+            LabelText = Loc.Get("MeterRowHeight"),
             Min = 10, Max = 100,
             OnValueUpdate = val =>
             {
@@ -180,7 +184,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         rowSpacingInput = new LabeledNumericInputNode
         {
             Size = new Vector2(Width, 28),
-            LabelText = "Row Spacing:",
+            LabelText = Loc.Get("MeterRowSpacing"),
             Min = 0, Max = 100,
             OnValueUpdate = val =>
             {
@@ -192,7 +196,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         backgroundCheckbox = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Show Background",
+            String = Loc.Get("MeterBackground"),
             OnClick = val =>
             {
                 if (isLoading) return;
@@ -204,7 +208,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         scrollbarToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Show Scrollbar",
+            String = Loc.Get("MeterScrollbar"),
             OnClick = value =>
             {
                 if (isLoading) return;
@@ -214,7 +218,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
         backgroundColorInput = new ColorInputRow
         {
-            Label = "Background Color: ",
+            Label = Loc.Get("MeterBackgroundColor"),
             Size = new Vector2(Width, 28),
             DefaultColor = new MeterSettings().WindowColor,
             CurrentColor = Settings.WindowColor,
@@ -226,7 +230,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         headerToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Enable Header",
+            String = Loc.Get("MeterEnableHeader"),
             OnClick = val =>
             {
                 if (isLoading) return;
@@ -237,8 +241,10 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
         backgroundStyleDropdown = new LabeledEnumDropdownNode<MeterBackgroundStyle>
         {
+            ShowStepButtons = true,
+            LabelWidth = ConfigurationLayout.StandardLabelWidth - TabSize,
             Size = new Vector2(Width, 28),
-            LabelText = "Background Style:",
+            LabelText = Loc.Get("MeterBackgroundStyle"),
             Options = Enum.GetValues<MeterBackgroundStyle>().ToList(),
             OnOptionSelected = value =>
             {
@@ -254,8 +260,9 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
         headerHeightInput = new LabeledNumericInputNode
         {
+            LabelWidth = ConfigurationLayout.StandardLabelWidth - TabSize,
             Size = new Vector2(Width, 28),
-            LabelText = "Header Space:",
+            LabelText = Loc.Get("MeterHeaderSpace"),
             OnValueUpdate = val =>
             {
                 if (isLoading) return;
@@ -266,7 +273,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         footerToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Enable Footer",
+            String = Loc.Get("MeterEnableFooter"),
             OnClick = val =>
             {
                 if (isLoading) return;
@@ -277,8 +284,9 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
         footerHeightInput = new LabeledNumericInputNode
         {
+            LabelWidth = ConfigurationLayout.StandardLabelWidth - TabSize,
             Size = new Vector2(Width, 28),
-            LabelText = "Footer Space:",
+            LabelText = Loc.Get("MeterFooterSpace"),
             OnValueUpdate = val =>
             {
                 if (isLoading) return;
@@ -289,7 +297,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         showLimitBreakToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Show Limit Break",
+            String = Loc.Get("MeterShowLimitBreak"),
             OnClick = val =>
             {
                 if (isLoading) return;
@@ -300,7 +308,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         showNonPlayerToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Show Non Player Combatants",
+            String = Loc.Get("MeterShowNonPlayers"),
             OnClick = val =>
             {
                 if (isLoading) return;
@@ -311,7 +319,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         showPinSelfToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Pin Self To Top",
+            String = Loc.Get("MeterPinSelf"),
             OnClick = val =>
             {
                 if (isLoading) return;
@@ -323,8 +331,8 @@ public sealed class MeterDisplaySection : MeterConfigSection
         keepSelfVisibleToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Keep Self Visible When Collapsed",
-            TextTooltip = "Collapse to your own row, keeping your expanded window size for reopening.",
+            String = Loc.Get("MeterKeepSelfVisible"),
+            TextTooltip = Loc.Get("MeterKeepSelfTooltip"),
             OnClick = value =>
             {
                 if (!isLoading) Settings.KeepSelfVisibleWhenCollapsed = value;
@@ -334,8 +342,8 @@ public sealed class MeterDisplaySection : MeterConfigSection
         selfHighlightToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Highlight Self",
-            TextTooltip = "Apply meter-specific colors to your own row.",
+            String = Loc.Get("MeterHighlightSelf"),
+            TextTooltip = Loc.Get("MeterHighlightSelfTooltip"),
             OnClick = val =>
             {
                 if (isLoading) return;
@@ -347,8 +355,9 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
         selfTextTargetDropdown = new LabeledEnumDropdownNode<SelfTextOverrideMode>
         {
+            LabelWidth = ConfigurationLayout.StandardLabelWidth - TabSize,
             Size = new Vector2(Width, 28),
-            LabelText = "Self Text Target:",
+            LabelText = Loc.Get("MeterSelfTextTarget"),
             Options = Enum.GetValues<SelfTextOverrideMode>().ToList(),
             SelectedOption = SelfRowOverride.TextColorMode,
             OnOptionSelected = val =>
@@ -361,8 +370,8 @@ public sealed class MeterDisplaySection : MeterConfigSection
         selfTextColorToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Override Self Text Color",
-            TextTooltip = "Uses the Self Text Target setting above.",
+            String = Loc.Get("MeterOverrideSelfTextColor"),
+            TextTooltip = Loc.Get("MeterSelfTextTargetTooltip"),
             OnClick = val =>
             {
                 if (isLoading) return;
@@ -374,7 +383,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
         selfTextColorInput = new ColorInputRow
         {
-            Label = "Self Text Color: ",
+            Label = Loc.Get("MeterSelfTextColor"),
             Size = new Vector2(Width, 28),
             DefaultColor = new SelfRowOverrideSettings().TextColor,
             CurrentColor = SelfRowOverride.TextColor,
@@ -386,8 +395,8 @@ public sealed class MeterDisplaySection : MeterConfigSection
         selfTextOutlineColorToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Override Self Outline Color",
-            TextTooltip = "Uses the Self Text Target setting above.",
+            String = Loc.Get("MeterOverrideSelfOutline"),
+            TextTooltip = Loc.Get("MeterSelfTextTargetTooltip"),
             OnClick = val =>
             {
                 if (isLoading) return;
@@ -399,7 +408,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
         selfTextOutlineColorInput = new ColorInputRow
         {
-            Label = "Self Outline Color: ",
+            Label = Loc.Get("MeterSelfOutlineColor"),
             Size = new Vector2(Width, 28),
             DefaultColor = new SelfRowOverrideSettings().TextOutlineColor,
             CurrentColor = SelfRowOverride.TextOutlineColor,
@@ -411,7 +420,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
         selfBarColorToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Override Self Bar Color",
+            String = Loc.Get("MeterOverrideSelfBarColor"),
             OnClick = val =>
             {
                 if (isLoading) return;
@@ -423,7 +432,7 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
         selfBarColorInput = new ColorInputRow
         {
-            Label = "Self Bar Color: ",
+            Label = Loc.Get("MeterSelfBarColor"),
             Size = new Vector2(Width, 28),
             DefaultColor = new SelfRowOverrideSettings().BarColor,
             CurrentColor = SelfRowOverride.BarColor,
@@ -435,8 +444,8 @@ public sealed class MeterDisplaySection : MeterConfigSection
         selfTextStyleToggle = new CheckboxRowNode
         {
             Size = new Vector2(Width, 20),
-            String = "Override Self Text Style",
-            TextTooltip = "Uses the Self Text Target setting above.",
+            String = Loc.Get("MeterOverrideSelfTextStyle"),
+            TextTooltip = Loc.Get("MeterSelfTextTargetTooltip"),
             OnClick = val =>
             {
                 if (isLoading) return;
@@ -448,8 +457,9 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
         selfTextFontSizeInput = new LabeledNumericInputNode
         {
+            LabelWidth = ConfigurationLayout.StandardLabelWidth - 2 * TabSize,
             Size = new Vector2(Width, 28),
-            LabelText = "Self Text Size:",
+            LabelText = Loc.Get("MeterSelfTextSize"),
             Min = 6,
             Max = 72,
             OnValueUpdate = val =>
@@ -461,8 +471,10 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
         selfTextFontTypeDropdown = new LabeledEnumDropdownNode<FontType>
         {
+            ShowStepButtons = true,
+            LabelWidth = ConfigurationLayout.StandardLabelWidth - 2 * TabSize,
             Size = new Vector2(Width, 28),
-            LabelText = "Self Text Font:",
+            LabelText = Loc.Get("MeterSelfTextFont"),
             Options = Enum.GetValues<FontType>().ToList(),
             SelectedOption = SelfRowOverride.TextFontType,
             OnOptionSelected = val =>
@@ -474,8 +486,9 @@ public sealed class MeterDisplaySection : MeterConfigSection
 
         selfTextFlagsInput = new LabeledTextFlagsInputNode
         {
+            LabelWidth = ConfigurationLayout.StandardLabelWidth - 2 * TabSize,
             Width = Width,
-            LabelText = "Self Text Style:",
+            LabelText = Loc.Get("MeterSelfTextStyle"),
             OnValueChanged = val =>
             {
                 if (isLoading) return;
@@ -548,9 +561,9 @@ public sealed class MeterDisplaySection : MeterConfigSection
         footerHeightInput.IsEnabled = Settings.FooterEnabled;
         var horizontal = Settings.Layout == MeterLayout.Horizontal;
         scrollbarToggle!.IsEnabled = !horizontal;
-        rowHeightInput!.LabelText = horizontal ? "Card Height:" : "Row Height:";
-        rowSpacingInput!.LabelText = horizontal ? "Card Spacing:" : "Row Spacing:";
-        showPinSelfToggle!.String = horizontal ? "Pin Self To First Card" : "Pin Self To Top";
+        rowHeightInput!.LabelText = horizontal ? Loc.Get("MeterCardHeight") : Loc.Get("MeterRowHeight");
+        rowSpacingInput!.LabelText = horizontal ? Loc.Get("MeterCardSpacing") : Loc.Get("MeterRowSpacing");
+        showPinSelfToggle!.String = horizontal ? Loc.Get("MeterPinSelfCard") : Loc.Get("MeterPinSelf");
     }
 
     private void ApplySelfOverrideState()

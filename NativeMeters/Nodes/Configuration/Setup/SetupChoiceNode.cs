@@ -5,6 +5,7 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Configuration.Setup;
 
@@ -30,7 +31,7 @@ internal sealed class SetupChoiceNode : ResNode, IConfigurationNavigationNode
         previous = new CircleButtonNode
         {
             Icon = CircleButtonIcon.LeftArrow,
-            TextTooltip = $"Previous: {title}",
+            TextTooltip = Loc.Format("SetupPreviousChoice", title),
             OnClick = () => Step(-1),
         };
         dropdown = new DropDownNode<int>
@@ -43,7 +44,7 @@ internal sealed class SetupChoiceNode : ResNode, IConfigurationNavigationNode
         next = new CircleButtonNode
         {
             Icon = CircleButtonIcon.RightArrow,
-            TextTooltip = $"Next: {title}",
+            TextTooltip = Loc.Format("SetupNextChoice", title),
             OnClick = () => Step(1),
         };
         label.AttachNode(this);

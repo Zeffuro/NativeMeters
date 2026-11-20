@@ -21,3 +21,9 @@ You can fully customize the meters and their appearance (it will use any UI them
 3. Add the following URL to your Custom Plugin Repositories:
    `https://raw.githubusercontent.com/Zeffuro/MyDalamudPlugins/master/repo.json`
 4. Search for **NativeMeters** in the Plugin Installer.
+
+## Translations
+
+NativeMeters follows the FFXIV client language by default. To choose the plugin language independently, open **General → Language**. The settings window reopens in the selected language and saves your choice. The menu includes English, Japanese, German, French, Korean, Simplified Chinese (CN), and Traditional Chinese (TC).
+
+To contribute a translation, edit the matching [RESX file](NativeMeters/Localization) and open a pull request. Simplified Chinese (CN) uses `Strings.zh-CN.resx` and Traditional Chinese (TC) uses `Strings.zh-TW.resx`. Preserve resource keys, format placeholders such as `{0}`, chat commands, and tags such as `[dps:c.1]`. Untranslated strings can be left out of the localized file to use the English text from `Strings.resx`.

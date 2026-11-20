@@ -4,8 +4,11 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
 using NativeMeters.Extensions;
+using NativeMeters.Localization;
 using NativeMeters.Models;
 using NativeMeters.Services;
+using GameAction = Lumina.Excel.Sheets.Action;
+using PlaceName = Lumina.Excel.Sheets.PlaceName;
 
 namespace NativeMeters.Nodes.Configuration.Setup;
 
@@ -14,19 +17,25 @@ internal sealed class SetupSampleFight
     private const int DurationSeconds = 98;
     public List<Combatant> Members { get; } =
     [
-        Create("Ari Vale", "PLD", 13_840, 320, "Confiteor-68800", 18, 17, 102, 0),
-        Create("Tala Reed", "WHM", 10_460, 6_410, "Afflatus Misery-82640", 22, 18, 75, 1),
-        Create("Ren Ash", "BLM", 21_730, 0, "Xenoglossy-97000", 24, 26, 94, 0),
+        Create("Ari Vale", "PLD", 13_840, 320, BestHit(16459, "Confiteor", 68_800), 18, 17, 102, 0),
+        Create("Tala Reed", "WHM", 10_460, 6_410, BestHit(16535, "Afflatus Misery", 82_640), 22, 18, 75, 1),
+        Create("Ren Ash", "BLM", 21_730, 0, BestHit(16507, "Xenoglossy", 97_000), 24, 26, 94, 0),
     ];
     public Encounter Encounter { get; }
 
-    public SetupSampleFight(string title = "Striking Dummy")
+    public SetupSampleFight(string? title = null)
     {
         Encounter = FakeEncounterFactory.CreateFakeEncounter(Members);
-        Encounter.Title = title;
-        Encounter.CurrentZoneName = "The Goblet";
+        Encounter.Title = title ?? Loc.Get("SetupStrikingDummy");
+        Encounter.CurrentZoneName = Service.DataManager.GetExcelSheet<PlaceName>().GetRowOrDefault(427)?.Name.ToString() ?? "The Goblet";
         foreach (var member in Members)
             member.DamagePercent = member.Damage * 100.0 / Encounter.Damage;
+    }
+
+    private static string BestHit(uint actionId, string fallbackName, int damage)
+    {
+        var actionName = Service.DataManager.GetExcelSheet<GameAction>().GetRowOrDefault(actionId)?.Name.ToString();
+        return $"{actionName ?? fallbackName}-{damage}";
     }
 
     private static Combatant Create(string name, string job, int dps, int hps, string bestHit,

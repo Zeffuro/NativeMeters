@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
+using NativeMeters.Localization;
 
 namespace NativeMeters.Nodes.Input;
 
@@ -62,7 +63,7 @@ internal static class TextFlagOptions
         .ToList();
 
     public static string GetLabel(TextFlags flag)
-        => SplitPascalCase(flag.ToString());
+        => Loc.EnumLabel(flag, SplitPascalCase(flag.ToString()));
 
     public static string GetSummary(TextFlags flags)
     {
@@ -72,7 +73,7 @@ internal static class TextFlagOptions
             .ToList();
 
         return selected.Count == 0
-            ? "None"
+            ? Loc.Get("CommonNone")
             : string.Join(", ", selected);
     }
 
