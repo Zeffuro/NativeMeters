@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using KamiToolKit.BaseTypes;
 
-namespace NativeMeters.Nodes.Components.Gauge;
+namespace NativeMeters.Nodes.Components.ProgressBars;
 
 internal static class GaugeColors
 {
@@ -13,7 +13,8 @@ internal static class GaugeColors
     public static Vector4 Get(NodeBase node, GaugeColorMode colorMode)
         => colorMode switch
         {
-            GaugeColorMode.Additive => new Vector4(node.AddColor.X, node.AddColor.Y, node.AddColor.Z, node.Color.W),
+            GaugeColorMode.Additive or GaugeColorMode.Solid
+                => new Vector4(node.AddColor.X, node.AddColor.Y, node.AddColor.Z, node.Color.W),
             GaugeColorMode.BrightAdditive => new Vector4(
                 Math.Max(0.0f, (node.AddColor.X - BrightTintColorFloor) / BrightTintColorWeight),
                 Math.Max(0.0f, (node.AddColor.Y - BrightTintColorFloor) / BrightTintColorWeight),
@@ -26,10 +27,10 @@ internal static class GaugeColors
 
     public static void Apply(NodeBase node, Vector4 value, GaugeColorMode colorMode, Vector3? additiveMultiplyColor = null)
     {
-        if (colorMode == GaugeColorMode.Additive)
+        if (colorMode is GaugeColorMode.Additive or GaugeColorMode.Solid)
         {
             node.Color = new Vector4(1.0f, 1.0f, 1.0f, value.W);
-            node.MultiplyColor = additiveMultiplyColor ?? Vector3.One;
+            node.MultiplyColor = colorMode == GaugeColorMode.Solid ? Vector3.Zero : additiveMultiplyColor ?? Vector3.One;
             node.AddColor = new Vector3(value.X, value.Y, value.Z);
             return;
         }

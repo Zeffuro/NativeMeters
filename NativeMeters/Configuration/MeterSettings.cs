@@ -131,11 +131,38 @@ public enum ProgressBarType
     ToDoLegacy = 4,
 
     [Description("Enemy Cast (Legacy)")]
-    EnemyCastLegacy = 7
+    EnemyCastLegacy = 7,
+
+    [Description("Content Gauge")]
+    ContentGauge = 8,
+
+    [Description("Aether Gauge")]
+    AetherGauge = 9,
+
+    [Description("Custom Deliveries")]
+    CustomDeliveries = 10,
+
+    [Description("Item Inspection")]
+    ItemInspection = 11,
+
+    [Description("Collectable Negotiation")]
+    CollectableNegotiation = 12,
+
+    [Description("Gold Saucer Gauge")]
+    GoldSaucerGauge = 13,
+
+    [Description("Bard Arrow")]
+    BardArrow = 14,
 }
 
 public static class ProgressBarTypeOptions
 {
+    public static bool SupportsPreservingEnds(ProgressBarType type) => type is ProgressBarType.Cast
+        or ProgressBarType.EnemyCast or ProgressBarType.ToDo or ProgressBarType.PartyListHp or ProgressBarType.LimitBreak
+        or ProgressBarType.ContentGauge or ProgressBarType.AetherGauge or ProgressBarType.CustomDeliveries
+        or ProgressBarType.ItemInspection or ProgressBarType.CollectableNegotiation or ProgressBarType.GoldSaucerGauge
+        or ProgressBarType.BardArrow;
+
     public static List<ProgressBarType> Ordered()
         => [
             ProgressBarType.Cast,
@@ -143,6 +170,13 @@ public static class ProgressBarTypeOptions
             ProgressBarType.ToDo,
             ProgressBarType.PartyListHp,
             ProgressBarType.LimitBreak,
+            ProgressBarType.ContentGauge,
+            ProgressBarType.AetherGauge,
+            ProgressBarType.CustomDeliveries,
+            ProgressBarType.ItemInspection,
+            ProgressBarType.CollectableNegotiation,
+            ProgressBarType.GoldSaucerGauge,
+            ProgressBarType.BardArrow,
             ProgressBarType.CastLegacy,
             ProgressBarType.ToDoLegacy,
         ];

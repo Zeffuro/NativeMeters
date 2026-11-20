@@ -1,13 +1,14 @@
 using System.Numerics;
 using NativeMeters.Configuration;
-using NativeMeters.Nodes.Components.Gauge;
 
-namespace NativeMeters.Nodes.Components;
+namespace NativeMeters.Nodes.Components.ProgressBars;
 
 public abstract class ComponentGaugeProgressNode : GaugeBarNode, IMeterProgressNode
 {
+    protected static readonly Vector3 LegacyAdditiveTextureWeight = new Vector3(90.0f, 75.0f, 75.0f) / 255.0f;
     protected GaugeColorMode DefaultColorMode { get; set; } = GaugeColorMode.Multiply;
     protected GaugeColorMode? NativeColorMode { get; set; }
+    protected GaugeColorMode FlatColorMode { get; set; } = GaugeColorMode.Flat;
 
     public ProgressBarColorTreatment ColorTreatment
     {
@@ -22,13 +23,14 @@ public abstract class ComponentGaugeProgressNode : GaugeBarNode, IMeterProgressN
 
     protected override GaugeColorMode BarColorMode => ColorTreatment switch
     {
-        ProgressBarColorTreatment.Flat => GaugeColorMode.Flat,
+        ProgressBarColorTreatment.Flat => FlatColorMode,
         ProgressBarColorTreatment.NativeTint => NativeColorMode ?? DefaultColorMode,
         ProgressBarColorTreatment.LegacyAdditive => GaugeColorMode.Additive,
+        ProgressBarColorTreatment.StockColors => GaugeColorMode.TextureAlpha,
         _ => DefaultColorMode,
     };
 
     protected override Vector3? BarMultiplyColor => ColorTreatment == ProgressBarColorTreatment.LegacyAdditive
-        ? new Vector3(90.0f, 75.0f, 75.0f) / 255.0f
+        ? LegacyAdditiveTextureWeight
         : null;
 }

@@ -3,9 +3,8 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using NativeMeters.Nodes.Components.Gauge;
 
-namespace NativeMeters.Nodes.Components;
+namespace NativeMeters.Nodes.Components.ProgressBars;
 
 public unsafe class ProgressBarEnemyCastGaugeNode : ComponentGaugeProgressNode
 {
@@ -13,31 +12,37 @@ public unsafe class ProgressBarEnemyCastGaugeNode : ComponentGaugeProgressNode
     private const float NativeWidth = 204.0f;
     private const float GaugeWidth = 188.0f;
     private const float NativeHeight = 20.0f;
+    private const float TrackCapWidth = 34.0f;
     private const DrawFlags GaugeDrawFlags = (DrawFlags)0x8;
     private const NodeFlags VisibleGaugeNodeFlags =
         NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents;
 
-    public ProgressBarEnemyCastGaugeNode()
+    public ProgressBarEnemyCastGaugeNode() : this(false) { }
+
+    internal ProgressBarEnemyCastGaugeNode(bool preserveEnds)
     {
         BackgroundColorMode = GaugeColorMode.TextureAlpha;
         DefaultColorMode = GaugeColorMode.Multiply;
 
-        BackdropImageNode = new ImageNode
-        {
-            NodeId = 12,
-            NodeFlags = VisibleGaugeNodeFlags,
-            DrawFlags = GaugeDrawFlags,
-            PartId = 1,
-            Position = Vector2.Zero,
-            Size = new Vector2(NativeWidth, NativeHeight),
-            Origin = Vector2.Zero,
-            WrapMode = WrapMode.Stretch,
-            ImageNodeFlags = 0,
-        };
-        BackdropImageNode.AddPart(CreateParts());
-        BackdropImageNode.Node->PartsList->Id = 1;
+        var parts = CreateParts();
 
-        MainFillNode = new NineGridNode
+        BackdropImageNode = CreateStockImage(12, parts, new Vector2(NativeWidth, NativeHeight),
+            preserveEnds ? VisibleGaugeNodeFlags & ~NodeFlags.Visible : VisibleGaugeNodeFlags,
+            GaugeDrawFlags, 1);
+
+        MainFillNode = CreateFill(parts);
+
+        if (preserveEnds)
+            StaticBackdropNode = CreateSlicedLayer(13, parts[1], Vector2.Zero, TrackCapWidth,
+                GaugeDrawFlags, VisibleGaugeNodeFlags);
+
+        InitializeGauge(new Vector2(NativeWidth, NativeHeight), GaugeWidth,
+            minimumUnscaledWidth: preserveEnds ? TrackCapWidth * 2 : 0);
+    }
+
+    private static NineGridNode CreateFill(Part[] parts)
+    {
+        var node = new NineGridNode
         {
             NodeId = 11,
             NodeFlags = VisibleGaugeNodeFlags,
@@ -49,11 +54,10 @@ public unsafe class ProgressBarEnemyCastGaugeNode : ComponentGaugeProgressNode
             LeftOffset = 10.0f,
             RightOffset = 10.0f,
             PartsRenderType = 240,
-            Parts = CreateParts(),
+            Parts = parts,
         };
-        MainFillNode.Node->PartsList->Id = 1;
-
-        InitializeGauge(new Vector2(NativeWidth, NativeHeight), GaugeWidth);
+        node.Node->PartsList->Id = 1;
+        return node;
     }
 
     private static Part[] CreateParts()

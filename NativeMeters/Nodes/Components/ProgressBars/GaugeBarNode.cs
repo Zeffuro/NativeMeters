@@ -4,9 +4,12 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.BaseTypes;
 using KamiToolKit.BaseTypes.ComponentNode;
+using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
+using NativeMeters.Rendering;
 
-namespace NativeMeters.Nodes.Components.Gauge;
+namespace NativeMeters.Nodes.Components.ProgressBars;
 
 public abstract unsafe class GaugeBarNode : ComponentNode<AtkComponentGaugeBar, AtkUldComponentDataGaugeBar>
 {
@@ -15,14 +18,19 @@ public abstract unsafe class GaugeBarNode : ComponentNode<AtkComponentGaugeBar, 
     private Vector2 nativeSize;
     private Vector2 requestedSize;
     private float gaugeWidth;
+    private float layoutWidth;
+    private float minimumUnscaledWidth;
     private float progress;
     private bool fillRightToLeft;
     private bool isInitialized;
     private Vector4? barColor;
 
+    private float GaugeLayoutWidth => GaugeGeometry.GetInnerWidth(layoutWidth, nativeSize.X, gaugeWidth);
+
     private sealed record NodeLayout(NodeBase Node, Vector2 Position, Vector2 Size, Vector3 MultiplyColor);
 
     public ImageNode BackdropImageNode { get; protected set; } = null!;
+    protected NineGridNode? FrameUnderlayNode { get; set; }
     public NineGridNode? StaticBackdropNode { get; protected set; }
     public NineGridNode MainFillNode { get; protected set; } = null!;
     public NineGridNode? IncreaseFillNode { get; protected set; }
@@ -41,9 +49,14 @@ public abstract unsafe class GaugeBarNode : ComponentNode<AtkComponentGaugeBar, 
         {
             requestedSize = new Vector2(Math.Max(1, value.X), Math.Max(1, value.Y));
             if (!isInitialized) return;
-            base.Size = new Vector2(gaugeWidth, requestedSize.Y);
-            ScaleX = requestedSize.X / nativeSize.X;
-            ScaleY = 1;
+            var preserveEnds = minimumUnscaledWidth > 0;
+            layoutWidth = preserveEnds
+                ? GaugeGeometry.GetUnscaledWidth(requestedSize, nativeSize.Y, minimumUnscaledWidth)
+                : nativeSize.X;
+            var layoutHeight = preserveEnds ? nativeSize.Y : requestedSize.Y;
+            base.Size = new Vector2(GaugeLayoutWidth, layoutHeight);
+            ScaleX = requestedSize.X / layoutWidth;
+            ScaleY = preserveEnds ? requestedSize.Y / layoutHeight : 1;
         }
     }
 
@@ -109,12 +122,50 @@ public abstract unsafe class GaugeBarNode : ComponentNode<AtkComponentGaugeBar, 
         CollisionNode.NodeFlags = 0;
     }
 
-    protected void InitializeGauge(Vector2 size, float? internalWidth = null, bool useBorderSlot = false)
+    protected static ImageNode CreateStockImage(
+        uint nodeId, Part[] parts, Vector2 size, NodeFlags flags, DrawFlags drawFlags, ushort partId,
+        WrapMode wrapMode = WrapMode.Stretch, Vector2 origin = default)
+    {
+        var image = new ImageNode
+        {
+            NodeId = nodeId,
+            NodeFlags = flags,
+            DrawFlags = drawFlags,
+            PartId = partId,
+            Position = Vector2.Zero,
+            Size = size,
+            Origin = origin,
+            WrapMode = wrapMode,
+            ImageNodeFlags = 0,
+        };
+        image.AddPart(parts);
+        image.Node->PartsList->Id = 1;
+        return image;
+    }
+
+    protected static NineGridNode CreateSlicedLayer(uint nodeId, Part part, Vector2 position, float capWidth,
+        DrawFlags drawFlags, NodeFlags nodeFlags)
+        => new()
+        {
+            NodeId = nodeId,
+            NodeFlags = nodeFlags,
+            DrawFlags = drawFlags,
+            Position = position,
+            Size = part.Size,
+            LeftOffset = capWidth,
+            RightOffset = capWidth,
+            Parts = [part],
+        };
+
+    protected void InitializeGauge(Vector2 size, float? internalWidth = null, bool useBorderSlot = false,
+        float minimumUnscaledWidth = 0)
     {
         nativeSize = requestedSize = size;
         gaugeWidth = internalWidth ?? size.X;
+        this.minimumUnscaledWidth = minimumUnscaledWidth;
 
         Attach(BackdropImageNode);
+        Attach(FrameUnderlayNode);
         Attach(StaticBackdropNode);
         Attach(IncreaseFillNode);
         Attach(DecreaseFillNode);
@@ -159,14 +210,24 @@ public abstract unsafe class GaugeBarNode : ComponentNode<AtkComponentGaugeBar, 
         base.OnSizeChanged();
         if (!isInitialized) return;
 
-        var heightScale = requestedSize.Y / nativeSize.Y;
+        var preserveEnds = minimumUnscaledWidth > 0;
+        var heightScale = preserveEnds ? 1 : requestedSize.Y / nativeSize.Y;
+        if (preserveEnds)
+        {
+            CollisionNode.Size = new Vector2(GaugeLayoutWidth, nativeSize.Y);
+            ComponentBase->UldManager.RootNodeWidth = (ushort)GaugeLayoutWidth;
+            ComponentBase->UldManager.RootNodeHeight = (ushort)nativeSize.Y;
+        }
         foreach (var layout in layouts)
         {
             layout.Node.Position = layout.Position * new Vector2(1, heightScale);
             if (layout.Node == MainFillNode || layout.Node == IncreaseFillNode || layout.Node == DecreaseFillNode)
                 layout.Node.Height = layout.Size.Y * heightScale;
             else
-                layout.Node.Size = layout.Size * new Vector2(1, heightScale);
+            {
+                var width = preserveEnds ? GaugeGeometry.GetInnerWidth(layoutWidth, nativeSize.X, layout.Size.X) : layout.Size.X;
+                layout.Node.Size = new Vector2(width, layout.Size.Y * heightScale);
+            }
         }
 
         ComponentBase->Setup();
@@ -182,7 +243,8 @@ public abstract unsafe class GaugeBarNode : ComponentNode<AtkComponentGaugeBar, 
         ComponentBase->Update(0);
 
         var fill = GetLayout(MainFillNode);
-        MainFillNode.X = fill.Position.X + (fillRightToLeft ? Math.Max(0, fill.Size.X - MainFillNode.Width) : 0);
+        var fullWidth = minimumUnscaledWidth > 0 ? GaugeLayoutWidth : fill.Size.X;
+        MainFillNode.X = fill.Position.X + (fillRightToLeft ? Math.Max(0, fullWidth - MainFillNode.Width) : 0);
         var transitionX = fillRightToLeft ? MainFillNode.X : Math.Max(0, MainFillNode.Width - Component->MarginX);
 
         if (IncreaseFillNode != null)

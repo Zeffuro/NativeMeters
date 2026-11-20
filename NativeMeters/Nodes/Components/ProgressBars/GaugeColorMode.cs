@@ -1,4 +1,4 @@
-namespace NativeMeters.Nodes.Components.Gauge;
+namespace NativeMeters.Nodes.Components.ProgressBars;
 
 public enum GaugeColorMode
 {
@@ -7,4 +7,5 @@ public enum GaugeColorMode
     BrightAdditive,
     TextureAlpha,
     Flat,
+    Solid,
 }

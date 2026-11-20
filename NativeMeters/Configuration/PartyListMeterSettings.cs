@@ -40,6 +40,8 @@ public class PartyListMeterSettings
     public int BarWidth { get; set; } = 32;
     public int BarHeight { get; set; } = 8;
     public ProgressBarType BarType { get; set; } = ProgressBarType.PartyListHp;
+    public ProgressBarSizing BarSizing { get; set; }
+    public string BarFillStat { get; set; } = StatSelector.DefaultStatSelector;
     public bool BarFillRightToLeft { get; set; } = true;
     public ColorMode BarColorMode { get; set; } = ColorMode.Static;
     public ProgressBarColorTreatment BarColorTreatment { get; set; } = ProgressBarColorTreatment.Flat;
@@ -65,6 +67,9 @@ public class PartyListMeterSettings
     public Vector4 RaidTextOutlineColor { get; set; } = ColorHelper.GetColor(36);
     public Vector4 BarColor { get; set; } = ColorHelper.GetColor(50);
     public Vector4 BarBackgroundColor { get; set; } = ColorHelper.GetColor(50);
+
+    internal (ProgressBarType Type, bool PreserveEnds) MemberBarStyle => (BarType,
+        BarSizing == ProgressBarSizing.PreserveEnds && ProgressBarTypeOptions.SupportsPreservingEnds(BarType));
 
     public void ResetToDefaults()
     {
@@ -92,6 +97,8 @@ public class PartyListMeterSettings
         BarWidth = defaults.BarWidth;
         BarHeight = defaults.BarHeight;
         BarType = defaults.BarType;
+        BarSizing = defaults.BarSizing;
+        BarFillStat = defaults.BarFillStat;
         BarFillRightToLeft = defaults.BarFillRightToLeft;
         BarColorMode = defaults.BarColorMode;
         BarColorTreatment = defaults.BarColorTreatment;
@@ -121,6 +128,7 @@ public class PartyListMeterSettings
         var defaults = new PartyListMeterSettings();
 
         MemberFormat ??= defaults.MemberFormat;
+        BarFillStat = StatSelector.NormalizeStatSelector(BarFillStat);
         TopMemberStat = StatSelector.NormalizeStatSelector(TopMemberStat);
         TopMemberFormat ??= defaults.TopMemberFormat;
         RaidDpsFormat ??= defaults.RaidDpsFormat;

@@ -45,6 +45,7 @@ internal sealed partial class PartyListMeterConfigurationNode
             barWidthInput.Value = config.BarWidth;
             barHeightInput.Value = config.BarHeight;
             barTypeDropdown.SelectedOption = config.BarType;
+            barFillStatDropdown.SelectedOption = config.BarFillStat;
             barFillRightToLeftToggle.IsChecked = config.BarFillRightToLeft;
             barColorModeDropdown.SelectedOption = config.BarColorMode;
             barColorTreatmentDropdown.SelectedOption = config.BarColorTreatment;
@@ -100,6 +101,7 @@ internal sealed partial class PartyListMeterConfigurationNode
         SetCheckboxEnabled(showRaidDpsToggle, isEnabled);
 
         var areMemberBarsEnabled = isEnabled && config.ShowMemberBars;
+        var supportsBarSizing = ProgressBarTypeOptions.SupportsPreservingEnds(config.BarType);
         var isRaidDpsEnabled = isEnabled && config.ShowRaidDps;
         var isTopMemberEnabled = isEnabled && config.HighlightTopMember;
 
@@ -122,6 +124,9 @@ internal sealed partial class PartyListMeterConfigurationNode
         barWidthInput.IsEnabled = areMemberBarsEnabled;
         barHeightInput.IsEnabled = areMemberBarsEnabled;
         barTypeDropdown.IsEnabled = areMemberBarsEnabled;
+        barSizingDropdown.SelectedOption = supportsBarSizing ? config.BarSizing : ProgressBarSizing.Stretch;
+        barSizingDropdown.IsEnabled = areMemberBarsEnabled && supportsBarSizing;
+        barFillStatDropdown.IsEnabled = areMemberBarsEnabled;
         SetCheckboxEnabled(barFillRightToLeftToggle, areMemberBarsEnabled);
         barColorModeDropdown.IsEnabled = areMemberBarsEnabled;
         barColorTreatmentDropdown.IsEnabled = areMemberBarsEnabled;

@@ -5,7 +5,6 @@ using System.Numerics;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.BaseTypes;
 using KamiToolKit.Classes;
 using KamiToolKit.Controllers;
 using KamiToolKit.Enums;
@@ -15,7 +14,6 @@ using NativeMeters.Configuration;
 using NativeMeters.Data.Stats;
 using NativeMeters.Extensions;
 using NativeMeters.Models;
-using NativeMeters.Nodes.Components;
 using NativeMeters.Tags;
 using NativeMeters.Utilities;
 
@@ -27,8 +25,7 @@ public sealed unsafe class PartyListMeterManager : IDisposable
     private const float MinimumScale = 0.001f;
 
     private readonly TextNode?[] memberTextNodes = new TextNode?[MaxHudMemberCount];
-    private readonly NodeBase?[] memberBarNodes = new NodeBase?[MaxHudMemberCount];
-    private readonly ProgressBarType?[] memberBarTypes = new ProgressBarType?[MaxHudMemberCount];
+    private readonly PartyListMemberBars memberBars = new(MaxHudMemberCount);
     private readonly string?[] cachedText = new string?[MaxHudMemberCount];
 
     private AddonController<AddonPartyList>? partyListController;
@@ -183,13 +180,16 @@ public sealed unsafe class PartyListMeterManager : IDisposable
                 resolvedCombatants[hudData.HudIndex] = combatant;
         }
 
-        var maxDps = resolvedCombatants.Count == 0
+        var fillSelector = Settings.ShowMemberBars
+            ? StatSelector.GetStatSelector(StatSelector.NormalizeStatSelector(Settings.BarFillStat))
+            : null;
+        var maxFill = fillSelector == null || resolvedCombatants.Count == 0
             ? 0.0
-            : resolvedCombatants.Values.Max(combatant => combatant.ENCDPS);
+            : resolvedCombatants.Values.Max(fillSelector);
         var topMemberHudIndex = ResolveTopMemberHudIndex(resolvedCombatants);
 
-        if (!Settings.ShowMemberBars)
-            DisposeMemberBarNodes();
+        if (fillSelector == null)
+            memberBars.Retire();
 
         foreach (var hudData in hudMembers)
         {
@@ -210,7 +210,13 @@ public sealed unsafe class PartyListMeterManager : IDisposable
                 continue;
             }
 
-            ApplyBarNodeSettings(hudData.HudIndex, hudData.AnchorNode, addon, combatant, maxDps);
+            if (fillSelector != null && rootNode != null)
+            {
+                var progress = maxFill > 0.0 ? fillSelector(combatant) / maxFill : 0.0;
+                var anchorPosition = GetLocalPosition(addon, hudData.AnchorNode);
+                memberBars.Update(rootNode, hudData.HudIndex, Settings, combatant, anchorPosition, (float)progress);
+            }
+
             ApplyTextNodeSettings(hudData.HudIndex, hudData.AnchorNode, addon, combatant, hudData.HudIndex == topMemberHudIndex);
         }
 
@@ -240,15 +246,11 @@ public sealed unsafe class PartyListMeterManager : IDisposable
             };
             rootNode.RemoveNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision);
 
+            var barStyle = Settings.MemberBarStyle;
             for (var index = 0; index < memberTextNodes.Length; index++)
             {
                 if (Settings.ShowMemberBars)
-                {
-                    var barNode = CreateBarNode(Settings.BarType);
-                    barNode.AttachNode(rootNode, NodePosition.AsFirstChild);
-                    memberBarNodes[index] = barNode;
-                    memberBarTypes[index] = Settings.BarType;
-                }
+                    memberBars.Attach(rootNode, index, barStyle);
 
                 var textNode = CreateTextNode();
                 textNode.AttachNode(rootNode);
@@ -278,33 +280,6 @@ public sealed unsafe class PartyListMeterManager : IDisposable
         textNode.RemoveNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision);
 
         return textNode;
-    }
-
-    private static NodeBase CreateBarNode(ProgressBarType barType)
-    {
-        NodeBase barNode = barType switch
-        {
-            ProgressBarType.Cast => new ProgressBarCastGaugeNode(),
-            ProgressBarType.EnemyCast => new ProgressBarEnemyCastGaugeNode(),
-            ProgressBarType.ToDo => new ProgressBarToDoGaugeNode(),
-            ProgressBarType.PartyListHp => new ProgressBarPartyListHpNode(),
-            ProgressBarType.LimitBreak => new ProgressBarLimitBreakGaugeNode(),
-            ProgressBarType.CastLegacy => new LegacyCastProgressBarNode(),
-            ProgressBarType.ToDoLegacy => new LegacyToDoProgressBarNode(),
-            ProgressBarType.EnemyCastLegacy => new LegacyEnemyCastProgressBarNode(),
-            _ => new ProgressBarToDoGaugeNode(),
-        };
-
-        barNode.IsVisible = false;
-
-        barNode.RemoveNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision);
-
-        if (barNode is ComponentGaugeProgressNode gaugeNode)
-        {
-            gaugeNode.CollisionNode.RemoveNodeFlags(NodeFlags.EmitsEvents, NodeFlags.RespondToMouse, NodeFlags.HasCollision, NodeFlags.Focusable);
-        }
-
-        return barNode;
     }
 
     private bool ShouldRender()
@@ -414,71 +389,6 @@ public sealed unsafe class PartyListMeterManager : IDisposable
 
         textNode.IsVisible = true;
         textNode.MarkDirty();
-    }
-
-    private void ApplyBarNodeSettings(
-        int slotIndex,
-        AtkResNode* anchorNode,
-        AddonPartyList* addon,
-        Combatant combatant,
-        double maxDps)
-    {
-        if (!Settings.ShowMemberBars)
-        {
-            HideMemberBarNode(slotIndex);
-            return;
-        }
-
-        var progressNode = EnsureMemberBarNode(slotIndex, out var barNode);
-        if (progressNode == null || barNode == null)
-            return;
-
-        var localAnchorPosition = GetLocalPosition(addon, anchorNode);
-        var progress = maxDps > 0.0 ? combatant.ENCDPS / maxDps : 0.0;
-
-        barNode.Position = localAnchorPosition + new Vector2(Settings.BarOffsetX, Settings.BarOffsetY);
-        var barSize = new Vector2(Settings.BarWidth, Settings.BarHeight);
-        if (barNode.Size != barSize) barNode.Size = barSize;
-        progressNode.Progress = (float)progress;
-        progressNode.ColorTreatment = Settings.BarColorTreatment;
-        progressNode.FillRightToLeft = Settings.BarFillRightToLeft;
-        progressNode.BarColor = ResolveMemberBarColor(combatant);
-        progressNode.BackgroundColor = Settings.BarBackgroundColor;
-        barNode.IsVisible = true;
-        barNode.MarkDirty();
-    }
-
-    private Vector4 ResolveMemberBarColor(Combatant combatant)
-        => Settings.BarColorMode switch
-        {
-            ColorMode.Static => Settings.BarColor,
-            ColorMode.Job or ColorMode.Role => combatant.GetColor(Settings.BarColorMode),
-            _ => Settings.BarColor,
-        };
-
-    private IMeterProgressNode? EnsureMemberBarNode(int slotIndex, out NodeBase? barNode)
-    {
-        barNode = null;
-
-        if (slotIndex < 0 || slotIndex >= memberBarNodes.Length || rootNode == null)
-            return null;
-
-        if (memberBarNodes[slotIndex] is { } existingNode
-            && memberBarTypes[slotIndex] == Settings.BarType
-            && existingNode is IMeterProgressNode existingProgressNode)
-        {
-            barNode = existingNode;
-            return existingProgressNode;
-        }
-
-        memberBarNodes[slotIndex].DisposeLater();
-
-        barNode = CreateBarNode(Settings.BarType);
-        barNode.AttachNode(rootNode, NodePosition.AsFirstChild);
-        memberBarNodes[slotIndex] = barNode;
-        memberBarTypes[slotIndex] = Settings.BarType;
-
-        return (IMeterProgressNode)barNode;
     }
 
     private void ApplyRaidTextNodeSettings(AddonPartyList* addon)
@@ -605,19 +515,10 @@ public sealed unsafe class PartyListMeterManager : IDisposable
         cachedText[index] = null;
     }
 
-    private void HideMemberBarNode(int index)
-    {
-        if (index < 0 || index >= memberBarNodes.Length)
-            return;
-
-        if (memberBarNodes[index] is { } barNode)
-            barNode.IsVisible = false;
-    }
-
     private void HideMemberSlot(int index)
     {
         HideMemberTextNode(index);
-        HideMemberBarNode(index);
+        memberBars.Hide(index);
     }
 
     private void HideRaidTextNode()
@@ -634,28 +535,17 @@ public sealed unsafe class PartyListMeterManager : IDisposable
         ClearAttachedNodeReferences();
     }
 
-    private void DisposeMemberBarNodes()
-    {
-        for (var index = 0; index < memberBarNodes.Length; index++)
-        {
-            memberBarNodes[index].DisposeLater();
-            memberBarNodes[index] = null;
-            memberBarTypes[index] = null;
-        }
-    }
-
     private void ClearAttachedNodeReferences()
     {
         rootNode = null;
         raidTextNode = null;
         cachedRaidText = null;
         attachedAddon = 0;
+        memberBars.ClearReferences();
 
         for (var index = 0; index < memberTextNodes.Length; index++)
         {
             memberTextNodes[index] = null;
-            memberBarNodes[index] = null;
-            memberBarTypes[index] = null;
             cachedText[index] = null;
         }
     }

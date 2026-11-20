@@ -55,19 +55,6 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
     private CheckboxRowNode showPartyToggle = null!;
     private CheckboxRowNode hideWhenNoDataToggle = null!;
     private LabeledEnumDropdownNode<PartyListMeterAnchor> anchorDropdown = null!;
-    private CheckboxRowNode showMemberBarsToggle = null!;
-    private LabeledInputPairRowNode barOffsetRow = null!;
-    private LabeledInputPairRowNode barSizeRow = null!;
-    private LabeledNumericInputNode barOffsetXInput = null!;
-    private LabeledNumericInputNode barOffsetYInput = null!;
-    private LabeledNumericInputNode barWidthInput = null!;
-    private LabeledNumericInputNode barHeightInput = null!;
-    private LabeledEnumDropdownNode<ProgressBarType> barTypeDropdown = null!;
-    private CheckboxRowNode barFillRightToLeftToggle = null!;
-    private LabeledEnumDropdownNode<ColorMode> barColorModeDropdown = null!;
-    private LabeledEnumDropdownNode<ProgressBarColorTreatment> barColorTreatmentDropdown = null!;
-    private ColorInputRow barColorInput = null!;
-    private ColorInputRow barBackgroundColorInput = null!;
     private CheckboxRowNode showRaidDpsToggle = null!;
     private HorizontalListNode raidFormatRow = null!;
     private LabeledTextInputNode raidFormatInput = null!;
@@ -102,6 +89,18 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             String = "Party List Meter",
         });
 
+        BuildGeneralControls();
+        BuildMemberTextControls();
+        BuildTopMemberControls();
+        BuildMemberBarControls();
+        BuildRaidDpsControls();
+        BuildMemberTextStyleControls();
+        AddSections();
+        RefreshControls();
+    }
+
+    private void BuildGeneralControls()
+    {
         enabledToggle = new CheckboxRowNode
         {
             Size = new Vector2(360.0f, CheckboxHeight),
@@ -127,7 +126,10 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             TextTooltip = "Reset Party List settings\n(hold button to confirm)",
             OnClick = ResetPartyListSettings,
         };
+    }
 
+    private void BuildMemberTextControls()
+    {
         showSelfToggle = new CheckboxRowNode
         {
             Size = new Vector2(360.0f, CheckboxHeight),
@@ -190,6 +192,44 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         browseTagButton = CreateTagBrowserButton(() => OpenTagPicker(formatInput));
         formatRow.AddNode(new NodeBase[] { formatInput, formatHelpButton, browseTagButton });
 
+        anchorDropdown = new LabeledEnumDropdownNode<PartyListMeterAnchor>
+        {
+            Size = new Vector2(360, ControlHeight),
+            LabelText = "Anchor:",
+            Options = Enum.GetValues<PartyListMeterAnchor>().ToList(),
+            SelectedOption = config.Anchor,
+            OnOptionSelected = value =>
+            {
+                config.Anchor = value;
+                SaveAndUpdate();
+            },
+        };
+
+        memberOffsetRow = CreatePairedInputRow("Position:");
+        memberSizeRow = CreatePairedInputRow("Size:");
+        offsetXInput = CreateCompactNumericInput("X:", config.OffsetX, -500, 500, value => config.OffsetX = value);
+        offsetYInput = CreateCompactNumericInput("Y:", config.OffsetY, -500, 500, value => config.OffsetY = value);
+        widthInput = CreateCompactNumericInput("Width:", config.Width, 1, 500, value => config.Width = value);
+        heightInput = CreateCompactNumericInput("Height:", config.Height, 1, 100, value => config.Height = value);
+        memberOffsetRow.AddInputPair(offsetXInput, offsetYInput);
+        memberSizeRow.AddInputPair(widthInput, heightInput);
+
+        memberAlignmentDropdown = new LabeledEnumDropdownNode<AlignmentType>
+        {
+            Size = new Vector2(360, ControlHeight),
+            LabelText = "Alignment:",
+            Options = Enum.GetValues<AlignmentType>().ToList(),
+            SelectedOption = config.MemberAlignment,
+            OnOptionSelected = value =>
+            {
+                config.MemberAlignment = value;
+                SaveAndUpdate();
+            },
+        };
+    }
+
+    private void BuildTopMemberControls()
+    {
         highlightTopMemberToggle = new CheckboxRowNode
         {
             Size = new Vector2(360.0f, CheckboxHeight),
@@ -263,166 +303,10 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
                 System.PartyListMeterManager?.UpdateSettings();
             },
         };
+    }
 
-        anchorDropdown = new LabeledEnumDropdownNode<PartyListMeterAnchor>
-        {
-            Size = new Vector2(360, ControlHeight),
-            LabelText = "Anchor:",
-            Options = Enum.GetValues<PartyListMeterAnchor>().ToList(),
-            SelectedOption = config.Anchor,
-            OnOptionSelected = value =>
-            {
-                config.Anchor = value;
-                SaveAndUpdate();
-            },
-        };
-
-        memberOffsetRow = CreatePairedInputRow("Position:");
-        memberSizeRow = CreatePairedInputRow("Size:");
-        offsetXInput = CreateCompactNumericInput("X:", config.OffsetX, -500, 500, value => config.OffsetX = value);
-        offsetYInput = CreateCompactNumericInput("Y:", config.OffsetY, -500, 500, value => config.OffsetY = value);
-        widthInput = CreateCompactNumericInput("Width:", config.Width, 1, 500, value => config.Width = value);
-        heightInput = CreateCompactNumericInput("Height:", config.Height, 1, 100, value => config.Height = value);
-        fontSizeInput = CreateNumericInput("Font Size:", (int)config.FontSize, 6, 72, value => config.FontSize = (uint)value);
-        memberOffsetRow.AddInputPair(offsetXInput, offsetYInput);
-        memberSizeRow.AddInputPair(widthInput, heightInput);
-
-        memberAlignmentDropdown = new LabeledEnumDropdownNode<AlignmentType>
-        {
-            Size = new Vector2(360, ControlHeight),
-            LabelText = "Alignment:",
-            Options = Enum.GetValues<AlignmentType>().ToList(),
-            SelectedOption = config.MemberAlignment,
-            OnOptionSelected = value =>
-            {
-                config.MemberAlignment = value;
-                SaveAndUpdate();
-            },
-        };
-
-        showMemberBarsToggle = new CheckboxRowNode
-        {
-            Size = new Vector2(360.0f, CheckboxHeight),
-            IsVisible = true,
-            String = "Show Member Bars",
-            IsChecked = config.ShowMemberBars,
-            TextTooltip = "Shows a native-style DPS bar on each party-list row.",
-            OnClick = isChecked =>
-            {
-                config.ShowMemberBars = isChecked;
-                SaveAndUpdate();
-                ApplyEnabledState();
-            },
-        };
-
-        barOffsetRow = CreatePairedInputRow("Position:");
-        barSizeRow = CreatePairedInputRow("Size:");
-        barOffsetXInput = CreateCompactNumericInput("X:", config.BarOffsetX, -500, 500, value => config.BarOffsetX = value);
-        barOffsetYInput = CreateCompactNumericInput("Y:", config.BarOffsetY, -500, 500, value => config.BarOffsetY = value);
-        barWidthInput = CreateCompactNumericInput("Width:", config.BarWidth, 1, 500, value => config.BarWidth = value);
-        barHeightInput = CreateCompactNumericInput("Height:", config.BarHeight, 1, 100, value => config.BarHeight = value);
-        barOffsetRow.AddInputPair(barOffsetXInput, barOffsetYInput);
-        barSizeRow.AddInputPair(barWidthInput, barHeightInput);
-
-        barTypeDropdown = new LabeledEnumDropdownNode<ProgressBarType>
-        {
-            Size = new Vector2(360, ControlHeight),
-            LabelText = "Bar Type:",
-            Options = ProgressBarTypeOptions.Ordered(),
-            SelectedOption = config.BarType,
-            OnOptionSelected = value =>
-            {
-                config.BarType = value;
-                SaveAndUpdate();
-            },
-        };
-
-        barFillRightToLeftToggle = new CheckboxRowNode
-        {
-            Size = new Vector2(360.0f, CheckboxHeight),
-            IsVisible = true,
-            String = "Fill Right To Left",
-            IsChecked = config.BarFillRightToLeft,
-            OnClick = isChecked =>
-            {
-                config.BarFillRightToLeft = isChecked;
-                SaveAndUpdate();
-            },
-        };
-
-        barColorModeDropdown = new LabeledEnumDropdownNode<ColorMode>
-        {
-            Size = new Vector2(360, ControlHeight),
-            LabelText = "Bar Color Mode:",
-            Options = Enum.GetValues<ColorMode>().ToList(),
-            SelectedOption = config.BarColorMode,
-            OnOptionSelected = value =>
-            {
-                config.BarColorMode = value;
-                SaveAndUpdate();
-                ApplyEnabledState();
-            },
-        };
-
-        barColorTreatmentDropdown = new LabeledEnumDropdownNode<ProgressBarColorTreatment>
-        {
-            Size = new Vector2(360, ControlHeight),
-            LabelText = "Bar Tint:",
-            Options = Enum.GetValues<ProgressBarColorTreatment>().ToList(),
-            SelectedOption = config.BarColorTreatment,
-            OnOptionSelected = value =>
-            {
-                config.BarColorTreatment = value;
-                SaveAndUpdate();
-            },
-        };
-
-        barColorInput = new ColorInputRow
-        {
-            Label = "Bar Color: ",
-            Size = new Vector2(Width, ControlHeight),
-            DefaultColor = new PartyListMeterSettings().BarColor,
-            CurrentColor = config.BarColor,
-            OnColorConfirmed = color =>
-            {
-                config.BarColor = color;
-                SaveAndUpdate();
-            },
-            OnColorCanceled = color =>
-            {
-                config.BarColor = color;
-                SaveAndUpdate();
-            },
-            OnColorPreviewed = color =>
-            {
-                config.BarColor = color;
-                System.PartyListMeterManager?.UpdateSettings();
-            },
-        };
-
-        barBackgroundColorInput = new ColorInputRow
-        {
-            Label = "Bar Background: ",
-            Size = new Vector2(Width, ControlHeight),
-            DefaultColor = new PartyListMeterSettings().BarBackgroundColor,
-            CurrentColor = config.BarBackgroundColor,
-            OnColorConfirmed = color =>
-            {
-                config.BarBackgroundColor = color;
-                SaveAndUpdate();
-            },
-            OnColorCanceled = color =>
-            {
-                config.BarBackgroundColor = color;
-                SaveAndUpdate();
-            },
-            OnColorPreviewed = color =>
-            {
-                config.BarBackgroundColor = color;
-                System.PartyListMeterManager?.UpdateSettings();
-            },
-        };
-
+    private void BuildRaidDpsControls()
+    {
         showRaidDpsToggle = new CheckboxRowNode
         {
             Size = new Vector2(360.0f, CheckboxHeight),
@@ -554,6 +438,11 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
                 System.PartyListMeterManager?.UpdateSettings();
             },
         };
+    }
+
+    private void BuildMemberTextStyleControls()
+    {
+        fontSizeInput = CreateNumericInput("Font Size:", (int)config.FontSize, 6, 72, value => config.FontSize = (uint)value);
 
         fontTypeDropdown = new LabeledEnumDropdownNode<FontType>
         {
@@ -624,7 +513,10 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
                 System.PartyListMeterManager?.UpdateSettings();
             },
         };
+    }
 
+    private void AddSections()
+    {
         var resetRow = new HorizontalListNode
         {
             Size = new Vector2(360.0f, ResetButtonHeight),
@@ -675,14 +567,19 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
         AddNode(1, new NodeBase[]
         {
             showMemberBarsToggle,
-            barOffsetRow,
-            barSizeRow,
             barTypeDropdown,
+            barSizingDropdown,
+            new ResNode { Height = 4 },
+            barFillStatDropdown,
             barFillRightToLeftToggle,
+            new ResNode { Height = 4 },
             barColorModeDropdown,
             barColorTreatmentDropdown,
             barColorInput,
             barBackgroundColorInput,
+            new ResNode { Height = 4 },
+            barSizeRow,
+            barOffsetRow,
         });
 
         AddNode(new CategoryTextNode
@@ -717,7 +614,5 @@ internal sealed partial class PartyListMeterConfigurationNode : TabbedVerticalLi
             textColorInput,
             outlineColorInput,
         });
-
-        RefreshControls();
     }
 }

@@ -1,7 +1,7 @@
 using System.Numerics;
 using NativeMeters.Configuration;
 
-namespace NativeMeters.Nodes.Components;
+namespace NativeMeters.Nodes.Components.ProgressBars;
 
 public interface IMeterProgressNode
 {

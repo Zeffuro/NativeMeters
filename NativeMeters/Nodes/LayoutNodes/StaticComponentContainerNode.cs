@@ -9,6 +9,7 @@ using NativeMeters.Configuration;
 using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Nodes.Components;
+using NativeMeters.Nodes.Components.ProgressBars;
 using NativeMeters.Rendering;
 
 namespace NativeMeters.Nodes.LayoutNodes;
@@ -76,17 +77,7 @@ public sealed class StaticComponentContainerNode : ResNode
         NodeBase node = settings.Type switch {
             MeterComponentType.JobIcon or MeterComponentType.Icon => new IconImageNode { FitTexture = true },
             MeterComponentType.Asset => new AssetImageNode(),
-            MeterComponentType.ProgressBar => settings.ProgressBarType switch {
-                ProgressBarType.Cast => new ProgressBarCastGaugeNode(),
-                ProgressBarType.EnemyCast => new ProgressBarEnemyCastGaugeNode(),
-                ProgressBarType.ToDo => new ProgressBarToDoGaugeNode(),
-                ProgressBarType.PartyListHp => new ProgressBarPartyListHpNode(),
-                ProgressBarType.LimitBreak => new ProgressBarLimitBreakGaugeNode(),
-                ProgressBarType.CastLegacy => new LegacyCastProgressBarNode(),
-                ProgressBarType.ToDoLegacy => new LegacyToDoProgressBarNode(),
-                ProgressBarType.EnemyCastLegacy => new LegacyEnemyCastProgressBarNode(),
-                _ => new ProgressBarToDoGaugeNode()
-            },
+            MeterComponentType.ProgressBar => MeterProgressNodes.Create(settings.ProgressBarType, settings.PreserveBarEnds),
             MeterComponentType.Text => new BackgroundTextNode(),
             MeterComponentType.Background => new SimpleNineGridNode {
                 TexturePath = "ui/uld/ToolTipS.tex",
@@ -112,6 +103,7 @@ public sealed class StaticComponentContainerNode : ResNode
             hash.Add(component.ZIndex);
             hash.Add(component.Type);
             hash.Add(component.ProgressBarType);
+            hash.Add(component.PreserveBarEnds);
         }
 
         return hash.ToHashCode();

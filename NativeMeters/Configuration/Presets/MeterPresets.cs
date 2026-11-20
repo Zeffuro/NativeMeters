@@ -8,6 +8,8 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using NativeMeters.Configuration.Persistence;
 using NativeMeters.Data.Stats;
+using NativeMeters.Models;
+using NativeMeters.Rendering;
 using NativeMeters.Services;
 using static NativeMeters.Configuration.Presets.MeterPresetComponents;
 
@@ -48,10 +50,11 @@ public static class MeterPresets
     public static void ApplyPreset(string name, MeterSettings target, CustomMeterBarStyle? barStyle,
         bool? showBackground = null, ProgressBarType? barType = null, ColorMode? playerColor = null,
         ProgressBarColorTreatment? barTint = null, ColorMode? barColor = null, string? sortBy = null,
-        string? fillStat = null)
+        string? fillStat = null, JobIconType? iconStyle = null, ProgressBarSizing? barSizing = null)
     {
         if (!TryApplyPreset(name, target)) return;
-        ApplyAppearance(target, barStyle, showBackground, barType, playerColor, barTint, barColor, sortBy, fillStat);
+        ApplyAppearance(target, barStyle, showBackground, barType, playerColor, barTint, barColor, sortBy, fillStat,
+            iconStyle, barSizing);
     }
 
     private static bool TryApplyPreset(string name, MeterSettings target)
@@ -87,7 +90,10 @@ public static class MeterPresets
         var name = target.RowComponents.Find(row => row is { Type: MeterComponentType.Text, Name: "Player Name" });
         if (bar == null || name == null) return;
 
-        name.Position = name.Position with { X = MathF.Round(bar.Position.X + bar.Size.X * CastGaugeFillInset) };
+        var layoutWidth = bar.PreserveBarEnds
+            ? GaugeGeometry.GetUnscaledWidth(bar.Size, GaugeGeometry.CastHeight, GaugeGeometry.CastTrackCapWidth * 2)
+            : GaugeGeometry.CastWidth;
+        name.Position = name.Position with { X = MathF.Round(bar.Position.X + GaugeGeometry.CastFillInset * bar.Size.X / layoutWidth) };
     }
 
     public static void ApplySettings(MeterSettings source, MeterSettings target)
@@ -152,8 +158,8 @@ public static class MeterPresets
 
     public static List<ComponentSettings> GetDefaultStylishComponents()
     {
-        var barWidth = MathF.Round((StylishRight - StylishTextLeft) / (1f - 2f * CastGaugeFillInset));
-        var barLeft = MathF.Round(StylishTextLeft - barWidth * CastGaugeFillInset);
+        const float barWidth = StylishRight - StylishTextLeft + 2 * GaugeGeometry.CastFillInset;
+        const float barLeft = StylishTextLeft - GaugeGeometry.CastFillInset;
         return
         [
             new()
@@ -161,10 +167,13 @@ public static class MeterPresets
                 Name = "Progress Bar",
                 Type = MeterComponentType.ProgressBar,
                 DataSource = StatSelector.DefaultStatSelector,
-                Position = new Vector2(barLeft, 14),
-                Size = new Vector2(barWidth, 16),
+                Position = new Vector2(barLeft, 12),
+                Size = new Vector2(barWidth, GaugeGeometry.CastHeight),
                 ZIndex = 0,
                 ColorMode = ColorMode.Job,
+                ProgressBarSizing = ProgressBarSizing.PreserveEnds,
+                ProgressBarColorTreatment = ProgressBarColorTreatment.NativeTint,
+                BarBackgroundColor = new Vector4(0, 0, 0, 0.38f),
             },
             Job(StylishLeft, 3, 26),
             Text("Player Name", "[name]", StylishTextLeft, 0, 148, 18),

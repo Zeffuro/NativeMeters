@@ -49,7 +49,7 @@ public class DynamicNodeList(NodeBase parentNode) : IDisposable
     }
 
     private static int GetStructureSignature(ComponentSettings component)
-        => HashCode.Combine(component.Type, component.ZIndex, component.ProgressBarType);
+        => HashCode.Combine(component.Type, component.ZIndex, component.ProgressBarType, component.PreserveBarEnds);
 
     public void Dispose()
     {

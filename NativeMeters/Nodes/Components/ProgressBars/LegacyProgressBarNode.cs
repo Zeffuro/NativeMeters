@@ -3,7 +3,7 @@ using System.Numerics;
 using KamiToolKit.Nodes;
 using NativeMeters.Configuration;
 
-namespace NativeMeters.Nodes.Components;
+namespace NativeMeters.Nodes.Components.ProgressBars;
 
 internal abstract class LegacyProgressBarNode<T> : ProgressNode, IMeterProgressNode where T : ProgressNode, new()
 {

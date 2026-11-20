@@ -14,7 +14,7 @@ internal static class SetupControls
     public const float Spacing = 4;
     public const float Indent = 16;
     public const float DialogWidth = 660;
-    public const float DialogHeight = 568;
+    public const float DialogHeight = 596;
     public const float DialogInset = 12;
     public const float FooterInset = 36;
     public const float FooterClearance = 10;

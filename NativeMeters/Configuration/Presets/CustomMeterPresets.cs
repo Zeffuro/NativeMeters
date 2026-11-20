@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using NativeMeters.Data.Stats;
+using NativeMeters.Models;
 using static NativeMeters.Configuration.Presets.MeterPresetComponents;
 
 namespace NativeMeters.Configuration.Presets;
@@ -31,8 +32,10 @@ public sealed class CustomMeterOptions
     public MeterLayout Layout { get; set; } = MeterLayout.Vertical;
     public CustomMeterBarStyle BarStyle { get; set; } = CustomMeterBarStyle.FullWidth;
     public ProgressBarType? BarType { get; set; } = ProgressBarType.Cast;
+    public ProgressBarSizing BarSizing { get; set; } = ProgressBarSizing.PreserveEnds;
     public bool? ShowBackground { get; set; }
     public ColorMode? PlayerColor { get; set; }
+    public JobIconType IconStyle { get; set; } = JobIconType.Default;
     public ColorMode? BarColor { get; set; }
     public ProgressBarColorTreatment? BarTint { get; set; } = ProgressBarColorTreatment.Auto;
     public string SortBy { get; set; } = StatSelector.DefaultStatSelector;
@@ -94,7 +97,7 @@ public static class CustomMeterPresets
         else
             ApplyVertical(target, columns, showTotals: false, filled, textAbove, filledHeight);
         var bar = ApplyAppearance(target, options.BarStyle, options.ShowBackground, options.BarType, options.PlayerColor,
-            options.BarTint, options.BarColor, options.SortBy, options.FillStat);
+            options.BarTint, options.BarColor, options.SortBy, options.FillStat, options.IconStyle, options.BarSizing);
         if (filled && bar != null)
         {
             var horizontal = options.Layout == MeterLayout.Horizontal;

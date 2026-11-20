@@ -4,6 +4,7 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using NativeMeters.Data.Stats;
+using NativeMeters.Models;
 using NativeMeters.Rendering;
 
 namespace NativeMeters.Configuration.Presets;
@@ -11,7 +12,6 @@ namespace NativeMeters.Configuration.Presets;
 internal static class MeterPresetComponents
 {
     internal const int DefaultCombatants = 8;
-    internal const float CastGaugeFillInset = 6f / 160f;
     internal const float ToDoGaugeFillInset = 2f / 44f;
     internal static Vector4 Ink => ColorHelper.GetColor(50);
     internal static Vector4 Muted => ColorHelper.GetColor(50) with { W = 0.75f };
@@ -99,7 +99,8 @@ internal static class MeterPresetComponents
 
     internal static ComponentSettings? ApplyAppearance(MeterSettings target, CustomMeterBarStyle? barStyle, bool? showBackground,
         ProgressBarType? barType = null, ColorMode? playerColor = null, ProgressBarColorTreatment? barTint = null,
-        ColorMode? barColor = null, string? sortBy = null, string? fillStat = null)
+        ColorMode? barColor = null, string? sortBy = null, string? fillStat = null, JobIconType? iconStyle = null,
+        ProgressBarSizing? barSizing = null)
     {
         if (showBackground.HasValue) ApplyBackground(target, showBackground.Value);
         if (sortBy != null) target.StatToTrack = StatSelector.NormalizeStatSelector(sortBy);
@@ -108,14 +109,18 @@ internal static class MeterPresetComponents
         {
             if (barColor.HasValue) bar.ColorMode = barColor.Value;
             if (barTint.HasValue) bar.ProgressBarColorTreatment = barTint.Value;
+            if (barSizing.HasValue) bar.ProgressBarSizing = barSizing.Value;
             if (fillStat != null) bar.DataSource = StatSelector.NormalizeStatSelector(fillStat);
         }
 
-        if (playerColor is { } color)
+        if (playerColor.HasValue || iconStyle.HasValue)
         {
             foreach (var component in target.RowComponents)
             {
-                if (component is { Type: MeterComponentType.Text } && ColorResolver.IsNameTextComponent(component))
+                if (iconStyle is { } style && component is { Type: MeterComponentType.JobIcon })
+                    component.JobIconType = style;
+                if (playerColor is { } color && component is { Type: MeterComponentType.Text } &&
+                    ColorResolver.IsNameTextComponent(component))
                     component.ColorMode = color;
             }
         }
@@ -210,8 +215,11 @@ internal static class MeterPresetComponents
     internal static float GetMinimumBarHeight(ProgressBarType barType) => barType switch
     {
         ProgressBarType.LimitBreak => 20f,
-        ProgressBarType.PartyListHp => 12f,
-        ProgressBarType.Cast or ProgressBarType.EnemyCast => 10f,
+        ProgressBarType.BardArrow => 18f,
+        ProgressBarType.PartyListHp or ProgressBarType.ContentGauge or ProgressBarType.GoldSaucerGauge => 12f,
+        ProgressBarType.Cast or ProgressBarType.EnemyCast or ProgressBarType.AetherGauge or
+            ProgressBarType.CustomDeliveries or ProgressBarType.CollectableNegotiation => 10f,
+        ProgressBarType.ItemInspection => 8f,
         _ => 4f,
     };
 

@@ -9,6 +9,7 @@ using NativeMeters.Extensions;
 using NativeMeters.Models;
 using NativeMeters.Nodes;
 using NativeMeters.Nodes.Components;
+using NativeMeters.Nodes.Components.ProgressBars;
 using NativeMeters.Tags;
 using BackgroundTextNode = NativeMeters.Nodes.BackgroundTextNode;
 

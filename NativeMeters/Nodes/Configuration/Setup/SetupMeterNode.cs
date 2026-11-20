@@ -8,6 +8,7 @@ using NativeMeters.Configuration;
 using NativeMeters.Configuration.Presets;
 using NativeMeters.Data.Stats;
 using NativeMeters.Extensions;
+using NativeMeters.Models;
 using static NativeMeters.Nodes.Configuration.Setup.SetupControls;
 
 namespace NativeMeters.Nodes.Configuration.Setup;
@@ -22,7 +23,9 @@ internal sealed class SetupMeterNode : TabbedVerticalListNode
         .Select(type => (type, type.Description)).ToArray();
     private static readonly (ColorMode Value, string Label)[] Colors = EnumChoices<ColorMode>();
     private static readonly (ProgressBarColorTreatment Value, string Label)[] Tints = EnumChoices<ProgressBarColorTreatment>();
+    private static readonly (ProgressBarSizing Value, string Label)[] BarSizes = EnumChoices<ProgressBarSizing>();
     private static readonly (MeterLayout Value, string Label)[] Layouts = EnumChoices<MeterLayout>();
+    private static readonly (JobIconType Value, string Label)[] IconStyles = EnumChoices<JobIconType>();
     private static readonly (bool Value, string Label)[] TextPositions = [(true, "Above bar"), (false, "Inside bar")];
     private static readonly (string Value, string Label)[] Stats = StatSelector.GetAvailableStatSelectors()
         .Select(stat => (stat, StatLabel(stat))).ToArray();
@@ -37,6 +40,10 @@ internal sealed class SetupMeterNode : TabbedVerticalListNode
     private readonly TabBarNode tabs;
     private readonly List<SetupChoiceNode> choices = [];
     private readonly SetupChoiceNode[] presetBarControls;
+    private readonly SetupChoiceNode presetIconChoice;
+    private SetupChoiceNode? customIconChoice;
+    private readonly SetupChoiceNode presetBarSizingChoice;
+    private SetupChoiceNode? customBarSizingChoice;
     private readonly SetupMeterPreviewNode preview;
     private readonly TextNode previewLabel;
     private readonly Action changed;
@@ -54,6 +61,8 @@ internal sealed class SetupMeterNode : TabbedVerticalListNode
     private ProgressBarColorTreatment? presetBarTint;
     private string? presetSort;
     private string? presetFill;
+    private JobIconType? presetIconStyle;
+    private ProgressBarSizing? presetBarSizing;
 
     public bool CanContinue => !useCustom || custom.Columns.Count != 0;
 
@@ -80,6 +89,8 @@ internal sealed class SetupMeterNode : TabbedVerticalListNode
         presetColor.SetTooltip("Color player names by job, role, or a fixed color.");
         var barColor = Override("Bar color", Colors, value => presetBarColor = value);
         var fill = StatOverride("Bar fill", value => presetFill = value);
+        presetIconChoice = Override("Icon Style", IconStyles, value => presetIconStyle = value);
+        presetBarSizingChoice = Override("Bar sizing", BarSizes, value => presetBarSizing = value);
         presetBarControls = [presetType, presetTint, barColor, fill];
         presetControls = Page(controlsWidth);
         presetControls.AddNode([
@@ -87,8 +98,9 @@ internal sealed class SetupMeterNode : TabbedVerticalListNode
             Pair(controlsWidth, Override("Bar style", CustomMeterPresets.BarStyles, value => presetBar = value), presetType),
             Pair(controlsWidth, presetColor, barColor),
             Pair(controlsWidth, presetTint, fill),
-            Pair(controlsWidth, StatOverride("Sort by", value => presetSort = value)),
-            Pair(controlsWidth, Override<bool>("Background", [(true, "On"), (false, "Off")], value => presetBackground = value)),
+            Pair(controlsWidth, StatOverride("Sort by", value => presetSort = value), presetBarSizingChoice),
+            Pair(controlsWidth, Override<bool>("Background", [(true, "On"), (false, "Off")], value => presetBackground = value),
+                presetIconChoice),
         ]);
         presetControls.RecalculateLayout();
 
@@ -110,6 +122,8 @@ internal sealed class SetupMeterNode : TabbedVerticalListNode
         var barColor = Override("Bar color", Colors, value => custom.BarColor = value, "Default");
         var fill = Choice("Bar fill", Stats, custom.FillStat, value => custom.FillStat = value);
         var position = Choice("Text position", TextPositions, custom.TextAboveBar, value => custom.TextAboveBar = value);
+        customIconChoice = Choice("Icon Style", IconStyles, custom.IconStyle, value => custom.IconStyle = value);
+        customBarSizingChoice = Choice("Bar sizing", BarSizes, custom.BarSizing, value => custom.BarSizing = value);
         var footer = Check("Footer", custom.ShowFooter, value =>
         {
             custom.ShowFooter = value;
@@ -135,7 +149,8 @@ internal sealed class SetupMeterNode : TabbedVerticalListNode
             }), customType),
             Pair(width, customColor, barColor),
             Pair(width, customTint, fill),
-            Pair(width, Choice("Sort by", Stats, custom.SortBy, value => custom.SortBy = value), extras),
+            Pair(width, Choice("Sort by", Stats, custom.SortBy, value => custom.SortBy = value), customBarSizingChoice),
+            Pair(width, extras, customIconChoice),
         ]);
         columns = Page(width);
         AddColumns(columns);
@@ -243,7 +258,7 @@ internal sealed class SetupMeterNode : TabbedVerticalListNode
         if (second != null) second.Width = fieldWidth;
         return new HorizontalListNode
         {
-            Height = first.Height,
+            Height = Math.Max(first.Height, second?.Height ?? 0),
             ItemSpacing = ColumnGap,
             InitialNodes = second == null ? [first] : [first, second],
         };
@@ -320,15 +335,36 @@ internal sealed class SetupMeterNode : TabbedVerticalListNode
         previewDirty = false;
         preview.Height = Math.Clamp(contentHeight - preview.Y, 0, MaxPreviewHeight);
         var meter = CreateMeter();
+        var navigationChanged = false;
+        var bar = meter.RowComponents.Find(component => component?.Type == MeterComponentType.ProgressBar);
         if (!useCustom)
         {
-            var hasBar = meter.RowComponents.Exists(component => component?.Type == MeterComponentType.ProgressBar);
+            var hasBar = bar != null;
             if (presetBarControls[0].IsEnabled != hasBar)
             {
                 foreach (var choice in presetBarControls) choice.IsEnabled = hasBar;
-                changed();
+                navigationChanged = true;
             }
         }
+
+        var sizingChoice = useCustom ? customBarSizingChoice! : presetBarSizingChoice;
+        var canPreserveEnds = bar != null && ProgressBarTypeOptions.SupportsPreservingEnds(bar.ProgressBarType);
+        if (sizingChoice.IsEnabled != canPreserveEnds)
+        {
+            sizingChoice.IsEnabled = canPreserveEnds;
+            navigationChanged = true;
+        }
+
+        var iconChoice = useCustom ? customIconChoice! : presetIconChoice;
+        var hasIcon = meter.RowComponents.Exists(component => component?.Type == MeterComponentType.JobIcon);
+        if (iconChoice.IsEnabled != hasIcon)
+        {
+            iconChoice.IsEnabled = hasIcon;
+            navigationChanged = true;
+        }
+
+        if (navigationChanged) changed();
+
         var rowCount = useCustom && meter.Layout == MeterLayout.Vertical ? 2 : 3;
         preview.ShowMeter(meter, rowCount);
     }
@@ -340,7 +376,7 @@ internal sealed class SetupMeterNode : TabbedVerticalListNode
             CustomMeterPresets.Apply(custom, meter);
         else
             MeterPresets.ApplyPreset(preset, meter, presetBar, presetBackground, presetBarType, presetPlayerColor, presetBarTint,
-                presetBarColor, presetSort, presetFill);
+                presetBarColor, presetSort, presetFill, presetIconStyle, presetBarSizing);
         return meter;
     }
 }

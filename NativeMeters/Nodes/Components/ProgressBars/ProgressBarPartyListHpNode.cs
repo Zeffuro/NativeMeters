@@ -3,9 +3,8 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using NativeMeters.Nodes.Components.Gauge;
 
-namespace NativeMeters.Nodes.Components;
+namespace NativeMeters.Nodes.Components.ProgressBars;
 
 public unsafe class ProgressBarPartyListHpNode : ComponentGaugeProgressNode
 {
@@ -14,6 +13,7 @@ public unsafe class ProgressBarPartyListHpNode : ComponentGaugeProgressNode
     private const float NativeStripHeight = 16.0f;
     private const float FillOriginX = 5.0f;
     private const float BackdropOriginX = 6.0f;
+    private const float TrackCapWidth = 10.0f;
     private const DrawFlags GaugeDrawFlags = (DrawFlags)0x8;
     private const DrawFlags TransitionDrawFlags = (DrawFlags)0xA;
     private const NodeFlags FillNodeFlags =
@@ -22,54 +22,37 @@ public unsafe class ProgressBarPartyListHpNode : ComponentGaugeProgressNode
     private const NodeFlags TransitionNodeFlags =
         NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Enabled | NodeFlags.EmitsEvents;
 
-    public ProgressBarPartyListHpNode()
+    public ProgressBarPartyListHpNode() : this(false) { }
+
+    internal ProgressBarPartyListHpNode(bool preserveEnds)
     {
         BackgroundColorMode = GaugeColorMode.TextureAlpha;
         DefaultColorMode = GaugeColorMode.Multiply;
 
-        BackdropImageNode = new ImageNode
-        {
-            NodeId = 12,
-            NodeFlags = BackdropNodeFlags,
-            DrawFlags = GaugeDrawFlags,
-            PartId = 0,
-            Position = Vector2.Zero,
-            Size = new Vector2(NativeWidth, NativeStripHeight),
-            Origin = new Vector2(BackdropOriginX, 0.0f),
-            WrapMode = WrapMode.Stretch,
-            ImageNodeFlags = 0,
-        };
-        BackdropImageNode.AddPart(CreateParts());
-        BackdropImageNode.Node->PartsList->Id = 1;
+        var parts = CreateParts();
 
-        MainFillNode = new NineGridNode
-        {
-            NodeId = 11,
-            NodeFlags = FillNodeFlags,
-            DrawFlags = GaugeDrawFlags,
-            PartId = 2,
-            Position = Vector2.Zero,
-            Size = new Vector2(NativeWidth, NativeStripHeight),
-            Origin = new Vector2(FillOriginX, 0.0f),
-            LeftOffset = 6,
-            RightOffset = 6,
-            PartsRenderType = 240,
-            Parts = CreateParts(),
-        };
-        MainFillNode.Node->PartsList->Id = 1;
+        BackdropImageNode = CreateStockImage(12, parts, new Vector2(NativeWidth, NativeStripHeight),
+            preserveEnds ? BackdropNodeFlags & ~NodeFlags.Visible : BackdropNodeFlags,
+            GaugeDrawFlags, 0, origin: new Vector2(BackdropOriginX, 0.0f));
 
-        IncreaseFillNode = CreateTransitionNode(9, 108);
-        DecreaseFillNode = CreateTransitionNode(10, 252);
+        MainFillNode = CreateFill(parts);
+
+        IncreaseFillNode = CreateTransitionNode(9, 108, parts);
+        DecreaseFillNode = CreateTransitionNode(10, 252, parts);
         IncreaseFillNode.Node->PartsList->Id = 1;
         DecreaseFillNode.Node->PartsList->Id = 1;
 
-        InitializeGauge(new Vector2(NativeWidth, NativeStripHeight));
+        if (preserveEnds)
+            StaticBackdropNode = CreateSlicedLayer(13, parts[0], Vector2.Zero, TrackCapWidth,
+                GaugeDrawFlags, FillNodeFlags);
+
+        InitializeGauge(new Vector2(NativeWidth, NativeStripHeight), minimumUnscaledWidth: preserveEnds ? TrackCapWidth * 2 : 0);
     }
 
-    private static NineGridNode CreateTransitionNode(uint nodeId, byte partsRenderType)
+    private static NineGridNode CreateTransitionNode(uint nodeId, byte partsRenderType, Part[] parts)
         => new()
         {
-            Parts = CreateParts(),
+            Parts = parts,
             NodeId = nodeId,
             NodeFlags = TransitionNodeFlags,
             DrawFlags = TransitionDrawFlags,
@@ -82,6 +65,26 @@ public unsafe class ProgressBarPartyListHpNode : ComponentGaugeProgressNode
             BlendMode = 2,
             PartsRenderType = partsRenderType,
         };
+
+    private static NineGridNode CreateFill(Part[] parts)
+    {
+        var node = new NineGridNode
+        {
+            NodeId = 11,
+            NodeFlags = FillNodeFlags,
+            DrawFlags = GaugeDrawFlags,
+            PartId = 2,
+            Position = Vector2.Zero,
+            Size = new Vector2(NativeWidth, NativeStripHeight),
+            Origin = new Vector2(FillOriginX, 0.0f),
+            LeftOffset = 6,
+            RightOffset = 6,
+            PartsRenderType = 240,
+            Parts = parts,
+        };
+        node.Node->PartsList->Id = 1;
+        return node;
+    }
 
     private static Part[] CreateParts()
         => [

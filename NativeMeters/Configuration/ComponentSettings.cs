@@ -12,6 +12,14 @@ namespace NativeMeters.Configuration;
 
 public enum MeterComponentType { Text = 0, JobIcon = 1, ProgressBar = 2, Background = 3, MenuButton = 4, Separator = 5, Icon = 6, Asset = 7 }
 public enum ColorMode { Static, Job, Role }
+public enum ProgressBarSizing
+{
+    Stretch,
+
+    [Description("Preserve ends")]
+    PreserveEnds,
+}
+
 public enum ProgressBarColorTreatment
 {
     Auto,
@@ -24,6 +32,9 @@ public enum ProgressBarColorTreatment
 
     [Description("Legacy Additive")]
     LegacyAdditive,
+
+    [Description("Stock Colors")]
+    StockColors,
 }
 
 public class ComponentSettings
@@ -56,9 +67,13 @@ public class ComponentSettings
     public Vector4 BarBackgroundColor { get; set; } = KnownColor.Black.Vector();
     public ColorMode ColorMode { get; set; } = ColorMode.Job;
     public ProgressBarType ProgressBarType { get; set; } = ProgressBarType.Cast;
+    public ProgressBarSizing ProgressBarSizing { get; set; }
     public ProgressBarColorTreatment ProgressBarColorTreatment { get; set; } = ProgressBarColorTreatment.Auto;
     public bool ProgressBarFillRightToLeft { get; set; }
     public bool ShowBackground { get; set; }
+
+    internal bool PreserveBarEnds => ProgressBarSizing == ProgressBarSizing.PreserveEnds &&
+        ProgressBarTypeOptions.SupportsPreservingEnds(ProgressBarType);
 
     public void EnsureInitialized()
     {

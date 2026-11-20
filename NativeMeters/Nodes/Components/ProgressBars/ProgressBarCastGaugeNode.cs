@@ -3,41 +3,61 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using NativeMeters.Nodes.Components.Gauge;
+using NativeMeters.Rendering;
 
-namespace NativeMeters.Nodes.Components;
+namespace NativeMeters.Nodes.Components.ProgressBars;
 
 public unsafe class ProgressBarCastGaugeNode : ComponentGaugeProgressNode
 {
     private const string TexturePath = "ui/uld/Parameter_Gauge.tex";
-    private const float NativeWidth = 160.0f;
-    private const float NativeHeight = 20.0f;
+    private const float NativeWidth = GaugeGeometry.CastWidth;
+    private const float NativeHeight = GaugeGeometry.CastHeight;
+    private const float TrackCapWidth = GaugeGeometry.CastTrackCapWidth;
     private static readonly Vector3 NativeCastFillMultiplyColor = new(0.9f, 0.75f, 0.75f);
     private const DrawFlags GaugeDrawFlags = (DrawFlags)0x8;
     private const NodeFlags VisibleGaugeNodeFlags =
         NodeFlags.AnchorTop | NodeFlags.AnchorLeft | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents;
 
-    public ProgressBarCastGaugeNode()
+    public ProgressBarCastGaugeNode() : this(false) { }
+
+    internal ProgressBarCastGaugeNode(bool preserveEnds)
     {
         BackgroundColorMode = GaugeColorMode.TextureAlpha;
         DefaultColorMode = GaugeColorMode.Additive;
 
-        BackdropImageNode = new ImageNode
-        {
-            NodeId = 12,
-            NodeFlags = VisibleGaugeNodeFlags,
-            DrawFlags = GaugeDrawFlags,
-            PartId = 5,
-            Position = Vector2.Zero,
-            Size = new Vector2(NativeWidth, NativeHeight),
-            Origin = Vector2.Zero,
-            WrapMode = WrapMode.Stretch,
-            ImageNodeFlags = 0,
-        };
-        BackdropImageNode.AddPart(CreateParts());
-        BackdropImageNode.Node->PartsList->Id = 1;
+        var parts = CreateParts();
 
-        MainFillNode = new NineGridNode
+        BackdropImageNode = CreateStockImage(12, parts, new Vector2(NativeWidth, NativeHeight),
+            preserveEnds ? VisibleGaugeNodeFlags & ~NodeFlags.Visible : VisibleGaugeNodeFlags,
+            GaugeDrawFlags, 5);
+
+        MainFillNode = CreateFill(parts);
+
+        if (preserveEnds)
+        {
+            StaticBackdropNode = CreateTrackLayer(14, 100.0f);
+            BorderNode = CreateTrackLayer(13, 0.0f);
+        }
+        else
+        {
+            BorderImageNode = CreateStockImage(13, parts, new Vector2(NativeWidth, NativeHeight),
+                VisibleGaugeNodeFlags, GaugeDrawFlags, 0);
+        }
+
+        InitializeGauge(new Vector2(NativeWidth, NativeHeight), minimumUnscaledWidth: preserveEnds ? TrackCapWidth * 2 : 0);
+    }
+
+    private static NineGridNode CreateTrackLayer(uint nodeId, float textureY)
+        => CreateSlicedLayer(nodeId, new Part
+        {
+            TexturePath = TexturePath,
+            TextureCoordinates = new Vector2(0, textureY),
+            Size = new Vector2(NativeWidth, NativeHeight),
+        }, Vector2.Zero, TrackCapWidth, GaugeDrawFlags, VisibleGaugeNodeFlags);
+
+    private static NineGridNode CreateFill(Part[] parts)
+    {
+        var node = new NineGridNode
         {
             NodeId = 11,
             NodeFlags = VisibleGaugeNodeFlags,
@@ -45,31 +65,15 @@ public unsafe class ProgressBarCastGaugeNode : ComponentGaugeProgressNode
             PartId = 2,
             Position = Vector2.Zero,
             Size = new Vector2(NativeWidth, NativeHeight),
-            Origin = new Vector2(6.0f, 0.0f),
+            Origin = new Vector2(GaugeGeometry.CastFillInset, 0.0f),
             LeftOffset = 7.0f,
             RightOffset = 7.0f,
             MultiplyColor = NativeCastFillMultiplyColor,
             PartsRenderType = 36,
-            Parts = CreateParts(),
+            Parts = parts,
         };
-        MainFillNode.Node->PartsList->Id = 1;
-
-        BorderImageNode = new ImageNode
-        {
-            NodeId = 13,
-            NodeFlags = VisibleGaugeNodeFlags,
-            DrawFlags = GaugeDrawFlags,
-            PartId = 0,
-            Position = Vector2.Zero,
-            Size = new Vector2(NativeWidth, NativeHeight),
-            Origin = Vector2.Zero,
-            WrapMode = WrapMode.Stretch,
-            ImageNodeFlags = 0,
-        };
-        BorderImageNode.AddPart(CreateParts());
-        BorderImageNode.Node->PartsList->Id = 1;
-
-        InitializeGauge(new Vector2(NativeWidth, NativeHeight));
+        node.Node->PartsList->Id = 1;
+        return node;
     }
 
     private static Part[] CreateParts()
